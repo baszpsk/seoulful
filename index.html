@@ -1482,6 +1482,9 @@ html.i3-wait-sh-t-wood .th-t-wood :is(.rm-row, .sh-row)::after, html.i3-wait-sh-
 .rm-spot .fig-svg { width: 64px; height: 77px; }
 .rm-spot.deco .deco-svg { width: 64px; height: 77px; transform-origin: 50% 95%; }
 .rm-spot.dc-go .deco-svg { animation: fm-hop .7s var(--spring); }
+/* (a layer of its own all the while, #280: a hop's end took it off, and an iPhone drew its 3D picture anew
+   a piece at a time, as the plaza's characters after each stroll) */
+.rm-spot.deco .deco-svg { will-change: transform; }
 .rm-cab.arranging .rm-spot { cursor: pointer; box-shadow: inset 0 0 0 1.5px rgba(160, 122, 63, .25); }
 .rm-cab.arranging .rm-spot.empty { box-shadow: inset 0 0 0 1.5px rgba(160, 122, 63, .35); background: rgba(255, 255, 255, .18); }
 .rm-spot.sel { box-shadow: inset 0 0 0 2.5px var(--gold) !important; background: rgba(255, 214, 120, .22) !important; }
@@ -1821,7 +1824,11 @@ html.i3-pz-shop-day .pz-art.day .pz3-shop.pz-d, html.i3-pz-shop-lit .pz-art.lit 
 .pz-char { display: block; width: 64px; height: 118px; transform: scaleX(var(--face, 1)); transition: transform .25s; }
 /* (in 3D one faces about at once: turned by degrees its picture showed it was flat, a line midway, #216) */
 html.c3 .pz-char { transition: none; }
-.pz-char .char-svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 1px 0 rgba(255, 255, 255, .3)); }
+/* (a layer of its own all the while, #280: a stroll's step put the character on a layer of its own and the
+   stroll's end took it off, and each time an iPhone drew its 3D picture anew on the plaza, a piece of it at a
+   time: for a while only hair, a body cut off square, or none under the name; WebKit, measured: gone about
+   0.6 s after each stroll, never with this) */
+.pz-char .char-svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 1px 0 rgba(255, 255, 255, .3)); will-change: transform; }
 /* Characters in 3D (#145): the 3D picture in the drawn character's own box, the drawing hidden. A
    picture shows only once it has opened (never a broken one). While it is made (on a phone known to draw
    in 3D) the drawing waits unseen (another look: a moment of it, then the picture, would seem a ghost),
@@ -1849,11 +1856,12 @@ html.c3:not(.c3-slow) svg[data-c3o]:not(.c3o-on):not(.c3-late) > :not(.c3-o) { d
 .char-svg.c3-under > g, .char-svg.c3-under > g *,
 html.c3:not(.c3-slow) .char-svg[data-c3]:not(.c3-on):not(.c3-under):not(.c3-late) > g:not(.cp-shadow) *,
 html.c3:not(.c3-slow) svg[data-c3o]:not(.c3o-on):not(.c3-late) > :not(.c3-o) * { animation: none !important; }
-/* A move's stage over a character: as high as the character (over the page, under the bars and a sheet
-   over it; over a sheet it is in: c3Layer). The character under it holds still while it plays (the stage
-   follows its box: a box that breathed would resize the stage at each step, and a resized stage is drawn
-   anew, so the character flickered). */
-.c3-play { position: fixed; z-index: 19; pointer-events: none; }
+/* A move's stage over a character: in the page beside it (c3Go, #280), over it and what is by it in what it
+   is in (the bars and a sheet over the page stay over it), its bleed cut at the screen's sides (overflow).
+   The character under it holds still while it plays (the stage follows its box: a box that breathed would
+   resize the stage at each step, and a resized stage is drawn anew, so the character flickered). */
+.c3-play { position: absolute; z-index: 19; overflow: hidden; pointer-events: none; }
+.c3-play > div { position: absolute; pointer-events: none; }
 .char-svg.c3-held { animation: none !important; transform: none !important; }
 .c3-drawn > .c3-live { visibility: hidden; }
 /* (taps go through the stage to what is under it: the character, its pet; a drag on the character turns
@@ -1866,6 +1874,8 @@ html.c3 .shop-char, html.c3 .rm-char { touch-action: pan-y; }
 .c3-drawn .pet-box.c3-pet .pet-svg, .c3-drawn ~ .pet-box.c3-pet .pet-svg { visibility: visible; }
 @keyframes c3-in { from { opacity: 0; } }
 .pz-pet { position: absolute; left: 44px; bottom: -2px; width: 30px; height: 30px; pointer-events: none; }
+/* (its pet in 3D too: a layer of its own all the while, as its character's, #280) */
+.pz-pet .pet-svg { will-change: transform; }
 .pz-p.walking .pz-char .char-svg { animation: pz-step .36s ease-in-out infinite alternate; }
 .pz-p.walking .pz-pet .pet-svg { animation: pz-step .3s ease-in-out infinite alternate; }
 @keyframes pz-step { 0% { transform: translateY(0) rotate(-2deg); } 100% { transform: translateY(-3px) rotate(2deg); } }
@@ -2005,7 +2015,9 @@ html.i3-ar-arena .ar-stage .ar-floor { display: none; }
 .ar-hp > i.mid { background: linear-gradient(90deg, #f59e0b, #fde047); }
 .ar-hp > i.low { background: linear-gradient(90deg, #ef4444, #f97316); }
 .ar-hpn { font-size: 10.5px; color: var(--muted); }
-.ar-fig { width: 118px; height: 140px; }
+/* (a layer of its own all the while, #280: each lunge, hit and coming in put it on one and took it off, and
+   each time an iPhone drew its 3D picture anew a piece at a time, as the plaza's characters after a stroll) */
+.ar-fig { width: 118px; height: 140px; will-change: transform; }
 .ar-fig .fig-svg { width: 100%; height: 100%; overflow: visible; }
 .ar-side.d .ar-fig .fig-svg { transform: scaleX(-1); }
 .ar-fig.ar-in { animation: ar-in .5s var(--spring); }
@@ -2810,7 +2822,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 <div id="toasts" role="status" aria-live="polite"></div>
 <input type="file" id="cam-env" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="cam-user" class="visually-hidden" accept="image/*" capture="user" tabindex="-1" aria-hidden="true">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbz2iYI-AY2wmBoYL11bWkP6gy9TdUqZsB_CAT27Iq7vdgxg-T8PsD0q3uy43YM53lGwEA/exec","version":"2.12.0","page":"","e3":"cf0cf2cd"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbz2iYI-AY2wmBoYL11bWkP6gy9TdUqZsB_CAT27Iq7vdgxg-T8PsD0q3uy43YM53lGwEA/exec","version":"2.12.1","page":"","e3":"cf0cf2cd"};</script>
 <script>
 (function () {
   'use strict';
@@ -3688,13 +3700,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (stand) c3PutH(hd, stand, true);
       c3Watch(hd);
     }
+    // (the page drawn anew under a move playing: its character's new self held under its stage now, before
+    // the page is painted, never seen beside it; its stage put back beside it, if the page took it away)
+    if (C3.live && C3.live.follow) C3.live.follow();
     // (its box gone: the stage ends; but one in a sheet still open (another tab of it shown a while, the
     // shelf, the swaps) waits, drawing nothing, to be moved into its box when that is back: never made
     // anew and empty a moment, #214)
     if (C3.live && !C3.live.host.isConnected && !(C3.live.inSheet && $('#sheet-root.open'))) { C3.live.stop(); C3.live = null; }
-    // (the page drawn anew under a move playing: its character's new self held under its stage now, before
-    // the page is painted, never seen beside it)
-    if (C3.live && C3.live.follow) C3.live.follow();
     // (a live stage's pet box drawn anew, or another pet: on its stage at once)
     c3Pet(C3.live);
   }
@@ -4387,10 +4399,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // and empty a moment)
     if (was && was.temp && was.again && was.over() === svg) { was.again(loop); return true; }
     if (was && was.temp) was.end();
-    var box = document.createElement('div');
+    // The stage: in the page beside the character (#280), so it moves with the page on the very frame the
+    // page moves, scrolled or pulled down past its top (put over the page instead and moved after it a
+    // moment later, at most 20 times a second, it floated about by the character as the page was scrolled).
+    // The character's box in it (`at`), and round that what its picture draws past the box (its bleed),
+    // cut at the sides of what it is scrolled in (the screen): never making the page wider than the
+    // screen a while, scrolled across on a phone.
+    var box = document.createElement('div'), at = document.createElement('div');
     box.className = 'c3-play';
-    box.style.zIndex = c3Layer(svg);
-    document.body.appendChild(box);
+    box.setAttribute('aria-hidden', 'true');
+    box.appendChild(at);
     var s = null;
     var look = svg.getAttribute('data-c3');
     var home = function (el) { var p = el.parentElement; return p ? String(p.className || '').split(' ')[0] : ''; };
@@ -4399,11 +4417,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // (c3-held: its box does not breathe, so the stage over it keeps its size).
     svg.classList.add('go', 'c3-held');
     if (loop) svg.classList.add('loop');
-    // Kept over it as the page moves (written only when it has moved). Its size as laid out: what moves
-    // it about a moment (the page coming in, scaled a little) moves the stage, never resizes it (a resized
-    // stage is made anew). The page drawn anew meanwhile: over the character's new self (the same look in
-    // the same place), which holds as this one did; none, or it is out of sight: the move ends (never a
-    // stage left where no character is).
+    var px = function (el, k, v) { v = Math.round(v * 100) / 100 + 'px'; if (el.style[k] !== v) el.style[k] = v; };
+    // How the stage's box is laid out where it is put (read when it is put there, and again only if it is
+    // no longer over the character): a px of it on the screen across and down (less than 0: in a box
+    // turned about, a character in the plaza facing left), and where its 0 is.
+    var map = null;
+    // Kept over the character (put again only when it is not, the page laid out anew). Its size as laid
+    // out: what moves it about a moment (the page coming in, scaled a little) moves the stage with it,
+    // never resizes it (a resized stage is made anew). The page drawn anew meanwhile: beside the
+    // character's new self (the same look in the same place), which holds as this one did; none, or it is
+    // out of sight: the move ends (never a stage left where no character is).
     var place = function () {
       if (!svg.isConnected) {
         var same = Array.prototype.filter.call(document.querySelectorAll('svg.char-svg[data-c3]'), function (x) { return x.getAttribute('data-c3') === look && home(x) === at0; });
@@ -4414,18 +4437,60 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }
       var r = svg.getBoundingClientRect();
       if (!r.width || !r.height) { if (s) s.end(); return; }
+      if (box.parentNode !== svg.parentNode) { svg.parentNode.insertBefore(box, svg.nextSibling); map = null; }
       var w = svg.clientWidth || Math.round(r.width), h = svg.clientHeight || Math.round(r.height);
-      var at = [r.left + (r.width - w) / 2 + 'px', r.top + (r.height - h) / 2 + 'px', w + 'px', h + 'px'];
-      ['left', 'top', 'width', 'height'].forEach(function (k, i) { if (box.style[k] !== at[i]) box.style[k] = at[i]; });
+      var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      if (map && at.style.width === w + 'px' && at.style.height === h + 'px') {
+        var q = at.getBoundingClientRect();
+        if (Math.abs(q.left + q.width / 2 - cx) < 0.5 && Math.abs(q.top + q.height / 2 - cy) < 0.5) return;
+      }
+      // (what it is scrolled in, read before the box is moved about below: none, the page)
+      var sc = null;
+      for (var p = svg.parentElement; p && p !== document.body && p !== document.documentElement; p = p.parentElement) {
+        if (!/^(visible|clip)$/.test(getComputedStyle(p).overflowX)) { sc = p; break; }
+      }
+      var e0 = 0, e1 = document.documentElement.clientWidth;
+      if (sc) { e0 = sc.getBoundingClientRect().left + sc.clientLeft - sc.scrollLeft; e1 = e0 + Math.max(sc.scrollWidth, sc.clientWidth); }
+      var b = c3Bleed(), bx = Math.round(w * b.side), bt = Math.round(h * b.top);
+      var W = w + 2 * bx, H = h + bt;
+      px(box, 'width', W);
+      px(box, 'height', H);
+      px(box, 'left', 0);
+      px(box, 'top', 0);
+      var m0 = box.getBoundingClientRect();
+      px(box, 'left', 100);
+      px(box, 'top', 100);
+      var m1 = box.getBoundingClientRect();
+      var sx = (m1.left - m0.left) / 100 || 1, sy = (m1.top - m0.top) / 100 || 1;
+      map = { sx: sx, sy: sy, ox: m0.left - Math.min(0, sx * W), oy: m0.top - Math.min(0, sy * H) };
+      var ax = Math.abs(sx), ay = Math.abs(sy);
+      var x0 = Math.max(e0, cx - (w / 2 + bx) * ax), x1 = Math.min(e1, cx + (w / 2 + bx) * ax);
+      var y0 = cy - (h / 2 + bt) * ay, y1 = cy + (h / 2) * ay;
+      if (x1 <= x0) { x0 = cx - (w / 2) * ax; x1 = cx + (w / 2) * ax; }
+      W = (x1 - x0) / ax;
+      H = (y1 - y0) / ay;
+      var L = ((x0 + x1) / 2 - map.ox) / sx - W / 2, T = ((y0 + y1) / 2 - map.oy) / sy - H / 2;
+      px(box, 'width', W);
+      px(box, 'height', H);
+      px(box, 'left', L);
+      px(box, 'top', T);
+      px(at, 'width', w);
+      px(at, 'height', h);
+      px(at, 'left', (cx - map.ox) / sx - L - w / 2);
+      px(at, 'top', (cy - map.oy) / sy - T - h / 2);
     };
     place();
-    s = C3.live = C3.mod.stage(box, c3Look(svg), { turn: -12 });
+    s = C3.live = C3.mod.stage(at, c3Look(svg), { turn: -12 });
     s.temp = true;
     s.host = box;
     s.follow = place;
+    // (as the page moves: a box it is in scrolled, or laid out anew; written only when it is no longer over
+    // the character)
     var follow = setInterval(place, 50);
+    window.addEventListener('scroll', place, { capture: true, passive: true });
     s.end = function () {
       clearInterval(follow);
+      window.removeEventListener('scroll', place, { capture: true, passive: true });
       s.stop();
       if (box.parentNode) box.parentNode.removeChild(box);
       svg.classList.remove('c3-under', 'go', 'loop', 'c3-held');
@@ -4465,17 +4530,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return play(false);
     }, s.end);
     return true;
-  }
-  /** How high a move's stage goes: just over what the character is in (a sheet, the shop screen's
-   *  greeting, a box being opened: what has a layer of its own), so what covers the character covers its
-   *  move too; one on the page itself: as the page (the bars and a sheet over it stay over it). */
-  function c3Layer(el) {
-    var z = '';
-    for (var p = el.parentElement; p && p !== document.body; p = p.parentElement) {
-      var cs = getComputedStyle(p);
-      if (cs.position !== 'static' && cs.zIndex !== 'auto') z = cs.zIndex;
-    }
-    return z === '' ? '' : String(+z + 1);
   }
   // A picture's own ids (its gradients) are counted, so no two pictures on the page share one. Drawing the
   // screen counts its own from the start each time (render), so the same screen is the same text.
@@ -5410,10 +5464,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (x.matches(C3_LIVE) !== y.matches(C3_LIVE)) return false;
     return true;
   }
-  /** `live`'s children made as `next`'s (the new HTML's, taken from it as they are used). */
+  /** `live`'s children made as `next`'s (the new HTML's, taken from it as they are used); a stage's canvas
+   *  and a move's stage beside its character (c3Go) left where they are. */
   function morphKids(live, next) {
     var a = [], b = [], c, k;
-    for (c = live.firstChild; c; c = c.nextSibling) if (!(c.nodeType === 1 && c.classList.contains('c3-live'))) a.push(c);
+    for (c = live.firstChild; c; c = c.nextSibling) if (!(c.nodeType === 1 && (c.classList.contains('c3-live') || c.classList.contains('c3-play')))) a.push(c);
     for (c = next.firstChild; c; c = c.nextSibling) b.push(c);
     var i = 0, ea = a.length - 1, eb = b.length - 1;
     while (i <= ea && i <= eb && sameKind(a[i], b[i])) i++;
@@ -9571,7 +9626,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var sick = l.type === sickType();
     var r = B.rules || {};
     openSheet({ title: (decide ? 'อนุมัติ · ' : '') + l.name + ' · ' + l.type, body: html`<p class="muted small mt0">${thRange(l.from, l.to)} · ${l.days} วัน${l.requestedAt ? ' · ขอเมื่อ ' + whenAt(l.requestedAt) : ''}</p>
-      ${sick ? html`<label class="check"><input type="checkbox" id="lf-cert" data-change="lf-cert" ${l.cert ? 'checked' : ''}><span>เห็นใบรับรองแพทย์แล้ว<small>ตั้งแต่วันที่ ${r.sickNoteDay || 3} ของการป่วย วันที่ใบให้หยุดไม่หัก Incentive · ดูตัวจริงหรือรูปที่ส่งมา ไม่ต้องเก็บไว้ในแอป · ส่งหลังอนุมัติเงินเดือนแล้ว คืนในเดือนถัดไปถ้าภายใน ${r.noteLateDays || 3} วันหลังกลับมาทำงาน</small></span></label>
+      ${sick ? html`<label class="check"><input type="checkbox" id="lf-cert" data-change="lf-cert" ${l.cert ? 'checked' : ''}><span>เห็นใบรับรองแพทย์แล้ว<small>ตั้งแต่วันที่ ${r.sickNoteDay || 3} ของการป่วย วันที่ใบให้หยุดไม่หัก Incentive · ดูตัวจริงหรือรูปที่ส่งมา ไม่ต้องเก็บไว้ในแอป · ส่งหลังอนุมัติเงินเดือนแล้ว คืนในเดือนถัดไปถ้าภายใน ${r.noteLateDays || 3} วันหลังกลับมาทำงาน · ใบที่นับในเงินเดือนที่อนุมัติแล้ว เจ้าของร้านแก้ได้ ส่วนต่างปรับในเดือนถัดไป</small></span></label>
         <div class="two" id="lf-days" ${l.cert ? '' : 'hidden'}><label class="field"><span>ใบให้หยุดตั้งแต่</span><input class="input" type="date" id="lf-from" value="${l.certFrom || l.from}"></label><label class="field"><span>ถึง</span><input class="input" type="date" id="lf-to" value="${l.certTo || l.to}"></label></div>
         <label class="check"><input type="checkbox" id="lf-hospital" ${l.hospital ? 'checked' : ''}><span>นอนโรงพยาบาล<small>ไม่หัก Incentive ทั้งครั้ง · ดูใบรับรองแพทย์หรือเอกสารโรงพยาบาล</small></span></label>` : ''}
       <label class="field"><span>เหตุสุดวิสัย ไม่หัก Incentive</span><input class="input" id="lf-waive" maxlength="200" value="${l.waive || ''}" placeholder="เหตุผลและหลักฐานที่เห็น เช่น อุบัติเหตุระหว่างทาง มีใบโรงพยาบาล"><small>เว้นว่าง = หักตามกติกา · ${l.name} คุณ และเจ้าของร้านเห็นเหตุผลนี้</small></label>`,
@@ -9912,7 +9967,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (bk.error || bk.stale) todo.unshift(['shield', bk.error ? 'สำรองข้อมูลอัตโนมัติไม่สำเร็จ — ดูสาเหตุ แล้วกด "สำรองตอนนี้"' : 'ไม่ได้สำรองข้อมูลมา 3 วันแล้ว — ดูสาเหตุ แล้วกด "สำรองตอนนี้"', 'settings']);
     if (bk.mailOn && bk.to && !bk.offAccount) todo.push(['mail', 'ให้ส่งไฟล์สำรองไปอีเมลของบัญชีอื่น (ข้อมูลไม่หายแม้เข้าบัญชี Google ของร้านไม่ได้)', 'settings']);
     var rem = o.reminders || {};
-    var tempUp = !!(o.temp && o.temp.need && !o.temp.booked);
+    var tempUp = !!(o.temp && o.temp.need && !o.temp.booked && !o.temp.closed);
     (rem.setMissing || []).forEach(function (y) { todo.unshift(['cal', 'ใส่วันหยุดตามประเพณีปี ' + (+y + 543) + ' (ตามประกาศวันหยุดสถาบันการเงิน)', 'settings']); });
     if ((rem.startMissing || []).length) todo.unshift(['team', 'ใส่วันเริ่มงาน ' + rem.startMissing.length + ' คน (' + rem.startMissing.join(', ') + ') — ระหว่างนี้ยังไม่ได้พักร้อนตามอายุงาน', 'staff']);
     return html`<div class="stack">
@@ -13882,9 +13937,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** Who is off, as "name ลาป่วย (รออนุมัติ)". */
   function tempWho(x) { return x.name + ' ' + x.type + (x.pending ? ' (รออนุมัติ)' : ''); }
   /** On the Friday itself, or someone more off once booked: FindTemp's fast service first. */
-  function tempFastFirst(t) { return !!(t.late && (t.today || t.booked)); }
+  function tempFastFirst(t) { return !!(t.open && (t.today || t.booked)); }
   function tempPill(t) {
-    return t.booked ? html`<span class="pill ok">${icon('check')} จองแล้ว</span>` : t.today ? html`<span class="pill warn">วันนี้</span>` : t.open ? html`<span class="pill warn">เปิดจองแล้ว</span>` : html`<span class="pill">เปิดจอง พ. 00:01</span>`;
+    return t.booked ? html`<span class="pill ok">${icon('check')} จองแล้ว</span>` : t.closed ? html`<span class="pill">ปิดจองแล้ว</span>` : t.today ? html`<span class="pill warn">วันนี้ ถึง 17:00</span>` : t.open ? html`<span class="pill warn">เปิดจองแล้ว</span>` : html`<span class="pill">เปิดจอง พ. 00:01</span>`;
   }
   /** The overview's card: someone off on the coming Friday, one temp to book on FindTemp; booked or not. */
   function tempOwnerCard(t) {
@@ -13902,16 +13957,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var wed = new Date(t.opens);
     var lines = [];
     if (t.booked) lines.push('จองแล้ว · ' + (t.booked.by ? t.booked.by + ' ' : '') + isoDate(t.booked.at) + ' ' + isoTime(t.booked.at) + ' น.' + (t.off.length > t.need ? ' · ลา ' + t.off.length + ' คน จองไว้ ' + t.need + ' คน อยากได้อีกคนใช้บริการด่วน' : ''));
-    else if (t.today) lines.push('วันนี้เลย ใช้บริการด่วนได้คนใน ' + t.fast.hours + ' ชั่วโมง');
-    else if (t.late) lines.push('เลยรอบเตือนแล้ว ประกาศงานในไฟน์เทมป์ได้เลย หรือใช้บริการด่วน');
-    else lines.push('งานวันศุกร์ประกาศในไฟน์เทมป์ได้ตั้งแต่พุธ ' + thShort(ymdOf(wed)) + ' 00:01 · แอปเตือนอังคาร 20:00 และ 23:55 ถ้ายังไม่ได้กด "จองแล้ว"');
+    else if (t.closed) lines.push('ปิดจองแล้ว (ศุกร์ 17:00) แอปไม่เตือนเรื่องศุกร์นี้แล้ว');
+    else if (t.today) lines.push('วันนี้เลย จองได้ถึง 17:00 · บริการด่วนได้คนใน ' + t.fast.hours + ' ชั่วโมง');
+    else if (t.open) lines.push('เปิดจองแล้ว ประกาศงานในไฟน์เทมป์ได้ถึงศุกร์ 17:00 หรือใช้บริการด่วน');
+    else lines.push('จองงานวันศุกร์ในไฟน์เทมป์ได้ตั้งแต่พุธ ' + thShort(ymdOf(wed)) + ' 00:01 ถึงศุกร์ 17:00 · แอปเตือนอังคาร 20:00 และพุธ 00:01 ถ้ายังไม่ได้กด "จองแล้ว"');
     return html`<div id="tp-page" class="stack">
       <section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ลาศุกร์ ${thShort(t.fri)} · ${t.off.length} คน</span>${tempPill(t)}</div>
         ${t.off.length ? html`<div class="list">${t.off.map(function (x) { return html`<div class="item"><span class="grow"><b>${x.name}</b><span class="s" style="display:block">${x.type}${x.dept ? ' · ' + x.dept : ''}</span></span>${x.pending ? html`<span class="pill">รออนุมัติ</span>` : html`<span class="pill ok">อนุมัติแล้ว</span>`}</div>`; })}</div>` : html`<p class="small muted" style="margin:8px 16px 16px">คนที่ลายกเลิกแล้ว ถ้าจะยกเลิกการจอง ทำในไฟน์เทมป์</p>`}
       </section>
       <p class="small" style="margin:0"><b>${lines[0]}</b></p>
       <div class="hint">${icon('info')}<span>ลา 1 คนขึ้นไป เรียกพนักงานชั่วคราว 1 คน นับการลาทุกแบบทั้งหน้าร้านและครัว รวมคำขอที่รออนุมัติ · บริการด่วนได้คนใน ${t.fast.hours} ชั่วโมง ${money(t.fast.price)} บาทต่อคนต่อ ${t.fast.per} ชั่วโมง</span></div>
-      <p class="small muted" style="margin:0">คุณกดจองในไฟน์เทมป์เอง เพราะเป็นการจ่ายเงิน จองแล้วกลับมากด "จองแล้ว" แอปจะเลิกเตือน · มีคนลาเพิ่มหลังจอง แอปบอกทันทีในมือถือและอีเมล</p>
+      <p class="small muted" style="margin:0">คุณกดจองในไฟน์เทมป์เอง เพราะเป็นการจ่ายเงิน จองแล้วกลับมากด "จองแล้ว" แอปจะเลิกเตือน · ตั้งแต่พุธ 00:01 ถึงศุกร์ 17:00 มีคนลาเพิ่ม แอปบอกทันทีในมือถือและอีเมลทุกครั้ง ทั้งก่อนและหลังจอง</p>
     </div>`;
   }
   function tempFoot(t) {
