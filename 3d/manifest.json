@@ -1,0 +1,507 @@
+{
+ "bodies": {
+  "f": {
+   "height": 0.93,
+   "kb": 172,
+   "fist": [
+    -0.1556,
+    0.3385,
+    0.0005
+   ]
+  },
+  "m": {
+   "height": 0.96,
+   "kb": 160,
+   "fist": [
+    -0.1743,
+    0.3553,
+    0.0006
+   ]
+  }
+ },
+ "parts": {
+  "r-long": {
+   "tint": [
+    null,
+    null
+   ],
+   "kb": {
+    "f": 117,
+    "m": 117
+   }
+  },
+  "r-bob": {
+   "tint": [
+    null,
+    null
+   ],
+   "kb": {
+    "f": 83,
+    "m": 83
+   }
+  },
+  "r-short": {
+   "tint": [
+    null,
+    null
+   ],
+   "kb": {
+    "f": 65,
+    "m": 62
+   }
+  },
+  "r-pony": {
+   "tint": [
+    null,
+    null,
+    "#f472b6"
+   ],
+   "kb": {
+    "f": 76,
+    "m": 76
+   }
+  },
+  "r-bun": {
+   "tint": [
+    null,
+    null,
+    "#f472b6"
+   ],
+   "kb": {
+    "f": 76,
+    "m": 75
+   }
+  },
+  "r-spiky": {
+   "tint": [
+    null,
+    null
+   ],
+   "kb": {
+    "f": 54,
+    "m": 53
+   }
+  },
+  "r-twin": {
+   "tint": [
+    null,
+    null,
+    "#60a5fa"
+   ],
+   "kb": {
+    "f": 89,
+    "m": 89
+   }
+  },
+  "r-wave": {
+   "tint": [
+    null,
+    null
+   ],
+   "kb": {
+    "f": 122,
+    "m": 122
+   }
+  },
+  "r-swept": {
+   "tint": [
+    null,
+    null
+   ],
+   "kb": {
+    "f": 80,
+    "m": 78
+   }
+  },
+  "u-uniform": {
+   "tint": [
+    "#2f2a28",
+    "#b07d4f",
+    "#8c5f36",
+    "#f6e3c3",
+    "#b07d4f"
+   ],
+   "kb": {
+    "f": 50,
+    "m": 49
+   },
+   "tucked": true
+  },
+  "u-tee": {
+   "tint": [
+    "#7cc4f5",
+    "#5aa8de",
+    "#ffffff"
+   ],
+   "kb": {
+    "f": 32,
+    "m": 32
+   }
+  },
+  "u-hoodie": {
+   "tint": [
+    "#f7a9c4",
+    "#e88aac",
+    "#ffffff"
+   ],
+   "kb": {
+    "f": 60,
+    "m": 62
+   }
+  },
+  "u-sweater": {
+   "tint": [
+    "#f3e6cf",
+    "#e7a39a",
+    "#d9c7a7"
+   ],
+   "kb": {
+    "f": 46,
+    "m": 46
+   }
+  },
+  "u-sailor": {
+   "tint": [
+    "#ffffff",
+    "#1e3a8a",
+    "#ef4444",
+    "#dc2626"
+   ],
+   "kb": {
+    "f": 47,
+    "m": 49
+   }
+  },
+  "u-chef": {
+   "tint": [
+    "#ffffff",
+    "#9ca3af",
+    "#e5e7eb",
+    "#dc2626"
+   ],
+   "kb": {
+    "f": 38,
+    "m": 38
+   }
+  },
+  "u-dress": {
+   "tint": [
+    "#fde68a",
+    "#f59e0b",
+    "#f472b6",
+    "#db2777",
+    "#fcd34d"
+   ],
+   "kb": {
+    "f": 49,
+    "m": 49
+   },
+   "full": true
+  },
+  "u-hanbok": {
+   "tint": [
+    "#f9a8d4",
+    "#6d5dd3",
+    "#ffffff",
+    "#dc2626",
+    "#ec4899"
+   ],
+   "kb": {
+    "f": 44,
+    "m": 44
+   },
+   "full": true
+  },
+  "u-bomber": {
+   "tint": [
+    "#1e3a5f",
+    "#f1e9d8",
+    "#dc2626",
+    "#f8fafc",
+    "#f5c542",
+    "#94a3b8"
+   ],
+   "kb": {
+    "f": 73,
+    "m": 73
+   }
+  },
+  "u-sabai": {
+   "tint": [
+    "#f59e0b",
+    "#7e22ce",
+    "#fbbf24",
+    "#fde047",
+    "#b45309"
+   ],
+   "kb": {
+    "f": 49,
+    "m": 49
+   },
+   "full": true
+  },
+  "u-xmas": {
+   "tint": [
+    "#b91c1c",
+    "#ffffff",
+    "#16a34a"
+   ],
+   "kb": {
+    "f": 64,
+    "m": 64
+   }
+  },
+  "l-skirt": {
+   "tint": [
+    "#2d3a64",
+    "#1f2a4d"
+   ],
+   "kb": {
+    "f": 20,
+    "m": 20
+   }
+  },
+  "l-pleat": {
+   "tint": [
+    "#9ca3af",
+    "#4b5563",
+    "#dc2626",
+    "#e5e7eb"
+   ],
+   "kb": {
+    "f": 29,
+    "m": 29
+   }
+  },
+  "l-pants": {
+   "tint": [
+    "#3b3a44",
+    "#2a2930"
+   ],
+   "kb": {
+    "f": 24,
+    "m": 24
+   }
+  },
+  "l-jeans": {
+   "tint": [
+    "#3b6fb6",
+    "#2c548f",
+    "#6a95d1",
+    "#e8b94a"
+   ],
+   "kb": {
+    "f": 31,
+    "m": 31
+   }
+  },
+  "l-shorts": {
+   "tint": [
+    "#6aa7e0",
+    "#4a86bf"
+   ],
+   "kb": {
+    "f": 24,
+    "m": 24
+   }
+  },
+  "l-cargo": {
+   "tint": [
+    "#7c8b5a",
+    "#6b784c",
+    "#3f3a2e",
+    "#d6d3d1"
+   ],
+   "kb": {
+    "f": 30,
+    "m": 30
+   }
+  },
+  "k-sneaker": {
+   "tint": [
+    "#ffffff",
+    "#eceef2",
+    "#f472b6",
+    "#f472b6"
+   ],
+   "kb": {
+    "f": 50,
+    "m": 50
+   }
+  },
+  "k-mary": {
+   "tint": [
+    "#2b2320",
+    "#1a1412",
+    "#e8b94a",
+    "#ffffff"
+   ],
+   "kb": {
+    "f": 39,
+    "m": 39
+   }
+  },
+  "k-boots": {
+   "tint": [
+    "#8b5a2b",
+    "#6b4420",
+    "#4a2f17"
+   ],
+   "kb": {
+    "f": 50,
+    "m": 50
+   }
+  },
+  "k-rain": {
+   "tint": [
+    "#facc15",
+    "#eab308",
+    "#ca8a04"
+   ],
+   "kb": {
+    "f": 50,
+    "m": 49
+   }
+  },
+  "k-slipper": {
+   "tint": [
+    "#fbcfe8",
+    "#f9d5e5",
+    "#f9a8d4",
+    "#2b2320",
+    "#f472b6"
+   ],
+   "kb": {
+    "f": 42,
+    "m": 42
+   }
+  },
+  "k-high": {
+   "tint": [
+    "#dc2626",
+    "#f8fafc",
+    "#f1f5f9",
+    "#ffffff"
+   ],
+   "kb": {
+    "f": 59,
+    "m": 59
+   }
+  }
+ },
+ "credits": {},
+ "v": "cf5b2326",
+ "props": [
+  "a-balloon",
+  "a-boba",
+  "a-candy",
+  "a-fan",
+  "a-flower",
+  "a-icecream",
+  "a-krathong",
+  "a-pinwheel",
+  "a-skate",
+  "a-sparkler",
+  "a-spatula",
+  "a-tteok",
+  "a-wand",
+  "e-2027",
+  "e-3d",
+  "e-heart",
+  "e-round",
+  "e-star",
+  "e-sticker",
+  "e-sun",
+  "h-beanie",
+  "h-bow",
+  "h-bunny",
+  "h-cap",
+  "h-cat",
+  "h-chef",
+  "h-flowers",
+  "h-halo",
+  "h-horns",
+  "h-party",
+  "h-pumpkin",
+  "h-santa",
+  "h-straw",
+  "h-witch",
+  "j-bowtie",
+  "j-chain",
+  "j-gold",
+  "j-heart",
+  "j-jasmine",
+  "j-lei",
+  "j-pearl",
+  "j-scarf",
+  "w-angel",
+  "w-bag",
+  "w-batwing",
+  "w-bear",
+  "w-butterfly",
+  "w-cape",
+  "w-champ",
+  "w-jetpack",
+  "x-cherry",
+  "x-flower",
+  "x-heart",
+  "x-holly",
+  "x-ribbon",
+  "x-star",
+  "y-board",
+  "y-pan"
+ ],
+ "things": {
+  "egg": 27,
+  "rice": 47,
+  "shroom": 41,
+  "chili": 28,
+  "garlic": 29,
+  "lime": 40,
+  "shrimp": 44,
+  "cheese": 29,
+  "fries": 30,
+  "drum": 42,
+  "melon": 24,
+  "pine": 40,
+  "golden": 34,
+  "mochi": 25,
+  "pudding": 42,
+  "donut": 44,
+  "macaron": 38,
+  "cone": 48,
+  "cookie": 32,
+  "bingsu": 37,
+  "shortcake": 40,
+  "pancake": 48,
+  "tart": 30,
+  "bungeo": 36,
+  "toast": 27,
+  "queen": 48,
+  "p-chick": 32,
+  "p-hamster": 41,
+  "p-cat": 43,
+  "p-blackcat": 49,
+  "p-bunny": 46,
+  "p-shiba": 46,
+  "p-penguin": 40,
+  "p-panda": 47,
+  "p-dragon": 52,
+  "p-reindeer": 56,
+  "d-plant": 43,
+  "d-books": 17,
+  "d-frame": 22,
+  "d-candle": 9,
+  "d-lamp": 28,
+  "d-jar": 40,
+  "d-globe": 20,
+  "d-neon": 53,
+  "d-trophy": 15,
+  "d-family": 19,
+  "d-crayon": 12,
+  "d-pumpkin": 20,
+  "d-krathong": 26,
+  "d-xmastree": 39,
+  "d-fireworks": 22
+ }
+}

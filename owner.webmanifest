@@ -1,9 +1,10 @@
 {
   "name": "เจ้าของร้าน",
   "short_name": "เจ้าของร้าน",
+  "id": "./owner.html",
   "start_url": "./owner.html",
   "scope": "./",
-  "display": "browser",
+  "display": "standalone",
   "background_color": "#f5f2ed",
   "theme_color": "#f5f2ed",
   "lang": "th",

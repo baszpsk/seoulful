@@ -1,9 +1,10 @@
 {
   "name": "Seoulful",
   "short_name": "Seoulful",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
-  "display": "browser",
+  "display": "standalone",
   "background_color": "#12100e",
   "theme_color": "#f5f2ed",
   "lang": "th",
