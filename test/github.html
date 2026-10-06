@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<!-- GitHub's one-time code arrives in this page's address: never passed on to the next page. -->
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#f2eee7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0d0b" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="192x192" href="owner-192.png">
+<title>เชื่อมกิตฮับ · Seoulful</title>
+<style id="framed">html{display:none}</style>
+<script>if (window.top === window.self) document.getElementById('framed').remove(); else window.top.location = window.location.href;</script>
+<style>
+:root { --bg: #f2eee7; --card: #fffdf9; --ink: #171412; --ink-2: #4a443e; --muted: #80776d; --line: rgba(92, 68, 36, .14); --gold: #a07a3f; --ok: #2d6a4d; --ok-soft: rgba(45, 125, 90, .12); --bad: #ad2f28; --bad-soft: rgba(200, 60, 50, .10); --btn: #171412; --btn-ink: #ffffff; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0f0d0b; --card: #1d1a17; --ink: #f2ede6; --ink-2: #cfc6ba; --muted: #9b9185; --line: rgba(255, 248, 238, .12); --gold: #d2ac6b; --ok: #7fc9a0; --ok-soft: rgba(127, 201, 160, .13); --bad: #f08c82; --bad-soft: rgba(240, 140, 130, .13); --btn: #f2ede6; --btn-ink: #171412; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { min-height: 100vh; background: var(--bg); color: var(--ink); font: 16px/1.65 "Noto Sans Thai", "Sarabun", "Leelawadee UI", Tahoma, system-ui, -apple-system, sans-serif; padding: max(24px, env(safe-area-inset-top)) 16px 32px; }
+main { max-width: 460px; margin: 0 auto; background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 26px 22px 24px; }
+.logo { display: block; width: 56px; height: 56px; border-radius: 14px; margin: 0 auto 10px; }
+h1 { margin: 0 0 14px; font-size: 21px; line-height: 1.35; text-align: center; }
+p { margin: 0 0 12px; }
+ol { margin: 0 0 14px; padding-left: 22px; }
+li { margin: 0 0 4px; }
+b { font-weight: 650; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+.state { border-radius: 14px; padding: 12px 14px; margin: 0 0 14px; }
+.state.ok { background: var(--ok-soft); color: var(--ok); }
+.state.bad { background: var(--bad-soft); color: var(--bad); }
+.btn { display: block; width: 100%; margin: 6px 0 0; padding: 13px 16px; border: 0; border-radius: 999px; background: var(--btn); color: var(--btn-ink); font: inherit; font-weight: 650; text-align: center; text-decoration: none; cursor: pointer; }
+.btn.plain { background: transparent; color: var(--ink-2); border: 1px solid var(--line); }
+.btn[disabled] { opacity: .55; cursor: default; }
+.foot { margin: 16px 0 0; font-size: 13px; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="owner-192.png" alt="">
+  <h1>เชื่อมแอปร้านกับกิตฮับ</h1>
+  <div id="box" aria-live="polite"><p class="muted">กำลังดูว่าเชื่อมแล้วหรือยัง…</p></div>
+  <p class="foot">หน้านี้คุยกับกิตฮับให้แอปร้านเท่านั้น ไม่มีข้อมูลพนักงาน และไม่ต้องใส่รหัส</p>
+</main>
+<form id="gh-form" method="post" hidden><input type="hidden" name="manifest"></form>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbxyO18fWWvTnVvMiJNLJi4b6zaQeaTHgCfeWnhdUKj7ku-Rhuh1YxiB7i29g9JoCl3quA/exec","test":true};</script>
+<script>
+/*
+ * The connect page of the shop's GitHub App (Feedback.gs apiGithubConnect_): the owner taps its link (the
+ * app's settings, or the chat), presses "Create GitHub App" on GitHub, then "Install", and comes back
+ * here each time; nothing to copy. It asks the app's script only "githubConnect" (never the app's boot,
+ * which may send the staff announcement), with api=1 as the app does (Api.gs doGet).
+ */
+(function () {
+  'use strict';
+  var SITE = window.__SEOULFUL_SITE__ || {};
+  var API = SITE.api ? SITE.api + (SITE.api.indexOf('?') < 0 ? '?' : '&') + 'api=1' : '';
+  var GITHUB = 'https://github.com/';
+  var box = document.getElementById('box');
+  var q = new URLSearchParams(location.search);
+  var code = q.get('code') || '';
+  // GitHub's code (and the rest it adds) off the address at once: a reload never sends it again.
+  if (location.search) history.replaceState(null, '', location.pathname);
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return '&#' + c.charCodeAt(0) + ';';
+    });
+  }
+  /** True the first time in this tab: straight on to GitHub once, a button after that (no going round and round). */
+  function firstTime(name) {
+    try {
+      if (sessionStorage.getItem('gh.' + name)) return false;
+      sessionStorage.setItem('gh.' + name, '1');
+    } catch (e) {}
+    return true;
+  }
+  function show(html) {
+    box.innerHTML = html;
+  }
+  function wait(ms) {
+    return new Promise(function (done) {
+      setTimeout(done, ms);
+    });
+  }
+  /** The script's answer; asked again when Google loses it on the way (the code too: the script knows a code it has turned). */
+  function ask(data, tries) {
+    tries = tries || 0;
+    return fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'githubConnect', auth: {}, data: data }), credentials: 'omit', cache: 'no-store' })
+      .then(function (r) {
+        return r.text();
+      })
+      .then(function (text) {
+        var res = null;
+        try {
+          res = JSON.parse(text);
+        } catch (e) {}
+        if (!res || (res.ok === false && res.transient)) throw new Error('lost');
+        return res;
+      })
+      .catch(function (e) {
+        if (tries >= 3) throw e;
+        return wait(1500 * (tries + 1)).then(function () {
+          return ask(data, tries + 1);
+        });
+      });
+  }
+  function toGitHub(url) {
+    if (String(url).indexOf(GITHUB) === 0) location.href = url;
+  }
+  function sendForm(form) {
+    if (!form || String(form.url).indexOf(GITHUB) !== 0) return failed('ไม่ได้แบบฟอร์มจากแอป ลองอีกครั้ง');
+    show('<p>กำลังพาไปกิตฮับ…</p><p class="small muted">ถ้ากิตฮับให้เข้าสู่ระบบก่อน เข้าสู่ระบบแล้วกลับมาหน้านี้ แตะ "เชื่อมกิตฮับ" อีกครั้ง</p><button class="btn plain" data-do="go">เชื่อมกิตฮับ</button>');
+    var f = document.getElementById('gh-form');
+    f.action = form.url;
+    f.elements.manifest.value = JSON.stringify(form.manifest);
+    f.submit();
+  }
+  function failed(why, fresh) {
+    show(
+      '<div class="state bad">' + esc(why) + '</div>' +
+        '<button class="btn" data-do="again">ลองอีกครั้ง</button>' +
+        (fresh ? '<button class="btn plain" data-do="fresh">สร้างแอปของร้านบนกิตฮับใหม่</button>' : '')
+    );
+  }
+  function render(res) {
+    if (!res.ok) return failed(res.error || 'ระบบขัดข้อง ลองอีกครั้ง');
+    var d = res.data || {};
+    var name = d.app && d.app.name ? ' (' + esc(d.app.name) + ')' : '';
+    if (d.state === 'new') {
+      if (d.form) return sendForm(d.form);
+      return show(
+        '<p>เชื่อมครั้งเดียว แล้วเรื่องที่คุณอนุมัติในแอป บันทึกหน้างาน และสรุปการใช้แอป ส่งเป็นงานให้ Claude เอง</p>' +
+          '<ol><li>แตะ "เชื่อมกิตฮับ" ด้านล่าง</li><li>หน้ากิตฮับกรอกไว้ให้หมดแล้ว กดปุ่มเขียว <b>Create GitHub App for …</b></li><li>หน้าถัดไปกดปุ่มเขียว <b>Install</b> แล้วกิตฮับพากลับมาหน้านี้</li></ol>' +
+          '<button class="btn" data-do="go">เชื่อมกิตฮับ</button>' +
+          '<p class="small muted" style="margin-top:12px">ไม่ต้องคัดลอกอะไร กุญแจไม่ผ่านมือใคร และไม่หมดอายุ</p>'
+      );
+    }
+    if (d.state === 'install') {
+      show('<p>สร้างแอปของร้านบนกิตฮับแล้ว' + name + '</p><p><b>ขั้นสุดท้าย:</b> หน้าถัดไปกดปุ่มเขียว <b>Install</b></p><a class="btn" href="' + esc(d.url) + '">ไปหน้า Install</a>');
+      if (firstTime('install')) toGitHub(d.url);
+      return;
+    }
+    if (d.state === 'pick') {
+      return show('<p>ติดตั้งแอปของร้านแล้ว แต่ยังไม่ได้เลือกที่เก็บโค้ด <b>restaurant-tools</b></p><p class="small muted">หน้าถัดไปเลือก restaurant-tools แล้วกดปุ่มเขียว <b>Save</b> กิตฮับจะพากลับมาหน้านี้</p><a class="btn" href="' + esc(d.url) + '">เลือก restaurant-tools</a>');
+    }
+    if (d.state === 'on') {
+      return show('<div class="state ok"><b>เชื่อมกิตฮับแล้ว</b>' + name + '</div><p>เรื่องที่คุณอนุมัติในแอปส่งเป็นงานให้ Claude เอง และทุกคืนส่งบันทึกหน้างานให้ Claude สรุปพร้อมวิธีแก้</p><p class="small muted">ปิดหน้านี้ได้เลย</p>');
+    }
+    failed(d.error || 'ระบบขัดข้อง ลองอีกครั้ง', d.fresh);
+  }
+  function run(data) {
+    show('<p class="muted">กำลังคุยกับแอปร้าน…</p>');
+    ask(data).then(render, function () {
+      failed('เชื่อมต่อแอปร้านไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองอีกครั้ง');
+    });
+  }
+  box.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-do]');
+    if (!b) return;
+    b.disabled = true;
+    var what = b.getAttribute('data-do');
+    run(what === 'go' ? { go: 1 } : what === 'fresh' ? { go: 1, fresh: 1 } : {});
+  });
+
+  // Back from GitHub without going on (the back button): the page comes back as it was left; asked afresh.
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted && API && !SITE.test) run({});
+  });
+  if (SITE.test) return show('<div class="state bad">แอปทดลองไม่ส่งงานถึง Claude · เชื่อมกิตฮับที่แอปจริง</div>');
+  if (!API) return show('<div class="state bad">เปิดหน้านี้จากลิงก์ในแอปของร้าน</div>');
+  // Back from GitHub with the made app's code; else, the first time in this tab, on to GitHub's form if there is no app yet.
+  run(code ? { code: code } : firstTime('go') ? { go: 1 } : {});
+})();
+</script>
+</body>
+</html>

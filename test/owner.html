@@ -10509,24 +10509,40 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     ['วันหยุดและวันจ่ายเงิน', ['daysOffPerMonth', 'fixedHolidays', 'floatingHolidays', 'setHolidays', 'closedDates', 'payUnusedDaysOff', 'payDay']],
     ['ประกันสังคม', ['ssoRate', 'ssoMin', 'ssoMax']],
     ['แจ้งเตือน', ['emailOnApprove', 'ownerEmail', 'lineToken', 'lineAnnounceLeave', 'lineRainNotice', 'lineNews', 'lineHour']],
-    ['ความคิดเห็นจากพนักงาน', ['githubToken'], githubHelp],
+    ['ความคิดเห็นจากพนักงาน', [], githubHelp],
     ['บันทึกหน้างาน', ['dailyLeads', 'menuList']],
     ['เกมของทีม', ['gameClosed']],
     ['เช็กมาตรฐาน (หัวหน้าเช็ก)', ['checkTimes', 'checkFront', 'checkKitchen']],
     ['เป้ายอดขายทีม (แต้มทุกคน)', ['salesTarget', 'salesGrow', 'salesPoints']],
     ['ความปลอดภัย', ['ownerPin']],
   ];
-  /** The GitHub key in three taps: GitHub's page opens filled in; the owner picks the repository and copies the key. */
+  /**
+   * GitHub for Claude's tasks: the shop's own app on GitHub, made and installed from the connect page on the
+   * shop's site (two green buttons there, nothing to copy, no end date; Feedback.gs). The key pasted by hand
+   * is the other way in, folded away: its field and save button are here, not in the group's list.
+   */
   function githubHelp(o) {
+    var g = o.github || {};
+    var set = o.settings.githubToken;
+    if (g.test) return html`<div class="hint" style="margin-bottom:12px">${icon('info')}<span>แอปทดลองไม่ส่งงานถึง Claude · เชื่อมกิตฮับที่แอปจริง</span></div>`;
+    var on = !!(g.app && g.app.on);
+    var made = !!(g.app && !g.app.on);
+    var keyed = !!(set && set.set);
     var url = o.links && o.links.githubToken;
-    if (!url) return '';
-    var on = o.settings.githubToken && o.settings.githubToken.set;
     var repo = String((o.links && o.links.githubRepo) || '').split('/')[1] || '';
-    return html`<div class="hint" style="margin-bottom:12px">${icon(on ? 'check' : 'spark')}<div class="grow">${on
-      ? html`<b>ใส่กุญแจแล้ว</b> — เรื่องที่อนุมัติส่งเป็นงานให้ Claude เอง และทุกคืนส่งบันทึกหน้างานให้ Claude สรุปพร้อมวิธีแก้`
-      : html`<b>ใส่กุญแจ GitHub แล้ว Claude ทำงานให้เอง:</b> เรื่องที่อนุมัติส่งเป็นงานทันที และบันทึกหน้างานได้สรุปพร้อมวิธีแก้ทุกเช้า
-        <ol style="margin:8px 0 0;padding-left:18px"><li>แตะปุ่มด้านล่าง (หน้า GitHub กรอกชื่อ สิทธิ์ และวันหมดอายุไว้ให้แล้ว)</li><li>ที่ Repository access เลือก <b>Only select repositories</b> แล้วเลือก <b>${repo}</b></li><li>กด <b>Generate token</b> แล้วกด Copy</li><li>กลับมาวางในช่อง "GitHub: กุญแจส่งงานให้ Claude" แล้วกดบันทึก</li></ol>
-        <a class="btn sm" style="margin-top:10px" href="${url}" target="_blank" rel="noopener">${icon('lock')} สร้างกุญแจ GitHub</a>`}</div></div>`;
+    var say = on
+      ? html`<b>เชื่อมกิตฮับแล้ว</b> — เรื่องที่อนุมัติส่งเป็นงานให้ Claude เอง และทุกคืนส่งบันทึกหน้างานให้ Claude สรุปพร้อมวิธีแก้ · แอปของร้านบนกิตฮับ: ${g.app.name}`
+      : made
+        ? html`<b>สร้างแอปของร้านบนกิตฮับแล้ว เหลือกด Install</b> — แตะปุ่มด้านล่าง แล้วกดปุ่มเขียว <b>Install</b>`
+        : keyed
+          ? html`<b>ใส่กุญแจแล้ว</b> — เรื่องที่อนุมัติส่งเป็นงานให้ Claude เอง และทุกคืนส่งบันทึกหน้างานให้ Claude สรุปพร้อมวิธีแก้ · กุญแจที่วางอาจหมดอายุ แตะ "เชื่อมกิตฮับ" เพื่อใช้แอปของร้านบนกิตฮับแทน (ไม่หมดอายุ)`
+          : html`<b>เชื่อมกิตฮับแล้ว Claude ทำงานให้เอง:</b> เรื่องที่อนุมัติส่งเป็นงานทันที และบันทึกหน้างานได้สรุปพร้อมวิธีแก้ทุกเช้า · แตะปุ่มด้านล่าง แล้วกดปุ่มเขียวบนกิตฮับ 2 ครั้ง (<b>Create GitHub App</b> แล้ว <b>Install</b>) ไม่ต้องคัดลอกอะไร`;
+    return html`<div class="hint" style="margin-bottom:12px">${icon(on || keyed ? 'check' : 'spark')}<div class="grow">${say}
+        ${g.connect ? html`<div style="margin-top:10px"><a class="btn sm" href="${g.connect}" target="_blank" rel="noopener">${icon('lock')} ${on ? 'เปิดหน้าเชื่อมกิตฮับ' : made ? 'เชื่อมกิตฮับต่อ' : 'เชื่อมกิตฮับ'}</a></div>` : ''}</div></div>
+      <details><summary class="small muted" style="cursor:pointer">${keyed ? 'กุญแจที่วางไว้ (ทางสำรอง)' : 'หรือวางกุญแจเอง (ทางสำรอง)'}</summary>
+        ${url ? html`<ol class="small muted" style="margin:8px 0 0;padding-left:18px"><li><a href="${url}" target="_blank" rel="noopener">สร้างกุญแจ GitHub</a> (หน้า GitHub กรอกชื่อ สิทธิ์ และวันหมดอายุไว้ให้แล้ว)</li><li>ที่ Repository access เลือก <b>Only select repositories</b> แล้วเลือก <b>${repo}</b></li><li>กด <b>Generate token</b> แล้วกด Copy</li><li>วางในช่องด้านล่าง แล้วกดบันทึก</li></ol>` : ''}
+        ${settingField(set)}
+        <button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="githubToken">บันทึกกุญแจ</button></details>`;
   }
   function settingsView() {
     var o = S.ownerHome;
@@ -10544,7 +10560,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <p class="small muted" style="margin:8px 0 0"><b>กันโกงดีที่สุด:</b> ใช้มือถือหรือแท็บเล็ตเครื่องเก่า (ไม่ใช่โทรศัพท์ร้าน) ติดผนังด้านในร้าน สูงระดับหน้าอก มองไม่เห็นจากนอกร้าน เปิดหน้านี้บนเครื่องนั้นแล้วกดปุ่มด้านบน จอแสดง QR ที่เปลี่ยนทุก 5 วินาที และกล้องหน้าของจอเก็บภาพคนที่สแกนทุกครั้ง พนักงานสแกนด้วยแอปในมือถือตัวเอง รูปที่ถ่ายส่งต่อกันใช้ไม่ได้ · เสียบชาร์จไว้ ต่อ Wi-Fi และตั้งไม่ให้จอดับ</p></section>
       ${SETTING_GROUPS.map(function (g) {
         return html`<section class="card"><div class="card-h"><span class="eyebrow">${g[0]}</span></div>${g[2] ? g[2](o) : ''}${g[1].map(function (k) { return settingField(set[k]); })}
-          <button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="${g[1].join(',')}">บันทึก${g[0]}</button></section>`;
+          ${g[1].length ? html`<button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="${g[1].join(',')}">บันทึก${g[0]}</button>` : ''}</section>`;
       })}
       <section class="card"><div class="card-h"><span class="eyebrow">LINE</span></div>
         <div class="small" style="line-height:1.7">กลุ่มพนักงาน: ${o.line.groupLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`} · LINE เจ้าของร้าน: ${o.line.ownerLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`} · สรุปรายวัน: ${o.line.dailyOn ? 'เปิด' : 'ปิด'}</div>
@@ -14601,7 +14617,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <section class="card"><div class="card-h"><span class="eyebrow">Claude สรุปและวิธีแก้</span>${sum && sum.url ? html`<a class="small" href="${sum.url}" target="_blank" rel="noopener">ดูงานใน GitHub</a>` : ''}</div>
         ${sum ? html`<div class="small muted" style="margin-bottom:6px">${thDateLong(sum.date)}</div><div class="dl-sum">${sum.summary}</div>`
           : d.github ? html`<p class="small muted mt0">${waiting ? 'ส่งบันทึก' + dlDay(waiting.date) + 'ให้ Claude แล้ว สรุปพร้อมวิธีแก้จะขึ้นที่นี่ตอนเช้า' : 'ทุกคืนแอปส่งบันทึกของวันให้ Claude สรุปพร้อมวิธีแก้ ขึ้นที่นี่ตอนเช้า'}</p>`
-          : html`<p class="small muted mt0">ใส่กุญแจ GitHub ที่ ตั้งค่า › ความคิดเห็นจากพนักงาน แล้ว Claude สรุปพร้อมวิธีแก้ให้ทุกเช้า · ระหว่างนี้คัดลอกบันทึกไปถาม Claude ในแชตได้</p><button class="btn sm" data-act="dl-copy">${icon('chat')} คัดลอกบันทึกส่ง Claude</button>`}
+          : html`<p class="small muted mt0">เชื่อมกิตฮับที่ ตั้งค่า › ความคิดเห็นจากพนักงาน แล้ว Claude สรุปพร้อมวิธีแก้ให้ทุกเช้า · ระหว่างนี้คัดลอกบันทึกไปถาม Claude ในแชตได้</p><button class="btn sm" data-act="dl-copy">${icon('chat')} คัดลอกบันทึกส่ง Claude</button>`}
       </section>
       ${dlFixingOwner(d.fixing)}
       ${(st.top || []).length ? html`<h3 class="h3">เกิดซ้ำใน 30 วัน</h3><section class="card flush">${st.top.map(function (g) { return dlGroupRow(g, true); })}</section>` : ''}
@@ -14993,7 +15009,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ['กำลังทำ', items.filter(function (x) { return x.status === 'approved' || x.status === 'built'; })],
       ['ที่ผ่านมา', items.filter(function (x) { return x.status === 'done' || x.status === 'declined'; })],
     ].filter(function (g) { return g[1].length; });
-    return html`${fbList.github ? '' : html`<div class="hint" style="margin-bottom:12px">${icon('info')}<span>ยังไม่ได้เชื่อม Claude: กดอนุมัติแล้วคัดลอกคำขอไปวางในแชต Claude ได้ · อยากให้ส่งเองอัตโนมัติ ใส่กุญแจ GitHub ใน ตั้งค่า › ความคิดเห็นจากพนักงาน</span></div>`}
+    return html`${fbList.github ? '' : html`<div class="hint" style="margin-bottom:12px">${icon('info')}<span>ยังไม่ได้เชื่อม Claude: กดอนุมัติแล้วคัดลอกคำขอไปวางในแชต Claude ได้ · อยากให้ส่งเองอัตโนมัติ แตะ "เชื่อมกิตฮับ" ใน ตั้งค่า › ความคิดเห็นจากพนักงาน</span></div>`}
       ${groups.map(function (g) {
         return html`<h3 class="h3">${g[0]} (${g[1].length})</h3><section class="card flush"><div class="list">${g[1].map(function (f) {
           var st = fbOwnerStatus(f);
@@ -15073,7 +15089,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     } else if (f.status === 'approved' || f.status === 'built') {
       actions = f.issue
         ? html`<div class="hint" style="margin-top:16px">${icon('check')}<span>ส่งให้ Claude แล้ว · งาน #${f.issue}${f.status === 'built' ? ' · Claude ทำเสร็จแล้ว ลองในเดโมแล้วสั่ง "อัปเดตแอปร้าน" เมื่อพร้อม' : ' · Claude ทำเสร็จจะขึ้นที่นี่'}</span></div>`
-        : html`<div class="hint" style="margin-top:16px">${icon('info')}<span>อนุมัติแล้ว · กด "คัดลอกคำขอ" แล้ววางในแชต Claude (หรือใส่กุญแจ GitHub ในตั้งค่า เพื่อส่งเองอัตโนมัติ)</span></div>`;
+        : html`<div class="hint" style="margin-top:16px">${icon('info')}<span>อนุมัติแล้ว · กด "คัดลอกคำขอ" แล้ววางในแชต Claude (หรือเชื่อมกิตฮับในตั้งค่า เพื่อส่งเองอัตโนมัติ)</span></div>`;
     } else actions = view;
     if (f.status !== 'fresh' && f.note) actions = html`${actions}<p class="small muted" style="margin:16px 0 0">ตอบ ${f.name} ไว้ว่า: ${f.note}</p>`;
     var foot = f.status === 'fresh'
