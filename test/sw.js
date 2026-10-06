@@ -37,7 +37,9 @@ function keyOf() {
 }
 
 function ask(key, action, data) {
-  return fetch(key.api, {
+  // (marked api=1 as the pages' requests are: an answer Google loses comes back to the script as a page load)
+  var api = key.api + (/[?&]api=1\b/.test(key.api) ? '' : (key.api.indexOf('?') < 0 ? '?' : '&') + 'api=1');
+  return fetch(api, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({ action: action, auth: {}, data: data }),

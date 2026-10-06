@@ -2855,6 +2855,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // On the shop's own site (dev/build.js writes it): the script's address, this
   // page's version, and the page it opens as (owner.html: the owner's).
   var SITE = window.__SEOULFUL_SITE__ || null;
+  // The script's address for the app's requests, marked api=1: when Google loses an answer on the way, it
+  // sends the request back to the script as a page load (the POST, its content server, then a GET of this
+  // address, 6 Oct 2569), and the script knows then that nobody is opening the app (Api.gs doGet).
+  var API_URL = SITE && SITE.api ? SITE.api + (SITE.api.indexOf('?') < 0 ? '?' : '&') + 'api=1' : '';
   // The version of this page's code (the server may be newer after an update).
   var CODE_VERSION = (SITE && SITE.version) || B.version || '';
   var ROLLOVER_HOUR = 6;
@@ -2883,14 +2887,29 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   };
   var HOOKS = window.__SEOULFUL_HOOKS__ || {};
   // What the app last showed, kept on this phone: the next open shows it at
-  // once while the server is asked again. Only this version's, and a staff
-  // screen only for the same person on the same work day.
+  // once while the server is asked again; a staff screen only for the same
+  // person on the same work day. Kept across an update too (the owner's
+  // choice, 6 Oct 2569: the first open after each update showed an empty
+  // outline for 2–35 seconds, the phone having thrown away what it kept): an
+  // earlier version's is shown until this version's data replaces it. What
+  // was kept and cannot be drawn (an earlier version's laid out otherwise, or
+  // kept broken) is forgotten and the outline shown, as on a first open
+  // (FROM_MEM, dropKept), never a screen stuck on its way.
   var MEM = { boot: 'seoulful.last.boot', kboot: 'seoulful.last.kboot', home: 'seoulful.last.home', owner: 'seoulful.last.owner', parts: 'seoulful.last.parts' };
   var MEM_MAX = { boot: 7 * 86400000, kboot: 7 * 86400000, home: 12 * 3600000, owner: 12 * 3600000 };
-  function remember(which, data, tag) { LS.set(MEM[which], { v: CODE_VERSION, at: Date.now(), tag: tag || '', data: data }); }
+  // What the screen shows from this phone's memory ('home', 'part:team', …) and the version that kept it, till the server's data replaces it.
+  var FROM_MEM = {};
+  // The boot data as it was before what was kept was put in it: what dropKept goes back to.
+  var bootBefore = null;
+  function remember(which, data, tag) {
+    delete FROM_MEM[which];
+    if (!FROM_MEM.boot && !FROM_MEM.kboot) bootBefore = null;
+    LS.set(MEM[which], { v: CODE_VERSION, at: Date.now(), tag: tag || '', data: data });
+  }
   function recall(which, tag) {
     var m = LS.get(MEM[which]);
-    if (!m || m.v !== CODE_VERSION || !m.data || m.tag !== (tag || '') || !(Date.now() - m.at < MEM_MAX[which])) return null;
+    if (!m || !m.data || m.tag !== (tag || '') || !(Date.now() - m.at < MEM_MAX[which])) return null;
+    FROM_MEM[which] = m.v || '?';
     return m;
   }
   function forget(which) { LS.del(MEM[which]); }
@@ -2901,15 +2920,47 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     who = who || partWho();
     if (!who) return;
     var all = LS.get(MEM.parts);
-    if (!all || all.who !== who || all.v !== CODE_VERSION) all = { who: who, v: CODE_VERSION, parts: {} };
+    if (!all || all.who !== who || !all.parts) all = { who: who, v: CODE_VERSION, parts: {} };
+    // (an earlier version's parts stay, each marked with its version, till this version's replace them)
+    else if (all.v !== CODE_VERSION) Object.keys(all.parts).forEach(function (k) { all.parts[k].v = all.parts[k].v || all.v; });
+    all.v = CODE_VERSION;
     all.parts[name] = { at: Date.now(), tag: tag || '', data: data };
+    delete FROM_MEM['part:' + name];
     LS.set(MEM.parts, all);
   }
   function lastPart(name, tag) {
     var who = partWho();
     var all = who ? LS.get(MEM.parts) : null;
-    var m = all && all.who === who && all.v === CODE_VERSION && all.parts ? all.parts[name] : null;
-    return m && m.tag === (tag || '') && Date.now() - m.at < 12 * 3600000 ? m : null;
+    var m = all && all.who === who && all.parts ? all.parts[name] : null;
+    if (!m || m.tag !== (tag || '') || !(Date.now() - m.at < 12 * 3600000)) return null;
+    FROM_MEM['part:' + name] = m.v || all.v || '?';
+    return m;
+  }
+  /**
+   * What was kept on this phone could not be drawn (an earlier version's, its data laid out otherwise; or
+   * kept broken): forgotten, and the parts of the screen it filled shown as on a first open, their outline
+   * till the server's data comes (each was asked for as it was shown). False when nothing shown was kept:
+   * the fault is the app's own, and goes on as it would.
+   */
+  function dropKept() {
+    var was = FROM_MEM;
+    var what = Object.keys(was);
+    if (!what.length) return false;
+    FROM_MEM = {};
+    if (bootBefore && (was.boot || was.kboot)) B = bootBefore;
+    bootBefore = null;
+    if (was.boot) forget('boot');
+    if (was.kboot) { forget('kboot'); S.k.done = {}; }
+    if (was.home) { forget('home'); S.home = null; }
+    if (was.owner) { forget('owner'); S.ownerHome = null; }
+    if (what.some(function (k) { return /^part:/.test(k); })) forget('parts');
+    if (was['part:slip']) slipBy = {};
+    if (was['part:team']) { S.team = null; S.entries = null; }
+    if (was['part:leaves']) S.leaves = null;
+    if (was['part:pay']) { payBy = {}; S.pay = null; S.payAt = 0; }
+    if (was['part:employees']) S.employees = null;
+    useErr('ข้อมูลที่จำไว้วาดไม่ได้: ' + what.map(function (k) { return k + ' ' + was[k]; }).join(' · '));
+    return true;
   }
 
   // The server's clock as last seen here (a phone's own clock may be off): today is the server's today from the first frame.
@@ -5233,6 +5284,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // again a moment later goes through. The app does that by itself; a
   // change (a clock-in, an approval) is never sent twice.
   var READS = ['boot', 'kioskPing', 'status', 'home', 'month', 'calendar', 'payslips', 'payslip', 'team', 'entries', 'leaves', 'exceptions', 'payroll', 'photo', 'photos', 'owner', 'employees', 'feedbackMine', 'feedbackList', 'feedbackFile', 'feedbackSync', 'orderList', 'orderOwner', 'orderCatalog', 'notes', 'pushKey', 'usageReport'];
+  // Reads not sent twice when slow (sendHedged): the shop screen's check-in every 45 seconds, which nobody
+  // waits on; pictures and files, slow to come by their size, not by Google; and those slow by their nature
+  // (GitHub, the week's use).
+  var NO_HEDGE = ['kioskPing', 'photo', 'photos', 'feedbackFile', 'feedbackSync', 'orderCatalog', 'pushKey', 'usageReport'];
   var inFlight = {};
   function call(action, data, auth, opts) {
     if (READS.indexOf(action) < 0) {
@@ -5246,8 +5301,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var key = JSON.stringify([action, data || {}, auth || {}]);
     if (inFlight[key] && !(opts && opts.fresh)) return inFlight[key];
     var tries = 0;
+    // (a PIN being tried goes once (`once`): sent twice, a wrong one would count twice towards the lock)
+    var hedge = !(opts && opts.once) && NO_HEDGE.indexOf(action) < 0;
     var go = function () {
-      return send(action, data, auth, 45000).catch(function (e) {
+      return (hedge ? sendHedged : send)(action, data, auth, 45000).catch(function (e) {
         // Lost on the way: twice more. Google's side failed (not a message for the person): once more.
         if (!(e.network ? tries < 2 : e.transient && tries < 1)) throw e;
         tries++;
@@ -5261,6 +5318,44 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return p;
   }
   function later(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
+  /**
+   * A read Google is slow to answer goes once more alongside, and whichever answer comes first is taken.
+   * Now and then Google holds an answer for 10–40 seconds, or loses it on the way, while the same request
+   * sent again comes back in 2–4 (the test app, 6 Oct 2569: 9 of 40 requests so, 10–41 s each). A read
+   * changes nothing, so sending it twice is safe. The use of the app keeps it as one request: how long
+   * the person waited for it, and how it ended (and 'h' when it went twice).
+   */
+  var HEDGE_MS = 6000;
+  function sendHedged(action, data, auth, timeoutMs) {
+    var used = useWait(action);
+    return new Promise(function (resolve, reject) {
+      var open = 0, over = false, timer = 0;
+      var end = function (ok, v) {
+        over = true;
+        clearTimeout(timer);
+        useDone(used, ok ? 'ok' : v.code || (v.network ? (v.slow ? 'SLOW' : 'NET') : 'ERROR'));
+        if (ok) resolve(v); else reject(v);
+      };
+      var one = function () {
+        open++;
+        send(action, data, auth, timeoutMs, true).then(function (d) {
+          open--;
+          if (!over) end(true, d);
+        }, function (e) {
+          open--;
+          // Google's side or the way failed: the other one, still on its way, may yet come.
+          if (!over && !((e.network || e.transient) && open > 0)) end(false, e);
+        });
+      };
+      one();
+      timer = setTimeout(function () {
+        timer = 0;
+        if (over || document.visibilityState === 'hidden') return;
+        useEv('h', action);
+        one();
+      }, HEDGE_MS);
+    });
+  }
   /**
    * Someone is about to type a PIN: after a quiet while, Google's side takes
    * a moment to wake, so it is woken now (with the start data, which may
@@ -5342,10 +5437,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var m = moveLeft();
     if (m > 0) busyFor(m + 30);
   }, true);
-  function send(action, data, auth, timeoutMs) {
+  /** One request to the server. `untracked`: kept in the use of the app by the caller (sendHedged), not here. */
+  function send(action, data, auth, timeoutMs, untracked) {
     var t0 = Date.now();
     var req = { action: action, auth: auth || {}, data: data || {} };
-    var used = useWait(action);
+    var used = untracked ? 0 : useWait(action);
     return new Promise(function (resolve, reject) {
       var answered = function (res) {
         useDone(used, res && res.ok ? 'ok' : (res && res.code) || 'ERROR');
@@ -5365,6 +5461,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         useDone(used, slow ? 'SLOW' : 'NET');
         var e = new Error(slow ? 'ระบบตอบช้าเกินไป กรุณาลองใหม่' : 'เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่');
         e.network = true;
+        e.slow = !!slow;
         e.detail = String((err && err.message) || err || '');
         whenQuiet(function () { reject(e); });
       };
@@ -5374,7 +5471,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         // signed in to several Google accounts is not asked which one.
         var ctl = window.AbortController ? new AbortController() : null;
         var timer = ctl ? setTimeout(function () { ctl.abort(); }, timeoutMs) : 0;
-        fetch(SITE.api, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(req), credentials: 'omit', cache: 'no-store', signal: ctl ? ctl.signal : undefined })
+        fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(req), credentials: 'omit', cache: 'no-store', signal: ctl ? ctl.signal : undefined })
           .then(function (r) {
             if (!r.ok) throw new Error('HTTP ' + r.status);
             return r.json();
@@ -5614,7 +5711,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var req = { action: 'usage', auth: {}, data: { sessions: batch } };
     try {
       if (SITE) {
-        fetch(SITE.api, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(req), credentials: 'omit', cache: 'no-store', keepalive: true })
+        fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(req), credentials: 'omit', cache: 'no-store', keepalive: true })
           .then(function (r) { return r.json(); }).then(done, function () {});
       } else if (window.google && google.script && google.script.run) {
         google.script.run.withSuccessHandler(done).withFailureHandler(function () {}).api(req);
@@ -6283,7 +6380,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var tabWas = tabIndex(app);
     var picN = PIC.n, out;
     PIC.n = 0; PIC.at = 'r';
-    try { out = String(fn()); } finally { PIC.n = picN; PIC.at = 'p'; }
+    try {
+      out = String(fn());
+    } catch (e) {
+      // (shown from what this phone kept, which cannot be drawn: without it)
+      if (!dropKept()) throw e;
+      PIC.n = 0;
+      fn = VIEWS[S.view] || VIEWS.loading;
+      out = String(fn());
+    } finally { PIC.n = picN; PIC.at = 'p'; }
     var key = out.replace(CLOCKS, '$1');
     if (soft === true && screen === lastScreen && key === lastKey) return;
     lastKey = key;
@@ -6774,7 +6879,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // already allows it (the clock-in needs it; no question pops up before the app).
     if (B.clock && B.clock.mode === 'kiosk+phone') gpsAllowed().then(function (yes) { if (yes && S.view === 'staff' && !S.geo) warmGps(); });
     render();
-    call('home', {}, { empId: id, pin: pin }).then(function (data) {
+    call('home', {}, { empId: id, pin: pin }, { once: true }).then(function (data) {
       S.pinBusy = false;
       S.login = null;
       S.staff = { empId: id, pin: pin, name: ownName(e0) };
@@ -7325,7 +7430,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     k.step = 'confirm';
     kioskTouch();
     render();
-    call('status', {}, kioskAuth(k.emp, pin)).then(function (data) {
+    call('status', {}, kioskAuth(k.emp, pin), { once: true }).then(function (data) {
       S.pinBusy = false;
       if (seq !== k.seq) return;
       k.status = data.status;
@@ -10136,7 +10241,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.ownerHome = null; S.ownerErr = '';
     S.view = 'owner'; S.ownerTab = 'overview';
     render();
-    return call('owner', {}, { ownerPin: pin }).then(function (d) {
+    return call('owner', {}, { ownerPin: pin }, { once: true }).then(function (d) {
       S.pinBusy = false;
       S.login = null;
       S.owner = { pin: pin };
@@ -16188,7 +16293,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     ev.preventDefault();
     noteLens(el);
     useAct(el);
-    fn(el, ev);
+    try {
+      fn(el, ev);
+    } catch (e) {
+      // (a tap on what this phone kept, which the app cannot work with: the screen without it)
+      if (!dropKept()) throw e;
+      render();
+    }
     glideLenses();
   });
   document.addEventListener('change', function (ev) {
@@ -16305,7 +16416,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (S.kiosk && S.kiosk.token) {
       // The screen as it last was, at once (or its outline); its data follows.
       var lastK = recall('kboot', S.kiosk.id || '');
-      if (lastK) { B = Object.assign(B, lastK.data); kioskDone(lastK.data); }
+      if (lastK) {
+        if (!bootBefore) bootBefore = Object.assign({}, B);
+        try { B = Object.assign(B, lastK.data); kioskDone(lastK.data); } catch (e) { if (!dropKept()) throw e; }
+      }
       S.view = 'kiosk';
       kioskReset();
       kioskBoot();
@@ -16325,7 +16439,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     if (S.staff) {
       var lastHome = recall('home', homeTag(S.staff.empId));
-      if (lastHome && !S.home) { applyHome(lastHome.data); S.homeAt = lastHome.at; }
+      if (lastHome && !S.home) {
+        try { applyHome(lastHome.data); S.homeAt = lastHome.at; } catch (e) { if (!dropKept()) throw e; }
+      }
       S.view = 'staff';
       render();
       loadHome(true);
@@ -16376,7 +16492,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // rarely change, and the fresh copy follows in a moment. The person's own
     // screen is asked for at the same time (start), not after.
     var last = recall('boot', page);
-    if (last) B = Object.assign(B, last.data);
+    if (last) {
+      if (!bootBefore) bootBefore = Object.assign({}, B);
+      B = Object.assign(B, last.data);
+    }
     B.page = page;
     start();
     fresh.then(function (b) {
