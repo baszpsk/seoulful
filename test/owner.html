@@ -1942,7 +1942,6 @@ html.c3 .shop-char, html.c3 .rm-char { touch-action: pan-y; }
 .shop-week small { font-size: 11.5px; color: #6b5a44; }
 .shop-new.champ { background: linear-gradient(135deg, #fde68a, #d4a24c); color: #3a2a12; }
 .shop-new.champ svg { width: 11px; height: 11px; }
-.shop-new.soon { background: var(--inset); color: var(--muted); }
 .shop-item.soon { filter: grayscale(.65); cursor: default; }
 @media (prefers-reduced-motion: reduce) { .shop-week::after { animation: none; display: none; } }
 /* ---- ศึกน้อง ---- */
@@ -2843,7 +2842,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 <div id="toasts" role="status" aria-live="polite"></div>
 <input type="file" id="cam-env" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="cam-user" class="visually-hidden" accept="image/*" capture="user" tabindex="-1" aria-hidden="true">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbxyO18fWWvTnVvMiJNLJi4b6zaQeaTHgCfeWnhdUKj7ku-Rhuh1YxiB7i29g9JoCl3quA/exec","version":"2.12.2","page":"owner","e3":"cf0cf2cd","test":true,"store":"test."};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbxyO18fWWvTnVvMiJNLJi4b6zaQeaTHgCfeWnhdUKj7ku-Rhuh1YxiB7i29g9JoCl3quA/exec","version":"2.12.3","page":"owner","e3":"cf0cf2cd","test":true,"store":"test."};</script>
 <script>
 (function () {
   'use strict';
@@ -11123,7 +11122,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         var mini = Object.assign({}, look);
         mini[x.slot] = x.id;
         var preview = x.slot === 'b' ? html`<span class="big">${badgeArt(x.id)}</span>` : x.slot === 'p' ? html`<span class="shop-petp">${raw(PET_ART(x.id, look))}</span>` : x.slot === 'd' ? html`<span class="shop-deco">${raw(DECO_ART(x.id))}</span>` : x.slot === 't' ? html`<i class="rm-sw big th-${x.id}"><i></i><i></i></i>` : char && x.slot === 'f' ? html`<span class="shop-fxp">${raw(charOf(mini))}${chFx(mini)}</span>` : char ? raw(charOf(mini, x.slot === 'm' ? 'pose' : '')) : avatar(me, 'av-try', [0, 0, mini]);
-        return html`<div class="shop-item ${char ? 'char' : ''} soon" aria-disabled="true"><i class="shop-new soon">มา ${thShort(x.from)}</i>${preview}<b>${x.name}</b><span>เร็ว ๆ นี้</span></div>`;
+        return html`<div class="shop-item ${char ? 'char' : ''} soon" aria-disabled="true">${preview}<b>${x.name}</b><span>มา ${thShort(x.from)}</span></div>`;
       })}</div>
       ${char && shop.slot === 'm' ? shopKits(d) : ''}
       ${shop.slot === 'b' && d.games ? html`<p class="small shop-games">${badgeArt('b-g-joystick')} ป้ายจากเกม มี ${d.games.got}/${d.games.all} แบบ · ลุ้นได้ตอนเล่นวิ่งฝ่าด่านหรือศึกน้อง ${d.games.plays} รอบแรกของวัน (รวมกัน) · ยังไม่เจอเลย วันที่ ${d.games.pity} ที่เล่นได้แน่นอน${gameLeftWords(d.games)}</p>` : ''}
