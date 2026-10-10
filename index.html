@@ -465,6 +465,25 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .state-line { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .hint { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--ink-2); background: var(--surface-2); border: 0; box-shadow: inset 0 0 0 1px var(--line); border-radius: var(--r-md); padding: 11px 13px; }
 .hint svg { width: 18px; height: 18px; flex: none; margin-top: 2px; color: var(--gold); }
+/* how the app is used (#283): the line at the foot of ฉัน, and the owner's look */
+.use-note { display: flex; gap: 8px; align-items: flex-start; width: 100%; margin: 2px 0 0; padding: 4px 6px; border: 0; background: none; font: inherit; font-size: 12.5px; line-height: 1.5; color: var(--muted); text-align: left; }
+.use-note svg { width: 15px; height: 15px; flex: none; margin-top: 2px; }
+.use-note u { text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+.use-card .fb-ico { background: rgba(59, 91, 138, .12); color: #3b5b8a; }
+.use-sec { margin: 18px 0 6px; }
+.use-kv { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.use-kv:first-child { border-top: 0; padding-top: 0; }
+.use-kv:last-child { padding-bottom: 0; }
+.use-kv span { color: var(--ink-2); }
+.use-kv b { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.use-kv small { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); }
+.use-row { padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.use-row:first-child { border-top: 0; }
+.use-row .s { font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+.use-hours { display: flex; align-items: flex-end; gap: 2px; height: 64px; margin-top: 8px; }
+.use-hours i { flex: 1; min-height: 2px; border-radius: 3px 3px 0 0; background: var(--gold); opacity: .8; }
+.use-hours-l { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 3px; }
+.use-advice { white-space: pre-wrap; }
 .hint.warn { background: var(--warn-soft); box-shadow: none; color: var(--warn); }
 .hint.warn svg { color: var(--warn); }
 .hint.bad { background: var(--bad-soft); box-shadow: none; color: var(--bad); }
@@ -1922,7 +1941,6 @@ html.c3 .shop-char, html.c3 .rm-char { touch-action: pan-y; }
 .shop-week small { font-size: 11.5px; color: #6b5a44; }
 .shop-new.champ { background: linear-gradient(135deg, #fde68a, #d4a24c); color: #3a2a12; }
 .shop-new.champ svg { width: 11px; height: 11px; }
-.shop-new.soon { background: var(--inset); color: var(--muted); }
 .shop-item.soon { filter: grayscale(.65); cursor: default; }
 @media (prefers-reduced-motion: reduce) { .shop-week::after { animation: none; display: none; } }
 /* ---- ศึกน้อง ---- */
@@ -2822,7 +2840,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 <div id="toasts" role="status" aria-live="polite"></div>
 <input type="file" id="cam-env" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="cam-user" class="visually-hidden" accept="image/*" capture="user" tabindex="-1" aria-hidden="true">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbz2iYI-AY2wmBoYL11bWkP6gy9TdUqZsB_CAT27Iq7vdgxg-T8PsD0q3uy43YM53lGwEA/exec","version":"2.12.1","page":"","e3":"cf0cf2cd"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbz2iYI-AY2wmBoYL11bWkP6gy9TdUqZsB_CAT27Iq7vdgxg-T8PsD0q3uy43YM53lGwEA/exec","version":"2.12.3","page":"","e3":"cf0cf2cd"};</script>
 <script>
 (function () {
   'use strict';
@@ -2834,6 +2852,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // On the shop's own site (dev/build.js writes it): the script's address, this
   // page's version, and the page it opens as (owner.html: the owner's).
   var SITE = window.__SEOULFUL_SITE__ || null;
+  // The script's address for the app's requests, marked api=1: when Google loses an answer on the way, it
+  // sends the request back to the script as a page load (the POST, its content server, then a GET of this
+  // address, 6 Oct 2569), and the script knows then that nobody is opening the app (Api.gs doGet).
+  var API_URL = SITE && SITE.api ? SITE.api + (SITE.api.indexOf('?') < 0 ? '?' : '&') + 'api=1' : '';
   // The version of this page's code (the server may be newer after an update).
   var CODE_VERSION = (SITE && SITE.version) || B.version || '';
   var ROLLOVER_HOUR = 6;
@@ -2852,21 +2874,39 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // the name in its own type). dev/icons.js draws the home-screen icons from it.
   var LOGO = {"fox":"M408.5 21.1a118 118 0 0 0-20.8 27.4 108 108 0 0 0-5.6 80c5.6 16.8 10.9 23.7 34.6 45.3a128 128 0 0 1 38.8 70.6c1 4.3 2 7.4 2.5 7 1.1-1.2 5.7-27.8 6.5-37.9a95 95 0 0 0-9.2-47c-14.5-31.8-16.6-53-7.7-80.6 1.9-5.8 3.4-11.2 3.4-12s-4.7-8.5-10.4-17.1a198 198 0 0 1-21.5-39.9l-1.7-5.1zm111.2 3c-21.7 9.3-32.5 17.2-43.5 31.7a102 102 0 0 0-21.9 65.2c.7 13 3.2 21.9 10.1 37 12.2 26.3 14.6 46.4 9.1 78.3a167 167 0 0 0-2.3 16.8c.5 1.4 14-15 19-23.1a120 120 0 0 0 18.8-68.6c0-25.5 6.7-43.2 23.5-63 8.3-9.8 8.7-12.5 4.9-31.9a149 149 0 0 1-1.8-28.7 79 79 0 0 0-1.1-19.7c-.5 0-7.2 2.7-14.8 6M307.6 72.8a99 99 0 0 0 5.1 86.4c13.5 26.4 30.1 38.9 64.3 48.3a123 123 0 0 1 61.6 41.6 36 36 0 0 0 6 6.6c.3-.3-.2-4-1.1-8.2-6-28.9-15.5-47.3-32.8-63.5-25.1-23.5-31.8-31.7-37.8-46.2a90 90 0 0 1-6.8-27.2c-1.2-10.3-1.8-11.1-10.9-16.2A203 203 0 0 1 320 69l-8.6-8zM597 71.6a106 106 0 0 0-67.3 51.6c-6.7 13.5-8.7 22.8-9.7 45.3-1.2 25.3-3.3 35.6-10.3 50.8a169 169 0 0 1-21 32.4 31 31 0 0 0-5.7 8.3c2 0 19.5-9.3 27.6-14.5a117 117 0 0 0 27.5-25.4c2.7-3.6 7.7-12.2 11-19.1 10.3-21 17.7-31.3 28.7-40.3 7.7-6.3 16.5-11.4 28.3-16.2 4.5-2 9-4.2 10-5 2.7-2.6 4.7-7.4 8.4-20.9 4-14.5 8.6-26.9 14.4-38.4 2.3-4.6 3.9-8.7 3.6-9.2-1-1.6-37.9-1-45.5.6m-533 10c-7.6 8.7-12.9 23.4-16.6 46.2a95 95 0 0 1-7.3 27c-25 59.3-33.2 115.3-24 163 9.2 47.6 40.6 85 72 85.5q29.6.4 41.3-57.3c3.6-18 5-34.7 4.3-54.5-1.2-32.9-6.7-56.3-16.2-68l-2.4-3-2 2a109 109 0 0 0-15 27 129 129 0 0 0-6.2 52.4c.3 5.4.1 6.6-1.4 7.8-4.3 3-5.6 1-6.8-10.8-4-40.4 15.7-85 44-99.7 4.5-2.3 13.5-5.6 21.2-7.7 18-5 32.5-10 39-13.8a59 59 0 0 0 24.5-30c.5-2.2.3-2.7-1.6-3.1a948 948 0 0 0-33.3-2.2c-31.1-1.6-34.4-2.2-37.5-5.9-3.6-4.4-16.6-7.5-34.5-8.2l-14-.6-2.8-8.6C84.5 106 70.5 78 68 78c-.5 0-2.3 1.6-4 3.5m51.3.7a112 112 0 0 0-15.4 23.1c-2.9 6.4-5.3 17.4-4 18.2.3.2 6.8.7 14.4 1l13.9.8-.8-2.9a133 133 0 0 1-3.6-24.9c0-3.8-.4-9.7-.8-13l-.6-5.9zm-10.9 63.1c-1.7.8-3.6 2-4.3 3-1 1.3-.8 1.8 1.7 3.6a26 26 0 0 0 18.7 3.3c6-1.2 13-5 11.7-6.2-3.7-3.6-22.6-6-27.8-3.7m123 .7c-.4.7-.2 2.3 3.5 24.5 4 24 11.2 38.8 26.5 54 25.5 25.4 52 34.3 84.5 28.5a147 147 0 0 1 44.5-1.1 173 173 0 0 1 39.4 13.7 91 91 0 0 0 14.2 6.2c1.5-.5-13.5-19-22.2-27.3a104 104 0 0 0-49.6-27.4 103 103 0 0 1-30.6-12.3c-14.6-9.4-22.7-18.8-34.7-40-4-7-7.8-13.3-8.6-13.9a199 199 0 0 0-29.1-3l-32.6-2.2c-2.6-.2-5 0-5.2.3m409.1 2.6q-46 7.1-66.8 38.6c-2 2.9-6 10.5-9.1 16.8a118 118 0 0 1-18.8 29.5 140 140 0 0 1-43.3 32.6c-5.8 3-10.6 5.7-10.6 6.1 0 1.1 15.6 1 28.5-.2 27.1-2.6 43.3-10 70-32 7.7-6.3 23.8-14.5 34-17.2a116 116 0 0 1 24-2.7c8.8-.3 16.7-1 17.7-1.6s5.9-6 11-12a237 237 0 0 1 34.6-33.5l6.3-4.4-11.5-5.8c-30.2-15.1-42.7-17.8-66-14.2m-503 85.2a187 187 0 0 1 15 56.7c1.5 13 1.6 16.8.5 28.5a179 179 0 0 1-9.3 45 291 291 0 0 1-22.8 48.4c0 .2 3.8-1.2 8.5-3a79 79 0 0 1 31.6-7.2c7.8.4 11.3 2.4 14.2 7.9 2 3.9 2 10.8-.7 30.9a511 511 0 0 0-.6 71c1.3 18.7 5 51.9 6.1 54.8l.8 2.2h25.6c18.7 0 25.5-.3 25.5-1.2 0-.6-2.8-5.4-6.2-10.7-16.4-25.2-24.2-49.6-22.4-69.5 1.4-14.8 1.7-16 22.5-87.3 7.8-26.8 8.5-43.3 2.5-64-9.6-33.6-41-71-84-100.1-6.8-4.6-8-5-6.9-2.4m492-.2a91 91 0 0 0-39.5 21.9 124 124 0 0 1-36.3 21.5 184 184 0 0 1-50.2 8.3l-5 .3 7.5 3.6c18 8.6 33.3 12.2 52 12a71 71 0 0 0 23.5-2.7c18.3-5 21.8-5.6 34.5-5.7a95 95 0 0 1 52 14.3c3.7 2.1 7.4 3.9 8.3 3.9s7.3-2.5 14-5.6a434 434 0 0 1 49-17.5l4.7-1.4-8.5-10.8c-14.9-18.8-24.5-27-40.8-34.8-13.6-6.4-21.6-8.1-41.2-8.5-12.7-.3-18.8 0-24 1.2M197 267.5c0 .3 4.8 6.5 10.8 13.9a210 210 0 0 1 25.1 38.6c2.8 5.2 8.2 13.7 11.9 19a259 259 0 0 0 37.1 39.2c40.8 33 87.6 45.3 144.9 38.2l5.2-.6 8.6 8.3c35 33.9 44.8 75.6 27.3 116.3-2 4.9-6.3 13-9.3 18s-5.6 9.5-5.6 10c0 1 47.8.8 48.4-.2.3-.5-.1-18.6-.9-40.3L498 453q-1-35.6-2.3-36.6a21 21 0 0 0-6.6-2.9 48 48 0 0 1-29-22.2c-2-4-2.4-7.2-3.1-20.3a159 159 0 0 0-2.3-21.5c-11.6-46.6-68-75.4-159.6-81.5-14.7-1-98-1.4-98-.5m286 27.3c0 2.5 31.7 35.1 39.5 40.7a90 90 0 0 0 42.7 16.4c28 5 47 15.9 65.5 37.5l5 6 7.4.7c4 .4 12.2.8 18 .8 13.2.1 29.8 1.7 40.9 4a26 26 0 0 0 8.8 1c.5-1.2-7.8-31.8-10.5-38.6q-6-15.2-20.9-29.3a105 105 0 0 0-30.8-21.6 69 69 0 0 0-36.1-7.7 78 78 0 0 0-27 3.8 94 94 0 0 1-29.5 4.2c-13 .4-17.1.1-25.6-1.6-12.4-2.6-28-7.9-38.5-13.2-8.3-4.1-8.9-4.3-8.9-3.1m-7 12.7a246 246 0 0 0 7.7 27C502.2 391 530 434.6 563 458.2c4.8 3.4 16.4 9.9 26.7 14.9 19.5 9.4 28.8 15 39.6 23.6 3.8 3 7 5.3 7.2 5.1a355 355 0 0 0 6.6-32.3c3.8-27.4-8.6-60.6-31-82.5-13.5-13.2-24.8-18.6-49-23.5-36.6-7.4-57.5-20.8-85-54.5q-1.8-2.2-2-1.5m-448.5 72c2.3 6.4 7.5 16.7 21.2 42.5 6.2 11.7 9.7 21.7 11.7 34 5.2 32.5-4.6 70.8-27 105.6-3 4.7-5.5 8.7-5.5 9 0 .2 7 .4 15.3.4 13.4 0 15.6-.2 16.9-1.7.8-1 3-6 4.7-11.3L115 414.7c0-.1-6.6-.2-14.7-.2A80 80 0 0 1 32 382.1c-2.6-3.5-5.2-7-5.8-8-.7-.9-.1 1.5 1.3 5.4m329.8 56.8c29.1 37.3 33.5 75.3 13.3 115.4-2 4-5 9.3-6.7 12-1.6 2.5-3 5-3 5.5s10.8.8 24 .8h24v-8.2c0-4.6-1-34.8-2-67.3l-2-60.6c0-1.4-2.4-1.7-18.2-2.2-10-.4-21.4-1.3-25.3-2.1-11.4-2.5-11.3-2.5-4.1 6.7"};
   var KEY = { staff: 'seoulful.staff', owner: 'seoulful.owner', kiosk: 'seoulful.kiosk', device: 'seoulful.device', push: 'seoulful.push', pushKey: 'seoulful.pushkey' };
+  // The test app's site sits under the shop's (dev/staging.js), so a phone gives both one storage: the
+  // test app's names start with SITE.store, and neither ever reads the other's.
+  var STORE = (SITE && SITE.store) || '';
   var LS = {
-    get: function (k) { try { return JSON.parse(window.localStorage.getItem(k)); } catch (e) { return null; } },
-    set: function (k, v) { try { window.localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } },
-    del: function (k) { try { window.localStorage.removeItem(k); } catch (e) { /* storage unavailable */ } },
+    get: function (k) { try { return JSON.parse(window.localStorage.getItem(STORE + k)); } catch (e) { return null; } },
+    set: function (k, v) { try { window.localStorage.setItem(STORE + k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } },
+    del: function (k) { try { window.localStorage.removeItem(STORE + k); } catch (e) { /* storage unavailable */ } },
   };
   var HOOKS = window.__SEOULFUL_HOOKS__ || {};
   // What the app last showed, kept on this phone: the next open shows it at
-  // once while the server is asked again. Only this version's, and a staff
-  // screen only for the same person on the same work day.
+  // once while the server is asked again; a staff screen only for the same
+  // person on the same work day. Kept across an update too (the owner's
+  // choice, 6 Oct 2569: the first open after each update showed an empty
+  // outline for 2–35 seconds, the phone having thrown away what it kept): an
+  // earlier version's is shown until this version's data replaces it. What
+  // was kept and cannot be drawn (an earlier version's laid out otherwise, or
+  // kept broken) is forgotten and the outline shown, as on a first open
+  // (FROM_MEM, dropKept), never a screen stuck on its way.
   var MEM = { boot: 'seoulful.last.boot', kboot: 'seoulful.last.kboot', home: 'seoulful.last.home', owner: 'seoulful.last.owner', parts: 'seoulful.last.parts' };
   var MEM_MAX = { boot: 7 * 86400000, kboot: 7 * 86400000, home: 12 * 3600000, owner: 12 * 3600000 };
-  function remember(which, data, tag) { LS.set(MEM[which], { v: CODE_VERSION, at: Date.now(), tag: tag || '', data: data }); }
+  // What the screen shows from this phone's memory ('home', 'part:team', …) and the version that kept it, till the server's data replaces it.
+  var FROM_MEM = {};
+  // The boot data as it was before what was kept was put in it: what dropKept goes back to.
+  var bootBefore = null;
+  function remember(which, data, tag) {
+    delete FROM_MEM[which];
+    if (!FROM_MEM.boot && !FROM_MEM.kboot) bootBefore = null;
+    LS.set(MEM[which], { v: CODE_VERSION, at: Date.now(), tag: tag || '', data: data });
+  }
   function recall(which, tag) {
     var m = LS.get(MEM[which]);
-    if (!m || m.v !== CODE_VERSION || !m.data || m.tag !== (tag || '') || !(Date.now() - m.at < MEM_MAX[which])) return null;
+    if (!m || !m.data || m.tag !== (tag || '') || !(Date.now() - m.at < MEM_MAX[which])) return null;
+    FROM_MEM[which] = m.v || '?';
     return m;
   }
   function forget(which) { LS.del(MEM[which]); }
@@ -2877,15 +2917,47 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     who = who || partWho();
     if (!who) return;
     var all = LS.get(MEM.parts);
-    if (!all || all.who !== who || all.v !== CODE_VERSION) all = { who: who, v: CODE_VERSION, parts: {} };
+    if (!all || all.who !== who || !all.parts) all = { who: who, v: CODE_VERSION, parts: {} };
+    // (an earlier version's parts stay, each marked with its version, till this version's replace them)
+    else if (all.v !== CODE_VERSION) Object.keys(all.parts).forEach(function (k) { all.parts[k].v = all.parts[k].v || all.v; });
+    all.v = CODE_VERSION;
     all.parts[name] = { at: Date.now(), tag: tag || '', data: data };
+    delete FROM_MEM['part:' + name];
     LS.set(MEM.parts, all);
   }
   function lastPart(name, tag) {
     var who = partWho();
     var all = who ? LS.get(MEM.parts) : null;
-    var m = all && all.who === who && all.v === CODE_VERSION && all.parts ? all.parts[name] : null;
-    return m && m.tag === (tag || '') && Date.now() - m.at < 12 * 3600000 ? m : null;
+    var m = all && all.who === who && all.parts ? all.parts[name] : null;
+    if (!m || m.tag !== (tag || '') || !(Date.now() - m.at < 12 * 3600000)) return null;
+    FROM_MEM['part:' + name] = m.v || all.v || '?';
+    return m;
+  }
+  /**
+   * What was kept on this phone could not be drawn (an earlier version's, its data laid out otherwise; or
+   * kept broken): forgotten, and the parts of the screen it filled shown as on a first open, their outline
+   * till the server's data comes (each was asked for as it was shown). False when nothing shown was kept:
+   * the fault is the app's own, and goes on as it would.
+   */
+  function dropKept() {
+    var was = FROM_MEM;
+    var what = Object.keys(was);
+    if (!what.length) return false;
+    FROM_MEM = {};
+    if (bootBefore && (was.boot || was.kboot)) B = bootBefore;
+    bootBefore = null;
+    if (was.boot) forget('boot');
+    if (was.kboot) { forget('kboot'); S.k.done = {}; }
+    if (was.home) { forget('home'); S.home = null; }
+    if (was.owner) { forget('owner'); S.ownerHome = null; }
+    if (what.some(function (k) { return /^part:/.test(k); })) forget('parts');
+    if (was['part:slip']) slipBy = {};
+    if (was['part:team']) { S.team = null; S.entries = null; }
+    if (was['part:leaves']) S.leaves = null;
+    if (was['part:pay']) { payBy = {}; S.pay = null; S.payAt = 0; }
+    if (was['part:employees']) S.employees = null;
+    useErr('ข้อมูลที่จำไว้วาดไม่ได้: ' + what.map(function (k) { return k + ' ' + was[k]; }).join(' · '));
+    return true;
   }
 
   // The server's clock as last seen here (a phone's own clock may be off): today is the server's today from the first frame.
@@ -3941,7 +4013,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       try {
         // (heads: read whole as the page starts · pics: the characters' pictures, each read as asked ·
         // at: when each of those was made, for the oldest to go)
-        var rq = indexedDB.open('seoulful-kept', 1);
+        var rq = indexedDB.open(STORE + 'seoulful-kept', 1);
         rq.onupgradeneeded = function () { ['heads', 'pics', 'at'].forEach(function (n) { rq.result.createObjectStore(n); }); };
         rq.onerror = function () { ok(null); };
         rq.onsuccess = function () {
@@ -5208,7 +5280,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // request can be lost on the way ("Load failed"), and the same read sent
   // again a moment later goes through. The app does that by itself; a
   // change (a clock-in, an approval) is never sent twice.
-  var READS = ['boot', 'kioskPing', 'status', 'home', 'month', 'calendar', 'payslips', 'payslip', 'team', 'entries', 'leaves', 'exceptions', 'payroll', 'photo', 'photos', 'owner', 'employees', 'feedbackMine', 'feedbackList', 'feedbackFile', 'feedbackSync', 'orderList', 'orderOwner', 'orderCatalog', 'notes', 'pushKey'];
+  var READS = ['boot', 'kioskPing', 'status', 'home', 'month', 'calendar', 'payslips', 'payslip', 'team', 'entries', 'leaves', 'exceptions', 'payroll', 'photo', 'photos', 'owner', 'employees', 'feedbackMine', 'feedbackList', 'feedbackFile', 'feedbackSync', 'orderList', 'orderOwner', 'orderCatalog', 'notes', 'pushKey', 'usageReport'];
+  // Reads not sent twice when slow (sendHedged): the shop screen's check-in every 45 seconds, which nobody
+  // waits on; pictures and files, slow to come by their size, not by Google; and those slow by their nature
+  // (GitHub, the week's use).
+  var NO_HEDGE = ['kioskPing', 'photo', 'photos', 'feedbackFile', 'feedbackSync', 'orderCatalog', 'pushKey', 'usageReport'];
   var inFlight = {};
   function call(action, data, auth, opts) {
     if (READS.indexOf(action) < 0) {
@@ -5222,8 +5298,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var key = JSON.stringify([action, data || {}, auth || {}]);
     if (inFlight[key] && !(opts && opts.fresh)) return inFlight[key];
     var tries = 0;
+    // (a PIN being tried goes once (`once`): sent twice, a wrong one would count twice towards the lock)
+    var hedge = !(opts && opts.once) && NO_HEDGE.indexOf(action) < 0;
     var go = function () {
-      return send(action, data, auth, 45000).catch(function (e) {
+      return (hedge ? sendHedged : send)(action, data, auth, 45000).catch(function (e) {
         // Lost on the way: twice more. Google's side failed (not a message for the person): once more.
         if (!(e.network ? tries < 2 : e.transient && tries < 1)) throw e;
         tries++;
@@ -5237,6 +5315,44 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return p;
   }
   function later(ms) { return new Promise(function (resolve) { setTimeout(resolve, ms); }); }
+  /**
+   * A read Google is slow to answer goes once more alongside, and whichever answer comes first is taken.
+   * Now and then Google holds an answer for 10–40 seconds, or loses it on the way, while the same request
+   * sent again comes back in 2–4 (the test app, 6 Oct 2569: 9 of 40 requests so, 10–41 s each). A read
+   * changes nothing, so sending it twice is safe. The use of the app keeps it as one request: how long
+   * the person waited for it, and how it ended (and 'h' when it went twice).
+   */
+  var HEDGE_MS = 6000;
+  function sendHedged(action, data, auth, timeoutMs) {
+    var used = useWait(action);
+    return new Promise(function (resolve, reject) {
+      var open = 0, over = false, timer = 0;
+      var end = function (ok, v) {
+        over = true;
+        clearTimeout(timer);
+        useDone(used, ok ? 'ok' : v.code || (v.network ? (v.slow ? 'SLOW' : 'NET') : 'ERROR'));
+        if (ok) resolve(v); else reject(v);
+      };
+      var one = function () {
+        open++;
+        send(action, data, auth, timeoutMs, true).then(function (d) {
+          open--;
+          if (!over) end(true, d);
+        }, function (e) {
+          open--;
+          // Google's side or the way failed: the other one, still on its way, may yet come.
+          if (!over && !((e.network || e.transient) && open > 0)) end(false, e);
+        });
+      };
+      one();
+      timer = setTimeout(function () {
+        timer = 0;
+        if (over || document.visibilityState === 'hidden') return;
+        useEv('h', action);
+        one();
+      }, HEDGE_MS);
+    });
+  }
   /**
    * Someone is about to type a PIN: after a quiet while, Google's side takes
    * a moment to wake, so it is woken now (with the start data, which may
@@ -5318,11 +5434,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var m = moveLeft();
     if (m > 0) busyFor(m + 30);
   }, true);
-  function send(action, data, auth, timeoutMs) {
+  /** One request to the server. `untracked`: kept in the use of the app by the caller (sendHedged), not here. */
+  function send(action, data, auth, timeoutMs, untracked) {
     var t0 = Date.now();
     var req = { action: action, auth: auth || {}, data: data || {} };
+    var used = untracked ? 0 : useWait(action);
     return new Promise(function (resolve, reject) {
       var answered = function (res) {
+        useDone(used, res && res.ok ? 'ok' : (res && res.code) || 'ERROR');
         lastAnswerAt = Date.now();
         if (res && res.serverNow) syncClock(Date.parse(res.serverNow), t0, Date.now());
         whenQuiet(function () {
@@ -5336,8 +5455,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         });
       };
       var failed = function (err, slow) {
+        useDone(used, slow ? 'SLOW' : 'NET');
         var e = new Error(slow ? 'ระบบตอบช้าเกินไป กรุณาลองใหม่' : 'เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่');
         e.network = true;
+        e.slow = !!slow;
         e.detail = String((err && err.message) || err || '');
         whenQuiet(function () { reject(e); });
       };
@@ -5347,7 +5468,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         // signed in to several Google accounts is not asked which one.
         var ctl = window.AbortController ? new AbortController() : null;
         var timer = ctl ? setTimeout(function () { ctl.abort(); }, timeoutMs) : 0;
-        fetch(SITE.api, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(req), credentials: 'omit', cache: 'no-store', signal: ctl ? ctl.signal : undefined })
+        fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(req), credentials: 'omit', cache: 'no-store', signal: ctl ? ctl.signal : undefined })
           .then(function (r) {
             if (!r.ok) throw new Error('HTTP ' + r.status);
             return r.json();
@@ -5368,13 +5489,260 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function isApprover() { return S.view === 'owner' || (S.home && S.home.me && S.home.me.role === 'approver'); }
 
   // ======================================================================
+  // How the app is used (#283, Usage.gs)
+  // ======================================================================
+  // Kept on this phone as the app is used, so it can be made quicker and easier where it counts: each
+  // screen and sheet by its name and how long it stayed, each button pressed, each request to the server
+  // (how long, how it ended, the button it answered; one still on its way when the app was put away, as
+  // left), each problem message, the page's own errors, how long opening took (a screen to see; the day's
+  // data in) and the phone. Nothing typed (not even which PIN key), no picture, no place. A stretch of use,
+  // from the app shown to it hidden, goes as the app is put away, in the background (nobody waits for it),
+  // with the key the server gave its person (never the PIN); one that could not go, the next time. Staff
+  // are told at the foot of ฉัน (use-about), the owner looks at it at ภาพรวม › การใช้แอป.
+  var USE_Q = 'seoulful.use', USE_KEYS = 'seoulful.usekeys', USE_LAST = 'seoulful.uselast';
+  // (a stretch is cut in two after 30 minutes or 800 events: the shop's screen is never put away)
+  var USE_EV_MAX = 800, USE_SPAN = 30 * 60000, USE_Q_MAX = 60, USE_Q_SIZE = 400000, USE_SEND_BYTES = 60000;
+  var USE = { cur: null, page: '', act: null, wait: {}, seq: 0, dev: '', last: '' };
+  var USE_VIEW = { loading: 'กำลังเปิด', moved: 'แอปย้ายที่', error: 'เปิดไม่ได้', offline: 'ไม่มีเน็ต', start: 'เลือกชื่อ', pin: 'ใส่ PIN', ownerLogin: 'ใส่รหัสเจ้าของร้าน' };
+  var USE_TAB = { home: 'หน้าแรก', team: 'ทีม', friends: 'เพื่อน', ideas: 'ไอเดีย', me: 'ฉัน', history: 'ประวัติการทำงาน', slips: 'สลิปเงินเดือน', leave: 'วันลา', order: 'สั่งของ', approve: 'อนุมัติ' };
+  var USE_OWNER_TAB = { overview: 'ภาพรวม', pay: 'เงินเดือน', team: 'ทีม', staff: 'พนักงาน', settings: 'ตั้งค่า' };
+  var USE_KIOSK = { names: 'เลือกชื่อ', pin: 'ใส่ PIN', confirm: 'ยืนยัน', result: 'ลงเวลาแล้ว' };
+  function useId() {
+    var abc = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789', out = '';
+    var r = window.crypto && crypto.getRandomValues ? crypto.getRandomValues(new Uint8Array(16)) : null;
+    for (var i = 0; i < 16; i++) out += abc.charAt((r ? r[i] : Math.floor(Math.random() * 256)) % abc.length);
+    return out;
+  }
+  /** A new stretch, its times counted from `t0` (performance.now(); 0: as the page began to load). */
+  function useStart(kind, t0) {
+    USE.cur = { id: useId(), at: 0, t0: t0, kind: kind, who: '', kiosk: '', ver: CODE_VERSION, ev: [], shown: null, fresh: null, errs: 0 };
+    USE.page = '';
+  }
+  function useEv(k) {
+    var u = USE.cur;
+    if (!u) return;
+    var t = performance.now();
+    if (u.ev.length >= USE_EV_MAX || t - u.t0 > USE_SPAN) { useCut('more'); u = USE.cur; }
+    var e = [k, Math.max(0, Math.round((t - u.t0) / 100) / 10)];
+    for (var i = 1; i < arguments.length; i++) e.push(arguments[i]);
+    u.ev.push(e);
+  }
+  /** Whose the app is now: a person's id, 'OWNER', or '' (the shop's screen goes by its own token). */
+  function useWho() {
+    if (S.view === 'kiosk') return '';
+    if (S.view === 'owner') return S.owner ? 'OWNER' : '';
+    return S.staff ? S.staff.empId : '';
+  }
+  function useScreen() {
+    if (S.view === 'staff') return 'พนักงาน › ' + (USE_TAB[S.tab] || S.tab) + (S.sub ? ' › ' + (USE_TAB[S.sub] || S.sub) : '');
+    if (S.view === 'owner') return 'เจ้าของร้าน › ' + (USE_OWNER_TAB[S.ownerTab] || S.ownerTab);
+    if (S.view === 'kiosk') return 'จอในร้าน › ' + (USE_KIOSK[S.k.step] || S.k.step);
+    return USE_VIEW[S.view] || String(S.view || '');
+  }
+  /** A sheet by its name: its own (`use`), or its title without the numbers and dates in it. */
+  function useSheetName(o) {
+    return String(o.use || o.title || '').replace(/<[^>]*>/g, '').replace(/\d[\d.,:\/-]*/g, '#').replace(/\s+/g, ' ').trim().slice(0, 60);
+  }
+  /** The screen (and sheet) now: kept when it changes; another person signed in here begins a stretch of their own. */
+  function usePage() {
+    var u = USE.cur;
+    if (!u) return;
+    var who = useWho();
+    if (who && u.who && who !== u.who) { useCut('more'); u = USE.cur; }
+    if (who) {
+      u.who = who;
+      if (who !== USE.last) { USE.last = who; LS.set(USE_LAST, who); }
+    }
+    if (S.view === 'kiosk' && S.kiosk) u.kiosk = S.kiosk.token;
+    var name = useScreen() + (sheetState ? ' › ' + useSheetName(sheetState) : '');
+    if (name === USE.page) return;
+    USE.page = name;
+    useEv('p', name);
+  }
+  /** Drawn: the first screen there is to see (not its outline) of a stretch the app was opened for. */
+  function useShown(app) {
+    var u = USE.cur;
+    if (!u || u.kind !== 'open' || u.shown != null || S.view === 'loading' || app.querySelector('.skel, .outline')) return;
+    u.shown = Math.round(performance.now() - u.t0);
+  }
+  /** The day's data came from the server: once a stretch. */
+  function useFresh() {
+    var u = USE.cur;
+    if (u && u.kind !== 'more' && u.fresh == null) u.fresh = Math.round(performance.now() - u.t0);
+  }
+  function useAct(el) {
+    var act = el.dataset.act;
+    USE.act = { act: act, t: performance.now() };
+    // (each key of a PIN: nothing kept, only that a request then answered it)
+    if (act === 'pin-key') return;
+    var d = el.dataset.tab || el.dataset.sub || el.dataset.do || el.dataset.days || '';
+    if (d) useEv('a', act, String(d).slice(0, 20)); else useEv('a', act);
+  }
+  /** A request on its way (send): its number, for useDone. */
+  function useWait(action) {
+    var u = USE.cur;
+    if (!u || action === 'usage') return 0;
+    var a = USE.act;
+    var n = ++USE.seq;
+    USE.wait[n] = { id: u.id, t: performance.now(), action: action, by: a && performance.now() - a.t < 2000 ? a.act : '' };
+    return n;
+  }
+  /** Its answer: 'ok', the server's code for why not, 'NET' (lost) or 'SLOW' (given up on). */
+  function useDone(n, res) {
+    var w = n ? USE.wait[n] : null;
+    if (!w) return;
+    delete USE.wait[n];
+    var u = USE.cur;
+    if (!u || u.id !== w.id) return;
+    u.ev.push(['c', Math.max(0, Math.round((w.t - u.t0) / 100) / 10), w.action, Math.round(performance.now() - w.t), String(res || ''), w.by]);
+    if (u.ev.length >= USE_EV_MAX) useCut('more');
+  }
+  function useErr(msg) {
+    var u = USE.cur;
+    if (!u || ++u.errs > 20) return;
+    useEv('x', String(msg).slice(0, 160));
+  }
+  /** The phone, in a few words: its system, browser, from the home screen or not, screen, memory, connection. */
+  function useDev() {
+    if (USE.dev) return USE.dev;
+    var ua = navigator.userAgent || '';
+    var v = function (re) { var m = re.exec(ua); return m ? m.slice(1).filter(Boolean).join('.') : ''; };
+    var os = /iPhone|iPod/.test(ua) ? 'iOS ' + v(/OS (\d+)[_.](\d+)/) : /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iPad' : /Android/.test(ua) ? 'Android ' + v(/Android (\d+)(?:\.(\d+))?/) : /Windows/.test(ua) ? 'Windows' : /Mac OS X/.test(ua) ? 'Mac' : /Linux/.test(ua) ? 'Linux' : 'อื่น ๆ';
+    var br = / Line\//.test(ua) ? 'LINE' : /FBAN|FBAV|Instagram/.test(ua) ? 'Facebook' : /SamsungBrowser/.test(ua) ? 'Samsung' : /EdgA?\/|EdgiOS/.test(ua) ? 'Edge' : /CriOS|Chrome\//.test(ua) ? 'Chrome' : /FxiOS|Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) ? 'Safari' : 'อื่น ๆ';
+    var home = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone ? 'หน้าจอโฮม' : 'เบราว์เซอร์';
+    var parts = [os.trim(), br, home, Math.round(screen.width) + '×' + Math.round(screen.height)];
+    if (navigator.deviceMemory) parts.push('แรม ' + navigator.deviceMemory + ' GB');
+    var cn = navigator.connection;
+    if (cn && cn.effectiveType) parts.push('เน็ต ' + cn.effectiveType);
+    return (USE.dev = parts.join(' · '));
+  }
+  /**
+   * A stretch over: onto this phone's list of those to send. A request still on its way: left unanswered,
+   * as the app was put away; or (`carry`, the stretch only cut in two) answered in the one that goes on.
+   */
+  function useClose(u, carry) {
+    var t = performance.now();
+    if (!carry) Object.keys(USE.wait).forEach(function (n) {
+      var w = USE.wait[n];
+      if (w.id !== u.id) return;
+      u.ev.push(['c', Math.max(0, Math.round((w.t - u.t0) / 100) / 10), w.action, Math.round(t - w.t), 'LEFT', w.by]);
+      delete USE.wait[n];
+    });
+    u.ms = Math.round(t - u.t0);
+    // (by the server's clock, as last seen: a phone's own may be off)
+    u.at = Date.now() + (S.offset || 0) - u.ms;
+    // (before anyone signed in: the last person on this phone; nobody yet, nobody to tell it of)
+    if (!u.who && !u.kiosk) u.who = LS.get(USE_LAST) || '';
+    if ((!u.who && !u.kiosk) || (!u.ev.length && u.ms < 2000)) return;
+    var q = LS.get(USE_Q) || [];
+    q.push({ id: u.id, at: Math.round(u.at), kind: u.kind, who: u.who, kiosk: u.kiosk, ver: u.ver, dev: useDev(), ms: u.ms, shown: u.shown, fresh: u.fresh, ev: u.ev });
+    var size = 0;
+    for (var i = q.length - 1; i >= 0; i--) {
+      size += JSON.stringify(q[i]).length;
+      if (size > USE_Q_SIZE || q.length - i > USE_Q_MAX) { q = q.slice(i + 1); break; }
+    }
+    LS.set(USE_Q, q);
+  }
+  /** Cut here: the stretch so far goes on the list, and another goes on (`kind` 'more'), on the same screen. */
+  function useCut(kind) {
+    var u = USE.cur, page = USE.page;
+    if (u) useClose(u, true);
+    useStart(kind, performance.now());
+    if (u) {
+      USE.cur.who = u.who;
+      USE.cur.kiosk = u.kiosk;
+      Object.keys(USE.wait).forEach(function (n) { if (USE.wait[n].id === u.id) USE.wait[n].id = USE.cur.id; });
+    }
+    if (page) { USE.page = page; useEv('p', page); }
+    setTimeout(useSend, 5000);
+  }
+  /** The app put away: the stretch goes, now. */
+  function useEnd() {
+    var u = USE.cur;
+    if (!u) return;
+    USE.cur = null;
+    useClose(u);
+    useSend();
+  }
+  function useBytes(t) {
+    try { return new TextEncoder().encode(t).length; } catch (e) { return t.length * 3; }
+  }
+  /** The person's key, as the server gave it with their screen (home, owner). */
+  function useKeep(who, key) {
+    if (!who || !key) return;
+    var keys = LS.get(USE_KEYS) || {};
+    if (keys[who] === key) return;
+    keys[who] = key;
+    LS.set(USE_KEYS, keys);
+  }
+  /**
+   * What is on the list goes to the server, in the background: on a page being put away the request
+   * carries on by itself (keepalive, 64 kB at most). Each is marked as on its way, and taken off once the
+   * server has it; one not heard of goes again 10 minutes on (the server keeps each once), three times at most.
+   */
+  function useSend() {
+    var q = LS.get(USE_Q) || [];
+    if (!q.length) return;
+    var keys = LS.get(USE_KEYS) || {};
+    var t = Date.now(), batch = [], bytes = 200;
+    q = q.filter(function (x) { return !(x.tries >= 3 && t - x.sent >= 600000); });
+    q.forEach(function (x) {
+      if (x.sent && t - x.sent < 600000) return;
+      var key = x.kiosk ? '' : keys[x.who];
+      if (!x.kiosk && !key) return;
+      var item = { id: x.id, at: x.at, kind: x.kind, who: x.who, kiosk: x.kiosk, key: key, ver: x.ver, dev: x.dev, ms: x.ms, shown: x.shown, fresh: x.fresh, ev: x.ev };
+      var n = useBytes(JSON.stringify(item));
+      if (batch.length >= 40 || bytes + n > USE_SEND_BYTES) return;
+      bytes += n;
+      batch.push(item);
+      x.sent = t;
+      x.tries = (x.tries || 0) + 1;
+    });
+    LS.set(USE_Q, q);
+    if (!batch.length) return;
+    var ids = batch.map(function (x) { return x.id; });
+    var done = function (res) {
+      if (!res || !res.ok) return;
+      LS.set(USE_Q, (LS.get(USE_Q) || []).filter(function (x) { return ids.indexOf(x.id) < 0; }));
+    };
+    var req = { action: 'usage', auth: {}, data: { sessions: batch } };
+    try {
+      if (SITE) {
+        fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(req), credentials: 'omit', cache: 'no-store', keepalive: true })
+          .then(function (r) { return r.json(); }).then(done, function () {});
+      } else if (window.google && google.script && google.script.run) {
+        google.script.run.withSuccessHandler(done).withFailureHandler(function () {}).api(req);
+      }
+    } catch (e) { /* it goes again next time */ }
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') useEnd();
+    else if (!USE.cur) { useStart('back', performance.now()); usePage(); }
+  });
+  window.addEventListener('pagehide', useEnd);
+  window.addEventListener('pageshow', function (e) { if (e.persisted && !USE.cur && document.visibilityState === 'visible') { useStart('back', performance.now()); usePage(); } });
+  window.addEventListener('error', function (e) {
+    // (a picture or file that did not load has no message: not the page's error)
+    if (e && e.message) useErr(e.message + (e.lineno ? ' @' + e.lineno + ':' + (e.colno || 0) : ''));
+  });
+  window.addEventListener('unhandledrejection', function (e) {
+    var r = e && e.reason;
+    // (a request that failed is kept as such already)
+    if (!r || r.network || r.code || r.transient != null) return;
+    useErr('Promise: ' + String(r.message || r).slice(0, 140));
+  });
+  if (document.visibilityState !== 'hidden') useStart('open', 0);
+  // (a screen never put away, as the shop's, sends what it has every 30 minutes, touched or not)
+  setInterval(function () { var u = USE.cur; if (u && performance.now() - u.t0 > USE_SPAN) useCut('more'); }, 60000);
+
+  // ======================================================================
   // Overlays: toast, sheet, confirm
   // ======================================================================
   // What went wrong lately, as the person was told: sent along when they report a problem.
   var ERRS = [];
   function whereNow() { return S.view === 'owner' ? 'เจ้าของร้าน/' + S.ownerTab : S.view === 'staff' ? 'พนักงาน/' + (S.sub || S.tab) : S.view || ''; }
   function toast(msg, tone) {
-    if (tone === 'bad') { ERRS.push({ m: String(msg).slice(0, 120), t: Date.now(), at: whereNow() }); if (ERRS.length > 5) ERRS.shift(); }
+    if (tone === 'bad') { ERRS.push({ m: String(msg).slice(0, 120), t: Date.now(), at: whereNow() }); if (ERRS.length > 5) ERRS.shift(); useEv('e', String(msg).slice(0, 120)); }
     var box = $('#toasts');
     var ms = tone === 'bad' || tone === 'tip' ? 7000 : 4500;
     var gone = function (el) { if (el.parentNode) el.parentNode.removeChild(el); };
@@ -5394,6 +5762,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var sheetState = null;
   function openSheet(o) {
     sheetState = o;
+    usePage();
     var root = $('#sheet-root');
     // A sheet already up takes the new content in place: it fades in, the sheet stays.
     var swap = root.classList.contains('open') && !root.classList.contains('closing');
@@ -5568,6 +5937,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var root = $('#sheet-root');
     var o = sheetState;
     sheetState = null;
+    usePage();
     // From wherever a finger left it, the sheet slides away down.
     var sheet = root.querySelector('.sheet'), scrim = root.querySelector('.scrim');
     if (sheet) sheet.style.transform = '';
@@ -6007,7 +6377,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var tabWas = tabIndex(app);
     var picN = PIC.n, out;
     PIC.n = 0; PIC.at = 'r';
-    try { out = String(fn()); } finally { PIC.n = picN; PIC.at = 'p'; }
+    try {
+      out = String(fn());
+    } catch (e) {
+      // (shown from what this phone kept, which cannot be drawn: without it)
+      if (!dropKept()) throw e;
+      PIC.n = 0;
+      fn = VIEWS[S.view] || VIEWS.loading;
+      out = String(fn());
+    } finally { PIC.n = picN; PIC.at = 'p'; }
     var key = out.replace(CLOCKS, '$1');
     if (soft === true && screen === lastScreen && key === lastKey) return;
     lastKey = key;
@@ -6041,6 +6419,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     afterRender();
     tick();
+    usePage();
+    useShown(app);
   }
   /** Which tab of the tab bar on the screen is chosen (-1: none). */
   function tabIndex(root) {
@@ -6496,7 +6876,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // already allows it (the clock-in needs it; no question pops up before the app).
     if (B.clock && B.clock.mode === 'kiosk+phone') gpsAllowed().then(function (yes) { if (yes && S.view === 'staff' && !S.geo) warmGps(); });
     render();
-    call('home', {}, { empId: id, pin: pin }).then(function (data) {
+    call('home', {}, { empId: id, pin: pin }, { once: true }).then(function (data) {
       S.pinBusy = false;
       S.login = null;
       S.staff = { empId: id, pin: pin, name: ownName(e0) };
@@ -6906,6 +7286,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       B = Object.assign(B, b);
       S.kiosk.name = b.kiosk.name;
       kioskDone(b);
+      useFresh();
       if (S.view === 'kiosk' && S.k.step === 'names') render();
       if (!kioskTimer) kioskTimer = setInterval(kioskRefresh, 5 * 60000);
       pingSoon(1500);
@@ -7046,7 +7427,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     k.step = 'confirm';
     kioskTouch();
     render();
-    call('status', {}, kioskAuth(k.emp, pin)).then(function (data) {
+    call('status', {}, kioskAuth(k.emp, pin), { once: true }).then(function (data) {
       S.pinBusy = false;
       if (seq !== k.seq) return;
       k.status = data.status;
@@ -7103,6 +7484,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function applyHome(data) {
     S.home = data;
     S.homeAt = Date.now();
+    if (S.staff) useKeep(S.staff.empId, data.useKey);
     if (data.levels) S.levels = data.levels;
     syncFaces(data.avatarTag);
     lvCheck(data.level);
@@ -7142,6 +7524,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       S.homeErr = '';
       applyHome(data);
       remember('home', data, homeTag(auth.empId, data));
+      useFresh();
       if (S.view === 'staff') softRender();
       prefetchTabs();
       return data;
@@ -7342,7 +7725,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return html`<section class="card pad-lg">
         <div class="card-h"><span class="eyebrow">วันนี้ · ${thDate(st.workDate)}</span>${d.rain ? html`<span class="pill rain">${icon('rain')} ฝนตก</span>` : ''}</div>
         <div class="row" style="align-items:flex-end;gap:14px"><div class="today-time">${String(d.in).slice(0, 5)}</div><div class="muted" style="padding-bottom:6px">เข้างาน · ${d.shiftName}</div></div>
-        <div class="state-line">${lateTag(d, true)}${d.ot ? html`<span class="pill gold">OT ${hrs(d.ot)} ชม.</span>` : d.otNote ? html`<span class="pill">${d.otNote}</span>` : ''}${d.startReason ? html`<span class="pill">เริ่ม ${d.startUsed} · ${d.startReason}</span>` : ''}</div>
+        <div class="state-line">${lateTag(d, true)}${d.ot ? html`<span class="pill gold">OT ${hrs(d.ot)} ชม.</span>` : d.otNote ? html`<span class="pill">${d.otNote}</span>` : ''}${d.startReason ? html`<span class="pill">เริ่ม ${d.startUsed} · ${d.startReason}</span>` : ''}${d.paidNote ? html`<span class="pill">${d.paidNote}</span>` : ''}</div>
         ${d.rain ? html`<p class="rain-thanks">${d.rainOnTime && rainPts() ? 'มาตรงเวลาวันฝนตก ได้แต้มพิเศษ +' + rainPts() + ' ' : ''}ขอบคุณที่ฝ่าฝนมาทำงานนะ</p>` : ''}
       </section>`;
     }
@@ -7458,6 +7841,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     openSheet({ title: 'กติกา Incentive', body: html`<ul class="rules">
         <li>${icon('check')}<span>มาตรงเวลา ได้ Incentive เต็มทุกเดือน (เบี้ยขยัน ค่าหัวหน้า ค่าอยู่นาน)</span></li>
         <li>${icon('clock')}<span>สายไม่เกิน ${r.grace} นาที ได้ ${r.allowed} ครั้งต่อเดือนโดยไม่หัก</span></li>
+        <li>${icon('money')}<span>เข้างานช้ากว่าเวลากะ ได้เงินตามเวลาที่ทำจริง${r.lateTimeFrom && r.lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(r.lateTimeFrom) + ')' : ''}: นับทีละครึ่งชั่วโมง ปัดลง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง · เช่น กะเริ่ม 10:30 มาถึง 10:55 ค่าจ้างและ OT เท่าเดิม มาถึง 11:40 ได้น้อยลง 1 ชม. · ได้อนุญาตเข้างานช้าก็นับแบบนี้ แต่ไม่หัก Incentive</span></li>
         <li>${icon('rain')}<span>วันฝนตก สายได้ถึง ${r.rainGrace} นาที${r.rainLate > r.rainGrace ? ' · ฝนหนักมาถึงช้ากว่านั้นไม่เกิน ' + r.rainLate + ' นาที นับเป็นสายไม่เกินกำหนด' : ''} ค่อย ๆ มาให้ปลอดภัย · ฝนหนักจนออกจากบ้านไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน</span></li>
         ${free.length ? html`<li>${icon('leave')}<span>${free.join(', ')}ตามสิทธิ์ ขอก่อนวันลา ไม่หัก</span></li>` : ''}
         ${biz.map(function (t) { return html`<li>${icon('cal')}<span>${t.type}แจ้งล่วงหน้า ${t.advanceDays} วันขึ้นไป ไม่หัก · แจ้งน้อยกว่านั้น หักวันละ ${money(t.cut)} บาท</span></li>`; })}
@@ -7771,6 +8155,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${row('data-act="refresh-home"', 'refresh', 'รีเฟรชข้อมูล', '')}
         <button class="item danger" data-act="logout-staff"><span class="me-ic">${icon('logout')}</span><div class="grow"><div class="t">ออกจากระบบในเครื่องนี้</div></div></button>
       </div></section>
+      <button class="use-note" data-act="use-about">${icon('info')}<span>ร้านเก็บสถิติการใช้แอป (เปิดหน้าไหน กดปุ่มไหน แอปตอบเร็วไหม) เพื่อปรับปรุงแอปให้เร็วและใช้ง่ายขึ้น ไม่เก็บสิ่งที่พิมพ์ · <u>ดูรายละเอียด</u></span></button>
     </div>`;
   }
 
@@ -8883,7 +9268,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return html`<div class="day"><div class="d ${d.weekend ? 'we' : ''}"><b>${+d.date.slice(8, 10)}</b><span>${TH_DAYS[dowOf(d.date)]}</span></div>
           <div class="m"><b>${d.in ? String(d.in).slice(0, 5) : '-'}</b> <span class="s">น. · กะ${d.shiftType || d.shiftName} เริ่ม ${d.startUsed}</span>
           <div class="tags">${lateTag(d)}${d.rain ? html`<span class="pill rain">${icon('rain')} ฝนตก${d.rainOnTime && rainPts() ? ' · +' + rainPts() + ' แต้ม' : ''}</span>` : ''}${d.ot ? html`<span class="pill gold">OT ${hrs(d.ot)} ชม.</span>` : ''}</div>
-          ${d.startReason ? html`<div class="s">${d.startReason}</div>` : ''}${d.otNote ? html`<div class="s">${d.otNote}</div>` : ''}</div></div>`;
+          ${d.startReason ? html`<div class="s">${d.startReason}</div>` : ''}${d.otNote ? html`<div class="s">${d.otNote}</div>` : ''}${d.paidNote ? html`<div class="s">${d.paidNote}</div>` : ''}</div></div>`;
       }) : html`<div class="empty">ยังไม่มีวันทำงานในเดือนนี้</div>`}</section>
       ${(m.entries || []).length ? html`<h3 class="h3">รายการที่ผู้อนุมัติบันทึก</h3><section class="card flush"><div class="list">${m.entries.map(function (x) {
         return html`<div class="item"><div class="grow"><div class="t">${x.type}${x.kind === 'permit' ? ' ' + x.time + ' น.' : ''}</div><div class="s">${thDate(x.date)}${x.reason ? ' · ' + x.reason : ''}${x.noOt ? ' · ไม่ได้ OT' : ''}</div></div>${x.kind !== 'permit' ? html`<div class="r amt">${x.kind === 'ot' && x.qty > 0 ? '+' : ''}${x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)} ${x.unit}</div>` : ''}</div>`;
@@ -9149,7 +9534,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var b = ((S.home && S.home.leave.balance) || []).filter(function (x) { return x.vacation; })[0];
     if (!b) return;
     var today = workDate();
-    openSheet({ title: b.type + ' ' + (+today.slice(0, 4) + 543), body: html`<div class="stack">
+    openSheet({ use: 'สิทธิ์ลา', title: b.type + ' ' + (+today.slice(0, 4) + 543), body: html`<div class="stack">
       <div class="stats" style="grid-template-columns:repeat(3,1fr)"><div class="stat"><b>${b.quota}</b><span>สิทธิ์ปีนี้</span></div><div class="stat"><b>${b.used}</b><span>ใช้แล้ว</span></div><div class="stat"><b>${b.remaining}</b><span>เหลือ</span></div></div>
       <section class="card flush"><div class="list">
         <div class="item"><div class="grow"><div class="t">พักร้อนตามกฎหมาย</div><div class="s">${b.annual ? (b.annualOn ? 'ทำงานครบ ' + b.annualYears + ' ปี วันที่ ' + thShort(b.annualOn) + ' ใช้ได้ตั้งแต่วันนั้น' : 'ทำงานครบ ' + b.annualYears + ' ปีแล้ว') : b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ได้เมื่อทำงานครบ ' + b.annualYears + ' ปี'}</div></div><div class="r amt">${b.annual} วัน</div></div>
@@ -9270,7 +9655,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function openSlip(key, btn) {
     var show = function (d) {
-      openSheet({ title: 'สลิปเงินเดือน ' + d.payslip.period.month, wide: true, body: slipDoc(d.payslip),
+      openSheet({ use: 'สลิปเงินเดือน', title: 'สลิปเงินเดือน ' + d.payslip.period.month, wide: true, body: slipDoc(d.payslip),
         foot: html`${HOOKS.noPrint ? '' : html`<button class="btn" data-act="print">${icon('print')} พิมพ์ / PDF</button>`}<button class="btn primary" data-act="save-image" data-target="#slip-doc" data-name="payslip-${key}">${icon('image')} บันทึกเป็นรูป</button>` });
     };
     var have = slipHere(key);
@@ -9312,6 +9697,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var shot = selfie ? takeSelfie() : Promise.resolve(null);
     // Already scanned (in the app, or by the link where links count), else scan now.
     var qrStep = scanned ? Promise.resolve({ qr: S.scanCode, inApp: S.scanInApp, readAt: S.scanReadAt }) : B.clock.phoneQr ? scanShopQr(true) : Promise.resolve({});
+    var before = inToday();
     spin(btn, true);
     Promise.all([shot, qrStep]).then(function (r) {
       var me = r[0];
@@ -9321,7 +9707,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return (fresh ? Promise.resolve(S.geo) : locate(true)).then(function (g) {
         var data = { shift: S.shift, device: deviceId(), qr: q.qr || '', scannedInApp: !!q.inApp, qrPhoto: !!q.fromPhoto, qrReadAt: q.readAt || '', photo: me ? me.photo : q.photo || '', photoAge: me ? me.age : q.age };
         if (g) { data.lat = g.lat; data.lng = g.lng; data.acc = g.acc; }
-        return call('clock', data, staffAuth());
+        return clockWatched(call('clock', data, staffAuth()), before);
       });
     }).then(function (res) {
       spin(btn, false);
@@ -9334,7 +9720,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       showResult(res.result);
     }, function (e) {
       spin(btn, false);
-      if (e.network) { clockAnswerLost(e); return; }
       savingDone();
       if (e.code === 'QR' || e.code === 'QR_OLD' || e.code === 'CLOCK') { S.scanCode = ''; S.scanInApp = false; S.scanReadAt = ''; render(); }
       if (e.message === 'ยังไม่ได้สแกน') return;
@@ -9353,6 +9738,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!S.shift) { toast('เลือกกะก่อน', 'bad'); return; }
     // The camera must open right away from the tap, before anything waits.
     var shot = forReview && S.posterShot ? Promise.resolve(S.posterShot) : takeSelfie(true);
+    var before = inToday();
     spin(btn, true);
     shot.then(function (me) {
       S.posterShot = me;
@@ -9362,7 +9748,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return (fresh ? Promise.resolve(S.geo) : locate(true)).then(function (g) {
         var data = { shift: S.shift, device: deviceId(), qr: forReview ? '' : me.qr, qrInPhoto: !forReview, review: !!forReview, photo: me.photo, photoAge: me.age };
         if (g) { data.lat = g.lat; data.lng = g.lng; data.acc = g.acc; }
-        return call('clock', data, staffAuth());
+        return clockWatched(call('clock', data, staffAuth()), before);
       });
     }).then(function (res) {
       if (!res) return;
@@ -9375,7 +9761,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       showResult(res.result);
     }, function (e) {
       spin(btn, false);
-      if (e.network) { clockAnswerLost(e); return; }
       // The poster's sheet takes the saving one's place; otherwise it goes, and a message says why.
       if ((e.code === 'POSTER' || e.code === 'QR' || e.code === 'QR_OLD') && S.posterShot && !forReview) { posterMiss(S.posterShot, e.message); return; }
       savingDone();
@@ -9384,26 +9769,58 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     });
   }
   /**
-   * The clock-in went out but its answer was lost (the network, or Google's
-   * side): it may have been saved. Ask for today's status before saying
-   * anything, so nobody presses again for nothing or thinks it failed.
+   * A clock-in on its way, watched. Google often saves one in 2–5 seconds, then holds its answer or loses
+   * it on the way for 10–36 (the test app, 6 Oct 2569: 9 of 26 slow requests so). Its answer not in after
+   * 6 seconds (HEDGE_MS), today's status is asked alongside, and once more 8 seconds after: the clock-in
+   * found saved is the answer, in the words the server kept for it (apiStatus_), and the one still on its
+   * way is let go. Its answer lost: the status is asked at once, and only one asked after the loss says it
+   * was not saved, before anything is said, so nobody presses again for nothing or thinks it failed.
+   * `before`: in already when they tapped (a status cannot tell this one apart then: its answer only).
    */
-  function clockAnswerLost(e) {
-    var before = !!(S.home && S.home.status && S.home.status.checkedIn);
-    toast('เน็ตสะดุด — กำลังตรวจว่าลงเวลาแล้วหรือยัง…');
-    loadHome(true, true).then(function (d) {
-      var st = d && d.status;
-      if (!st) { savingDone(); toast('เน็ตสะดุด ยังตรวจไม่ได้ว่าลงเวลาแล้วหรือยัง — รอสักครู่แล้วเปิดแอปใหม่ก่อนกดอีกครั้ง', 'bad'); return; }
-      if (st.checkedIn && !before) {
-        S.scanCode = ''; S.scanInApp = false; S.scanReadAt = ''; S.posterShot = null;
-        render();
-        showResult({ tone: 'ok', title: 'ลงเวลาเรียบร้อย', lines: ['เข้างาน ' + String(st.today.in).slice(0, 5) + ' น. · ' + st.today.shiftName] });
-        return;
-      }
-      savingDone();
-      toast('ยังไม่ได้ลงเวลา (เน็ตสะดุด) — กดลงเวลาอีกครั้ง', 'bad');
+  var CLOCK_ASK_AGAIN_MS = 8000;
+  function clockWatched(sent, before) {
+    return new Promise(function (resolve, reject) {
+      var over = false, lost = false, asked = 0, timer = 0;
+      var end = function (ok, v) {
+        if (over) return;
+        over = true;
+        clearTimeout(timer);
+        if (ok) resolve(v); else reject(v);
+      };
+      var ask = function () {
+        timer = 0;
+        if (over) return;
+        // (not while the app is out of sight, as for a read sent twice: back in sight, the answer may be in)
+        if (!lost && document.visibilityState === 'hidden') { timer = setTimeout(ask, 1000); return; }
+        var decides = lost;
+        var unsure = function () {
+          if (decides) end(false, { message: 'เน็ตสะดุด ยังตรวจไม่ได้ว่าลงเวลาแล้วหรือยัง — รอสักครู่แล้วเปิดแอปใหม่ก่อนกดอีกครั้ง' });
+          else if (!lost && ++asked < 2) timer = setTimeout(ask, CLOCK_ASK_AGAIN_MS);
+        };
+        call('status', {}, staffAuth(), { fresh: true }).then(function (d) {
+          var st = d && d.status;
+          if (st && st.checkedIn && !before) end(true, { status: st, me: d.me, result: d.clock || savedResult(st) });
+          else if (st && decides && !before) end(false, { message: 'ยังไม่ได้ลงเวลา (เน็ตสะดุด) — กดลงเวลาอีกครั้ง' });
+          else unsure();
+        }, unsure);
+      };
+      sent.then(function (res) {
+        end(true, res);
+      }, function (e) {
+        if (!e.network || over) { end(false, e); return; }
+        lost = true;
+        clearTimeout(timer);
+        toast('เน็ตสะดุด — กำลังตรวจว่าลงเวลาแล้วหรือยัง…');
+        ask();
+      });
+      if (!before) timer = setTimeout(ask, HEDGE_MS);
     });
   }
+  /** A clock-in found saved, its own answer not in and nothing kept of it: what today's status says. */
+  function savedResult(st) {
+    return { tone: 'ok', title: 'ลงเวลาเรียบร้อย', lines: ['เข้างาน ' + String(st.today.in).slice(0, 5) + ' น. · ' + st.today.shiftName] };
+  }
+  function inToday() { return !!(S.home && S.home.status && S.home.status.checkedIn); }
   function posterMiss(me, why) {
     openSheet({ title: 'ไม่เห็นป้าย QR ในรูป', body: html`<div class="poster-miss"><img src="${me.photo}" alt="รูปที่เพิ่งถ่าย">
         <p class="small">${why || 'ระบบหา QR ของร้านในรูปนี้ไม่เจอ'}</p>
@@ -9513,10 +9930,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var pics = html`${d && d.screenPhoto ? html`<button class="menu-item" data-act="photo" data-url="${d.screenPhoto}">${icon('image')} รูปจากจอตอนสแกน</button>` : ''}${d && d.photo ? html`<button class="menu-item" data-act="photo" data-url="${d.photo}">${icon('camera')} รูปจากมือถือตอนลงเวลา</button>` : ''}`;
     // The approver's own day is the owner's to record or correct, where the owner keeps it that way.
     if (S.view !== 'owner' && S.home && S.home.me && S.home.me.id === id && !S.team.selfOk) {
-      openSheet({ title: r.name, body: html`<div>${info}<div class="hint">${icon('info')}<span>รายการของคุณเอง (เวลา OT ลา) ให้เจ้าของร้านเป็นคนบันทึกหรือแก้</span></div>${pics}</div>` });
+      openSheet({ use: 'รายละเอียดพนักงาน', title: r.name, body: html`<div>${info}<div class="hint">${icon('info')}<span>รายการของคุณเอง (เวลา OT ลา) ให้เจ้าของร้านเป็นคนบันทึกหรือแก้</span></div>${pics}</div>` });
       return;
     }
-    openSheet({ title: r.name, body: html`<div>
+    openSheet({ use: 'รายละเอียดพนักงาน', title: r.name, body: html`<div>
       ${info}
       <button class="menu-item" data-act="open-fix" data-id="${id}">${icon('edit')} ${d ? 'แก้เวลา / กะ' : 'ลงเวลาแทน'}</button>
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="OT เพิ่ม">${icon('plus')} OT เพิ่ม</button>
@@ -9539,7 +9956,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <label class="field"><span>พนักงาน</span><select class="input" id="en-emp">${(B.employees || []).map(function (e) { return html`<option value="${e.id}" ${o.emp === e.id ? 'selected' : ''}>${e.name}</option>`; })}</select></label>
       <label class="field"><span>วันที่</span><input class="input" type="date" id="en-date" value="${o.date || workDate()}"></label>
       ${kind === 'permit'
-        ? html`<label class="field"><span>เวลาที่อนุญาตให้เข้างาน</span><input class="input" type="time" id="en-time" value="${o.time || ''}"></label><label class="check"><input type="checkbox" id="en-noot" ${o.noOt ? 'checked' : ''}><span>วันนี้ไม่ได้ OT ในกะ</span></label>`
+        ? html`<label class="field"><span>เวลาที่อนุญาตให้เข้างาน</span><input class="input" type="time" id="en-time" value="${o.time || ''}"></label><label class="check"><input type="checkbox" id="en-noot" ${o.noOt ? 'checked' : ''}><span>วันนี้ไม่ได้ OT ในกะ</span></label>
+          <p class="muted small" style="margin:-4px 0 10px">ไม่นับสาย ไม่หัก Incentive · ได้เงินตามเวลาที่ทำจริง${(B.rules || {}).lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(B.rules.lateTimeFrom) + ')' : ''}: เวลาตั้งแต่เวลาเข้ากะถึงตอนมาถึง นับทีละครึ่งชั่วโมง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง</p>`
         : html`<label class="field"><span>จำนวน (${def.unit})</span><input class="input" type="number" inputmode="decimal" step="${kind === 'ot' ? '0.5' : '1'}" id="en-qty" value="${o.qty || (kind === 'absent' ? 1 : kind === 'incentiveCut' ? (B.rules || {}).lateCut || '' : '')}"></label>
           ${kind === 'incentiveCut' ? html`<p class="muted small" style="margin:-4px 0 10px">หักจาก Incentive ไม่หักเงินเดือน · ถ้า Incentive ไม่พอ ส่วนที่เหลือยกไปหักรอบหน้าครั้งเดียว</p>` : ''}
           ${kind === 'ot' ? html`<div class="chips qty-chips" role="group" aria-label="เลือกชั่วโมง OT">${[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4].map(function (h) { return html`<button type="button" class="chip" data-act="ot-qty" data-h="${h}" aria-pressed="${String(o.qty) === String(h)}">${h === 0.5 ? '30 นาที' : hrs(h) + ' ชม.'}</button>`; })}</div>` : ''}`}
@@ -9566,7 +9984,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var e = empById(id) || {};
     var shifts = (B.shifts || []).filter(function (s) { return !e.dept || !s.dept || s.dept === e.dept; });
     var d = preset ? { date: preset.date, shift: preset.shift, in: preset.time } : r.day;
-    openSheet({ title: (d ? 'แก้เวลา · ' : 'ลงเวลาแทน · ') + (e.name || id), body: html`
+    openSheet({ use: 'แก้เวลา / ลงเวลาแทน', title: (d ? 'แก้เวลา · ' : 'ลงเวลาแทน · ') + (e.name || id), body: html`
       <label class="field"><span>วันที่</span><input class="input" type="date" id="fx-date" value="${d ? d.date : workDate()}"></label>
       <label class="field"><span>กะ</span><select class="input" id="fx-shift">${shifts.map(function (s) { return html`<option value="${s.code}" ${d && d.shift === s.code ? 'selected' : ''}>${s.type} · ${s.start}–${s.end}</option>`; })}</select></label>
       <label class="field"><span>เวลาเข้างาน</span><input class="input" type="time" id="fx-time" value="${d ? String(d.in).slice(0, 5) : ''}"></label>
@@ -9625,7 +10043,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!l) return;
     var sick = l.type === sickType();
     var r = B.rules || {};
-    openSheet({ title: (decide ? 'อนุมัติ · ' : '') + l.name + ' · ' + l.type, body: html`<p class="muted small mt0">${thRange(l.from, l.to)} · ${l.days} วัน${l.requestedAt ? ' · ขอเมื่อ ' + whenAt(l.requestedAt) : ''}</p>
+    openSheet({ use: 'การลา · รายละเอียด', title: (decide ? 'อนุมัติ · ' : '') + l.name + ' · ' + l.type, body: html`<p class="muted small mt0">${thRange(l.from, l.to)} · ${l.days} วัน${l.requestedAt ? ' · ขอเมื่อ ' + whenAt(l.requestedAt) : ''}</p>
       ${sick ? html`<label class="check"><input type="checkbox" id="lf-cert" data-change="lf-cert" ${l.cert ? 'checked' : ''}><span>เห็นใบรับรองแพทย์แล้ว<small>ตั้งแต่วันที่ ${r.sickNoteDay || 3} ของการป่วย วันที่ใบให้หยุดไม่หัก Incentive · ดูตัวจริงหรือรูปที่ส่งมา ไม่ต้องเก็บไว้ในแอป · ส่งหลังอนุมัติเงินเดือนแล้ว คืนในเดือนถัดไปถ้าภายใน ${r.noteLateDays || 3} วันหลังกลับมาทำงาน · ใบที่นับในเงินเดือนที่อนุมัติแล้ว เจ้าของร้านแก้ได้ ส่วนต่างปรับในเดือนถัดไป</small></span></label>
         <div class="two" id="lf-days" ${l.cert ? '' : 'hidden'}><label class="field"><span>ใบให้หยุดตั้งแต่</span><input class="input" type="date" id="lf-from" value="${l.certFrom || l.from}"></label><label class="field"><span>ถึง</span><input class="input" type="date" id="lf-to" value="${l.certTo || l.to}"></label></div>
         <label class="check"><input type="checkbox" id="lf-hospital" ${l.hospital ? 'checked' : ''}><span>นอนโรงพยาบาล<small>ไม่หัก Incentive ทั้งครั้ง · ดูใบรับรองแพทย์หรือเอกสารโรงพยาบาล</small></span></label>` : ''}
@@ -9800,7 +10218,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!e) return;
     var inc = e.incentive;
     var rules = B.rules || {};
-    openSheet({ title: e.name + ' · ' + S.pay.payroll.period.month, wide: true, body: html`<div class="stack">
+    openSheet({ use: 'เงินเดือนรายคน', title: e.name + ' · ' + S.pay.payroll.period.month, wide: true, body: html`<div class="stack">
       ${e.warnings.length ? html`<div class="warn-box">${e.warnings.map(function (w) { return html`<div>• ${w}</div>`; })}</div>` : ''}
       <section class="card"><table class="lines">${e.earnings.map(function (l) { return html`<tr><td>${l.label}<span class="d">${l.detail}</span></td><td class="a">${money(l.amount, true)}</td></tr>`; })}
         ${e.deductions.map(function (l) { return html`<tr class="neg"><td>${l.label}<span class="d">${l.detail}</span></td><td class="a">−${money(l.amount, true)}</td></tr>`; })}
@@ -9814,7 +10232,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <h3 class="h3 mt0">ลงเวลา ${e.days.length} วัน</h3>
       <div class="table-wrap"><table class="log"><thead><tr><th>วันที่</th><th>กะ</th><th>เริ่ม</th><th>เข้า</th><th>สาย</th><th>OT</th><th>หมายเหตุ</th><th></th></tr></thead><tbody>${e.days.map(function (d) {
         var away = (d.flags || []).some(function (f) { return /นอกร้าน/.test(f); });
-        var notes = [d.startReason, d.otNote, d.rain ? 'ฝนตก' : '', d.source, d.dist != null && !away ? 'ห่าง ' + distText(d.dist) : '', d.note].concat(d.flags || []).filter(Boolean).join(' · ');
+        var notes = [d.startReason, d.otNote, d.paidNote, d.rain ? 'ฝนตก' : '', d.source, d.dist != null && !away ? 'ห่าง ' + distText(d.dist) : '', d.note].concat(d.flags || []).filter(Boolean).join(' · ');
         return html`<tr><td>${thDate(d.date)}</td><td>${d.shiftType || d.shiftName}</td><td>${d.startUsed}</td><td>${String(d.in).slice(0, 5)}</td><td>${d.lateMin ? html`<span class="pill ${d.late === 'minor' ? 'warn' : 'bad'}">${d.lateMin}</span>` : ''}</td><td>${d.ot ? hrs(d.ot) : ''}</td><td class="small muted">${notes}</td><td>${d.photo ? html`<button class="icon-btn" data-act="photo" data-url="${d.photo}" aria-label="ดูรูป">${icon('image')}</button>` : ''}</td></tr>`;
       })}</tbody></table></div>
       ${e.entries.length ? html`<h3 class="h3">รายการเพิ่มเติม</h3><section class="card flush"><div class="list">${e.entries.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.type}</div><div class="s">${thDate(x.date)}${x.reason ? ' · ' + x.reason : ''} · ${x.by}</div></div><div class="r amt small">${x.kind === 'permit' ? 'เข้า ' + x.time : (x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)) + ' ' + x.unit}</div></div>`; })}</div></section>` : ''}
@@ -9852,7 +10270,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.ownerHome = null; S.ownerErr = '';
     S.view = 'owner'; S.ownerTab = 'overview';
     render();
-    return call('owner', {}, { ownerPin: pin }).then(function (d) {
+    return call('owner', {}, { ownerPin: pin }, { once: true }).then(function (d) {
       S.pinBusy = false;
       S.login = null;
       S.owner = { pin: pin };
@@ -9888,9 +10306,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (d.levels) { S.levels = d.levels; if (S.home) S.home.levels = d.levels; }
       if (LS.get(KEY.owner)) remember('owner', d);
       syncFaces(d.avatarTag);
+      useKeep('OWNER', d.useKey);
+      useFresh();
       if (S.view === 'owner') softRender();
       prefetchTabs();
       syncDailySums(d.daily);
+      syncUseAdvice(d.usage);
       if (d.bell) badgeSet(d.bell.unread || 0);
       goSoon();
       return d;
@@ -9989,6 +10410,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${orderOwnerCard(o.order)}
       ${feedbackCard(o.feedback)}
       ${pushTeamCard(o.push)}
+      ${useCard(o.usage)}
       ${(o.rainReview || []).length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ฝนตกที่ควรตรวจ</span></div><p class="small muted" style="margin:6px 16px 0">ข้อมูลอากาศไม่ตรงกับที่บันทึก บันทึกย้อนหลัง หรือปิดตอนที่ยังมีฝน · ถูกต้อง = คงไว้ · ลบ = ทุกคนที่ลงเวลาในช่วงนั้นไม่ได้ผ่อนผันฝนตก</p><div class="list">${o.rainReview.map(function (x) { return entryRow(x, true); })}</div></section>` : ''}
       ${(o.selfEdits || []).length ? html`<section class="card flush"><button class="item" data-act="self-edits">${icon('list')}<span class="grow">ผู้อนุมัติทำรายการให้ตัวเอง ${o.selfEdits.length} รายการ<span class="s" style="display:block">45 วันล่าสุด · ไว้ให้เห็นเฉย ๆ</span></span>${icon('right')}</button></section>` : ''}
       ${todo.length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">สิ่งที่ต้องทำ</span></div><div class="list">${todo.map(function (t) { return html`<button class="item" data-act="owner-tab" data-tab="${t[2]}">${icon(t[0])}<span class="grow">${t[1]}</span>${icon('right')}</button>`; })}</div></section>` : ''}
@@ -10070,7 +10492,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return html`<label class="field"><span>${f[1]}</span>${ctl}${f[3] ? html`<small>${f[3]}</small>` : ''}</label>`;
     };
     var face = id ? faceOf({ id: id }) : '';
-    openSheet({ title: id ? 'แก้ไข ' + (e.display || e.nick) : 'เพิ่มพนักงาน', body: html`${face ? html`<div class="form-group"><div class="row" style="gap:14px">${avatar({ id: id }, 'lg')}<div class="grow small muted">รูปที่${e.display || e.nick}ถ่ายเองในแอป เห็นเฉพาะคนที่เข้าระบบแล้ว</div><button class="btn sm" data-act="face-remove-emp" data-id="${id}">เอารูปออก</button></div></div>` : ''}${EMP_FIELDS.map(function (g) { return html`<div class="form-group"><div class="eyebrow" style="margin-bottom:8px">${g[0]}</div>${g[1].map(input)}</div>`; })}
+    openSheet({ use: 'แก้ไข/เพิ่มพนักงาน', title: id ? 'แก้ไข ' + (e.display || e.nick) : 'เพิ่มพนักงาน', body: html`${face ? html`<div class="form-group"><div class="row" style="gap:14px">${avatar({ id: id }, 'lg')}<div class="grow small muted">รูปที่${e.display || e.nick}ถ่ายเองในแอป เห็นเฉพาะคนที่เข้าระบบแล้ว</div><button class="btn sm" data-act="face-remove-emp" data-id="${id}">เอารูปออก</button></div></div>` : ''}${EMP_FIELDS.map(function (g) { return html`<div class="form-group"><div class="eyebrow" style="margin-bottom:8px">${g[0]}</div>${g[1].map(input)}</div>`; })}
       ${id ? html`<div class="form-group"><div class="row between"><span>PIN <b>${e.pin}</b></span><button class="btn sm" data-act="reset-pin" data-id="${id}">สุ่ม PIN ใหม่</button></div></div>` : ''}`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="save-emp" data-id="${id || ''}">บันทึก</button>` });
   }
@@ -10079,29 +10501,45 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var SETTING_GROUPS = [
     ['บริษัท (หัวสลิป)', ['brandName', 'companyTh', 'companyEn', 'branch', 'taxId', 'address']],
     ['การลงเวลา', ['clockMode', 'phoneQr', 'qrScanInApp', 'qrLive', 'screenCam', 'phoneLock', 'shiftCheck', 'approverSelf', 'kioskPin', 'phoneSelfie', 'posterSelfie', 'kioskPhoto', 'radius']],
-    ['มาสายและฝนตก', ['lateGraceMin', 'lateAllowed', 'lateCut', 'rainGraceMin', 'rainLateMin', 'rainMinMm', 'rainLookbackMin', 'weatherKey']],
+    ['มาสายและฝนตก', ['lateGraceMin', 'lateAllowed', 'lateCut', 'lateTimeFrom', 'rainGraceMin', 'rainLateMin', 'rainMinMm', 'rainLookbackMin', 'rainSoonChance', 'weatherKey']],
     ['ลาและขาดงาน', ['absentCut', 'noShowCut', 'suddenLeaveCut', 'suddenFrom']],
     ['วันหยุดและวันจ่ายเงิน', ['daysOffPerMonth', 'fixedHolidays', 'floatingHolidays', 'setHolidays', 'closedDates', 'payUnusedDaysOff', 'payDay']],
     ['ประกันสังคม', ['ssoRate', 'ssoMin', 'ssoMax']],
     ['แจ้งเตือน', ['emailOnApprove', 'ownerEmail', 'lineToken', 'lineAnnounceLeave', 'lineRainNotice', 'lineNews', 'lineHour']],
-    ['ความคิดเห็นจากพนักงาน', ['githubToken'], githubHelp],
+    ['ความคิดเห็นจากพนักงาน', [], githubHelp],
     ['บันทึกหน้างาน', ['dailyLeads', 'menuList']],
     ['เกมของทีม', ['gameClosed']],
     ['เช็กมาตรฐาน (หัวหน้าเช็ก)', ['checkTimes', 'checkFront', 'checkKitchen']],
     ['เป้ายอดขายทีม (แต้มทุกคน)', ['salesTarget', 'salesGrow', 'salesPoints']],
     ['ความปลอดภัย', ['ownerPin']],
   ];
-  /** The GitHub key in three taps: GitHub's page opens filled in; the owner picks the repository and copies the key. */
+  /**
+   * GitHub for Claude's tasks: the shop's own app on GitHub, made and installed from the connect page on the
+   * shop's site (two green buttons there, nothing to copy, no end date; Feedback.gs). The key pasted by hand
+   * is the other way in, folded away: its field and save button are here, not in the group's list.
+   */
   function githubHelp(o) {
+    var g = o.github || {};
+    var set = o.settings.githubToken;
+    if (g.test) return html`<div class="hint" style="margin-bottom:12px">${icon('info')}<span>แอปทดลองไม่ส่งงานถึง Claude · เชื่อมกิตฮับที่แอปจริง</span></div>`;
+    var on = !!(g.app && g.app.on);
+    var made = !!(g.app && !g.app.on);
+    var keyed = !!(set && set.set);
     var url = o.links && o.links.githubToken;
-    if (!url) return '';
-    var on = o.settings.githubToken && o.settings.githubToken.set;
     var repo = String((o.links && o.links.githubRepo) || '').split('/')[1] || '';
-    return html`<div class="hint" style="margin-bottom:12px">${icon(on ? 'check' : 'spark')}<div class="grow">${on
-      ? html`<b>ใส่กุญแจแล้ว</b> — เรื่องที่อนุมัติส่งเป็นงานให้ Claude เอง และทุกคืนส่งบันทึกหน้างานให้ Claude สรุปพร้อมวิธีแก้`
-      : html`<b>ใส่กุญแจ GitHub แล้ว Claude ทำงานให้เอง:</b> เรื่องที่อนุมัติส่งเป็นงานทันที และบันทึกหน้างานได้สรุปพร้อมวิธีแก้ทุกเช้า
-        <ol style="margin:8px 0 0;padding-left:18px"><li>แตะปุ่มด้านล่าง (หน้า GitHub กรอกชื่อ สิทธิ์ และวันหมดอายุไว้ให้แล้ว)</li><li>ที่ Repository access เลือก <b>Only select repositories</b> แล้วเลือก <b>${repo}</b></li><li>กด <b>Generate token</b> แล้วกด Copy</li><li>กลับมาวางในช่อง "GitHub: กุญแจส่งงานให้ Claude" แล้วกดบันทึก</li></ol>
-        <a class="btn sm" style="margin-top:10px" href="${url}" target="_blank" rel="noopener">${icon('lock')} สร้างกุญแจ GitHub</a>`}</div></div>`;
+    var say = on
+      ? html`<b>เชื่อมกิตฮับแล้ว</b> — เรื่องที่อนุมัติส่งเป็นงานให้ Claude เอง และทุกคืนส่งบันทึกหน้างานให้ Claude สรุปพร้อมวิธีแก้ · แอปของร้านบนกิตฮับ: ${g.app.name}`
+      : made
+        ? html`<b>สร้างแอปของร้านบนกิตฮับแล้ว เหลือกด Install</b> — แตะปุ่มด้านล่าง แล้วกดปุ่มเขียว <b>Install</b>`
+        : keyed
+          ? html`<b>ใส่กุญแจแล้ว</b> — เรื่องที่อนุมัติส่งเป็นงานให้ Claude เอง และทุกคืนส่งบันทึกหน้างานให้ Claude สรุปพร้อมวิธีแก้ · กุญแจที่วางอาจหมดอายุ แตะ "เชื่อมกิตฮับ" เพื่อใช้แอปของร้านบนกิตฮับแทน (ไม่หมดอายุ)`
+          : html`<b>เชื่อมกิตฮับแล้ว Claude ทำงานให้เอง:</b> เรื่องที่อนุมัติส่งเป็นงานทันที และบันทึกหน้างานได้สรุปพร้อมวิธีแก้ทุกเช้า · แตะปุ่มด้านล่าง แล้วกดปุ่มเขียวบนกิตฮับ 2 ครั้ง (<b>Create GitHub App</b> แล้ว <b>Install</b>) ไม่ต้องคัดลอกอะไร`;
+    return html`<div class="hint" style="margin-bottom:12px">${icon(on || keyed ? 'check' : 'spark')}<div class="grow">${say}
+        ${g.connect ? html`<div style="margin-top:10px"><a class="btn sm" href="${g.connect}" target="_blank" rel="noopener">${icon('lock')} ${on ? 'เปิดหน้าเชื่อมกิตฮับ' : made ? 'เชื่อมกิตฮับต่อ' : 'เชื่อมกิตฮับ'}</a></div>` : ''}</div></div>
+      <details><summary class="small muted" style="cursor:pointer">${keyed ? 'กุญแจที่วางไว้ (ทางสำรอง)' : 'หรือวางกุญแจเอง (ทางสำรอง)'}</summary>
+        ${url ? html`<ol class="small muted" style="margin:8px 0 0;padding-left:18px"><li><a href="${url}" target="_blank" rel="noopener">สร้างกุญแจ GitHub</a> (หน้า GitHub กรอกชื่อ สิทธิ์ และวันหมดอายุไว้ให้แล้ว)</li><li>ที่ Repository access เลือก <b>Only select repositories</b> แล้วเลือก <b>${repo}</b></li><li>กด <b>Generate token</b> แล้วกด Copy</li><li>วางในช่องด้านล่าง แล้วกดบันทึก</li></ol>` : ''}
+        ${settingField(set)}
+        <button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="githubToken">บันทึกกุญแจ</button></details>`;
   }
   function settingsView() {
     var o = S.ownerHome;
@@ -10119,7 +10557,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <p class="small muted" style="margin:8px 0 0"><b>กันโกงดีที่สุด:</b> ใช้มือถือหรือแท็บเล็ตเครื่องเก่า (ไม่ใช่โทรศัพท์ร้าน) ติดผนังด้านในร้าน สูงระดับหน้าอก มองไม่เห็นจากนอกร้าน เปิดหน้านี้บนเครื่องนั้นแล้วกดปุ่มด้านบน จอแสดง QR ที่เปลี่ยนทุก 5 วินาที และกล้องหน้าของจอเก็บภาพคนที่สแกนทุกครั้ง พนักงานสแกนด้วยแอปในมือถือตัวเอง รูปที่ถ่ายส่งต่อกันใช้ไม่ได้ · เสียบชาร์จไว้ ต่อ Wi-Fi และตั้งไม่ให้จอดับ</p></section>
       ${SETTING_GROUPS.map(function (g) {
         return html`<section class="card"><div class="card-h"><span class="eyebrow">${g[0]}</span></div>${g[2] ? g[2](o) : ''}${g[1].map(function (k) { return settingField(set[k]); })}
-          <button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="${g[1].join(',')}">บันทึก${g[0]}</button></section>`;
+          ${g[1].length ? html`<button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="${g[1].join(',')}">บันทึก${g[0]}</button>` : ''}</section>`;
       })}
       <section class="card"><div class="card-h"><span class="eyebrow">LINE</span></div>
         <div class="small" style="line-height:1.7">กลุ่มพนักงาน: ${o.line.groupLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`} · LINE เจ้าของร้าน: ${o.line.ownerLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`} · สรุปรายวัน: ${o.line.dailyOn ? 'เปิด' : 'ปิด'}</div>
@@ -10682,7 +11120,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         var mini = Object.assign({}, look);
         mini[x.slot] = x.id;
         var preview = x.slot === 'b' ? html`<span class="big">${badgeArt(x.id)}</span>` : x.slot === 'p' ? html`<span class="shop-petp">${raw(PET_ART(x.id, look))}</span>` : x.slot === 'd' ? html`<span class="shop-deco">${raw(DECO_ART(x.id))}</span>` : x.slot === 't' ? html`<i class="rm-sw big th-${x.id}"><i></i><i></i></i>` : char && x.slot === 'f' ? html`<span class="shop-fxp">${raw(charOf(mini))}${chFx(mini)}</span>` : char ? raw(charOf(mini, x.slot === 'm' ? 'pose' : '')) : avatar(me, 'av-try', [0, 0, mini]);
-        return html`<div class="shop-item ${char ? 'char' : ''} soon" aria-disabled="true"><i class="shop-new soon">มา ${thShort(x.from)}</i>${preview}<b>${x.name}</b><span>เร็ว ๆ นี้</span></div>`;
+        return html`<div class="shop-item ${char ? 'char' : ''} soon" aria-disabled="true">${preview}<b>${x.name}</b><span>มา ${thShort(x.from)}</span></div>`;
       })}</div>
       ${char && shop.slot === 'm' ? shopKits(d) : ''}
       ${shop.slot === 'b' && d.games ? html`<p class="small shop-games">${badgeArt('b-g-joystick')} ป้ายจากเกม มี ${d.games.got}/${d.games.all} แบบ · ลุ้นได้ตอนเล่นวิ่งฝ่าด่านหรือศึกน้อง ${d.games.plays} รอบแรกของวัน (รวมกัน) · ยังไม่เจอเลย วันที่ ${d.games.pity} ที่เล่นได้แน่นอน${gameLeftWords(d.games)}</p>` : ''}
@@ -10994,7 +11432,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var body = $('#sheet-body');
     shelf.back = { y: body ? body.scrollTop : 0, at: stripsAt() };
     shelf.ask = { to: p.id, want: want, give: {} };
-    openSheet({ title: 'ขอแลกกับ' + p.name, body: askBody(), foot: askFoot() });
+    openSheet({ use: 'แลกน้อง · ขอแลก', title: 'ขอแลกกับ' + p.name, body: askBody(), foot: askFoot() });
   }
   function askGiven() { var a = shelf.ask; var out = []; Object.keys(a.give).forEach(function (id) { for (var i = 0; i < a.give[id]; i++) out.push(id); }); return out; }
   function askBody() {
@@ -11182,7 +11620,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var body = $('#sheet-body');
     shelf.back = { y: body ? body.scrollTop : 0, at: stripsAt() };
     shelf.fig = { id: id, want: '', last: null };
-    openSheet({ title: figOf(shelf.data, id).name, body: figBody(), foot: figFoot() });
+    openSheet({ use: 'ห้อง · ดูน้อง', title: figOf(shelf.data, id).name, body: figBody(), foot: figFoot() });
     // Up close, it shows off one of its moves.
     setTimeout(function () { var h = $('.fg-hero'); if (h) figGo(h, +h.dataset.plus || 0); }, 380);
   }
@@ -13314,7 +13752,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     showDailyForm();
   }
   function showDailyForm() {
-    openSheet({ title: 'สรุปหน้างาน' + (dl.date === workDate() ? 'วันนี้' : ' ' + dlDay(dl.date)), body: dailyFormBody(), foot: dailyFormFoot() });
+    openSheet({ use: 'สรุปหน้างาน', title: 'สรุปหน้างาน' + (dl.date === workDate() ? 'วันนี้' : ' ' + dlDay(dl.date)), body: dailyFormBody(), foot: dailyFormFoot() });
     wireDailyForm();
   }
   function dlFilled(v) { return !!v && !!(String(v.menu || '').trim() || String(v.detail || '').trim()); }
@@ -13517,7 +13955,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function pushKeep(val) {
     return new Promise(function (done) {
       try {
-        var open = indexedDB.open('seoulful-push', 1);
+        var open = indexedDB.open(STORE + 'seoulful-push', 1);
         open.onupgradeneeded = function () { open.result.createObjectStore('kv'); };
         open.onerror = function () { done(); };
         open.onsuccess = function () {
@@ -13543,12 +13981,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!PUSH.msg) {
       PUSH.msg = true;
       navigator.serviceWorker.addEventListener('message', function (ev) {
+        // Only this site's own helper: the shop's would reach the test app's page under it too.
+        if (ev.source && ev.source.scriptURL && ev.source.scriptURL !== new URL('sw.js', location.href).href) return;
         var m = ev.data || {};
         if (m.type === 'seoulful-notes') bellNews(m.unread, m.notes);
         if (m.type === 'seoulful-go') goTo(m.go);
       });
     }
-    navigator.serviceWorker.getRegistration().then(function (reg) {
+    swReg().then(function (reg) {
       if (!reg) return null;
       // A newer helper is taken in as the app opens.
       try { reg.update().catch(function () {}); } catch (e) { /* later */ }
@@ -13559,8 +13999,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (S.view === 'staff' || S.view === 'owner') softRender();
     }, function () { PUSH.checked = true; });
   }
+  /** This site's own helper, or none: on the test app's site the shop's helper (a folder up) answers as well. */
+  function swReg() {
+    return navigator.serviceWorker.getRegistration().then(function (reg) { return reg && reg.scope === new URL('./', location.href).href ? reg : null; });
+  }
   function pushReg() {
-    return navigator.serviceWorker.register('sw.js').then(function () { return navigator.serviceWorker.ready; }).then(function (reg) { PUSH.reg = reg; return reg; });
+    // Its own helper, when it runs (not .ready: on the test app's site that may be the shop's).
+    return navigator.serviceWorker.register('sw.js').then(function (reg) {
+      var w = reg.installing || reg.waiting;
+      return reg.active || !w ? reg : new Promise(function (ok, bad) {
+        w.addEventListener('statechange', function () { if (w.state === 'activated') ok(reg); else if (w.state === 'redundant') bad(new Error('sw')); });
+      });
+    }).then(function (reg) { PUSH.reg = reg; return reg; });
   }
   /**
    * While the card asks: the helper and the shop's key made ready, so the tap only has the phone ask
@@ -13652,7 +14102,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     badgeSet(0);
     if (!pushCan()) return;
-    navigator.serviceWorker.getRegistration().then(function (reg) { return reg && reg.pushManager.getSubscription(); }).then(function (sub) {
+    swReg().then(function (reg) { return reg && reg.pushManager.getSubscription(); }).then(function (sub) {
       PUSH.sub = null;
       if (!sub) return null;
       if (auth) call('pushOff', { endpoint: sub.endpoint }, auth).catch(function () {});
@@ -13721,7 +14171,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   // -- the bell: what this person was told (the last 30 days)
   var bellList = null; // {notes, unread, phones} as last fetched
-  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', check: 'shield', temp: 'team', test: 'bell' };
+  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', check: 'shield', temp: 'team', 'rain-soon': 'rain', test: 'bell' };
   function noteWhen(iso) {
     var ms = now().getTime() - Date.parse(iso);
     if (ms < 60000) return 'เมื่อสักครู่';
@@ -13766,7 +14216,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         softRender();
       }, function () {});
       // Read here: the phone's own notices of them go too.
-      if (!HOOKS.push && pushCan()) navigator.serviceWorker.getRegistration().then(function (reg) { return reg && reg.getNotifications ? reg.getNotifications() : []; }).then(function (l) { (l || []).forEach(function (n) { n.close(); }); }, function () {});
+      if (!HOOKS.push && pushCan()) swReg().then(function (reg) { return reg && reg.getNotifications ? reg.getNotifications() : []; }).then(function (l) { (l || []).forEach(function (n) { n.close(); }); }, function () {});
     }, function (e) { if (bellShown() && !bellList) setSheetBody(html`${pushHere()}<p class="empty">${e.message}</p>`); });
   }
   /** A note came while the app is open (the phone's helper says so): the bell counts up, and rings. */
@@ -13846,7 +14296,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var c = S.home && S.home.check;
     if (!c || !c.mine) return;
     ck = { round: round, answers: {}, who: {} };
-    openSheet({ title: 'เช็กมาตรฐาน' + c.zone + ' · ' + round + ' น.', body: checkBody(c), foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="ck-send">${icon('check')} บันทึกการเช็ก</button>` });
+    openSheet({ use: 'เช็กมาตรฐาน · รอบ', title: 'เช็กมาตรฐาน' + c.zone + ' · ' + round + ' น.', body: checkBody(c), foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="ck-send">${icon('check')} บันทึกการเช็ก</button>` });
     wireCheck();
   }
   function checkBody(c) {
@@ -14017,6 +14467,110 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     dlSyncAt = Date.now();
     call('dailySync', {}, ownerAuth()).then(function (r) { if (r.changed) { dlList = null; loadOwner(true, true); } }, function () {});
   }
+  // ---- how the app is used (#283, Usage.gs): what staff are told, and the owner's look ---------------
+  /** At the foot of ฉัน: what is kept of the use of the app, why, who sees it, and for how long. */
+  function useAbout() {
+    openSheet({ title: 'สถิติการใช้แอป', body: html`<div class="stack">
+      <p class="mt0">ร้านเก็บว่าแอปถูกใช้อย่างไร เพื่อดูว่าตรงไหนช้า ตรงไหนใช้ยาก แล้วปรับให้เร็วและใช้ง่ายขึ้น</p>
+      <div class="hint">${icon('list')}<span><b>ที่เก็บ</b> เปิดแอปตอนไหนและนานเท่าไหร่ อยู่หน้าไหน กดปุ่มไหน แอปตอบช้าหรือเร็ว ข้อความแจ้งปัญหาที่ขึ้น และรุ่นของมือถือกับเบราว์เซอร์</span></div>
+      <div class="hint">${icon('lock')}<span><b>ที่ไม่เก็บ</b> สิ่งที่พิมพ์ (รวมถึง PIN) รูป และตำแหน่ง</span></div>
+      <div class="hint">${icon('user')}<span><b>ใครเห็น</b> เจ้าของร้านเห็นของแต่ละคน · ทุกสัปดาห์ส่งสรุปแบบไม่มีชื่อให้ Claude ผู้ช่วยที่ปรับปรุงแอป ช่วยดูว่าควรแก้ตรงไหนก่อน</span></div>
+      <div class="hint">${icon('clock')}<span><b>เก็บนานเท่าไหร่</b> 60 วัน แล้วลบเอง</span></div>
+      <p class="small muted mt0">สงสัยอะไรถามเจ้าของร้านได้เลย · อยากให้แอปดีขึ้นตรงไหน บอกได้ที่แท็บไอเดีย</p></div>`,
+      foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
+  }
+  var useRep = { days: 7, data: {}, err: '' };
+  var useSyncAt = 0;
+  function useSec(v) { return v == null ? '–' : v + ' วิ'; }
+  function useDur(min) { return min >= 60 ? Math.round(min / 6) / 10 + ' ชม.' : min >= 1 ? Math.round(min) + ' นาที' : Math.round(min * 60) + ' วิ'; }
+  function useWeek(ymd) { return thShort(ymd) + ' – ' + thShort(addDays(ymd, 6)); }
+  /** On the overview: the last 7 days in a few numbers (worked out at night), and Claude's advice when it has come. */
+  function useCard(u) {
+    var pills = [];
+    if (u && u.opens) {
+      if (u.shown50 != null) pills.push('เห็นหน้าแรก ' + useSec(u.shown50));
+      if (u.fresh50 != null) pills.push('ข้อมูลล่าสุดมา ' + useSec(u.fresh50));
+      if (u.clock50 != null) pills.push('ลงเวลาเสร็จ ' + useSec(u.clock50));
+      if (u.problems) pills.push('ขึ้นปัญหา ' + u.problems + ' ครั้ง');
+    }
+    return html`<button class="card dl-card use-card" data-act="use-open" style="width:100%;text-align:left">
+      <div class="fb-invite-h"><span class="fb-ico">${icon('phone')}</span><div class="grow"><span class="eyebrow">การใช้แอป · 7 วันล่าสุด</span><b>${u && u.opens ? 'เข้าแอป ' + u.opens + ' ครั้ง · ' + u.people + ' คน' : 'ดูว่าทีมใช้แอปอย่างไร ตรงไหนช้า'}</b></div>${icon('right')}</div>
+      ${pills.length ? html`<div class="row wrapx" style="gap:6px">${pills.map(function (p) { return html`<span class="pill">${p}</span>`; })}</div><p class="small muted" style="margin:8px 0 0">เวลาที่ใช้ตามปกติ (ครึ่งหนึ่งของครั้งเร็วกว่านี้)</p>` : ''}
+      ${u && u.advice ? html`<div class="hint" style="margin-top:12px">${icon('spark')}<span><b>Claude แนะนำแล้ว</b> · สัปดาห์ ${useWeek(u.advice)} · แตะเพื่ออ่าน</span></div>` : u && u.waiting ? html`<p class="small muted" style="margin:8px 0 0">ส่งสรุปให้ Claude แล้ว รอคำแนะนำ</p>` : ''}
+    </button>`;
+  }
+  function openUse() {
+    openSheet({ title: 'การใช้แอป', wide: true, body: useBody(), foot: html`<button class="btn primary" data-act="sheet-close">ปิด</button>` });
+    loadUse(useRep.days);
+  }
+  function loadUse(days) {
+    useRep.days = days;
+    useRep.err = '';
+    if ($('#use-rep')) setSheetBody(useBody());
+    call('usageReport', { days: days }, ownerAuth()).then(function (d) {
+      useRep.data[days] = d;
+      if ($('#use-rep')) setSheetBody(useBody());
+      syncUseAdvice(S.ownerHome && S.ownerHome.usage);
+    }, function (e) {
+      useRep.err = e.message;
+      if ($('#use-rep')) setSheetBody(useBody());
+    });
+  }
+  /** Claude's advice on a week sent, brought back from GitHub while one waits for it (every 10 minutes at most). */
+  function syncUseAdvice(u) {
+    if (!u || !u.waiting || Date.now() - useSyncAt < 10 * 60000) return;
+    useSyncAt = Date.now();
+    // (a moment after the page is up: the overview never waits for GitHub)
+    setTimeout(function () {
+      call('usageSync', {}, ownerAuth()).then(function (r) {
+        if (!r.changed || !S.ownerHome) return;
+        if (r.card) S.ownerHome.usage = r.card;
+        ownerChanged();
+        if (S.view === 'owner') softRender();
+        if ($('#use-rep')) loadUse(useRep.days);
+      }, function () {});
+    }, 4000);
+  }
+  function useBody() {
+    var d = useRep.data[useRep.days];
+    var seg = html`<div class="seg" role="group" aria-label="ช่วงเวลา">${[7, 30].map(function (n) { return html`<button type="button" aria-pressed="${useRep.days === n}" data-act="use-days" data-days="${n}">${n} วันล่าสุด</button>`; })}</div>`;
+    if (!d) {
+      return html`<div id="use-rep" class="stack">${seg}${useRep.err
+        ? html`<section class="card pad-lg center"><p class="muted mt0">${useRep.err}</p><button class="btn" data-act="use-days" data-days="${useRep.days}">${icon('refresh')} ลองอีกครั้ง</button></section>`
+        : html`<div class="skel" style="height:150px"></div><div class="skel" style="height:320px"></div>`}</div>`;
+    }
+    var advice = d.advice ? html`<section class="card pad-lg"><span class="eyebrow">${icon('spark')} คำแนะนำจาก Claude · สัปดาห์ ${useWeek(d.advice.week)}</span><p class="use-advice small" style="margin:8px 0 0">${d.advice.text}</p></section>` : '';
+    if (!d.total.stretches) return html`<div id="use-rep" class="stack">${seg}${advice}<p class="muted">ยังไม่มีข้อมูลในช่วงนี้ · แอปเริ่มเก็บหลังอัปเดตรุ่นนี้ และส่งมาตอนแต่ละคนปิดแอปหรือสลับไปแอปอื่น</p></div>`;
+    var sec = function (title, body, note) { return html`<div class="use-sec"><h3 class="h3" style="margin:0 0 6px">${title}</h3>${note ? html`<p class="small muted" style="margin:0 0 6px">${note}</p>` : ''}${body}</div>`; };
+    var rows = function (list, fn) { return html`<section class="card" style="padding:4px 16px">${list.map(function (x) { return html`<div class="use-row">${fn(x)}</div>`; })}</section>`; };
+    // (each: what, its usual time, and the time 9 in 10 were within)
+    var kv = function (list) { return html`<section class="card pad-lg">${list.map(function (x) { return html`<div class="use-kv"><span>${x[0]}</span><b>${useSec(x[1])}</b>${x[2] != null && x[2] !== x[1] ? html`<small>9 ใน 10 ครั้งไม่เกิน ${useSec(x[2])}</small>` : ''}</div>`; })}</section>`; };
+    var max = Math.max.apply(null, d.hours.concat([1]));
+    var people = function (p) { return html`<b>${p.name}</b> <span class="small muted">${p.role}</span>
+      <div class="s">เข้าแอป ${p.opens} ครั้ง · ใช้ ${useDur(p.min)}${p.game ? ' · เกม ' + useDur(p.game) + (p.gameInShift ? ' (ระหว่างกะ ' + useDur(p.gameInShift) + ')' : '') : ''}${p.problems ? ' · ขึ้นปัญหา ' + p.problems + ' ครั้ง' : ''}${p.last ? ' · ล่าสุด ' + noteWhen(p.last) : ''}</div>
+      ${p.top.length ? html`<div class="s">ใช้บ่อย: ${p.top.map(function (x) { return x.name + ' ×' + x.n; }).join(' · ')}</div>` : ''}
+      ${p.pages.length ? html`<div class="s">อยู่นาน: ${p.pages.map(function (x) { return x.page + ' ' + useDur(x.min); }).join(' · ')}</div>` : ''}
+      ${p.dev ? html`<div class="s">${p.dev}</div>` : ''}`; };
+    return html`<div id="use-rep" class="stack">${seg}${advice}
+      ${sec('ความเร็ว', kv([
+        ['เปิดแอปจนเห็นหน้าแรก', d.open.shown50, d.open.shown90],
+        ['เปิดแอปจนข้อมูลล่าสุดมา', d.open.fresh50, d.open.fresh90],
+        ['ลงเวลาด้วยมือถือ: เปิดแอปจนบันทึกเสร็จ', d.clock.phone.p50, d.clock.phone.p90],
+        ['ลงเวลาที่จอในร้าน: แตะชื่อจนบันทึกเสร็จ', d.clock.kiosk.p50, d.clock.kiosk.p90],
+      ]), 'เปิดแอปใหม่ ' + d.open.n + ' ครั้ง (ไม่นับกลับเข้าแอปที่เปิดค้างไว้) · ตัวเลขคือเวลาตามปกติ: ครึ่งหนึ่งของครั้งเร็วกว่านี้')}
+      ${d.waits.length ? sec('รอนานที่สุด', rows(d.waits.slice(0, 8), function (w) { return html`${w.name}<div class="s">${w.n} ครั้ง · ปกติ ${useSec(w.p50)} · 9 ใน 10 ครั้งไม่เกิน ${useSec(w.p90)}${w.net ? ' · เน็ตหลุด ' + w.net : ''}${w.err ? ' · ไม่สำเร็จ ' + w.err : ''}</div>`; }), 'หลังกดปุ่มนี้รอระบบตอบนานเท่าไหร่') : ''}
+      ${sec('รายคน', rows(d.people, people), 'เข้าแอป ' + d.total.opens + ' ครั้ง (เปิดใหม่หรือกลับเข้าแอป) · ' + d.total.people + ' คน/เครื่อง · ใช้รวม ' + useDur(d.total.min) + ' · เกมระหว่างกะนับตั้งแต่ลงเวลาจนจบกะ รวมช่วงพัก')}
+      ${sec('ช่วงเวลาที่เปิดแอป', html`<section class="card pad-lg"><div class="use-hours" aria-hidden="true">${d.hours.map(function (n) { return html`<i style="height:${Math.round((n / max) * 100)}%"></i>`; })}</div><div class="use-hours-l"><span>0 น.</span><span>6</span><span>12</span><span>18</span><span>23 น.</span></div></section>`)}
+      ${d.pages.length ? sec('หน้าที่อยู่นานที่สุด', rows(d.pages.slice(0, 10), function (x) { return html`${x.page}<div class="s">${useDur(x.min)} · ${x.n} ครั้ง · ${x.people} คน</div>`; })) : ''}
+      ${d.acts.length ? sec('ปุ่มที่กดบ่อย', rows(d.acts.slice(0, 12), function (x) { return html`${x.name}<div class="s">${x.n} ครั้ง · ${x.people} คน</div>`; })) : ''}
+      ${d.unused.length ? sec('ปุ่มที่ไม่มีใครกดช่วงนี้ ' + d.unused.length + ' ปุ่ม', html`<details class="card pad-lg"><summary class="small">ดูทั้งหมด</summary><p class="small muted" style="margin:8px 0 0">${d.unused.join(' · ')}</p></details>`) : ''}
+      ${d.games.length ? sec('เกม', rows(d.games, function (g) { return html`${g.game}<div class="s">${useDur(g.min)} · ระหว่างกะ ${useDur(g.inShift)} · ${g.people} คน</div>`; })) : ''}
+      ${sec('ข้อความปัญหาที่ขึ้น', d.problems.length ? rows(d.problems.slice(0, 10), function (x) { return html`${x.msg}<div class="s">${x.n} ครั้ง · ${x.people} คน</div>`; }) : html`<p class="small muted mt0">ไม่มี</p>`, d.crashes.length ? 'หน้าแอปสะดุด (ข้อผิดพลาดในโค้ด) ' + d.crashes.reduce(function (n, x) { return n + x.n; }, 0) + ' ครั้ง · Claude ได้รายละเอียดในสรุปรายสัปดาห์' : '')}
+      ${(d.notes || []).length ? sec('แจ้งเตือนที่แอปส่ง', rows(d.notes, function (x) { return html`${x.title}<div class="s">${x.n} ครั้ง · ${x.days} วัน</div>`; })) : ''}
+      ${d.devices.length ? sec('มือถือและรุ่นแอป', rows(d.devices.slice(0, 8), function (x) { return html`${x.dev}<div class="s">${x.people} คน</div>`; }), 'รุ่นแอป: ' + d.versions.map(function (v) { return v.ver + ' (' + v.n + ')'; }).join(' · ')) : ''}
+      <p class="small muted">เก็บ ${d.keepDays} วัน${d.from ? ' · ข้อมูลตั้งแต่ ' + thShort(ymdOf(new Date(d.from))) : ''} · ทุกวันจันทร์ส่งสรุปแบบไม่มีชื่อให้ Claude</p>
+    </div>`;
+  }
   /** The owner's page of notes; then Claude's summaries are brought back from GitHub, without waiting. */
   function loadDailyList(noSync) {
     return call('dailyList', {}, ownerAuth()).then(function (d) {
@@ -14060,7 +14614,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <section class="card"><div class="card-h"><span class="eyebrow">Claude สรุปและวิธีแก้</span>${sum && sum.url ? html`<a class="small" href="${sum.url}" target="_blank" rel="noopener">ดูงานใน GitHub</a>` : ''}</div>
         ${sum ? html`<div class="small muted" style="margin-bottom:6px">${thDateLong(sum.date)}</div><div class="dl-sum">${sum.summary}</div>`
           : d.github ? html`<p class="small muted mt0">${waiting ? 'ส่งบันทึก' + dlDay(waiting.date) + 'ให้ Claude แล้ว สรุปพร้อมวิธีแก้จะขึ้นที่นี่ตอนเช้า' : 'ทุกคืนแอปส่งบันทึกของวันให้ Claude สรุปพร้อมวิธีแก้ ขึ้นที่นี่ตอนเช้า'}</p>`
-          : html`<p class="small muted mt0">ใส่กุญแจ GitHub ที่ ตั้งค่า › ความคิดเห็นจากพนักงาน แล้ว Claude สรุปพร้อมวิธีแก้ให้ทุกเช้า · ระหว่างนี้คัดลอกบันทึกไปถาม Claude ในแชตได้</p><button class="btn sm" data-act="dl-copy">${icon('chat')} คัดลอกบันทึกส่ง Claude</button>`}
+          : html`<p class="small muted mt0">เชื่อมกิตฮับที่ ตั้งค่า › ความคิดเห็นจากพนักงาน แล้ว Claude สรุปพร้อมวิธีแก้ให้ทุกเช้า · ระหว่างนี้คัดลอกบันทึกไปถาม Claude ในแชตได้</p><button class="btn sm" data-act="dl-copy">${icon('chat')} คัดลอกบันทึกส่ง Claude</button>`}
       </section>
       ${dlFixingOwner(d.fixing)}
       ${(st.top || []).length ? html`<h3 class="h3">เกิดซ้ำใน 30 วัน</h3><section class="card flush">${st.top.map(function (g) { return dlGroupRow(g, true); })}</section>` : ''}
@@ -14452,7 +15006,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ['กำลังทำ', items.filter(function (x) { return x.status === 'approved' || x.status === 'built'; })],
       ['ที่ผ่านมา', items.filter(function (x) { return x.status === 'done' || x.status === 'declined'; })],
     ].filter(function (g) { return g[1].length; });
-    return html`${fbList.github ? '' : html`<div class="hint" style="margin-bottom:12px">${icon('info')}<span>ยังไม่ได้เชื่อม Claude: กดอนุมัติแล้วคัดลอกคำขอไปวางในแชต Claude ได้ · อยากให้ส่งเองอัตโนมัติ ใส่กุญแจ GitHub ใน ตั้งค่า › ความคิดเห็นจากพนักงาน</span></div>`}
+    return html`${fbList.github ? '' : html`<div class="hint" style="margin-bottom:12px">${icon('info')}<span>ยังไม่ได้เชื่อม Claude: กดอนุมัติแล้วคัดลอกคำขอไปวางในแชต Claude ได้ · อยากให้ส่งเองอัตโนมัติ แตะ "เชื่อมกิตฮับ" ใน ตั้งค่า › ความคิดเห็นจากพนักงาน</span></div>`}
       ${groups.map(function (g) {
         return html`<h3 class="h3">${g[0]} (${g[1].length})</h3><section class="card flush"><div class="list">${g[1].map(function (f) {
           var st = fbOwnerStatus(f);
@@ -14532,7 +15086,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     } else if (f.status === 'approved' || f.status === 'built') {
       actions = f.issue
         ? html`<div class="hint" style="margin-top:16px">${icon('check')}<span>ส่งให้ Claude แล้ว · งาน #${f.issue}${f.status === 'built' ? ' · Claude ทำเสร็จแล้ว ลองในเดโมแล้วสั่ง "อัปเดตแอปร้าน" เมื่อพร้อม' : ' · Claude ทำเสร็จจะขึ้นที่นี่'}</span></div>`
-        : html`<div class="hint" style="margin-top:16px">${icon('info')}<span>อนุมัติแล้ว · กด "คัดลอกคำขอ" แล้ววางในแชต Claude (หรือใส่กุญแจ GitHub ในตั้งค่า เพื่อส่งเองอัตโนมัติ)</span></div>`;
+        : html`<div class="hint" style="margin-top:16px">${icon('info')}<span>อนุมัติแล้ว · กด "คัดลอกคำขอ" แล้ววางในแชต Claude (หรือเชื่อมกิตฮับในตั้งค่า เพื่อส่งเองอัตโนมัติ)</span></div>`;
     } else actions = view;
     if (f.status !== 'fresh' && f.note) actions = html`${actions}<p class="small muted" style="margin:16px 0 0">ตอบ ${f.name} ไว้ว่า: ${f.note}</p>`;
     var foot = f.status === 'fresh'
@@ -14544,7 +15098,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         : f.status === 'declined'
           ? html`<button class="btn" data-act="fb-inbox">กลับ</button><button class="btn primary" data-act="fb-approve" data-id="${f.id}">เปลี่ยนใจ: อนุมัติ</button>`
           : html`<button class="btn primary" data-act="fb-inbox">กลับ</button>`;
-    openSheet({ title: FB_KINDS[f.kind] + ' · ' + f.name, wide: true, body: html`<div class="fb-detail"><div class="row wrapx" style="gap:8px"><span class="pill ${st[1]}">${st[0]}${f.issue ? ' #' + f.issue : ''}</span><span class="small muted">${whenAt(f.at)}</span></div>
+    openSheet({ use: 'ความคิดเห็น · เปิดเรื่อง', title: FB_KINDS[f.kind] + ' · ' + f.name, wide: true, body: html`<div class="fb-detail"><div class="row wrapx" style="gap:8px"><span class="pill ${st[1]}">${st[0]}${f.issue ? ' #' + f.issue : ''}</span><span class="small muted">${whenAt(f.at)}</span></div>
       ${f.text ? html`<p class="fb-body">${f.text}</p>` : ''}${media.length ? html`<div class="fb-media">${media}</div>` : ''}${f.device ? html`<div class="fb-device">${icon('phone')}<span>${f.device}</span></div>` : ''}${actions}</div>`, foot: foot });
     // Pictures come at once; a video when it is played.
     f.files.forEach(function (x, i) {
@@ -14926,7 +15480,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (!is) return;
       var x = b.items[n];
       var opts = [['sent', 'ร้านค้าส่งของมาแล้ว'], ['refund', 'ได้เงินคืน']].concat(is.kind === 'wrong' ? [['keep', 'ใช้ของที่ส่งมาแทนได้']] : [], [['drop', 'ไม่ต้องตามแล้ว']], is.fix ? [['', 'ยังรอร้านค้าอยู่']] : []);
-      openSheet({ title: x.name + ' ' + rcSay(is, x), body: html`<div class="stack"><p class="small muted mt0">${b.store}${b.orderNo ? ' · ' + b.orderNo : ''} · ${is.fix ? 'ตอนนี้: ' + RC_FIXES[is.fix] + ' ' + odWhen(is.fixAt) : 'รอร้านค้าอยู่'}${is.note ? ' · ' + is.note : ''}</p>
+      openSheet({ use: 'สั่งของ · ของมีปัญหา', title: x.name + ' ' + rcSay(is, x), body: html`<div class="stack"><p class="small muted mt0">${b.store}${b.orderNo ? ' · ' + b.orderNo : ''} · ${is.fix ? 'ตอนนี้: ' + RC_FIXES[is.fix] + ' ' + odWhen(is.fixAt) : 'รอร้านค้าอยู่'}${is.note ? ' · ' + is.note : ''}</p>
         ${opts.filter(function (o) { return o[0] !== (is.fix || ''); }).map(function (o) { return html`<button class="btn block" data-act="odo-fix" data-id="${b.id}" data-n="${n}" data-fix="${o[0]}">${o[1]}</button>`; })}</div>`, foot: html`<button class="btn" data-act="odo-back">กลับ</button>` });
     },
     'odo-fix-copy': function (el) {
@@ -15549,7 +16103,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'photo-wall': function (el) {
       run(el, call('photos', {}, actorAuth())).then(function (d) {
         var strips = d.items.some(function (x) { return x.screenUrl; });
-        openSheet({ title: 'รูปตอนลงเวลา · ' + thDate(d.date), wide: true, body: d.items.length
+        openSheet({ use: 'รูปตอนลงเวลา', title: 'รูปตอนลงเวลา · ' + thDate(d.date), wide: true, body: d.items.length
           ? html`<p class="muted small mt0">${strips ? html`<b>รูปจากจอ</b> = กล้องของจอในร้านตอนมีคนสแกน ต้องเห็นคนนั้นยืนสแกนอยู่ · ` : ''}<b>รูปจากมือถือ</b> = สิ่งที่กล้องมือถือเห็นตอนสแกน ต้องเป็นจอหรือป้ายในร้าน ไม่ใช่จอมือถืออีกเครื่อง · กรอบสีส้ม = รอตรวจ · ผู้อนุมัติลงแทนจะไม่มีรูป</p><div class="photo-wall ${strips ? 'wide' : ''}">${d.items.map(function (x) {
             return html`<figure class="${x.review ? 'review' : ''}"><div class="shots ${x.screenUrl && x.dataUrl ? 'two' : ''}">${x.screenUrl ? html`<img class="strip" src="${x.screenUrl}" alt="รูปจากจอ: ${x.name}">` : ''}${x.dataUrl ? html`<img class="phone" src="${x.dataUrl}" alt="รูปจากมือถือ: ${x.name}">` : ''}</div><figcaption><b>${x.name}</b>${x.in} น.${x.dist != null ? ' · ห่าง ' + distText(x.dist) : ''}${x.review ? html`<span class="pill warn" style="margin-top:4px">รอตรวจ</span>` : ''}${x.why ? html`<div class="why">${x.why}</div>` : ''}</figcaption>${x.review ? html`<div class="row"><button class="btn sm" data-act="review-fix" data-id="${x.empId}" data-date="${d.date}" data-shift="${x.shift}" data-in="${x.in}">แก้เวลา</button><button class="btn sm primary" data-act="review-ok" data-id="${x.id}">ผ่าน</button></div>` : ''}</figure>`;
           })}</div>`
@@ -15666,7 +16220,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       });
     },
     'pay-paid': function (el) {
-      openSheet({ title: 'ยืนยันจ่ายเงินเดือน' + S.pay.payroll.period.month, body: html`<p class="muted mt0">รวม ${money(S.pay.payroll.totals.net)} บาท · หลังยืนยัน พนักงานจะเห็นสลิปในแอป</p><label class="field"><span>วันที่จ่าย</span><input class="input" type="date" id="paid-date" value="${workDate()}"></label>`,
+      openSheet({ use: 'ยืนยันจ่ายเงินเดือน', title: 'ยืนยันจ่ายเงินเดือน' + S.pay.payroll.period.month, body: html`<p class="muted mt0">รวม ${money(S.pay.payroll.totals.net)} บาท · หลังยืนยัน พนักงานจะเห็นสลิปในแอป</p><label class="field"><span>วันที่จ่าย</span><input class="input" type="date" id="paid-date" value="${workDate()}"></label>`,
         foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="pay-paid-go">ยืนยันจ่ายแล้ว</button>` });
     },
     'pay-paid-go': function (el) {
@@ -15769,6 +16323,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'line-code': function (el) { run(el, call('lineCode', {}, ownerAuth())).then(function (d) { S.ownerHome.line.linkCode = d.linkCode; ownerChanged(); render(); }, function () {}); },
     'backup': function (el) { run(el, call('backup', {}, ownerAuth())).then(function (d) { backupDone(d); }, function () {}); },
     'backup-mail': function (el) { run(el, call('backupMail', {}, ownerAuth())).then(function (d) { backupDone(d); }, function () {}); },
+    // how the app is used (#283): what staff are told; the owner's look
+    'use-about': function () { useAbout(); },
+    'use-open': function () { openUse(); },
+    'use-days': function (el) { loadUse(+el.dataset.days === 30 ? 30 : 7); },
   };
 
   document.addEventListener('click', function (ev) {
@@ -15779,7 +16337,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (el.tagName === 'A' && el.getAttribute('href') && !/^#/.test(el.getAttribute('href'))) return;
     ev.preventDefault();
     noteLens(el);
-    fn(el, ev);
+    useAct(el);
+    try {
+      fn(el, ev);
+    } catch (e) {
+      // (a tap on what this phone kept, which the app cannot work with: the screen without it)
+      if (!dropKept()) throw e;
+      render();
+    }
     glideLenses();
   });
   document.addEventListener('change', function (ev) {
@@ -15896,7 +16461,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (S.kiosk && S.kiosk.token) {
       // The screen as it last was, at once (or its outline); its data follows.
       var lastK = recall('kboot', S.kiosk.id || '');
-      if (lastK) { B = Object.assign(B, lastK.data); kioskDone(lastK.data); }
+      if (lastK) {
+        if (!bootBefore) bootBefore = Object.assign({}, B);
+        try { B = Object.assign(B, lastK.data); kioskDone(lastK.data); } catch (e) { if (!dropKept()) throw e; }
+      }
       S.view = 'kiosk';
       kioskReset();
       kioskBoot();
@@ -15916,7 +16484,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     if (S.staff) {
       var lastHome = recall('home', homeTag(S.staff.empId));
-      if (lastHome && !S.home) { applyHome(lastHome.data); S.homeAt = lastHome.at; }
+      if (lastHome && !S.home) {
+        try { applyHome(lastHome.data); S.homeAt = lastHome.at; } catch (e) { if (!dropKept()) throw e; }
+      }
       S.view = 'staff';
       render();
       loadHome(true);
@@ -15967,7 +16537,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // rarely change, and the fresh copy follows in a moment. The person's own
     // screen is asked for at the same time (start), not after.
     var last = recall('boot', page);
-    if (last) B = Object.assign(B, last.data);
+    if (last) {
+      if (!bootBefore) bootBefore = Object.assign({}, B);
+      B = Object.assign(B, last.data);
+    }
     B.page = page;
     start();
     fresh.then(function (b) {
@@ -15978,6 +16551,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       remember('boot', keep, page);
       if (B.scan) S.scanCode = B.scan;
       bootTries = 0;
+      // (the names to pick from: what the start screen waited for)
+      if (S.view === 'start' || S.view === 'pin' || S.view === 'ownerLogin') useFresh();
       softRender();
     }, function (e) {
       // What this phone kept will do until the next open.
@@ -16051,6 +16626,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     art: function () { return { char: charOf, pet: PET_ART, deco: DECO_ART, look: LOOK_ART, fig: FIG_ART, moves: MOVES }; },
     // The run, for looking it over at chosen moments (dev/run-shots.js): its state and how a frame is drawn.
     run: function () { return { runner: runner, draw: runDraw, canvas: runCanvas, ghosts: runGhosts, step: runStep_, fresh: runNew_ }; },
+    // The use of the app as this phone keeps it (#283): the stretch under way and those not sent yet; `end`
+    // puts the app away as a phone does (dev/demo-check.js).
+    use: function (end) { if (end) useEnd(); return { cur: USE.cur, queue: LS.get(USE_Q) || [], keys: LS.get(USE_KEYS) || {} }; },
     reset: function () { closeSheet(); stopCamera(); LS.del(KEY.staff); LS.del(KEY.owner); LS.del(KEY.kiosk); forget('home'); forget('owner'); forget('parts'); dropSession(); S.staff = null; S.owner = null; S.kiosk = null; S.home = null; S.homeErr = ''; S.ownerHome = null; S.ownerErr = ''; S.pay = null; S.team = null; S.leaves = null; S.employees = null; S.tab = 'home'; S.sub = null; S.ownerTab = 'overview'; S.k.done = {}; S.view = 'start'; render(); },
     // Another phone picked up (the demo's roles): opened as it was left, from what it keeps.
     resume: function () {
