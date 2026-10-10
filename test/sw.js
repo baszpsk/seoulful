@@ -1,12 +1,19 @@
 /*
- * Seoulful — the phone's helper for notifications (แจ้งเตือน). A push from the shop says only "something
- * new"; this asks the shop for the words with this phone's own key (kept here when notifications were
- * turned on), then shows them, buzzing where the phone can. A tap opens the app where the note points.
- * It never touches the pages' requests: the app loads exactly as it would without it.
+ * Seoulful — the phone's helper, for two things.
+ * Notifications (แจ้งเตือน): a push from the shop says only "something new"; this asks the shop for the
+ * words with this phone's own key (kept here when notifications were turned on), then shows them,
+ * buzzing where the phone can. A tap opens the app where the note points.
+ * The app's pages kept on this phone (owner yes 10 Oct 2569: an open took 6.5 seconds on a slow phone when
+ * the page had to come first, 0.8 when the phone had it): index.html and owner.html open from the copy
+ * kept here at once, on a poor network or none too. The site is asked meanwhile and a newer page kept for
+ * the next open, the open app told (App.html pageInit loads it once nothing is under way). The pages' other
+ * requests go as they would without this helper.
  */
 'use strict';
 
 var DB = 'test.seoulful-push';
+// (the site's address keeps one set of stores for all its folders: the test app's, at test/, is named apart as DB is)
+var PAGES = DB + '-pages';
 
 function kv(mode, fn) {
   return new Promise(function (ok, bad) {
@@ -49,6 +56,132 @@ function ask(key, action, data) {
     return r.json();
   });
 }
+
+/** 'index.html' or 'owner.html' for a page of this helper's own folder (not one below it: the test app's), else ''. */
+function pageOf(url) {
+  var scope = self.registration.scope;
+  url = String(url || '');
+  if (url.indexOf(scope) !== 0) return '';
+  var rest = url.slice(scope.length).split(/[?#]/)[0];
+  return rest === '' || rest === 'index.html' ? 'index.html' : rest === 'owner.html' ? 'owner.html' : '';
+}
+
+function pageUrl(page) {
+  return new URL(page, self.registration.scope).href;
+}
+
+// What the site last said of each page (its stamp and version), and the asking under way: one at a time.
+var heard = {};
+var asking = {};
+
+/** The app page the site hands out now, kept for the next open; rejected when the site gave anything else. */
+function fetchPage(page) {
+  // (no-cache: the site is asked each time, and answers "not changed" in a few bytes when it is not)
+  return fetch(pageUrl(page), { cache: 'no-cache', credentials: 'omit' })
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    })
+    .then(function (text) {
+      // (only the app's own page: never a network's sign-in page, nor an error page that came as a page)
+      var m = /window\.__SEOULFUL_SITE__ = (\{[^\n]*?\});<\/script>/.exec(text);
+      var site = m ? JSON.parse(m[1]) : null;
+      if (!site || !site.build) throw new Error('not the app page');
+      heard[page] = { at: Date.now(), build: site.build, version: site.version || '' };
+      var res = new Response(text, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+      return caches
+        .open(PAGES)
+        .then(function (c) {
+          return c.put(pageUrl(page), res.clone());
+        })
+        .catch(function () {})
+        .then(function () {
+          return res;
+        });
+    });
+}
+
+/** What the site says of a page (kept here if newer), heard within `fresh` ms or asked now; null when it could not be asked. */
+function check(page, fresh) {
+  // (the site being asked already, as the page opened: its answer, newer than any heard before)
+  if (asking[page]) return asking[page];
+  var h = heard[page];
+  if (h && Date.now() - h.at < fresh) return Promise.resolve(h);
+  asking[page] = fetchPage(page)
+    .then(
+      function () {
+        return heard[page];
+      },
+      function () {
+        return null;
+      },
+    )
+    .then(function (h2) {
+      delete asking[page];
+      return h2;
+    });
+  return asking[page];
+}
+
+self.addEventListener('fetch', function (e) {
+  var req = e.request;
+  if (req.method !== 'GET' || req.mode !== 'navigate') return;
+  var page = pageOf(req.url);
+  if (!page) return;
+  // (?fresh=: the app asks for the site's own, its copy seemingly stuck; the address's other parts are the app's to read)
+  var fresh = /[?&]fresh=/.test(req.url);
+  var after;
+  // Kept running till the site has been asked, the page shown long before.
+  e.waitUntil(
+    new Promise(function (done) {
+      after = done;
+    }),
+  );
+  e.respondWith(
+    caches
+      .open(PAGES)
+      .then(function (c) {
+        return c.match(pageUrl(page));
+      })
+      .catch(function () {
+        return null;
+      })
+      .then(function (kept) {
+        if (kept && !fresh) {
+          Promise.resolve()
+            .then(function () {
+              return check(page, 0);
+            })
+            .then(after, after);
+          return kept;
+        }
+        // None kept yet: the site's, kept for the next open (the phone's own answer if it is not the app's page).
+        var got = Promise.resolve()
+          .then(function () {
+            return fetchPage(page);
+          })
+          .catch(function () {
+            return kept || fetch(req);
+          });
+        got.then(after, after);
+        return got;
+      }),
+  );
+});
+
+// The open app asks what the site has now (App.html pageAsk): the answer goes to that page alone.
+self.addEventListener('message', function (e) {
+  var m = e.data || {};
+  var c = e.source;
+  if (m.type !== 'seoulful-page-check' || !c || !c.url) return;
+  var page = pageOf(c.url);
+  if (!page) return;
+  e.waitUntil(
+    check(page, 20000).then(function (h) {
+      if (h) c.postMessage({ type: 'seoulful-page', page: page, build: h.build, version: h.version });
+    }),
+  );
+});
 
 self.addEventListener('install', function () {
   self.skipWaiting();

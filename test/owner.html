@@ -2842,7 +2842,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 <div id="toasts" role="status" aria-live="polite"></div>
 <input type="file" id="cam-env" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="cam-user" class="visually-hidden" accept="image/*" capture="user" tabindex="-1" aria-hidden="true">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbxyO18fWWvTnVvMiJNLJi4b6zaQeaTHgCfeWnhdUKj7ku-Rhuh1YxiB7i29g9JoCl3quA/exec","version":"2.12.3","page":"owner","e3":"cf0cf2cd","test":true,"store":"test."};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbxyO18fWWvTnVvMiJNLJi4b6zaQeaTHgCfeWnhdUKj7ku-Rhuh1YxiB7i29g9JoCl3quA/exec","version":"2.12.4","page":"owner","e3":"cf0cf2cd","test":true,"store":"test.","build":"41f0e330c5c2"};</script>
 <script>
 (function () {
   'use strict';
@@ -5288,6 +5288,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // (GitHub, the week's use).
   var NO_HEDGE = ['kioskPing', 'photo', 'photos', 'feedbackFile', 'feedbackSync', 'orderCatalog', 'pushKey', 'usageReport'];
   var inFlight = {};
+  // Changes sent and not answered yet (send).
+  var writing = 0;
   function call(action, data, auth, opts) {
     if (READS.indexOf(action) < 0) {
       return send(action, data, auth, 90000).catch(function (e) {
@@ -5441,7 +5443,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var t0 = Date.now();
     var req = { action: action, auth: auth || {}, data: data || {} };
     var used = untracked ? 0 : useWait(action);
-    return new Promise(function (resolve, reject) {
+    var p = new Promise(function (resolve, reject) {
       var answered = function (res) {
         useDone(used, res && res.ok ? 'ok' : (res && res.code) || 'ERROR');
         lastAnswerAt = Date.now();
@@ -5484,6 +5486,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }
       google.script.run.withSuccessHandler(answered).withFailureHandler(failed).api(req);
     });
+    // A change on its way: the page is not loaded anew till its answer is in (pageBusy).
+    if (READS.indexOf(action) < 0) {
+      writing++;
+      var off = function () { writing--; };
+      p.then(off, off);
+    }
+    return p;
   }
   function staffAuth() { return S.staff ? { empId: S.staff.empId, pin: S.staff.pin } : {}; }
   function ownerAuth() { return S.owner ? { ownerPin: S.owner.pin } : {}; }
@@ -7051,10 +7060,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   // ---- the screen's camera: a picture of whoever scans --------------------
   // The front camera runs while the screen shows its QR. The last 45 seconds
-  // stay in memory, one small frame a second; when a phone scans, the frames
-  // around that moment go to the server as the picture of that clock-in, and
-  // nothing else is kept.
-  var CAM_KEEP_MS = 45000;
+  // or so stay in memory, one small frame a second; when a phone scans, the
+  // frames around that moment go to the server as the picture of that
+  // clock-in, and nothing else is kept. The screen learns of the scan once it
+  // is saved, which may be as long after as a scan is given to reach the
+  // server (Api.gs LIVE_QR_BACK_: a minute while the backend is on Google):
+  // the frames reach back that far, and the half minute before the scan.
+  function camKeepMs() { var c = B.clock || {}; return Math.max(45000, (((c.qrBack || 2) + 1) * (c.qrStep || 5) + 30) * 1000); }
   function camWanted() { return S.view === 'kiosk' && liveQrOn() && !!(B.clock && B.clock.screenCam); }
   function camNote() {
     var st = S.k.cam.state;
@@ -7141,7 +7153,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     c.dark = mean < 16 || sd < 3 ? c.dark + 1 : 0;
     var t = Date.now();
     c.frames.push({ t: t, luma: luma, jpg: drawScaled(v, v.videoWidth, v.videoHeight, 320).toDataURL('image/jpeg', 0.6) });
-    while (c.frames.length && t - c.frames[0].t > CAM_KEEP_MS) c.frames.shift();
+    var keep = camKeepMs();
+    while (c.frames.length && t - c.frames[0].t > keep) c.frames.shift();
     setCam(c.dark >= 4 ? 'covered' : 'ok');
   }
   function frameNear(t, within) {
@@ -7188,7 +7201,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return cv.toDataURL('image/jpeg', 0.7);
     });
   }
-  /** The frames around one scan (the server's time of it, on this screen's clock), sent once. */
+  /** The frames around one scan (when the phone read the QR, else when it was saved; on this screen's clock), sent once. */
   function sendShot(shot) {
     if (S.k.shotsSent[shot.id] || !S.k.cam.frames.length) return;
     var at = Date.parse(shot.at) - S.offset;
@@ -7335,7 +7348,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       body = html`<div class="k-wait" aria-busy="true"><div class="skel" style="height:300px"></div><div class="names">${[0, 1, 2, 3, 4, 5].map(function () { return html`<div class="skel tile"></div>`; })}</div></div>`;
     } else if (k.step === 'names') {
       var pinHere = kioskPinOn();
-      body = html`${S.k.newVersion && B.appUrl ? html`<a class="k-update" href="${B.appUrl}" target="_top">${icon('refresh')} มีแอปรุ่นใหม่ — แตะเพื่อเปิดจอใหม่</a>` : ''}${rainBanner(B.rain, 'kiosk')}${liveQrPanel()}<div class="k-prompt">${!pinHere ? 'ใครลงเวลาแล้วขึ้น ✓ · ลืมมือถือหรือแบตหมด บอกผู้อนุมัติให้ลงเวลาแทน' : liveQrOn() ? 'ไม่มีมือถือ? แตะชื่อแล้วใส่ PIN ที่เครื่องนี้' : 'แตะชื่อของคุณเพื่อลงเวลาเข้างาน'}</div><div id="k-names">${nameTiles(pinHere ? 'k-pick' : 'k-nopin', k.done)}</div>`;
+      body = html`${S.k.newVersion && B.appUrl ? html`<a class="k-update" href="${freshUrl(B.appUrl)}" target="_top">${icon('refresh')} มีแอปรุ่นใหม่ — แตะเพื่อเปิดจอใหม่</a>` : ''}${rainBanner(B.rain, 'kiosk')}${liveQrPanel()}<div class="k-prompt">${!pinHere ? 'ใครลงเวลาแล้วขึ้น ✓ · ลืมมือถือหรือแบตหมด บอกผู้อนุมัติให้ลงเวลาแทน' : liveQrOn() ? 'ไม่มีมือถือ? แตะชื่อแล้วใส่ PIN ที่เครื่องนี้' : 'แตะชื่อของคุณเพื่อลงเวลาเข้างาน'}</div><div id="k-names">${nameTiles(pinHere ? 'k-pick' : 'k-nopin', k.done)}</div>`;
     } else if (k.step === 'pin') {
       var e = empById(k.emp) || {};
       body = html`<div class="pin-wrap">${avatar(e, 'lg')}<div class="hello" style="font-size:26px;margin-top:12px">${ownName(e)}</div><div class="muted">ใส่ PIN ของคุณ</div>${pinPad(e.pinLen || 4, k.pin, k.err)}
@@ -14014,6 +14027,125 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       });
     }).then(function (reg) { PUSH.reg = reg; return reg; });
   }
+
+  // ---- the app's page kept on this phone (site/sw.js) ----------------------------------------------------
+  // The page opens from the copy the helper keeps, at once (owner yes 10 Oct 2569: 6.5 seconds on a slow
+  // phone when the page came first). The helper asks the site meanwhile; once it has kept a newer page, this
+  // one loads anew as nothing is under way: the old look for a moment after an update, as the owner agreed.
+  // Should the copy seem stuck (the server newer than this page and no newer page kept a while), the site's
+  // own page is asked for, once a version.
+  var PAGE = { on: false, newer: '', fresh: '', asked: 0, timer: 0, touched: 0, heal: 0 };
+  var PAGES_KEPT = STORE + 'seoulful-push-pages'; // site/sw.js PAGES (its DB, test. for the test app's)
+  function pageInit() {
+    if (!SITE || !SITE.build || !('serviceWorker' in navigator)) return;
+    // Loaded with ?fresh= (pageLoad): the address forgets it.
+    var q = new URLSearchParams(location.search);
+    if (q.has('fresh')) {
+      q.delete('fresh');
+      try { history.replaceState(null, '', location.pathname + (String(q) ? '?' + q : '') + location.hash); } catch (e) { /* the address keeps it */ }
+    }
+    navigator.serviceWorker.addEventListener('message', function (ev) {
+      // Only this site's own helper: the shop's (a folder up) reaches the test app's page too.
+      if (ev.source && ev.source.scriptURL && ev.source.scriptURL !== new URL('sw.js', location.href).href) return;
+      var m = ev.data || {};
+      if (m.type === 'seoulful-page') pageHeard(m);
+    });
+    try { navigator.serviceWorker.startMessages(); } catch (e) { /* they come all the same */ }
+    ['pointerdown', 'keydown', 'scroll'].forEach(function (t) {
+      document.addEventListener(t, function () { PAGE.touched = Date.now(); }, { capture: true, passive: true });
+    });
+    document.addEventListener('visibilitychange', function () {
+      // Put away: loaded anew then, unseen. Back after a while (a phone keeps an app open for days): the site asked again.
+      if (document.visibilityState === 'hidden') { if ((PAGE.newer || PAGE.fresh) && !pageBusy(true)) pageLoad(); }
+      else if (Date.now() - PAGE.asked > 60000) pageAsk();
+    });
+    // (a helper new to this phone runs the page a moment after: asked then, the next open finding its copy)
+    navigator.serviceWorker.addEventListener('controllerchange', function () { pageAsk(); });
+    navigator.serviceWorker.register('sw.js').then(function () {
+      PAGE.on = true;
+      pageAsk();
+    }, function () { /* the page comes from the site each time, as before */ });
+  }
+  /** The helper asked what the site has now (it answers pageHeard); a page it does not run yet asks nothing. */
+  function pageAsk() {
+    var sw = navigator.serviceWorker.controller;
+    if (!PAGE.on || !sw) return;
+    PAGE.asked = Date.now();
+    try { sw.postMessage({ type: 'seoulful-page-check' }); } catch (e) { /* asked next time */ }
+  }
+  function pageHeard(m) {
+    if (!m.build || m.build === SITE.build || m.page !== (SITE.page === 'owner' ? 'owner.html' : 'index.html')) return;
+    // (never back to an older version: a site part-way through an update may hand out the one before a moment)
+    if (m.version && CODE_VERSION && versionBefore(m.version, CODE_VERSION)) return;
+    PAGE.newer = m.build;
+    pageTry();
+  }
+  /** The server's version (boot): this page older, and no newer page kept 15 seconds on, the site's own is asked for. */
+  function pageServer(v) {
+    if (!PAGE.on || PAGE.heal || !v || !CODE_VERSION || !versionBefore(CODE_VERSION, v) || !navigator.serviceWorker.controller) return;
+    PAGE.heal = setTimeout(function () {
+      if (PAGE.newer) return;
+      var once = STORE + 'seoulful.pageFresh';
+      try {
+        if (sessionStorage.getItem(once) === v) return;
+        sessionStorage.setItem(once, v);
+      } catch (e) { return; }
+      var go = function () { PAGE.fresh = v; pageTry(); };
+      // (the copy dropped too: a broken one is not opened again)
+      try { caches.delete(PAGES_KEPT).then(go, go); } catch (e) { go(); }
+    }, 15000);
+  }
+  function pageTry() {
+    clearTimeout(PAGE.timer);
+    if (!PAGE.newer && !PAGE.fresh) return;
+    if (pageBusy()) { PAGE.timer = setTimeout(pageTry, 1000); return; }
+    pageLoad();
+  }
+  /** Something under way that loading the page anew would lose or break into. */
+  function pageBusy(hidden) {
+    // (the shop's screen never by itself, its camera perhaps asked for again: it has its button, k-update)
+    if (S.kiosk && S.kiosk.token) return true;
+    if (sheetState || S.scanner || S.scanCode || S.goAfter || S.pinBusy || writing > 0) return true;
+    if (S.view === 'pin' || S.view === 'ownerLogin') return true;
+    if (runner && (runner.stage === 'count' || runner.stage === 'run')) return true;
+    var a = document.activeElement;
+    if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return true;
+    // (a tap a moment ago, or the page still moving: what it starts comes first)
+    return !hidden && (Date.now() - PAGE.touched < 2000 || quietIn() > 0);
+  }
+  /** This page loaded anew: the helper's newer copy, or (PAGE.fresh) the site's own; once in two minutes at most. */
+  function pageLoad() {
+    var fresh = PAGE.fresh;
+    PAGE.newer = '';
+    PAGE.fresh = '';
+    clearTimeout(PAGE.timer);
+    // (a site handing out two pages by turns never keeps the app loading)
+    var key = STORE + 'seoulful.pageLoad';
+    try {
+      if (Date.now() - (Number(sessionStorage.getItem(key)) || 0) < 120000) return;
+      sessionStorage.setItem(key, String(Date.now()));
+    } catch (e) { return; }
+    var q = new URLSearchParams(location.search);
+    q.delete('go');
+    q.delete('fresh');
+    // (a scan not used yet stays for the page to use)
+    if (!S.scanCode) { q.delete('in'); q.delete('qr'); }
+    if (fresh) q.set('fresh', fresh);
+    location.replace(location.pathname + (String(q) ? '?' + q : '') + location.hash);
+  }
+  /** Whether version a (2.12.3) comes before b. */
+  function versionBefore(a, b) {
+    var x = String(a).split('.');
+    var y = String(b).split('.');
+    for (var i = 0; i < Math.max(x.length, y.length); i++) {
+      var d = (Number(x[i]) || 0) - (Number(y[i]) || 0);
+      if (d) return d < 0;
+    }
+    return false;
+  }
+  /** The app's address with the site's own page asked for, past the phone's copy (site/sw.js ?fresh=). */
+  function freshUrl(u) { return u + (u.indexOf('?') < 0 ? '?' : '&') + 'fresh=' + encodeURIComponent(CODE_VERSION || '1'); }
+
   /**
    * While the card asks: the helper and the shop's key made ready, so the tap only has the phone ask
    * and sign up (an iPhone wants the sign-up close to the tap).
@@ -16518,6 +16650,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     setTimeout(function () { if (window.requestIdleCallback) requestIdleCallback(c3Start, { timeout: 300 }); else c3Start(); }, 150);
     if (!SITE) { start(); return; }
     takeHandoff();
+    pageInit();
     // The shop's screen asks for its own (start).
     if (S.kiosk && S.kiosk.token) { start(); return; }
     pushInit();
@@ -16553,6 +16686,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       remember('boot', keep, page);
       if (B.scan) S.scanCode = B.scan;
       bootTries = 0;
+      pageServer(b.version);
       // (the names to pick from: what the start screen waited for)
       if (S.view === 'start' || S.view === 'pin' || S.view === 'ownerLogin') useFresh();
       softRender();
@@ -16622,6 +16756,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   // Hooks for the demo page and for tests.
   window.SeoulfulApp = {
+    // This page's copy on the phone (dev/page-check.js): a newer page heard, and whether something is under way.
+    page: function () { return { on: PAGE.on, newer: PAGE.newer, fresh: PAGE.fresh, busy: pageBusy() }; },
     // How long till the page stands still (a sheet sliding, a screen coming in): the demo's server waits for it.
     quietIn: quietIn,
     // The drawings, for looking them over side by side (dev/art-check.js).
