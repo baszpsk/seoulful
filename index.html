@@ -2840,7 +2840,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 <div id="toasts" role="status" aria-live="polite"></div>
 <input type="file" id="cam-env" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="cam-user" class="visually-hidden" accept="image/*" capture="user" tabindex="-1" aria-hidden="true">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbz2iYI-AY2wmBoYL11bWkP6gy9TdUqZsB_CAT27Iq7vdgxg-T8PsD0q3uy43YM53lGwEA/exec","version":"2.12.8","page":"","e3":"cf0cf2cd","build":"cadfe5cf2450"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbz2iYI-AY2wmBoYL11bWkP6gy9TdUqZsB_CAT27Iq7vdgxg-T8PsD0q3uy43YM53lGwEA/exec","version":"2.12.9","page":"","e3":"cf0cf2cd","build":"5da44436ea5c"};</script>
 <script>
 (function () {
   'use strict';
@@ -9984,7 +9984,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="ขาดงาน">${icon('x')} ขาดงาน</button>
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="หัก Incentive">${icon('alert')} หัก Incentive</button>
       <button class="menu-item" data-act="open-leave-add" data-emp="${id}">${icon('leave')} บันทึกการลา</button>
-      ${d ? html`<button class="menu-item" data-act="rain-toggle" data-id="${d.id}" data-emp="${id}" data-on="${!d.rain}">${icon('rain')} ${d.rain ? 'ยกเลิกฝนตก' : 'ยืนยันฝนตก (ผ่อนผันสาย)'}</button>` : ''}
+      ${d ? (d.rain && d.rainShop ? rainShopHint(d, r.name) : html`<button class="menu-item" data-act="rain-toggle" data-id="${d.id}" data-emp="${id}" data-on="${!d.rain}">${icon('rain')} ${d.rain ? 'ยกเลิกฝนตก' : 'ยืนยันฝนตก (ผ่อนผันสาย)'}</button>`) : ''}
       ${pics}
       ${d ? html`<button class="menu-item danger" data-act="delete-clock" data-id="${d.id}" data-emp="${id}">${icon('trash')} ลบเวลาวันนี้</button>` : ''}
     </div>` });
@@ -10064,6 +10064,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <label class="field"><span>เหตุผล</span><input class="input" id="rs-reason" maxlength="200" placeholder="${on ? 'เช่น ฝนตกหนักระหว่างทาง มีรูปในกลุ่ม LINE' : 'เช่น กดผิดคน'}"></label>
       <p class="muted small clock-tell" style="margin:-4px 0 0">${clockTellText(empId, 'rain')}</p>`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="submit-rain-set" data-id="${recId}" data-on="${on}">${verb}</button>` });
+  }
+  /**
+   * Rain from the shop's rain period is everyone's alike, so the menu says so instead of offering to take it
+   * back for one person: the period goes as a whole (2.12.9, the owner's choice ก). Api.gs apiRainSet_ refuses
+   * it the same way (rainShopDrop_).
+   */
+  function rainShopHint(d, name) {
+    return html`<div class="hint" style="margin:4px 0 8px">${icon('rain')}<span>อยู่ในช่วงฝนตกของทั้งร้าน (${d.rainShop}) ทุกคนที่เข้ากะช่วงนี้สายได้ ${d.grace} นาทีเท่ากัน จึงยกเลิกฝนตกเฉพาะ${name}ไม่ได้ · ${S.view === 'owner' ? 'ถ้าฝนไม่ได้ตก ลบทั้งช่วงที่ รายการเดือนนี้ (ด้านล่าง) › ทุกคน · ฝนตก' : 'ถ้าฝนไม่ได้ตก บอกเจ้าของร้านให้ลบทั้งช่วง'}</span></div>`;
   }
   /** Taking back a later start allowed: why, for the owner and the person told (2.12.8). */
   function permitDeleteForm(entryId, empId) {
@@ -16331,7 +16339,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'delete-entry': function (el) {
       // A later start taken back asks why: the owner and the person are told (2.12.8).
       if (el.dataset.kind === 'permit') { permitDeleteForm(el.dataset.id, el.dataset.emp); return; }
-      confirmSheet({ title: 'ลบรายการ', text: 'ลบรายการนี้ใช่ไหม', yes: 'ลบ', danger: true }).then(function (ok) {
+      // A shop's rain period goes for everyone in it, as "ฝนตกที่ควรตรวจ" says too (2.12.9).
+      var rain = el.dataset.kind === 'rain';
+      confirmSheet({ title: rain ? 'ลบช่วงฝนตก' : 'ลบรายการ', text: rain ? 'ทุกคนที่ลงเวลาในช่วงนี้จะไม่ได้ผ่อนผันฝนตก และอาจนับเป็นสาย' : 'ลบรายการนี้ใช่ไหม', yes: 'ลบ', danger: true }).then(function (ok) {
         if (!ok) return;
         call('entryDelete', { id: el.dataset.id }, actorAuth()).then(function () { toast('ลบรายการแล้ว', 'ok'); loadTeam(); }, function (e) { toast(e.message, 'bad'); });
       });
