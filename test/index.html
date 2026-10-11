@@ -2842,7 +2842,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 <div id="toasts" role="status" aria-live="polite"></div>
 <input type="file" id="cam-env" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="cam-user" class="visually-hidden" accept="image/*" capture="user" tabindex="-1" aria-hidden="true">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbxyO18fWWvTnVvMiJNLJi4b6zaQeaTHgCfeWnhdUKj7ku-Rhuh1YxiB7i29g9JoCl3quA/exec","version":"2.12.7","page":"","e3":"cf0cf2cd","test":true,"store":"test.","build":"651e28d7a949"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbxyO18fWWvTnVvMiJNLJi4b6zaQeaTHgCfeWnhdUKj7ku-Rhuh1YxiB7i29g9JoCl3quA/exec","version":"2.12.8","page":"","e3":"cf0cf2cd","test":true,"store":"test.","build":"0344aed7dd5c"};</script>
 <script>
 (function () {
   'use strict';
@@ -9965,7 +9965,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function entryRow(x, owner) {
     var amount = x.kind === 'permit' ? 'เข้า ' + x.time : x.kind === 'rain' ? (x.time || 'ทั้งวัน') : (x.kind === 'ot' && x.qty > 0 ? '+' : '') + (x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)) + ' ' + x.unit;
-    return html`<div class="item"><div class="grow"><div class="t">${x.name} · ${x.type}${x.review ? html` <span class="pill warn">เจ้าของร้านตรวจ</span>` : ''}</div><div class="s">${thDate(x.date)}${x.reason ? ' · ' + x.reason : ''}${x.noOt ? ' · ไม่ได้ OT' : ''} · โดย ${x.by}${x.evidence ? html`<br>${x.evidence}` : ''}</div></div><div class="r amt small">${amount}</div>${owner ? html`<button class="btn sm" data-act="rain-keep" data-id="${x.id}">ถูกต้อง</button><button class="icon-btn" data-act="rain-drop" data-id="${x.id}" aria-label="ลบ">${icon('trash')}</button>` : html`<button class="icon-btn" data-act="delete-entry" data-id="${x.id}" aria-label="ลบ">${icon('trash')}</button>`}</div>`;
+    return html`<div class="item"><div class="grow"><div class="t">${x.name} · ${x.type}${x.review ? html` <span class="pill warn">เจ้าของร้านตรวจ</span>` : ''}</div><div class="s">${thDate(x.date)}${x.reason ? ' · ' + x.reason : ''}${x.noOt ? ' · ไม่ได้ OT' : ''} · โดย ${x.by}${x.evidence ? html`<br>${x.evidence}` : ''}</div></div><div class="r amt small">${amount}</div>${owner ? html`<button class="btn sm" data-act="rain-keep" data-id="${x.id}">ถูกต้อง</button><button class="icon-btn" data-act="rain-drop" data-id="${x.id}" aria-label="ลบ">${icon('trash')}</button>` : html`<button class="icon-btn" data-act="delete-entry" data-id="${x.id}" data-kind="${x.kind}" data-emp="${x.empId}" aria-label="ลบ">${icon('trash')}</button>`}</div>`;
   }
   function rowMenu(id) {
     var r = S.team.board.rows.filter(function (x) { return x.id === id; })[0];
@@ -9986,7 +9986,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="ขาดงาน">${icon('x')} ขาดงาน</button>
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="หัก Incentive">${icon('alert')} หัก Incentive</button>
       <button class="menu-item" data-act="open-leave-add" data-emp="${id}">${icon('leave')} บันทึกการลา</button>
-      ${d ? html`<button class="menu-item" data-act="rain-toggle" data-id="${d.id}" data-on="${!d.rain}">${icon('rain')} ${d.rain ? 'ยกเลิกฝนตก' : 'ยืนยันฝนตก (ผ่อนผันสาย)'}</button>` : ''}
+      ${d ? html`<button class="menu-item" data-act="rain-toggle" data-id="${d.id}" data-emp="${id}" data-on="${!d.rain}">${icon('rain')} ${d.rain ? 'ยกเลิกฝนตก' : 'ยืนยันฝนตก (ผ่อนผันสาย)'}</button>` : ''}
       ${pics}
       ${d ? html`<button class="menu-item danger" data-act="delete-clock" data-id="${d.id}" data-emp="${id}">${icon('trash')} ลบเวลาวันนี้</button>` : ''}
     </div>` });
@@ -9998,7 +9998,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var def = types.filter(function (t) { return t.type === type; })[0] || types[0];
     var kind = def.kind;
     return html`<label class="field"><span>ประเภท</span><select class="input" id="en-type" data-change="en-type">${types.map(function (t) { return html`<option value="${t.type}" ${t.type === def.type ? 'selected' : ''}>${t.type}</option>`; })}</select><small>${def.help}</small></label>
-      <label class="field"><span>พนักงาน</span><select class="input" id="en-emp">${(B.employees || []).map(function (e) { return html`<option value="${e.id}" ${o.emp === e.id ? 'selected' : ''}>${e.name}</option>`; })}</select></label>
+      <label class="field"><span>พนักงาน</span><select class="input" id="en-emp" data-change="en-emp">${(B.employees || []).map(function (e) { return html`<option value="${e.id}" ${o.emp === e.id ? 'selected' : ''}>${e.name}</option>`; })}</select></label>
       <label class="field"><span>วันที่</span><input class="input" type="date" id="en-date" value="${o.date || workDate()}"></label>
       ${kind === 'permit'
         ? html`<label class="field"><span>เวลาที่อนุญาตให้เข้างาน</span><input class="input" type="time" id="en-time" value="${o.time || ''}"></label><label class="check"><input type="checkbox" id="en-noot" ${o.noOt ? 'checked' : ''}><span>วันนี้ไม่ได้ OT ในกะ</span></label>
@@ -10006,7 +10006,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         : html`<label class="field"><span>จำนวน (${def.unit})</span><input class="input" type="number" inputmode="decimal" step="${kind === 'ot' ? '0.5' : '1'}" id="en-qty" value="${o.qty || (kind === 'absent' ? 1 : kind === 'incentiveCut' ? (B.rules || {}).lateCut || '' : '')}"></label>
           ${kind === 'incentiveCut' ? html`<p class="muted small" style="margin:-4px 0 10px">หักจาก Incentive ไม่หักเงินเดือน · ถ้า Incentive ไม่พอ ส่วนที่เหลือยกไปหักรอบหน้าครั้งเดียว</p>` : ''}
           ${kind === 'ot' ? html`<div class="chips qty-chips" role="group" aria-label="เลือกชั่วโมง OT">${[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4].map(function (h) { return html`<button type="button" class="chip" data-act="ot-qty" data-h="${h}" aria-pressed="${String(o.qty) === String(h)}">${h === 0.5 ? '30 นาที' : hrs(h) + ' ชม.'}</button>`; })}</div>` : ''}`}
-      <label class="field"><span>เหตุผล${kind === 'bonus' || kind === 'deduct' || kind === 'incentiveCut' || kind === 'permit' ? '' : ' (ถ้ามี)'}</span><input class="input" id="en-reason" maxlength="300" value="${o.reason || ''}"></label>`;
+      <label class="field"><span>เหตุผล${kind === 'bonus' || kind === 'deduct' || kind === 'incentiveCut' || kind === 'permit' ? '' : ' (ถ้ามี)'}</span><input class="input" id="en-reason" maxlength="300" value="${o.reason || ''}"></label>
+      ${kind === 'permit' ? html`<p class="muted small clock-tell" style="margin:-4px 0 0">${clockTellText(o.emp || ((B.employees || [])[0] || {}).id, 'permit')}</p>` : ''}`;
   }
   function openEntryForm(o) {
     openSheet({ title: 'บันทึกรายการ', body: entryForm(o), foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="submit-entry">บันทึก</button>` });
@@ -10037,12 +10038,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <p class="muted small clock-tell" style="margin:-4px 0 0">${clockTellText(id)}</p>`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="submit-fix" data-id="${id}">บันทึก</button>` });
   }
-  /** Who the app tells of a clock-in recorded, corrected or deleted for someone, with what (2.12.7). */
+  /**
+   * Who the app tells of a clock-in recorded, corrected or deleted for someone, with what (2.12.7); `del` is
+   * true for a deletion, 'permit' for a later start allowed or taken back, 'rain' for a clock-in's rain (2.12.8).
+   */
   function clockTellText(empId, del) {
     var e = empById(empId) || {};
     var self = S.view !== 'owner' && S.home && S.home.me && S.home.me.id === empId;
     var who = [self ? '' : e.name || 'คนนั้น', S.view === 'owner' ? '' : 'เจ้าของร้าน'].filter(Boolean);
-    return who.length ? 'แอปแจ้ง' + who.join('และ') + 'ทุกครั้ง พร้อม' + (del ? 'เวลาที่ลบ' : 'เวลาเดิม เวลาใหม่') + ' และเหตุผล' : '';
+    var what = del === 'permit' ? 'เวลาที่อนุญาต' : del === 'rain' ? 'เวลาเข้างาน' : del ? 'เวลาที่ลบ' : 'เวลาเดิม เวลาใหม่';
+    return who.length ? 'แอปแจ้ง' + who.join('และ') + 'ทุกครั้ง พร้อม' + what + ' และเหตุผล' : '';
   }
   /** Deleting a clock-in: why, for the owner and the person told (2.12.7). */
   function deleteClockForm(recId, empId) {
@@ -10051,6 +10056,24 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <label class="field"><span>เหตุผล</span><input class="input" id="dc-reason" maxlength="200" placeholder="เช่น กดผิดคน"></label>
       <p class="muted small clock-tell" style="margin:-4px 0 0">${clockTellText(empId, true)}</p>`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn danger" data-act="submit-delete-clock" data-id="${recId}">ลบ</button>` });
+  }
+  /** Confirming or clearing rain on one clock-in: why, for the owner and the person told (2.12.8). */
+  function rainSetForm(recId, empId, on) {
+    var e = empById(empId) || {};
+    var r = B.rules || {};
+    var verb = on ? 'ยืนยันฝนตก' : 'ยกเลิกฝนตก';
+    openSheet({ use: verb, title: verb + (e.name ? ' · ' + e.name : ''), body: html`<p class="muted small mt0">${on ? 'การลงเวลานี้สายได้ถึง ' + r.rainGrace + ' นาที (วันปกติ ' + r.grace + ' นาที) · ใช้เมื่อฝนตกจริงแต่แอปไม่เห็น' : 'การลงเวลานี้กลับไปสายได้ ' + r.grace + ' นาทีเหมือนวันปกติ'}</p>
+      <label class="field"><span>เหตุผล</span><input class="input" id="rs-reason" maxlength="200" placeholder="${on ? 'เช่น ฝนตกหนักระหว่างทาง มีรูปในกลุ่ม LINE' : 'เช่น กดผิดคน'}"></label>
+      <p class="muted small clock-tell" style="margin:-4px 0 0">${clockTellText(empId, 'rain')}</p>`,
+      foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="submit-rain-set" data-id="${recId}" data-on="${on}">${verb}</button>` });
+  }
+  /** Taking back a later start allowed: why, for the owner and the person told (2.12.8). */
+  function permitDeleteForm(entryId, empId) {
+    var e = empById(empId) || {};
+    openSheet({ use: 'ลบอนุญาตเข้างานช้า', title: 'ลบอนุญาตเข้างานช้า' + (e.name ? ' · ' + e.name : ''), body: html`<p class="muted small mt0">วันนั้นกลับไปเริ่มตามเวลากะ มาหลังเวลากะนับเป็นสาย</p>
+      <label class="field"><span>เหตุผล</span><input class="input" id="pd-reason" maxlength="200" placeholder="เช่น กดผิดคน มาตามเวลาปกติ"></label>
+      <p class="muted small clock-tell" style="margin:-4px 0 0">${clockTellText(empId, 'permit')}</p>`,
+      foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn danger" data-act="submit-delete-permit" data-id="${entryId}">ลบ</button>` });
   }
 
   function approveView() {
@@ -10263,10 +10286,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var on = t.onTime != null ? t.onTime : Math.max(0, t.workDays - t.lateMinor - t.lateMajor);
     return Math.round((100 * on) / t.workDays);
   }
-  /** Clock-ins others recorded, corrected or deleted for someone lately: each one told as it happened (2.12.7). */
+  /**
+   * Clock-ins others recorded, corrected or deleted for someone lately (2.12.7), and later starts allowed and
+   * rain confirmed, or taken back (2.12.8): each one told as it happened. (Api.gs CLOCK_CARD_ names it too.)
+   */
   function openClockFixes() {
     var list = (S.ownerHome && S.ownerHome.clockFixes) || [];
-    openSheet({ use: 'ลงเวลาแทน แก้ หรือลบ', title: 'ลงเวลาแทน แก้ หรือลบ', body: html`<p class="small muted mt0">45 วันล่าสุด ใหม่สุดก่อน · แอปแจ้งคุณทุกครั้งแล้ว · ทั้งหมดอยู่ในชีต "ประวัติแก้เวลา" · ไม่ถูก แก้ได้ในหน้าทีม</p>
+    openSheet({ use: 'แก้เวลาและผ่อนผันสาย', title: 'แก้เวลาและผ่อนผันสาย', body: html`<p class="small muted mt0">45 วันล่าสุด ใหม่สุดก่อน · ลงเวลาแทน แก้ ลบ อนุญาตเข้างานช้า และยืนยันหรือยกเลิกฝนตก · แอปแจ้งคุณทุกครั้งแล้ว · ทั้งหมดอยู่ในชีต "ประวัติแก้เวลา" · ไม่ถูก แก้ได้ในหน้าทีม</p>
       ${list.length ? html`<div class="list">${list.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.name} · ${x.what} ${thShort(x.date)}</div><div class="s">${x.detail}</div><div class="s">${x.reason ? x.reason + ' · ' : ''}${x.by} ${isoDate(x.at)} ${isoTime(x.at)} น.</div></div></div>`; })}</div>` : html`<div class="empty">ยังไม่มีใน 45 วันล่าสุด</div>`}` });
   }
   /** What the approver recorded on themselves lately: to see, nothing to press. */
@@ -10531,7 +10557,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${pushTeamCard(o.push)}
       ${useCard(o.usage)}
       ${(o.rainReview || []).length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ฝนตกที่ควรตรวจ</span></div><p class="small muted" style="margin:6px 16px 0">ข้อมูลอากาศไม่ตรงกับที่บันทึก บันทึกย้อนหลัง หรือปิดตอนที่ยังมีฝน · ถูกต้อง = คงไว้ · ลบ = ทุกคนที่ลงเวลาในช่วงนั้นไม่ได้ผ่อนผันฝนตก</p><div class="list">${o.rainReview.map(function (x) { return entryRow(x, true); })}</div></section>` : ''}
-      ${(o.clockFixes || []).length ? html`<section class="card flush"><button class="item" data-act="clock-fixes">${icon('clock')}<span class="grow">ลงเวลาแทน แก้ หรือลบ ${o.clockFixes.length} รายการ<span class="s" style="display:block">45 วันล่าสุด · แจ้งคุณทุกครั้งแล้ว</span></span>${icon('right')}</button></section>` : ''}
+      ${(o.clockFixes || []).length ? html`<section class="card flush"><button class="item" data-act="clock-fixes">${icon('clock')}<span class="grow">แก้เวลาและผ่อนผันสาย ${o.clockFixes.length} รายการ<span class="s" style="display:block">ลงแทน แก้ ลบ อนุญาตเข้าช้า ฝนตก · 45 วัน · แจ้งคุณทุกครั้งแล้ว</span></span>${icon('right')}</button></section>` : ''}
       ${(o.selfEdits || []).length ? html`<section class="card flush"><button class="item" data-act="self-edits">${icon('list')}<span class="grow">ผู้อนุมัติทำรายการให้ตัวเอง ${o.selfEdits.length} รายการ<span class="s" style="display:block">45 วันล่าสุด · ไว้ให้เห็นเฉย ๆ</span></span>${icon('right')}</button></section>` : ''}
       ${todo.length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">สิ่งที่ต้องทำ</span></div><div class="list">${todo.map(function (t) { return html`<button class="item" data-act="owner-tab" data-tab="${t[2]}">${icon(t[0])}<span class="grow">${t[1]}</span>${icon('right')}</button>`; })}</div></section>` : ''}
       <h3 class="h3">เงินเดือนย้อนหลัง</h3>
@@ -16302,9 +16328,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'row-menu': function (el) { rowMenu(el.dataset.id); },
     'open-entry': function (el) { closeSheet(); setTimeout(function () { openEntryForm({ emp: el.dataset.emp, type: el.dataset.type }); }, 230); },
     'submit-entry': function (el) {
-      run(el, call('entrySave', entryValues(), actorAuth())).then(function (d) { closeSheet(); toast('บันทึก ' + d.entry.type + ' ของ ' + d.entry.name + ' แล้ว', 'ok'); loadTeam(); if (S.pay) loadPay(); }, function () {});
+      run(el, call('entrySave', entryValues(), actorAuth())).then(function (d) { closeSheet(); toast('บันทึก ' + d.entry.type + ' ของ ' + d.entry.name + ' แล้ว' + (d.told ? ' · ' + d.told : ''), 'ok'); loadTeam(); if (S.pay) loadPay(); }, function () {});
     },
     'delete-entry': function (el) {
+      // A later start taken back asks why: the owner and the person are told (2.12.8).
+      if (el.dataset.kind === 'permit') { permitDeleteForm(el.dataset.id, el.dataset.emp); return; }
       confirmSheet({ title: 'ลบรายการ', text: 'ลบรายการนี้ใช่ไหม', yes: 'ลบ', danger: true }).then(function (ok) {
         if (!ok) return;
         call('entryDelete', { id: el.dataset.id }, actorAuth()).then(function () { toast('ลบรายการแล้ว', 'ok'); loadTeam(); }, function (e) { toast(e.message, 'bad'); });
@@ -16334,8 +16362,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'submit-fix': function (el) {
       run(el, call('clockFix', { empId: el.dataset.id, date: $('#fx-date').value, shift: $('#fx-shift').value, time: $('#fx-time').value, reason: $('#fx-reason').value }, actorAuth())).then(function (d) { closeSheet(); toast('บันทึกเวลาของ ' + d.record.name + ' แล้ว' + (d.told ? ' · ' + d.told : ''), 'ok'); loadTeam(); }, function () {});
     },
-    'rain-toggle': function (el) {
-      run(el, call('rainSet', { id: el.dataset.id, rain: el.dataset.on === 'true' }, actorAuth())).then(function (d) { closeSheet(); toast(d.rain ? 'ยืนยันฝนตกแล้ว' : 'ยกเลิกฝนตกแล้ว', 'ok'); loadTeam(); }, function () {});
+    'rain-toggle': function (el) { closeSheet(); setTimeout(function () { rainSetForm(el.dataset.id, el.dataset.emp, el.dataset.on === 'true'); }, 230); },
+    'submit-rain-set': function (el) {
+      run(el, call('rainSet', { id: el.dataset.id, rain: el.dataset.on === 'true', reason: $('#rs-reason').value }, actorAuth())).then(function (d) { closeSheet(); toast((d.rain ? 'ยืนยันฝนตกแล้ว' : 'ยกเลิกฝนตกแล้ว') + (d.told ? ' · ' + d.told : ''), 'ok'); loadTeam(); }, function () {});
+    },
+    'submit-delete-permit': function (el) {
+      run(el, call('entryDelete', { id: el.dataset.id, reason: $('#pd-reason').value }, actorAuth())).then(function (d) { closeSheet(); toast('ลบรายการแล้ว' + (d.told ? ' · ' + d.told : ''), 'ok'); loadTeam(); if (S.pay) loadPay(); }, function () {});
     },
     'delete-clock': function (el) { closeSheet(); setTimeout(function () { deleteClockForm(el.dataset.id, el.dataset.emp); }, 230); },
     'submit-delete-clock': function (el) {
@@ -16618,6 +16650,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var o = { type: el.value, emp: $('#en-emp').value, date: $('#en-date').value, reason: $('#en-reason').value };
       setSheetBody(entryForm(o));
     }
+    // A later start allowed: who will be told follows the person picked (2.12.8).
+    if (el.dataset.change === 'en-emp' && $('#en-time') && $('.clock-tell')) $('.clock-tell').textContent = clockTellText(el.value, 'permit');
   });
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'visible' && S.view === 'kiosk') {
