@@ -2842,7 +2842,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 <div id="toasts" role="status" aria-live="polite"></div>
 <input type="file" id="cam-env" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="cam-user" class="visually-hidden" accept="image/*" capture="user" tabindex="-1" aria-hidden="true">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbxyO18fWWvTnVvMiJNLJi4b6zaQeaTHgCfeWnhdUKj7ku-Rhuh1YxiB7i29g9JoCl3quA/exec","version":"2.12.4","page":"owner","e3":"cf0cf2cd","test":true,"store":"test.","build":"41f0e330c5c2"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbxyO18fWWvTnVvMiJNLJi4b6zaQeaTHgCfeWnhdUKj7ku-Rhuh1YxiB7i29g9JoCl3quA/exec","version":"2.12.5","page":"owner","e3":"cf0cf2cd","test":true,"store":"test.","build":"182d99cc81b9"};</script>
 <script>
 (function () {
   'use strict';
@@ -5514,7 +5514,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // (a stretch is cut in two after 30 minutes or 800 events: the shop's screen is never put away)
   var USE_EV_MAX = 800, USE_SPAN = 30 * 60000, USE_Q_MAX = 60, USE_Q_SIZE = 400000, USE_SEND_BYTES = 60000;
   var USE = { cur: null, page: '', act: null, wait: {}, seq: 0, dev: '', last: '' };
-  var USE_VIEW = { loading: 'กำลังเปิด', moved: 'แอปย้ายที่', error: 'เปิดไม่ได้', offline: 'ไม่มีเน็ต', start: 'เลือกชื่อ', pin: 'ใส่ PIN', ownerLogin: 'ใส่รหัสเจ้าของร้าน' };
+  var USE_VIEW = { loading: 'กำลังเปิด', moved: 'แอปย้ายที่', error: 'เปิดไม่ได้', offline: 'ไม่มีเน็ต', start: 'เลือกชื่อ', pin: 'ใส่ PIN', ownerLogin: 'ใส่รหัสเจ้าของร้าน', ownerCode: 'ใส่รหัสจากอีเมล' };
   var USE_TAB = { home: 'หน้าแรก', team: 'ทีม', friends: 'เพื่อน', ideas: 'ไอเดีย', me: 'ฉัน', history: 'ประวัติการทำงาน', slips: 'สลิปเงินเดือน', leave: 'วันลา', order: 'สั่งของ', approve: 'อนุมัติ' };
   var USE_OWNER_TAB = { overview: 'ภาพรวม', pay: 'เงินเดือน', team: 'ทีม', staff: 'พนักงาน', settings: 'ตั้งค่า' };
   var USE_KIOSK = { names: 'เลือกชื่อ', pin: 'ใส่ PIN', confirm: 'ยืนยัน', result: 'ลงเวลาแล้ว' };
@@ -6813,7 +6813,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         // Two of the same name in one group: what tells them apart, in small type under the name.
         var twin = g.list.some(function (o) { return o !== e && ownName(o) === ownName(e); });
         var apart = twin && e.name !== ownName(e) ? e.name.slice(ownName(e).length).trim() : '';
-        return html`<button class="name-tile ${done ? 'done' : ''}" data-act="${act}" data-id="${e.id}">${avatar(e)}<div class="grow"><b>${nameTag(e, ownName(e))}</b>${apart ? html`<span>${apart}</span>` : ''}</div>${done ? html`<span class="ok">${icon('check')}</span>` : ''}</button>`;
+        // (the test app's made-up people: their PINs, sent by its server only, B.employees[].pin)
+        return html`<button class="name-tile ${done ? 'done' : ''}" data-act="${act}" data-id="${e.id}">${avatar(e)}<div class="grow"><b>${nameTag(e, ownName(e))}</b>${apart ? html`<span>${apart}</span>` : ''}${e.pin ? html`<span>PIN ${e.pin}</span>` : ''}</div>${done ? html`<span class="ok">${icon('check')}</span>` : ''}</button>`;
       })}</div>`;
     });
   }
@@ -6848,21 +6849,36 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   VIEWS.pin = function () {
     var e = empById(S.pickId) || {};
     return html`<div class="wrap"><div class="topbar"><div class="wrap" style="padding:0"><button class="icon-btn" data-act="back-start" aria-label="กลับ">${icon('left')}</button>${brand()}<span style="width:40px"></span></div></div>
-      <div class="pin-wrap">${avatar(e, 'lg')}<div class="hello" style="font-size:24px;margin-top:12px">${ownName(e)}</div><div class="muted small">ใส่ PIN ${e.pinLen || 4} หลัก</div>
+      <div class="pin-wrap">${avatar(e, 'lg')}<div class="hello" style="font-size:24px;margin-top:12px">${ownName(e)}</div><div class="muted small">ใส่ PIN ${e.pinLen || 4} หลัก${e.pin ? ' · แอปทดลอง: ' + e.pin : ''}</div>
       ${pinPad(e.pinLen || 4, S.pin, S.pinErr)}</div></div>`;
   };
   VIEWS.ownerLogin = function () {
     return html`<div class="wrap"><div class="topbar"><div class="wrap" style="padding:0"><button class="icon-btn" data-act="back-start" aria-label="กลับ">${icon('left')}</button>${brand()}<span style="width:40px"></span></div></div>
-      <div class="pin-wrap">${ownerSeal('margin:0 auto;width:56px;height:56px')}<div class="hello" style="font-size:24px;margin-top:12px">เจ้าของร้าน</div><div class="muted small">ใส่รหัสเจ้าของร้าน</div>
+      <div class="pin-wrap">${ownerSeal('margin:0 auto;width:56px;height:56px')}<div class="hello" style="font-size:24px;margin-top:12px">เจ้าของร้าน</div><div class="muted small">ใส่รหัสเจ้าของร้าน${B.testOwnerPin ? ' · แอปทดลอง: ' + B.testOwnerPin : ''}</div>
       ${pinPad(0, S.pin, S.pinErr)}
-      <label class="remember"><input type="checkbox" id="remember-owner" ${S.keepOwner === false ? '' : 'checked'}> จำไว้ในเครื่องนี้</label></div></div>`;
+      <label class="remember"><input type="checkbox" id="remember-owner" ${S.keepOwner === false ? '' : 'checked'}> จำไว้ในเครื่องนี้</label>
+      <div class="foot-links" style="padding:18px 0 0"><button class="link" data-act="owner-forgot">ลืมรหัส</button></div></div></div>`;
+  };
+  /**
+   * After "ลืมรหัส": the email went to the shop's Google account (S.forgot, from ownerForgot), with a link
+   * and a 6-digit code. The link signs in where it opens; the code typed here signs in this page, when
+   * the link opened elsewhere (an iPhone's home-screen app keeps its own memory, apart from Safari's).
+   */
+  VIEWS.ownerCode = function () {
+    var f = S.forgot || {};
+    return html`<div class="wrap"><div class="topbar"><div class="wrap" style="padding:0"><button class="icon-btn" data-act="go-owner" aria-label="กลับ">${icon('left')}</button>${brand()}<span style="width:40px"></span></div></div>
+      <div class="pin-wrap">${ownerSeal('margin:0 auto;width:56px;height:56px')}<div class="hello" style="font-size:22px;margin-top:12px">${f.sent === false ? 'ส่งอีเมลไปแล้วเมื่อ ' + f.at + ' น.' : 'ส่งอีเมลแล้ว'}</div>
+      <div class="muted small">ไปที่ ${f.to} · กดลิงก์ในอีเมล หรือใส่รหัส 6 หลักจากอีเมลตรงนี้ · ใช้ได้ถึง ${f.until} น.</div>
+      ${pinPad(6, S.pin, S.pinErr)}
+      ${f.demo ? html`<div class="hint" style="margin-top:14px">${icon('info')}<span>${f.demo}</span></div>` : ''}
+      <p class="muted small" style="margin-top:16px">ไม่เห็นอีเมล ดูในจดหมายขยะ · ขออีเมลใหม่ได้ตอน ${f.again} น.</p></div></div>`;
   };
 
   function pinKey(k) {
     if (S.pinBusy) return;
     var kiosk = S.view === 'kiosk';
     var typed = kiosk ? S.k.pin : S.pin;
-    var len = kiosk ? (empById(S.k.emp) || {}).pinLen || 4 : S.view === 'pin' ? (empById(S.pickId) || {}).pinLen || 4 : 0;
+    var len = kiosk ? (empById(S.k.emp) || {}).pinLen || 4 : S.view === 'pin' ? (empById(S.pickId) || {}).pinLen || 4 : S.view === 'ownerCode' ? 6 : 0;
     if (k === 'del') typed = typed.slice(0, -1);
     else if (k === 'ok') { submitPin(typed); return; }
     else if (typed.length < (len || 12)) typed += k;
@@ -6875,6 +6891,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function submitPin(pin) {
     if (S.view === 'kiosk') return kioskSubmitPin(pin);
     if (S.view === 'ownerLogin') return ownerLogin(pin, $('#remember-owner') ? $('#remember-owner').checked : true);
+    if (S.view === 'ownerCode') return ownerByEmail({ code: pin });
     var id = S.pickId;
     var e0 = empById(id) || {};
     // Straight into the app: its outline shows while the server checks the PIN,
@@ -10286,22 +10303,74 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.view = 'owner'; S.ownerTab = 'overview';
     render();
     return call('owner', {}, { ownerPin: pin }, { once: true }).then(function (d) {
-      S.pinBusy = false;
-      S.login = null;
-      S.owner = { pin: pin };
-      if (keep) { LS.set(KEY.owner, S.owner); remember('owner', d); }
-      S.ownerHome = d;
-      S.ownerAt = Date.now();
-      S.pin = '';
-      syncFaces(d.avatarTag);
-      if (S.view === 'owner') render();
-      prefetchTabs();
+      ownerIn(pin, d, keep);
     }, function (e) {
       S.pinBusy = false;
       S.login = null;
       S.pin = '';
       S.pinErr = e.message;
       S.view = 'ownerLogin';
+      render();
+    });
+  }
+  /** Signed in as the owner with this password (pin), and the overview (d) it opened. */
+  function ownerIn(pin, d, keep) {
+    S.pinBusy = false;
+    S.login = null;
+    S.owner = { pin: pin };
+    if (keep) { LS.set(KEY.owner, S.owner); remember('owner', d); }
+    S.ownerHome = d;
+    S.ownerAt = Date.now();
+    S.pin = '';
+    syncFaces(d.avatarTag);
+    if (S.view === 'owner') render();
+    prefetchTabs();
+  }
+  /** "ลืมรหัส": an email to the shop's Google account (Api.gs apiOwnerForgot_); then its code is asked for. Sent once (a change). */
+  function ownerForgot(btn) {
+    var sent = call('ownerForgot', {}, {}).catch(function (e) {
+      if (e.network) e.message = 'เน็ตสะดุด อีเมลอาจส่งไปแล้ว ดูอีเมลก่อน · กด "ลืมรหัส" อีกครั้งเพื่อใส่รหัสจากอีเมล';
+      throw e;
+    });
+    run(btn, sent).then(function (d) {
+      S.forgot = d;
+      S.pin = ''; S.pinErr = '';
+      S.view = 'ownerCode';
+      render();
+    }, function () {});
+  }
+  /**
+   * In with the email's link ({token}) or code ({code}): the server gives the password back, kept on
+   * this phone as if typed, with the overview. Its answer lost on the way, asked again with the same
+   * device id, which the server lets in once more (only that one).
+   */
+  function ownerByEmail(arg) {
+    var code = !!arg.code;
+    S.pinBusy = true;
+    S.keepOwner = true;
+    S.login = { owner: true };
+    S.ownerHome = null; S.ownerErr = '';
+    S.view = 'owner'; S.ownerTab = 'overview';
+    render();
+    var req = Object.assign({ phone: deviceId() }, arg);
+    var tries = 0;
+    var go = function () {
+      return send('ownerByEmail', req, {}, 45000).catch(function (e) {
+        if (!(e.network && tries < 2)) throw e;
+        tries++;
+        return later(tries === 1 ? 700 : 2500).then(whenOnline).then(go);
+      });
+    };
+    return go().then(function (d) {
+      S.forgot = null;
+      ownerIn(d.pin, d.home, true);
+      toast('เข้าหน้าเจ้าของร้านแล้ว เครื่องนี้จำไว้ · ตั้งรหัสใหม่ได้ที่ ตั้งค่า › ความปลอดภัย', 'ok');
+    }, function (e) {
+      S.pinBusy = false;
+      S.login = null;
+      S.pin = '';
+      S.pinErr = e.message;
+      S.view = code && S.forgot ? 'ownerCode' : 'ownerLogin';
       render();
     });
   }
@@ -14106,7 +14175,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // (the shop's screen never by itself, its camera perhaps asked for again: it has its button, k-update)
     if (S.kiosk && S.kiosk.token) return true;
     if (sheetState || S.scanner || S.scanCode || S.goAfter || S.pinBusy || writing > 0) return true;
-    if (S.view === 'pin' || S.view === 'ownerLogin') return true;
+    if (S.view === 'pin' || S.view === 'ownerLogin' || S.view === 'ownerCode') return true;
     if (runner && (runner.stage === 'count' || runner.stage === 'run')) return true;
     var a = document.activeElement;
     if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return true;
@@ -15285,6 +15354,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'stay-old': function () { S.stay = true; start(); },
     'pick': function (el) { var seal = sealAt(el); S.pickId = el.dataset.id; S.pin = ''; S.pinErr = ''; S.view = 'pin'; render(); flyFrom(seal, $('.pin-wrap .av')); warmServer(); },
     'go-owner': function () { S.pin = ''; S.pinErr = ''; S.view = 'ownerLogin'; render(); warmServer(); },
+    'owner-forgot': function (el) { ownerForgot(el); },
     'back-start': function () { S.view = 'start'; S.pin = ''; render(); },
     'pin-key': function (el) { pinKey(el.dataset.k); },
     'sheet-close': function () { closeSheet(); },
@@ -16536,7 +16606,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }, 1200);
   });
   document.addEventListener('keydown', function (ev) {
-    var pinView = S.view === 'pin' || S.view === 'ownerLogin' || (S.view === 'kiosk' && S.k.step === 'pin');
+    var pinView = S.view === 'pin' || S.view === 'ownerLogin' || S.view === 'ownerCode' || (S.view === 'kiosk' && S.k.step === 'pin');
     if (!pinView || sheetState) return;
     if (/^\d$/.test(ev.key)) pinKey(ev.key);
     else if (ev.key === 'Backspace') pinKey('del');
@@ -16604,6 +16674,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       kioskBoot();
       return;
     }
+    // Opened from the email of "ลืมรหัส": in as the owner with its link.
+    if (S.ownerKey) {
+      var key = S.ownerKey;
+      S.ownerKey = '';
+      ownerByEmail({ token: key });
+      return;
+    }
     // Signed in on this phone: straight to the screen as last seen (or its
     // outline), while today's is fetched.
     if (B.page === 'owner' || (S.owner && !S.staff)) {
@@ -16650,6 +16727,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     setTimeout(function () { if (window.requestIdleCallback) requestIdleCallback(c3Start, { timeout: 300 }); else c3Start(); }, 150);
     if (!SITE) { start(); return; }
     takeHandoff();
+    takeOwnerKey();
     pageInit();
     // The shop's screen asks for its own (start).
     if (S.kiosk && S.kiosk.token) { start(); return; }
@@ -16731,6 +16809,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var carry = {};
     HANDOFF.forEach(function (h) { var v = LS.get(h[1]); if (v) carry[h[0]] = v; });
     return Object.keys(carry).length ? url + '#move=' + b64url(JSON.stringify(carry)) : url;
+  }
+  /** The link in the email of "ลืมรหัส" (#owner-key=…): kept for start, gone from the address at once. */
+  function takeOwnerKey() {
+    var m = /[#&]owner-key=([0-9a-f]{64})/.exec(location.hash);
+    if (!m) return;
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* the address keeps it */ }
+    S.ownerKey = m[1];
   }
   function takeHandoff() {
     var m = /[#&]move=([A-Za-z0-9_-]+)/.exec(location.hash);
