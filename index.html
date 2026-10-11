@@ -2840,7 +2840,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 <div id="toasts" role="status" aria-live="polite"></div>
 <input type="file" id="cam-env" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="cam-user" class="visually-hidden" accept="image/*" capture="user" tabindex="-1" aria-hidden="true">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbz2iYI-AY2wmBoYL11bWkP6gy9TdUqZsB_CAT27Iq7vdgxg-T8PsD0q3uy43YM53lGwEA/exec","version":"2.12.5","page":"","e3":"cf0cf2cd","build":"973d7dc3248e"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbz2iYI-AY2wmBoYL11bWkP6gy9TdUqZsB_CAT27Iq7vdgxg-T8PsD0q3uy43YM53lGwEA/exec","version":"2.12.6","page":"","e3":"cf0cf2cd","build":"b2d08699effd"};</script>
 <script>
 (function () {
   'use strict';
@@ -6844,11 +6844,24 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return html`<button class="key" data-act="pin-key" data-k="${k}">${k}</button>`;
       })}</div>`;
   }
+  /**
+   * A forgotten PIN (the owner's choice ก, 11 Oct 2569): the owner tells it again or gives a new one
+   * (พนักงาน › the name), and meanwhile the approver clocks them in at the time they came. Nothing is
+   * asked or kept. The approver by name when the shop has one, as the LINE news says it (Line.gs
+   * approverName_); for an approver, the other one, or the owner.
+   */
+  function forgotPinText(e) {
+    var others = (B.employees || []).filter(function (x) { return x.role === 'approver' && x.id !== e.id; });
+    var who = others.length === 1 ? others[0].name : others.length ? 'ผู้อนุมัติ' : '';
+    return 'บอกเจ้าของร้านเพื่อขอ PIN · ถึงเวลาเข้างานแล้ว ' + (who ? 'บอก' + who + 'ให้ลงเวลาแทน ด้วยเวลาที่มาถึงร้าน' : 'ขอให้ลงเวลาแทนด้วยเวลาที่มาถึงร้าน');
+  }
+  // (the name 18px under the picture, on the shop's screen too: no level's frame over it, dev/overlap.js)
   VIEWS.pin = function () {
     var e = empById(S.pickId) || {};
     return html`<div class="wrap"><div class="topbar"><div class="wrap" style="padding:0"><button class="icon-btn" data-act="back-start" aria-label="กลับ">${icon('left')}</button>${brand()}<span style="width:40px"></span></div></div>
-      <div class="pin-wrap">${avatar(e, 'lg')}<div class="hello" style="font-size:24px;margin-top:12px">${ownName(e)}</div><div class="muted small">ใส่ PIN ${e.pinLen || 4} หลัก${e.pin ? ' · แอปทดลอง: ' + e.pin : ''}</div>
-      ${pinPad(e.pinLen || 4, S.pin, S.pinErr)}</div></div>`;
+      <div class="pin-wrap">${avatar(e, 'lg')}<div class="hello" style="font-size:24px;margin-top:18px">${ownName(e)}</div><div class="muted small">ใส่ PIN ${e.pinLen || 4} หลัก${e.pin ? ' · แอปทดลอง: ' + e.pin : ''}</div>
+      ${pinPad(e.pinLen || 4, S.pin, S.pinErr)}
+      ${S.pinHelp ? html`<div class="hint pin-help" style="margin-top:18px;text-align:left">${icon('info')}<span>${forgotPinText(e)}</span></div>` : html`<div class="foot-links" style="padding:18px 0 0"><button class="link" data-act="pin-forgot">ลืม PIN</button></div>`}</div></div>`;
   };
   VIEWS.ownerLogin = function () {
     return html`<div class="wrap"><div class="topbar"><div class="wrap" style="padding:0"><button class="icon-btn" data-act="back-start" aria-label="กลับ">${icon('left')}</button>${brand()}<span style="width:40px"></span></div></div>
@@ -7366,8 +7379,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       body = html`${S.k.newVersion && B.appUrl ? html`<a class="k-update" href="${freshUrl(B.appUrl)}" target="_top">${icon('refresh')} มีแอปรุ่นใหม่ — แตะเพื่อเปิดจอใหม่</a>` : ''}${rainBanner(B.rain, 'kiosk')}${liveQrPanel()}<div class="k-prompt">${!pinHere ? 'ใครลงเวลาแล้วขึ้น ✓ · ลืมมือถือหรือแบตหมด บอกผู้อนุมัติให้ลงเวลาแทน' : liveQrOn() ? 'ไม่มีมือถือ? แตะชื่อแล้วใส่ PIN ที่เครื่องนี้' : 'แตะชื่อของคุณเพื่อลงเวลาเข้างาน'}</div><div id="k-names">${nameTiles(pinHere ? 'k-pick' : 'k-nopin', k.done)}</div>`;
     } else if (k.step === 'pin') {
       var e = empById(k.emp) || {};
-      body = html`<div class="pin-wrap">${avatar(e, 'lg')}<div class="hello" style="font-size:26px;margin-top:12px">${ownName(e)}</div><div class="muted">ใส่ PIN ของคุณ</div>${pinPad(e.pinLen || 4, k.pin, k.err)}
-        <button class="btn ghost" style="margin-top:18px" data-act="k-cancel">ยกเลิก</button></div>`;
+      body = html`<div class="pin-wrap">${avatar(e, 'lg')}<div class="hello" style="font-size:26px;margin-top:18px">${ownName(e)}</div><div class="muted">ใส่ PIN ของคุณ</div>${pinPad(e.pinLen || 4, k.pin, k.err)}
+        <button class="btn ghost" style="margin-top:18px" data-act="k-cancel">ยกเลิก</button><p class="muted small" style="margin:16px 0 0">ลืม PIN? ${forgotPinText(e)}</p></div>`;
     } else if (k.step === 'confirm') {
       body = kioskConfirm();
     } else if (!k.result) {
@@ -15350,7 +15363,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var ACTIONS = {
     'reload': function () { location.reload(); },
     'stay-old': function () { S.stay = true; start(); },
-    'pick': function (el) { var seal = sealAt(el); S.pickId = el.dataset.id; S.pin = ''; S.pinErr = ''; S.view = 'pin'; render(); flyFrom(seal, $('.pin-wrap .av')); warmServer(); },
+    'pick': function (el) { var seal = sealAt(el); S.pickId = el.dataset.id; S.pin = ''; S.pinErr = ''; S.pinHelp = false; S.view = 'pin'; render(); flyFrom(seal, $('.pin-wrap .av')); warmServer(); },
+    'pin-forgot': function () { S.pinHelp = true; render(); },
     'go-owner': function () { S.pin = ''; S.pinErr = ''; S.view = 'ownerLogin'; render(); warmServer(); },
     'owner-forgot': function (el) { ownerForgot(el); },
     'back-start': function () { S.view = 'start'; S.pin = ''; render(); },
