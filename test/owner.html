@@ -2842,7 +2842,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 <div id="toasts" role="status" aria-live="polite"></div>
 <input type="file" id="cam-env" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="cam-user" class="visually-hidden" accept="image/*" capture="user" tabindex="-1" aria-hidden="true">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbxyO18fWWvTnVvMiJNLJi4b6zaQeaTHgCfeWnhdUKj7ku-Rhuh1YxiB7i29g9JoCl3quA/exec","version":"2.12.9","page":"owner","e3":"cf0cf2cd","test":true,"store":"test.","build":"a0122cfd7926"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbxyO18fWWvTnVvMiJNLJi4b6zaQeaTHgCfeWnhdUKj7ku-Rhuh1YxiB7i29g9JoCl3quA/exec","version":"2.12.9","page":"owner","e3":"cf0cf2cd","test":true,"store":"test.","build":"c70221c7fdf0"};</script>
 <script>
 (function () {
   'use strict';
@@ -10718,11 +10718,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <ol class="small muted" style="padding-left:18px;margin:10px 0 0"><li>สร้าง LINE Official Account (ฟรี) เปิด Messaging API แล้ววาง Channel access token ในช่อง "แจ้งเตือน" ด้านบน</li><li>ตั้ง Webhook URL เป็นลิงก์แอปนี้ (${o.links.app || 'ลิงก์เว็บแอป'})</li><li>เชิญบอทเข้ากลุ่มพนักงาน แล้วพิมพ์ <b>เชื่อมระบบ ${o.line.linkCode}</b> ในกลุ่ม (เจ้าของร้านพิมพ์ในแชตกับบอทอีกครั้งด้วยรหัสใหม่)</li></ol>
         <button class="btn sm" style="margin-top:10px" data-act="line-code">สร้างรหัสใหม่</button></section>
       <section class="card"><div class="card-h"><span class="eyebrow">ข้อมูลและการสำรอง</span></div>
-        <p class="small muted mt0">ข้อมูลทั้งหมดอยู่ใน Google Sheet ของร้าน · สำรองทั้งไฟล์ให้เองทุกคืนตอนตี 4 (สำเนารายวันเก็บ 30 วัน สำเนาวันที่ 1 ของเดือนและก่อนอัปเดตทุกครั้งเก็บตลอด) · ส่งไฟล์ Excel ของข้อมูลทั้งหมดเข้าอีเมลสัปดาห์ละครั้ง · เงินเดือนที่อนุมัติแล้วเก็บแยกไว้ ไม่เปลี่ยนแม้แก้โปรแกรม</p>
+        <p class="small muted mt0">${o.backup && o.backup.sheetIsCopy ? 'ข้อมูลทั้งหมดอยู่ในระบบของร้าน · ทุกคืนตอนตี 4 คัดลอกลง Google Sheet ของร้านไว้เปิดดู (แก้ในชีตไม่มีผลกับแอป) แล้วสำรองทั้งไฟล์ (สำเนารายวันเก็บ 30 วัน สำเนาวันที่ 1 ของเดือนเก็บตลอด)' : 'ข้อมูลทั้งหมดอยู่ใน Google Sheet ของร้าน · สำรองทั้งไฟล์ให้เองทุกคืนตอนตี 4 (สำเนารายวันเก็บ 30 วัน สำเนาวันที่ 1 ของเดือนและก่อนอัปเดตทุกครั้งเก็บตลอด)'} · ส่งไฟล์ Excel ของข้อมูลทั้งหมดเข้าอีเมลสัปดาห์ละครั้ง · เงินเดือนที่อนุมัติแล้วเก็บแยกไว้ ไม่เปลี่ยนแม้แก้โปรแกรม</p>
         ${backupStatus(o.backup)}
         ${settingField(set.backupMail)}${settingField(set.backupEmail)}
         <button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="backupMail,backupEmail">บันทึกการสำรอง</button>
-        <div class="row wrapx" style="margin-top:12px"><a class="btn sm" href="${o.links.sheet}" target="_blank" rel="noopener">${icon('sheet')} เปิด Google Sheet</a>${o.backup && o.backup.folder ? html`<a class="btn sm" href="${o.backup.folder}" target="_blank" rel="noopener">${icon('shield')} โฟลเดอร์สำรอง</a>` : ''}<button class="btn sm" data-act="backup">สำรองตอนนี้</button><button class="btn sm" data-act="backup-mail">${icon('mail')} ส่งเข้าอีเมลตอนนี้</button></div>
+        <div class="row wrapx" style="margin-top:12px">${o.backup && o.backup.sheet ? html`<a class="btn sm" href="${o.backup.sheet}" target="_blank" rel="noopener">${icon('sheet')} เปิด Google Sheet</a>` : ''}${o.backup && o.backup.folder ? html`<a class="btn sm" href="${o.backup.folder}" target="_blank" rel="noopener">${icon('shield')} โฟลเดอร์สำรอง</a>` : ''}<button class="btn sm" data-act="backup">สำรองตอนนี้</button><button class="btn sm" data-act="backup-mail">${icon('mail')} ส่งเข้าอีเมลตอนนี้</button></div>
         <p class="tiny muted" style="margin:10px 0 0">เวอร์ชัน ${o.version} · ตรวจฝนโดย <a href="https://www.weatherapi.com/" target="_blank" rel="noopener" title="Free Weather API">WeatherAPI.com</a></p></section>
     </div>`;
   }
