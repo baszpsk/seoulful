@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.12.9","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"608b59e8d264"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.0","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"423e455bdc42"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -7309,7 +7309,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.view = 'staff'; S.tab = 'home'; S.sub = null;
     // Where the phone is, looked for while the PIN is checked when the phone
     // already allows it (the clock-in needs it; no question pops up before the app).
-    if (B.clock && B.clock.mode === 'kiosk+phone') gpsAllowed().then(function (yes) { if (yes && S.view === 'staff' && !S.geo) warmGps(); });
+    // (how the shop clocks in comes with the PIN's answer: before it, looked for when the phone allows it anyway)
+    if (!B.clock || B.clock.mode === 'kiosk+phone') gpsAllowed().then(function (yes) { if (yes && S.view === 'staff' && !S.geo) warmGps(); });
     render();
     call('home', {}, { empId: id, pin: pin }, { once: true }).then(function (data) {
       S.pinBusy = false;
@@ -7920,9 +7921,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // ======================================================================
   // Staff app (phone)
   // ======================================================================
+  /**
+   * The shop's own that the pages work from (its shifts, how it clocks in, its rules, its kinds of leave and of
+   * entries): it comes with the home or the owner's overview, after a right PIN (2.13.0), not with the names
+   * the app opens on (Api.gs bootData_); kept on the phone with them.
+   */
+  function appIn(app) {
+    if (!app || typeof app !== 'object') return;
+    ['shifts', 'clock', 'rules', 'leaveTypes', 'entryTypes'].forEach(function (k) { if (app[k] !== undefined) B[k] = app[k]; });
+  }
   function applyHome(data) {
     S.home = data;
     S.homeAt = Date.now();
+    appIn(data.app);
     if (S.staff) useKeep(S.staff.empId, data.useKey);
     if (data.levels) S.levels = data.levels;
     syncFaces(data.avatarTag);
@@ -10810,6 +10821,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (keep) { LS.set(KEY.owner, S.owner); remember('owner', d); }
     S.ownerHome = d;
     S.ownerAt = Date.now();
+    appIn(d.app);
     S.pin = '';
     syncFaces(d.avatarTag);
     if (S.view === 'owner') render();
@@ -10875,6 +10887,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (!S.owner || S.owner.pin !== auth.ownerPin) return null;
       S.ownerHome = d;
       S.ownerAt = Date.now();
+      appIn(d.app);
       S.ownerErr = '';
       if (d.levels) { S.levels = d.levels; if (S.home) S.home.levels = d.levels; }
       if (LS.get(KEY.owner)) remember('owner', d);
@@ -10908,7 +10921,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function ownerChanged(d) {
     S.ownerSeq = (S.ownerSeq || 0) + 1;
     S.ownerLoad = null;
-    if (d) { S.ownerHome = d; S.ownerAt = Date.now(); }
+    if (d) { S.ownerHome = d; S.ownerAt = Date.now(); appIn(d.app); }
     if (LS.get(KEY.owner) && S.ownerHome) remember('owner', S.ownerHome);
   }
   function logoutOwner(msg) {
@@ -10923,6 +10936,35 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.view = B.page === 'owner' ? 'ownerLogin' : 'start';
     render();
     if (msg && S.view === 'start') toast(msg, 'bad');
+  }
+  /**
+   * The owner's password shorter than 8 digits (one set before 2.13.0, the PIN guard): a new one set before
+   * anything else, once (Api.gs apiOwner_ codeShort), saved as the settings' own (settingsSave ownerPin).
+   */
+  function ownerNewCode() {
+    var o = S.ownerHome;
+    return html`${topbar({ name: 'เจ้าของร้าน', sub: o.brand.name + ' Staff', av: ownerSeal() }, 'owner-menu', o.bell)}
+      <main class="wrap page"><div class="stack">
+        <section class="card pad-lg"><span class="eyebrow">ความปลอดภัย</span>
+          <p style="margin:8px 0 4px"><b>ตั้งรหัสเจ้าของร้านใหม่ก่อนเข้าใช้</b></p>
+          <p class="small muted mt0">รหัสเดิมสั้นไป รหัสใหม่เป็นตัวเลข 8–12 หลัก ตั้งครั้งเดียว แล้วเข้าหน้าเจ้าของร้านด้วยรหัสใหม่ได้ตามปกติ</p>
+          <label class="field"><span>รหัสใหม่</span><input class="input" id="new-code" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password"></label>
+          <label class="field"><span>ใส่รหัสใหม่อีกครั้ง</span><input class="input" id="new-code2" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password"></label>
+          <button class="btn primary block" style="margin-top:16px" data-act="owner-new-code">บันทึกรหัสใหม่</button>
+        </section>
+      </div></main>`;
+  }
+  /** PINs locked by wrong ones, or locked within the day (Api.gs pinLocksView_): each lifted with one press. */
+  function pinLocksCard(list) {
+    if (!list || !list.length) return '';
+    return html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ล็อกจากใส่ PIN ผิด</span></div>
+      <p class="small muted" style="margin:6px 16px 0">ใส่ผิดหลายครั้งติดกัน แอปล็อกชั่วคราว ครั้งต่อไปนานขึ้น · ถ้าเป็นคนในร้านที่ลืม กดปลดล็อกให้ได้เลย</p>
+      <div class="list">${list.map(function (x) {
+        var day = x.until ? ymdOf(new Date(x.until)) : '';
+        var until = day ? (day === ymdOf(now()) ? '' : thShort(day) + ' ') + isoTime(x.until) + ' น.' : '';
+        var sub = until ? 'ล็อกถึง ' + until + (x.locks > 1 ? ' · ครั้งที่ ' + x.locks : '') : 'ล็อกไปแล้ว ' + x.locks + ' ครั้งใน 1 วันที่ผ่านมา ครั้งต่อไปนานขึ้น';
+        return html`<div class="item">${icon('lock')}<span class="grow">${x.name}<span class="s" style="display:block">${sub}</span></span><button class="btn sm" data-act="pin-unlock" data-key="${x.key}">ปลดล็อก</button></div>`;
+      })}</div></section>`;
   }
   /** The owner's screen before its data. */
   function ownerOutline() {
@@ -10939,6 +10981,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   VIEWS.owner = function () {
     var o = S.ownerHome;
     if (!o || !B.employees) return ownerOutline();
+    if (o.codeShort) return ownerNewCode();
     var tab = S.ownerTab;
     var body = tab === 'pay' ? payView() : tab === 'team' ? html`${S.leaves && S.leaves.pending.length ? html`<div class="stack" style="margin-bottom:22px">${leaveApprovals()}</div>` : ''}${teamView()}` : tab === 'staff' ? staffEditor() : tab === 'settings' ? settingsView() : overview();
     return html`${topbar({ name: 'เจ้าของร้าน', sub: o.brand.name + ' Staff', av: ownerSeal() }, 'owner-menu', o.bell)}
@@ -10967,6 +11010,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="stack">
       <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}</div>
       ${o.update ? updateCard(o.update) : ''}
+      ${pinLocksCard(o.pinLocks)}
       ${pushCard()}
       ${tempUp ? tempOwnerCard(o.temp) : ''}
       ${due ? html`<section class="card hero pad-lg"><span class="eyebrow">ต้องจ่าย · เงินเดือน${due.month}${due.payDue ? ' · วันที่ ' + thShort(due.payDue) : ''}</span><div class="big" style="margin-top:6px">${money(due.total)}<small>บาท</small></div>
@@ -11121,8 +11165,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** Part of the start data changed on this page (the shifts, the types of leave): here, and in what this phone keeps of it. */
   function bootSet(k, v) {
     B[k] = v;
+    // (the shop's own comes with the overview, 2.13.0: kept with it, appIn)
+    if (S.ownerHome && S.ownerHome.app) { S.ownerHome.app[k] = v; ownerChanged(); }
     var m = LS.get(MEM.boot);
-    if (m && m.data) { m.data[k] = v; LS.set(MEM.boot, m); }
+    if (m && m.data && k in m.data) { m.data[k] = v; LS.set(MEM.boot, m); }
   }
   /** What a sheet's fields ([data-g]) say now, less those as they were (`was`, its keys as the fields'): {key: text}. */
   function formChanged(was) {
@@ -15041,7 +15087,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   // -- the bell: what this person was told (the last 30 days)
   var bellList = null; // {notes, unread, phones} as last fetched
-  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', test: 'bell' };
+  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', 'pin-lock': 'lock', test: 'bell' };
   function noteWhen(iso) {
     var ms = now().getTime() - Date.parse(iso);
     if (ms < 60000) return 'เมื่อสักครู่';
@@ -16934,7 +16980,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'retry-boot': function () { retryBoot(); },
     'retry-part': function (el) { var w = el.dataset.what; delete S.loadErr[w]; render(); if (RETRY_PART[w]) RETRY_PART[w](); },
     'retry-load': function () {
-      if (S.bootErr && !B.clock) { retryBoot(); return; }
+      if (S.bootErr && !B.employees) { retryBoot(); return; }
       var outline = S.view === 'owner' ? !S.ownerHome : !S.home;
       // An outline shows its shapes again; a note over older data says it is loading.
       if (outline) { S.ownerErr = ''; S.homeErr = ''; } else S.retrying = true;
@@ -17179,6 +17225,25 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var fields = {};
       document.querySelectorAll('#sheet-body [data-f]').forEach(function (i) { fields[i.dataset.f] = i.value; });
       run(el, call('employeeSave', { id: el.dataset.id || undefined, fields: fields }, ownerAuth())).then(function (d) { closeSheet(); S.employees = d; render(); toast(d.notice, 'ok'); }, function () {});
+    },
+    'pin-unlock': function (el) {
+      run(el, call('pinUnlock', { key: el.dataset.key }, ownerAuth())).then(function (d) {
+        if (S.ownerHome) S.ownerHome.pinLocks = d.pinLocks;
+        ownerChanged();
+        render(); toast(d.notice, 'ok');
+      }, function () {});
+    },
+    'owner-new-code': function (el) {
+      var a = String(($('#new-code') || {}).value || '').trim();
+      var b = String(($('#new-code2') || {}).value || '').trim();
+      if (!/^\d{8,12}$/.test(a)) { toast('รหัสใหม่ต้องเป็นตัวเลข 8–12 หลัก', 'bad'); return; }
+      if (a !== b) { toast('รหัสสองช่องไม่ตรงกัน ใส่ใหม่อีกครั้ง', 'bad'); return; }
+      run(el, call('settingsSave', { values: { ownerPin: a } }, ownerAuth())).then(function (d) {
+        S.owner = { pin: a };
+        if (LS.get(KEY.owner)) LS.set(KEY.owner, S.owner);
+        ownerChanged(d);
+        render(); toast('ตั้งรหัสใหม่แล้ว · ใช้รหัสนี้เข้าหน้าเจ้าของร้านครั้งต่อไป', 'ok');
+      }, function () {});
     },
     'reset-pin': function (el) {
       run(el, call('employeePin', { id: el.dataset.id }, ownerAuth())).then(function (d) { closeSheet(); S.employees = d; render(); toast(d.notice, 'ok'); }, function () {});
@@ -17447,7 +17512,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (B.page === 'owner' || (S.owner && !S.staff)) {
       if (!S.owner) { S.view = 'ownerLogin'; render(); return; }
       var lastOwner = recall('owner');
-      if (lastOwner && !S.ownerHome) { S.ownerHome = lastOwner.data; S.ownerAt = lastOwner.at; }
+      if (lastOwner && !S.ownerHome) { S.ownerHome = lastOwner.data; S.ownerAt = lastOwner.at; appIn(S.ownerHome.app); }
       S.view = 'owner';
       render();
       loadOwner(true);
