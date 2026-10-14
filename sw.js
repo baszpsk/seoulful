@@ -6,14 +6,20 @@
  * The app's pages kept on this phone (owner yes 10 Oct 2569: an open took 6.5 seconds on a slow phone when
  * the page had to come first, 0.8 when the phone had it): index.html and owner.html open from the copy
  * kept here at once, on a poor network or none too. The site is asked meanwhile and a newer page kept for
- * the next open, the open app told (App.html pageInit loads it once nothing is under way). The pages' other
- * requests go as they would without this helper.
+ * the next open, the open app told (App.html pageInit loads it once nothing is under way). The site's
+ * fonts (where the app's pages have their own, on the shop's server on Cloudflare) are kept here as they
+ * come. The pages' other requests go as they would without this helper.
  */
 'use strict';
 
 var DB = 'seoulful-push';
 // (the site's address keeps one set of stores for all its folders: the test app's, at test/, is named apart as DB is)
 var PAGES = DB + '-pages';
+// The site's fonts (dev/build.js siteFonts), each named by its contents: the one kept here is the one asked for,
+// never asked for again. GitHub Pages has a phone keep a file 10 minutes, then ask whether it changed; a font
+// asked again as the page opens drew its words in the phone's own type a moment, then in the app's.
+var FONTS = DB + '-fonts';
+var FONT = /^fonts\/[\w-]+\.[0-9a-f]{10}\.woff2$/;
 
 function kv(mode, fn) {
   return new Promise(function (ok, bad) {
@@ -68,6 +74,77 @@ function pageOf(url) {
 
 function pageUrl(page) {
   return new URL(page, self.registration.scope).href;
+}
+
+/** Whether `url` is one of the site's fonts in this helper's own folder (not one below it: the test app's). */
+function isFont(url) {
+  var scope = self.registration.scope;
+  url = String(url || '').split(/[?#]/)[0];
+  return url.indexOf(scope) === 0 && FONT.test(url.slice(scope.length));
+}
+
+/** A font: the one kept, else the site's, kept as it comes (the face's file before it, made again, gone). */
+function font(e) {
+  var req = e.request;
+  var url = String(req.url).split(/[?#]/)[0];
+  var after;
+  e.waitUntil(
+    new Promise(function (done) {
+      after = done;
+    }),
+  );
+  return caches
+    .open(FONTS)
+    .catch(function () {
+      return null;
+    })
+    .then(function (c) {
+      return (c ? c.match(url) : Promise.resolve(null))
+        .catch(function () {
+          return null;
+        })
+        .then(function (kept) {
+          if (kept) {
+            after();
+            return kept;
+          }
+          return fetch(req).then(
+            function (r) {
+              if (c && r.ok) {
+                c.put(url, r.clone())
+                  .then(function () {
+                    return forgetOld(c, url);
+                  })
+                  .catch(function () {})
+                  .then(after, after);
+              } else after();
+              return r;
+            },
+            function (err) {
+              after();
+              throw err;
+            },
+          );
+        });
+    });
+}
+
+function forgetOld(c, url) {
+  if (!c.keys) return null;
+  var face = function (u) {
+    return String(u).replace(/\.[0-9a-f]{10}\.woff2$/, '');
+  };
+  return c.keys().then(function (list) {
+    return Promise.all(
+      list
+        .filter(function (r) {
+          return r.url !== url && face(r.url) === face(url);
+        })
+        .map(function (r) {
+          return c.delete(r);
+        }),
+    );
+  });
 }
 
 // What the site last said of each page (its stamp and version), and the asking under way: one at a time.
@@ -125,7 +202,12 @@ function check(page, fresh) {
 
 self.addEventListener('fetch', function (e) {
   var req = e.request;
-  if (req.method !== 'GET' || req.mode !== 'navigate') return;
+  if (req.method !== 'GET') return;
+  if (isFont(req.url)) {
+    e.respondWith(font(e));
+    return;
+  }
+  if (req.mode !== 'navigate') return;
   var page = pageOf(req.url);
   if (!page) return;
   // (?fresh=: the app asks for the site's own, its copy seemingly stuck; the address's other parts are the app's to read)

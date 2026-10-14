@@ -2,6 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
+<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbz2iYI-AY2wmBoYL11bWkP6gy9TdUqZsB_CAT27Iq7vdgxg-T8PsD0q3uy43YM53lGwEA/exec","version":"2.13.0","page":"owner","e3":"cf0cf2cd","build":"5ab42be4a501"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="เจ้าของร้าน">
@@ -16,6 +17,51 @@
 <style id="framed">html{display:none}</style>
 <script>if (window.top === window.self) document.getElementById('framed').remove(); else window.top.location = window.location.href;</script>
 <title>เจ้าของร้าน · Seoulful</title>
+<script>
+// เร็วที่สุด (12 ต.ค. 2569; on the shop's own site since ย้ายหลังบ้าน task 6): on the shop's server on Cloudflare
+// (SITE.edge, dev/build.js), the requests the app makes as it opens go from this line, before the fonts'
+// stylesheets and while the rest of the page (1.4 MB) is read and run (0.3 s on a mid phone, Chrome
+// slowed 4×, and the screen's first layout another 0.15 s): the start data and the screen of whoever
+// this phone has signed in (its staff member, or the owner on owner.html), as the app asks them (boot,
+// start). The app, asking a moment later, is handed these answers (post, earlyFor): nothing is shown that
+// the server did not say at this opening. Not on the shop's screen, nor when the address hands in
+// someone (a move from Google's page, the owner's email link): the app asks for itself then, as it
+// does for anything else; an answer not asked for in 20 s is dropped.
+(function () {
+  var site = window.__SEOULFUL_SITE__;
+  if (!site || !site.edge || !window.fetch || !window.Promise || !window.localStorage || !window.URLSearchParams) return;
+  if (/[#&](move|owner-key)=/.test(location.hash)) return;
+  // (the test app's names apart from the shop's, as the app's own STORE)
+  var STORE = site.store || '';
+  function get(k) { try { return JSON.parse(localStorage.getItem(STORE + k)); } catch (e) { return null; } }
+  function stable(v) {
+    if (Array.isArray(v)) return '[' + v.map(stable).join(',') + ']';
+    if (v && typeof v === 'object') return '{' + Object.keys(v).sort().map(function (k) { return JSON.stringify(k) + ':' + stable(v[k]); }).join(',') + '}';
+    return JSON.stringify(v);
+  }
+  function keyOf(body) { try { var r = JSON.parse(body); return r.action + '|' + stable(r.auth || {}) + '|' + stable(r.data || {}); } catch (e) { return ''; } }
+  if ((get('seoulful.kiosk') || {}).token) return;
+  var q = new URLSearchParams(location.search);
+  var page = String(site.page || q.get('page') || '').toLowerCase(), staff = get('seoulful.staff'), owner = get('seoulful.owner');
+  var list = [{ action: 'boot', auth: {}, data: { page: page, scan: q.get('in') || q.get('qr') || '', v: site.version || '' } }];
+  if (page === 'owner' || (owner && !staff)) { if (owner && owner.pin) list.push({ action: 'owner', auth: { ownerPin: owner.pin }, data: {} }); }
+  else if (staff && staff.empId) list.push({ action: 'home', auth: { empId: staff.empId, pin: staff.pin }, data: {} });
+  var sent = fetch(site.api + (site.api.indexOf('?') < 0 ? '?' : '&') + 'api=1', { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ batch: list }), credentials: 'omit', cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  window.__early = { at: performance.now(), keyOf: keyOf, list: list.map(function (req, i) {
+    var got = sent.then(function (out) {
+      var res = out && out.batch && out.batch[i];
+      // (the server's side failed: the app asks again by itself)
+      if (!res || res.transient) throw new Error('ask again');
+      // (the server's clock as it answered, before the app asked: not one to set the phone's clock by)
+      delete res.serverNow;
+      return res;
+    });
+    got.catch(function () {});
+    return { action: req.action, key: keyOf(JSON.stringify(req)), used: false, got: got };
+  }) };
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap">
@@ -2840,7 +2886,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 <div id="toasts" role="status" aria-live="polite"></div>
 <input type="file" id="cam-env" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="cam-user" class="visually-hidden" accept="image/*" capture="user" tabindex="-1" aria-hidden="true">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://script.google.com/macros/s/AKfycbz2iYI-AY2wmBoYL11bWkP6gy9TdUqZsB_CAT27Iq7vdgxg-T8PsD0q3uy43YM53lGwEA/exec","version":"2.12.9","page":"owner","e3":"cf0cf2cd","build":"766f21e51b04"};</script>
 <script>
 (function () {
   'use strict';
@@ -2849,9 +2894,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // State and constants
   // ======================================================================
   var B = window.__BOOT__ || {};
-  // On the shop's own site (dev/build.js writes it): the script's address, this
+  // On the shop's own site (dev/build.js writes it): the server's address, this
   // page's version, and the page it opens as (owner.html: the owner's).
   var SITE = window.__SEOULFUL_SITE__ || null;
+  // The server is the shop's own on Cloudflare (ย้ายหลังบ้าน, payroll/edge), not Google's (dev/build.js sets it
+  // by the address): answering in a tenth of a second, as it starts at once, so the page asks its quick reads
+  // together (post), from its first line (the head's script), and shows each answer as it comes (whenQuiet).
+  var EDGE = !!(SITE && SITE.edge);
   // The script's address for the app's requests, marked api=1: when Google loses an answer on the way, it
   // sends the request back to the script as a page load (the POST, its content server, then a GET of this
   // address, 6 Oct 2569), and the script knows then that nobody is opening the app (Api.gs doGet).
@@ -2873,7 +2922,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // The fox from the shop's logo, traced from its logo files (the app writes
   // the name in its own type). dev/icons.js draws the home-screen icons from it.
   var LOGO = {"fox":"M408.5 21.1a118 118 0 0 0-20.8 27.4 108 108 0 0 0-5.6 80c5.6 16.8 10.9 23.7 34.6 45.3a128 128 0 0 1 38.8 70.6c1 4.3 2 7.4 2.5 7 1.1-1.2 5.7-27.8 6.5-37.9a95 95 0 0 0-9.2-47c-14.5-31.8-16.6-53-7.7-80.6 1.9-5.8 3.4-11.2 3.4-12s-4.7-8.5-10.4-17.1a198 198 0 0 1-21.5-39.9l-1.7-5.1zm111.2 3c-21.7 9.3-32.5 17.2-43.5 31.7a102 102 0 0 0-21.9 65.2c.7 13 3.2 21.9 10.1 37 12.2 26.3 14.6 46.4 9.1 78.3a167 167 0 0 0-2.3 16.8c.5 1.4 14-15 19-23.1a120 120 0 0 0 18.8-68.6c0-25.5 6.7-43.2 23.5-63 8.3-9.8 8.7-12.5 4.9-31.9a149 149 0 0 1-1.8-28.7 79 79 0 0 0-1.1-19.7c-.5 0-7.2 2.7-14.8 6M307.6 72.8a99 99 0 0 0 5.1 86.4c13.5 26.4 30.1 38.9 64.3 48.3a123 123 0 0 1 61.6 41.6 36 36 0 0 0 6 6.6c.3-.3-.2-4-1.1-8.2-6-28.9-15.5-47.3-32.8-63.5-25.1-23.5-31.8-31.7-37.8-46.2a90 90 0 0 1-6.8-27.2c-1.2-10.3-1.8-11.1-10.9-16.2A203 203 0 0 1 320 69l-8.6-8zM597 71.6a106 106 0 0 0-67.3 51.6c-6.7 13.5-8.7 22.8-9.7 45.3-1.2 25.3-3.3 35.6-10.3 50.8a169 169 0 0 1-21 32.4 31 31 0 0 0-5.7 8.3c2 0 19.5-9.3 27.6-14.5a117 117 0 0 0 27.5-25.4c2.7-3.6 7.7-12.2 11-19.1 10.3-21 17.7-31.3 28.7-40.3 7.7-6.3 16.5-11.4 28.3-16.2 4.5-2 9-4.2 10-5 2.7-2.6 4.7-7.4 8.4-20.9 4-14.5 8.6-26.9 14.4-38.4 2.3-4.6 3.9-8.7 3.6-9.2-1-1.6-37.9-1-45.5.6m-533 10c-7.6 8.7-12.9 23.4-16.6 46.2a95 95 0 0 1-7.3 27c-25 59.3-33.2 115.3-24 163 9.2 47.6 40.6 85 72 85.5q29.6.4 41.3-57.3c3.6-18 5-34.7 4.3-54.5-1.2-32.9-6.7-56.3-16.2-68l-2.4-3-2 2a109 109 0 0 0-15 27 129 129 0 0 0-6.2 52.4c.3 5.4.1 6.6-1.4 7.8-4.3 3-5.6 1-6.8-10.8-4-40.4 15.7-85 44-99.7 4.5-2.3 13.5-5.6 21.2-7.7 18-5 32.5-10 39-13.8a59 59 0 0 0 24.5-30c.5-2.2.3-2.7-1.6-3.1a948 948 0 0 0-33.3-2.2c-31.1-1.6-34.4-2.2-37.5-5.9-3.6-4.4-16.6-7.5-34.5-8.2l-14-.6-2.8-8.6C84.5 106 70.5 78 68 78c-.5 0-2.3 1.6-4 3.5m51.3.7a112 112 0 0 0-15.4 23.1c-2.9 6.4-5.3 17.4-4 18.2.3.2 6.8.7 14.4 1l13.9.8-.8-2.9a133 133 0 0 1-3.6-24.9c0-3.8-.4-9.7-.8-13l-.6-5.9zm-10.9 63.1c-1.7.8-3.6 2-4.3 3-1 1.3-.8 1.8 1.7 3.6a26 26 0 0 0 18.7 3.3c6-1.2 13-5 11.7-6.2-3.7-3.6-22.6-6-27.8-3.7m123 .7c-.4.7-.2 2.3 3.5 24.5 4 24 11.2 38.8 26.5 54 25.5 25.4 52 34.3 84.5 28.5a147 147 0 0 1 44.5-1.1 173 173 0 0 1 39.4 13.7 91 91 0 0 0 14.2 6.2c1.5-.5-13.5-19-22.2-27.3a104 104 0 0 0-49.6-27.4 103 103 0 0 1-30.6-12.3c-14.6-9.4-22.7-18.8-34.7-40-4-7-7.8-13.3-8.6-13.9a199 199 0 0 0-29.1-3l-32.6-2.2c-2.6-.2-5 0-5.2.3m409.1 2.6q-46 7.1-66.8 38.6c-2 2.9-6 10.5-9.1 16.8a118 118 0 0 1-18.8 29.5 140 140 0 0 1-43.3 32.6c-5.8 3-10.6 5.7-10.6 6.1 0 1.1 15.6 1 28.5-.2 27.1-2.6 43.3-10 70-32 7.7-6.3 23.8-14.5 34-17.2a116 116 0 0 1 24-2.7c8.8-.3 16.7-1 17.7-1.6s5.9-6 11-12a237 237 0 0 1 34.6-33.5l6.3-4.4-11.5-5.8c-30.2-15.1-42.7-17.8-66-14.2m-503 85.2a187 187 0 0 1 15 56.7c1.5 13 1.6 16.8.5 28.5a179 179 0 0 1-9.3 45 291 291 0 0 1-22.8 48.4c0 .2 3.8-1.2 8.5-3a79 79 0 0 1 31.6-7.2c7.8.4 11.3 2.4 14.2 7.9 2 3.9 2 10.8-.7 30.9a511 511 0 0 0-.6 71c1.3 18.7 5 51.9 6.1 54.8l.8 2.2h25.6c18.7 0 25.5-.3 25.5-1.2 0-.6-2.8-5.4-6.2-10.7-16.4-25.2-24.2-49.6-22.4-69.5 1.4-14.8 1.7-16 22.5-87.3 7.8-26.8 8.5-43.3 2.5-64-9.6-33.6-41-71-84-100.1-6.8-4.6-8-5-6.9-2.4m492-.2a91 91 0 0 0-39.5 21.9 124 124 0 0 1-36.3 21.5 184 184 0 0 1-50.2 8.3l-5 .3 7.5 3.6c18 8.6 33.3 12.2 52 12a71 71 0 0 0 23.5-2.7c18.3-5 21.8-5.6 34.5-5.7a95 95 0 0 1 52 14.3c3.7 2.1 7.4 3.9 8.3 3.9s7.3-2.5 14-5.6a434 434 0 0 1 49-17.5l4.7-1.4-8.5-10.8c-14.9-18.8-24.5-27-40.8-34.8-13.6-6.4-21.6-8.1-41.2-8.5-12.7-.3-18.8 0-24 1.2M197 267.5c0 .3 4.8 6.5 10.8 13.9a210 210 0 0 1 25.1 38.6c2.8 5.2 8.2 13.7 11.9 19a259 259 0 0 0 37.1 39.2c40.8 33 87.6 45.3 144.9 38.2l5.2-.6 8.6 8.3c35 33.9 44.8 75.6 27.3 116.3-2 4.9-6.3 13-9.3 18s-5.6 9.5-5.6 10c0 1 47.8.8 48.4-.2.3-.5-.1-18.6-.9-40.3L498 453q-1-35.6-2.3-36.6a21 21 0 0 0-6.6-2.9 48 48 0 0 1-29-22.2c-2-4-2.4-7.2-3.1-20.3a159 159 0 0 0-2.3-21.5c-11.6-46.6-68-75.4-159.6-81.5-14.7-1-98-1.4-98-.5m286 27.3c0 2.5 31.7 35.1 39.5 40.7a90 90 0 0 0 42.7 16.4c28 5 47 15.9 65.5 37.5l5 6 7.4.7c4 .4 12.2.8 18 .8 13.2.1 29.8 1.7 40.9 4a26 26 0 0 0 8.8 1c.5-1.2-7.8-31.8-10.5-38.6q-6-15.2-20.9-29.3a105 105 0 0 0-30.8-21.6 69 69 0 0 0-36.1-7.7 78 78 0 0 0-27 3.8 94 94 0 0 1-29.5 4.2c-13 .4-17.1.1-25.6-1.6-12.4-2.6-28-7.9-38.5-13.2-8.3-4.1-8.9-4.3-8.9-3.1m-7 12.7a246 246 0 0 0 7.7 27C502.2 391 530 434.6 563 458.2c4.8 3.4 16.4 9.9 26.7 14.9 19.5 9.4 28.8 15 39.6 23.6 3.8 3 7 5.3 7.2 5.1a355 355 0 0 0 6.6-32.3c3.8-27.4-8.6-60.6-31-82.5-13.5-13.2-24.8-18.6-49-23.5-36.6-7.4-57.5-20.8-85-54.5q-1.8-2.2-2-1.5m-448.5 72c2.3 6.4 7.5 16.7 21.2 42.5 6.2 11.7 9.7 21.7 11.7 34 5.2 32.5-4.6 70.8-27 105.6-3 4.7-5.5 8.7-5.5 9 0 .2 7 .4 15.3.4 13.4 0 15.6-.2 16.9-1.7.8-1 3-6 4.7-11.3L115 414.7c0-.1-6.6-.2-14.7-.2A80 80 0 0 1 32 382.1c-2.6-3.5-5.2-7-5.8-8-.7-.9-.1 1.5 1.3 5.4m329.8 56.8c29.1 37.3 33.5 75.3 13.3 115.4-2 4-5 9.3-6.7 12-1.6 2.5-3 5-3 5.5s10.8.8 24 .8h24v-8.2c0-4.6-1-34.8-2-67.3l-2-60.6c0-1.4-2.4-1.7-18.2-2.2-10-.4-21.4-1.3-25.3-2.1-11.4-2.5-11.3-2.5-4.1 6.7"};
-  var KEY = { staff: 'seoulful.staff', owner: 'seoulful.owner', kiosk: 'seoulful.kiosk', device: 'seoulful.device', push: 'seoulful.push', pushKey: 'seoulful.pushkey' };
+  var KEY = { staff: 'seoulful.staff', owner: 'seoulful.owner', kiosk: 'seoulful.kiosk', device: 'seoulful.device', push: 'seoulful.push', pushKey: 'seoulful.pushkey', told: 'seoulful.told' };
   // The test app's site sits under the shop's (dev/staging.js), so a phone gives both one storage: the
   // test app's names start with SITE.store, and neither ever reads the other's.
   var STORE = (SITE && SITE.store) || '';
@@ -2978,6 +3027,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     kiosk: LS.get(KEY.kiosk),
     scanCode: B.scan || '',
     geoBusy: false,
+    // (where the phone is, being looked for: geoFresh)
+    geoP: null,
     k: { step: 'names', emp: null, pin: '', status: null, shift: null, result: null, stream: null, timer: null, idle: null, busy: false, done: {}, shotsSent: {}, newVersion: false,
       cam: { state: 'off', stream: null, video: null, frames: [], timer: null, dark: 0, busy: false } },
     geo: null,
@@ -5280,11 +5331,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // request can be lost on the way ("Load failed"), and the same read sent
   // again a moment later goes through. The app does that by itself; a
   // change (a clock-in, an approval) is never sent twice.
-  var READS = ['boot', 'kioskPing', 'status', 'home', 'month', 'calendar', 'payslips', 'payslip', 'team', 'entries', 'leaves', 'exceptions', 'payroll', 'photo', 'photos', 'owner', 'employees', 'feedbackMine', 'feedbackList', 'feedbackFile', 'feedbackSync', 'orderList', 'orderOwner', 'orderCatalog', 'notes', 'pushKey', 'usageReport'];
+  var READS = ['boot', 'kioskPing', 'status', 'home', 'month', 'calendar', 'payslips', 'payslip', 'team', 'entries', 'leaves', 'exceptions', 'payroll', 'photo', 'photos', 'owner', 'employees', 'feedbackMine', 'feedbackList', 'feedbackFile', 'feedbackSync', 'orderList', 'orderOwner', 'orderCatalog', 'notes', 'pushKey', 'usageReport', 'exportTables'];
   // Reads not sent twice when slow (sendHedged): the shop screen's check-in every 45 seconds, which nobody
   // waits on; pictures and files, slow to come by their size, not by Google; and those slow by their nature
-  // (GitHub, the week's use).
-  var NO_HEDGE = ['kioskPing', 'photo', 'photos', 'feedbackFile', 'feedbackSync', 'orderCatalog', 'pushKey', 'usageReport'];
+  // (GitHub, the week's use); the shop's tables as a file, slow by its size.
+  var NO_HEDGE = ['kioskPing', 'photo', 'photos', 'feedbackFile', 'feedbackSync', 'orderCatalog', 'pushKey', 'usageReport', 'exportTables'];
   var inFlight = {};
   // Changes sent and not answered yet (send).
   var writing = 0;
@@ -5417,6 +5468,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** `fn` once the page stands still: now, or as the move under way ends (a move seen playing is waited
    *  out a while longer than one only marked: taps one after another never hold it for long). */
   function whenQuiet(fn) {
+    // เร็วที่สุด (12 ต.ค. 2569): Google answering in 2–4 s, the wait cost nothing; the server on Cloudflare
+    // answering in 0.1 s, it was most of every wait (a mid phone, Chrome slowed 4×, 4G: from the tap to the
+    // data shown, the PIN to her home 0.96 s, เพื่อน 1.02 s, ลานโซลฟูล์ 0.82 s, ศึกน้อง 0.71 s, the clock-in's
+    // result 0.77 s, where the server's part was 0.1 s). There each answer goes in as it comes (with the
+    // early answers: 0.33, 0.46, 0.35, 0.20, 0.23 s), the screen drawn anew in place (redraw: what is the
+    // same stays, a card coming in carries on from where it was); the longest frame meanwhile no longer
+    // than with the wait (the drawing is the same, sooner).
+    if (EDGE) return fn();
     var t0 = performance.now();
     var wait = function () {
       var m = moveLeft();
@@ -5436,6 +5495,96 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var m = moveLeft();
     if (m > 0) busyFor(m + 30);
   }, true);
+  // post:begin
+  // ---- the reads asked at one moment, as one request (the server on Cloudflare) -------------------
+  // ทำให้เร็ว (11 ต.ค. 2569): the reads the page asks at one moment go to the server as one request
+  // (opening: the start data and the home; ฉัน: the newest slip and the months either side), answered in
+  // turn there and each handed back to its caller as if sent alone (payroll/edge/src/worker.js batch).
+  // Apart, each waited in line at the server behind the others. Only reads that answer quickly go
+  // together (READS, less NO_HEDGE: slow by their size or nature); a slow read goes alone at once, a
+  // change alone after any reads asked before it. Google's script takes one request at a time: there
+  // each goes alone, as ever.
+  var TOGETHER = READS.filter(function (a) { return NO_HEDGE.indexOf(a) < 0; });
+  var POST = { q: [], timer: 0 };
+  var POST_FAILED = { ok: false, error: 'ระบบขัดข้อง กรุณาลองใหม่', code: 'ERROR', transient: true };
+  /** The server's answer to a request's body, or the reason it is not: lost on the way, its HTTP status, given up on (`signal`). */
+  function postAlone(body, signal) {
+    return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: body, credentials: 'omit', cache: 'no-store', signal: signal })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      });
+  }
+  function postAborted() {
+    try { return new DOMException('The operation was aborted.', 'AbortError'); } catch (e) { var x = new Error('The operation was aborted.'); x.name = 'AbortError'; return x; }
+  }
+  function postSettle(it, ok, v) {
+    if (it.done) return;
+    it.done = true;
+    (ok ? it.resolve : it.reject)(v);
+  }
+  /** What the head's first script asked as the page began, for the app's first ask of that kind: its answer when the same, and within 20 s; else null. */
+  function earlyFor(it) {
+    var e = window.__early;
+    if (!e) return null;
+    if (performance.now() - e.at > 20000) { window.__early = null; return null; }
+    var k = e.keyOf(it.body);
+    for (var i = 0; i < e.list.length; i++) {
+      var x = e.list[i];
+      if (x.used || x.action !== it.action) continue;
+      x.used = true;
+      if (x.key === k) return x.got;
+    }
+    return null;
+  }
+  function postFlush() {
+    clearTimeout(POST.timer);
+    POST.timer = 0;
+    var list = POST.q.filter(function (it) { return !it.done; });
+    POST.q = [];
+    list = list.filter(function (it) {
+      var got = earlyFor(it);
+      if (!got) return true;
+      // (its early answer lost, or the server's side failed: asked now, as it would have been)
+      got.then(function (res) { postSettle(it, true, res); }, function () {
+        POST.q.push(it);
+        if (!POST.timer) POST.timer = setTimeout(postFlush, 0);
+      });
+      return false;
+    });
+    if (list.length === 1) {
+      var one = list[0];
+      postAlone(one.body).then(function (res) { postSettle(one, true, res); }, function (e) { postSettle(one, false, e); });
+    }
+    if (list.length < 2) return;
+    postAlone('{"batch":[' + list.map(function (it) { return it.body; }).join(',') + ']}').then(function (out) {
+      list.forEach(function (it, k) {
+        var res = out && out.batch && out.batch[k];
+        postSettle(it, true, res || Object.assign({}, POST_FAILED));
+      });
+    }, function (e) { list.forEach(function (it) { postSettle(it, false, e); }); });
+  }
+  /** One request's body to the server (send): its answer, or the reason it is not, as postAlone. */
+  function post(action, body, signal) {
+    if (!EDGE) return postAlone(body, signal);
+    var read = READS.indexOf(action) >= 0;
+    // (a change: what was asked as the page began may be from before it)
+    if (!read) window.__early = null;
+    if (TOGETHER.indexOf(action) < 0) {
+      if (!read && POST.q.length) postFlush();
+      return postAlone(body, signal);
+    }
+    return new Promise(function (resolve, reject) {
+      var it = { action: action, body: body, resolve: resolve, reject: reject, done: false };
+      if (signal) {
+        if (signal.aborted) { postSettle(it, false, postAborted()); return; }
+        signal.addEventListener('abort', function () { postSettle(it, false, postAborted()); });
+      }
+      POST.q.push(it);
+      if (!POST.timer) POST.timer = setTimeout(postFlush, 0);
+    });
+  }
+  // post:end
   /** One request to the server. `untracked`: kept in the use of the app by the caller (sendHedged), not here. */
   function send(action, data, auth, timeoutMs, untracked) {
     var t0 = Date.now();
@@ -5465,16 +5614,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         whenQuiet(function () { reject(e); });
       };
       if (SITE) {
-        // The shop's site: the same api() through the script's POST (doPost), as
-        // text/plain so no preflight, and without Google's cookies, so a phone
-        // signed in to several Google accounts is not asked which one.
+        // The shop's site: the same api() through the server's POST (doPost), as
+        // text/plain so no preflight, and without cookies, so a phone signed in
+        // to several Google accounts is not asked which one.
         var ctl = window.AbortController ? new AbortController() : null;
         var timer = ctl ? setTimeout(function () { ctl.abort(); }, timeoutMs) : 0;
-        fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(req), credentials: 'omit', cache: 'no-store', signal: ctl ? ctl.signal : undefined })
-          .then(function (r) {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
-            return r.json();
-          })
+        post(action, JSON.stringify(req), ctl ? ctl.signal : undefined)
           .then(function (res) { clearTimeout(timer); answered(res); }, function (err) { clearTimeout(timer); failed(err, err && err.name === 'AbortError'); });
         return;
       }
@@ -5511,6 +5656,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var USE_Q = 'seoulful.use', USE_KEYS = 'seoulful.usekeys', USE_LAST = 'seoulful.uselast';
   // (a stretch is cut in two after 30 minutes or 800 events: the shop's screen is never put away)
   var USE_EV_MAX = 800, USE_SPAN = 30 * 60000, USE_Q_MAX = 60, USE_Q_SIZE = 400000, USE_SEND_BYTES = 60000;
+  // (one sent but not heard of goes again this long on: 20 s on the server on Cloudflare, where it goes while the app is on screen, useNow)
+  var USE_AGAIN = EDGE ? 20000 : 600000;
   var USE = { cur: null, page: '', act: null, wait: {}, seq: 0, dev: '', last: '' };
   var USE_VIEW = { loading: 'กำลังเปิด', moved: 'แอปย้ายที่', error: 'เปิดไม่ได้', offline: 'ไม่มีเน็ต', start: 'เลือกชื่อ', pin: 'ใส่ PIN', ownerLogin: 'ใส่รหัสเจ้าของร้าน', ownerCode: 'ใส่รหัสจากอีเมล' };
   var USE_TAB = { home: 'หน้าแรก', team: 'ทีม', friends: 'เพื่อน', ideas: 'ไอเดีย', me: 'ฉัน', history: 'ประวัติการทำงาน', slips: 'สลิปเงินเดือน', leave: 'วันลา', order: 'สั่งของ', approve: 'อนุมัติ' };
@@ -5596,6 +5743,25 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     USE.wait[n] = { id: u.id, t: performance.now(), action: action, by: a && performance.now() - a.t < 2000 ? a.act : '' };
     return n;
   }
+  // วัดบนมือถือ (13 ต.ค. 2569): what a phone measured went only as the app was put away (useSend). The owner's
+  // try on a phone that night reached the server (4 requests, the last at 23:13) but none of its use did, so how
+  // quick it felt there was not known; from a computer every stretch had come (11). On the server on Cloudflare
+  // (a tenth of a second a request, nothing to pay), a second after a request is answered (none other on its
+  // way, the opening's screen and data in, someone signed in), the stretch so far is cut off (as after 30
+  // minutes: its times kept) and goes at once, while the app is on screen; one not heard of goes again 20 s on
+  // (USE_AGAIN), the next send or the next opening's carrying it (the server keeps each stretch once).
+  var useNowT = 0;
+  function useNow() {
+    if (!EDGE) return;
+    clearTimeout(useNowT);
+    useNowT = setTimeout(function () {
+      var u = USE.cur;
+      if (!u || u.kiosk || document.visibilityState === 'hidden' || Object.keys(USE.wait).length || (!u.who && !LS.get(USE_LAST))) return;
+      if (u.kind === 'open' && (u.shown == null || u.fresh == null) && performance.now() - u.t0 < 15000) return useNow();
+      useCut('more');
+      useSend();
+    }, 1000);
+  }
   /** Its answer: 'ok', the server's code for why not, 'NET' (lost) or 'SLOW' (given up on). */
   function useDone(n, res) {
     var w = n ? USE.wait[n] : null;
@@ -5605,6 +5771,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!u || u.id !== w.id) return;
     u.ev.push(['c', Math.max(0, Math.round((w.t - u.t0) / 100) / 10), w.action, Math.round(performance.now() - w.t), String(res || ''), w.by]);
     if (u.ev.length >= USE_EV_MAX) useCut('more');
+    useNow();
   }
   function useErr(msg) {
     var u = USE.cur;
@@ -5687,7 +5854,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /**
    * What is on the list goes to the server, in the background: on a page being put away the request
    * carries on by itself (keepalive, 64 kB at most). Each is marked as on its way, and taken off once the
-   * server has it; one not heard of goes again 10 minutes on (the server keeps each once), three times at most.
+   * server has it; one not heard of goes again 10 minutes on (20 s on the server on Cloudflare, USE_AGAIN: the
+   * server keeps each once), three times at most.
    */
   function useSend() {
     var q = LS.get(USE_Q) || [];
@@ -5696,7 +5864,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var t = Date.now(), batch = [], bytes = 200;
     q = q.filter(function (x) { return !(x.tries >= 3 && t - x.sent >= 600000); });
     q.forEach(function (x) {
-      if (x.sent && t - x.sent < 600000) return;
+      if (x.sent && t - x.sent < USE_AGAIN) return;
       var key = x.kiosk ? '' : keys[x.who];
       if (!x.kiosk && !key) return;
       var item = { id: x.id, at: x.at, kind: x.kind, who: x.who, kiosk: x.kiosk, key: key, ver: x.ver, dev: x.dev, ms: x.ms, shown: x.shown, fresh: x.fresh, ev: x.ev };
@@ -6342,14 +6510,221 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var bin = atob(b64);
     var bytes = new Uint8Array(bin.length);
     for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    var url = URL.createObjectURL(new Blob([bytes], { type: type }));
+    downloadBlob(name, new Blob([bytes], { type: type }));
+  }
+  function downloadBlob(name, blob) {
+    var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
     a.download = name;
     document.body.appendChild(a);
     a.click();
-    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 1500);
+    // (a big file is read from its link a while after the tap on some phones)
+    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 30000);
   }
+
+  // xlsx:begin
+  // ---- the shop's tables as a spreadsheet file (ส่งออกไฟล์ตาราง, ย้ายหลังบ้าน task 7) ----------------------
+  // Made on this phone from the tables the server reads out (Api.gs apiExportTables_: each sheet's values, a date
+  // as {$d: ms}, its number formats as runs down each column, its frozen rows): an .xlsx (Office Open XML, ECMA-376)
+  // that Excel, Google Sheets, Numbers and LibreOffice open, its sheets as the shop's sheet has them. A zip of a few
+  // XML files, each deflated by the browser's own CompressionStream where it has one (stored as it is where not: a
+  // bigger file, the same tables). Nobody waits for Google to make it.
+  var XLSX_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  var XL_NS = 'http://schemas.openxmlformats.org/';
+  // (in pieces: this page is an Apps Script template, which takes the two marks together for its own code)
+  var XL_HEAD = '<' + '?xml version="1.0" encoding="UTF-8" standalone="yes"?' + '>\n';
+  /** Text as XML takes it: no character XML forbids, none half of a pair. */
+  function xlEsc(v) {
+    return String(v)
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/g, '')
+      .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(^|[^\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '$1')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  /** A column's letters: 0 → A, 26 → AA. */
+  function xlCol(n) {
+    var s = '';
+    for (n++; n > 0; n = Math.floor((n - 1) / 26)) s = String.fromCharCode(65 + ((n - 1) % 26)) + s;
+    return s;
+  }
+  /** The sheets' names as a workbook takes them: 31 characters at most, none of []:*?/\, none the same. */
+  function xlNames(list) {
+    var used = {};
+    return list.map(function (t, i) {
+      var base = String(t.name || '').replace(/[\[\]:*?\/\\]/g, ' ').replace(/^'+|'+$/g, '').trim().slice(0, 31) || 'Sheet' + (i + 1);
+      var name = base;
+      for (var k = 2; used[name.toLowerCase()]; k++) name = base.slice(0, 31 - String(k).length - 3) + ' (' + k + ')';
+      used[name.toLowerCase()] = true;
+      return name;
+    });
+  }
+  /** A cell's text: a picture kept as text in the sheet says so; a cell holds 32,767 characters at most. */
+  function xlText(v) {
+    var s = String(v);
+    if (/^data:[^,]{0,100};base64,/.test(s)) return '(รูป)';
+    return s.length > 32767 ? s.slice(0, 32767) : s;
+  }
+  /** A number format the file can carry (printable, Thai too), else none (General). */
+  function xlFormat(f) { f = String(f || ''); return f && f !== 'General' && /^[\x20-\x7E\u0E00-\u0E7F]{1,100}$/.test(f) ? f : ''; }
+  /**
+   * The workbook's files from the server's tables (`x`: {offset, tables: [{name, rows, cols, frozen, F, fr, vals}]}):
+   * [{name, text}]. A date is a day number in the shop's time (offset ms ahead of UTC), in its column's format or as
+   * yyyy-mm-dd (hh:mm when it has a time); the frozen rows (else the first) bold.
+   */
+  function xlsxParts(x) {
+    var tables = x.tables || [];
+    var off = +x.offset || 0;
+    var names = xlNames(tables);
+    var strs = [], strAt = {}, refs = 0;
+    var str = function (t) {
+      var k = '$' + t;
+      refs++;
+      if (!Object.prototype.hasOwnProperty.call(strAt, k)) strAt[k] = strs.push(t) - 1;
+      return strAt[k];
+    };
+    // the number formats (164 on: the file's own; 49: text) and the cells' styles (0: as they come)
+    var fmts = [], fmtId = { '@': 49 }, xfs = [[0, 0]], xfAt = { '0:0': 0 };
+    var fmt = function (f) {
+      if (!f) return 0;
+      if (!Object.prototype.hasOwnProperty.call(fmtId, f)) fmtId[f] = 164 + fmts.push(f) - 1;
+      return fmtId[f];
+    };
+    var xf = function (id, bold) {
+      var k = id + ':' + (bold ? 1 : 0);
+      if (!Object.prototype.hasOwnProperty.call(xfAt, k)) xfAt[k] = xfs.push([id, bold ? 1 : 0]) - 1;
+      return xfAt[k];
+    };
+    var sheets = tables.map(function (t, si) {
+      var vals = t.vals || [];
+      var ncol = vals.reduce(function (m, row) { return Math.max(m, row.length); }, 0);
+      var F = (t.F || []).map(xlFormat);
+      // each column's runs of formats, top down ([column, row, rows, format], each from 1), walked down with the rows
+      var runs = [], at = [];
+      (t.fr || []).forEach(function (r) { (runs[r[0] - 1] = runs[r[0] - 1] || []).push(r); });
+      var formatAt = function (c, r) {
+        var list = runs[c];
+        if (!list) return '';
+        var i = at[c] || 0;
+        while (i < list.length && list[i][1] + list[i][2] - 1 < r) i++;
+        at[c] = i;
+        return i < list.length && list[i][1] <= r ? F[list[i][3]] || '' : '';
+      };
+      var head = Math.max(1, +t.frozen || 0);
+      var wide = [];
+      var rows = [];
+      vals.forEach(function (row, ri) {
+        var r = ri + 1, bold = r <= head, cells = [];
+        for (var c = 0; c < row.length; c++) {
+          var v = row[c], f = formatAt(c, r), ref = xlCol(c) + r, cell = '', len = 0;
+          if (v == null || v === '') continue;
+          if (typeof v === 'object' && isFinite(v.$d)) {
+            var day = (v.$d + off) / 86400000 + 25569;
+            var df = f && f !== '@' ? f : Math.abs(day - Math.round(day)) > 1e-7 ? 'yyyy-mm-dd hh:mm' : 'yyyy-mm-dd';
+            cell = '<c r="' + ref + '" s="' + xf(fmt(df), bold) + '"><v>' + day + '</v></c>';
+            len = df.length;
+          } else if (typeof v === 'number') {
+            if (!isFinite(v)) continue;
+            cell = '<c r="' + ref + '"' + (f || bold ? ' s="' + xf(fmt(f), bold) + '"' : '') + '><v>' + v + '</v></c>';
+            len = String(v).length + 1;
+          } else if (typeof v === 'boolean') {
+            cell = '<c r="' + ref + '" t="b"' + (bold ? ' s="' + xf(0, true) + '"' : '') + '><v>' + (v ? 1 : 0) + '</v></c>';
+            len = 5;
+          } else {
+            var text = xlText(typeof v === 'object' ? JSON.stringify(v) : v);
+            cell = '<c r="' + ref + '" t="s"' + (f || bold ? ' s="' + xf(fmt(f), bold) + '"' : '') + '><v>' + str(text) + '</v></c>';
+            len = Math.min(text.length, 60);
+          }
+          cells.push(cell);
+          if (ri < 300) wide[c] = Math.max(wide[c] || 0, len);
+        }
+        if (cells.length) rows.push('<row r="' + r + '">' + cells.join('') + '</row>');
+      });
+      var frozen = +t.frozen || 0;
+      var view = '<sheetView workbookViewId="0"' + (si ? '' : ' tabSelected="1"') + (frozen ? '><pane ySplit="' + frozen + '" topLeftCell="A' + (frozen + 1) + '" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft"/></sheetView>' : '/>');
+      var cols = '';
+      for (var c = 0; c < ncol; c++) cols += '<col min="' + (c + 1) + '" max="' + (c + 1) + '" width="' + Math.max(6, Math.min(50, Math.round((wide[c] || 4) * 1.1 + 2))) + '" customWidth="1"/>';
+      return '<worksheet xmlns="' + XL_NS + 'spreadsheetml/2006/main">' + '<dimension ref="A1' + (ncol && vals.length ? ':' + xlCol(ncol - 1) + vals.length : '') + '"/>' + '<sheetViews>' + view + '</sheetViews><sheetFormatPr defaultRowHeight="15"/>' + (cols ? '<cols>' + cols + '</cols>' : '') + (rows.length ? '<sheetData>' + rows.join('') + '</sheetData>' : '<sheetData/>') + '</worksheet>';
+    });
+    if (!sheets.length) {
+      names = ['Sheet1'];
+      sheets = ['<worksheet xmlns="' + XL_NS + 'spreadsheetml/2006/main"><sheetData/></worksheet>'];
+    }
+    var R = XL_NS + 'officeDocument/2006/relationships';
+    var CT = 'application/vnd.openxmlformats-officedocument.spreadsheetml.';
+    var n = sheets.length;
+    var files = [
+      { name: '[Content_Types].xml', text: '<Types xmlns="' + XL_NS + 'package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="' + CT + 'sheet.main+xml"/>' + sheets.map(function (x, i) { return '<Override PartName="/xl/worksheets/sheet' + (i + 1) + '.xml" ContentType="' + CT + 'worksheet+xml"/>'; }).join('') + '<Override PartName="/xl/styles.xml" ContentType="' + CT + 'styles+xml"/><Override PartName="/xl/sharedStrings.xml" ContentType="' + CT + 'sharedStrings+xml"/></Types>' },
+      { name: '_rels/.rels', text: '<Relationships xmlns="' + XL_NS + 'package/2006/relationships"><Relationship Id="rId1" Type="' + R + '/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+      { name: 'xl/workbook.xml', text: '<workbook xmlns="' + XL_NS + 'spreadsheetml/2006/main" xmlns:r="' + R + '"><bookViews><workbookView/></bookViews><sheets>' + names.map(function (nm, i) { return '<sheet name="' + xlEsc(nm) + '" sheetId="' + (i + 1) + '" r:id="rId' + (i + 1) + '"/>'; }).join('') + '</sheets></workbook>' },
+      { name: 'xl/_rels/workbook.xml.rels', text: '<Relationships xmlns="' + XL_NS + 'package/2006/relationships">' + sheets.map(function (x, i) { return '<Relationship Id="rId' + (i + 1) + '" Type="' + R + '/worksheet" Target="worksheets/sheet' + (i + 1) + '.xml"/>'; }).join('') + '<Relationship Id="rId' + (n + 1) + '" Type="' + R + '/styles" Target="styles.xml"/><Relationship Id="rId' + (n + 2) + '" Type="' + R + '/sharedStrings" Target="sharedStrings.xml"/></Relationships>' },
+      { name: 'xl/styles.xml', text: '<styleSheet xmlns="' + XL_NS + 'spreadsheetml/2006/main">' + (fmts.length ? '<numFmts count="' + fmts.length + '">' + fmts.map(function (f, i) { return '<numFmt numFmtId="' + (164 + i) + '" formatCode="' + xlEsc(f) + '"/>'; }).join('') + '</numFmts>' : '') + '<fonts count="2"><font><sz val="11"/><name val="Arial"/></font><font><b/><sz val="11"/><name val="Arial"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="' + xfs.length + '">' + xfs.map(function (x) { return '<xf numFmtId="' + x[0] + '" fontId="' + x[1] + '" fillId="0" borderId="0" xfId="0"' + (x[0] ? ' applyNumberFormat="1"' : '') + (x[1] ? ' applyFont="1"' : '') + '/>'; }).join('') + '</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>' },
+      { name: 'xl/sharedStrings.xml', text: '<sst xmlns="' + XL_NS + 'spreadsheetml/2006/main" count="' + refs + '" uniqueCount="' + strs.length + '">' + strs.map(function (t) { return '<si><t xml:space="preserve">' + xlEsc(t) + '</t></si>'; }).join('') + '</sst>' },
+    ];
+    sheets.forEach(function (x, i) { files.push({ name: 'xl/worksheets/sheet' + (i + 1) + '.xml', text: x }); });
+    return files.map(function (f) { return { name: f.name, text: XL_HEAD + f.text }; });
+  }
+  var XL_CRC = null;
+  function xlCrc(b) {
+    if (!XL_CRC) {
+      XL_CRC = new Int32Array(256);
+      for (var n = 0; n < 256; n++) {
+        var c = n;
+        for (var k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+        XL_CRC[n] = c;
+      }
+    }
+    var crc = -1;
+    for (var i = 0; i < b.length; i++) crc = XL_CRC[(crc ^ b[i]) & 0xff] ^ (crc >>> 8);
+    return (crc ^ -1) >>> 0;
+  }
+  /** `bytes` deflated by the browser (raw, as a zip keeps them), or null where it cannot. */
+  function xlDeflate(bytes) {
+    var cs;
+    try { cs = new CompressionStream('deflate-raw'); } catch (e) { return Promise.resolve(null); }
+    var w = cs.writable.getWriter();
+    w.write(bytes).catch(function () {});
+    w.close().catch(function () {});
+    return new Response(cs.readable).arrayBuffer().then(function (b) { return new Uint8Array(b); }, function () { return null; });
+  }
+  /** A zip of `files` ([{name, bytes}]): each deflated where that makes it smaller, else stored. */
+  function xlZip(files) {
+    return Promise.all(files.map(function (f) { return xlDeflate(f.bytes); })).then(function (packed) {
+      var enc = new TextEncoder();
+      var parts = [], dir = [], at = 0;
+      files.forEach(function (f, i) {
+        var name = enc.encode(f.name);
+        var z = packed[i] && packed[i].length < f.bytes.length ? packed[i] : null;
+        var data = z || f.bytes;
+        var crc = xlCrc(f.bytes);
+        // (1 Jan 1980, 00:00: no time of its own)
+        var head = new DataView(new ArrayBuffer(30));
+        head.setUint32(0, 0x04034b50, true); head.setUint16(4, 20, true); head.setUint16(6, 0x0800, true); head.setUint16(8, z ? 8 : 0, true);
+        head.setUint16(10, 0, true); head.setUint16(12, 33, true); head.setUint32(14, crc, true); head.setUint32(18, data.length, true);
+        head.setUint32(22, f.bytes.length, true); head.setUint16(26, name.length, true); head.setUint16(28, 0, true);
+        var cd = new DataView(new ArrayBuffer(46));
+        cd.setUint32(0, 0x02014b50, true); cd.setUint16(4, 20, true); cd.setUint16(6, 20, true); cd.setUint16(8, 0x0800, true); cd.setUint16(10, z ? 8 : 0, true);
+        cd.setUint16(12, 0, true); cd.setUint16(14, 33, true); cd.setUint32(16, crc, true); cd.setUint32(20, data.length, true); cd.setUint32(24, f.bytes.length, true);
+        cd.setUint16(28, name.length, true); cd.setUint32(42, at, true);
+        parts.push(new Uint8Array(head.buffer), name, data);
+        dir.push(new Uint8Array(cd.buffer), name);
+        at += 30 + name.length + data.length;
+      });
+      var size = dir.reduce(function (m, b) { return m + b.length; }, 0);
+      var end = new DataView(new ArrayBuffer(22));
+      end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+      end.setUint32(12, size, true); end.setUint32(16, at, true);
+      var all = parts.concat(dir, [new Uint8Array(end.buffer)]);
+      var out = new Uint8Array(at + size + 22), o = 0;
+      all.forEach(function (b) { out.set(b, o); o += b.length; });
+      return out;
+    });
+  }
+  /** The server's tables (apiExportTables_'s answer) as an .xlsx file's bytes. */
+  function xlsxFile(x) {
+    var enc = new TextEncoder();
+    return xlZip(xlsxParts(x).map(function (f) { return { name: f.name, bytes: enc.encode(f.text) }; }));
+  }
+  // xlsx:end
 
   // ======================================================================
   // Rendering
@@ -6913,7 +7288,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.view = 'staff'; S.tab = 'home'; S.sub = null;
     // Where the phone is, looked for while the PIN is checked when the phone
     // already allows it (the clock-in needs it; no question pops up before the app).
-    if (B.clock && B.clock.mode === 'kiosk+phone') gpsAllowed().then(function (yes) { if (yes && S.view === 'staff' && !S.geo) warmGps(); });
+    // (how the shop clocks in comes with the PIN's answer: before it, looked for when the phone allows it anyway)
+    if (!B.clock || B.clock.mode === 'kiosk+phone') gpsAllowed().then(function (yes) { if (yes && S.view === 'staff' && !S.geo) warmGps(); });
     render();
     call('home', {}, { empId: id, pin: pin }, { once: true }).then(function (data) {
       S.pinBusy = false;
@@ -7524,9 +7900,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // ======================================================================
   // Staff app (phone)
   // ======================================================================
+  /**
+   * The shop's own that the pages work from (its shifts, how it clocks in, its rules, its kinds of leave and of
+   * entries): it comes with the home or the owner's overview, after a right PIN (2.13.0), not with the names
+   * the app opens on (Api.gs bootData_); kept on the phone with them.
+   */
+  function appIn(app) {
+    if (!app || typeof app !== 'object') return;
+    ['shifts', 'clock', 'rules', 'leaveTypes', 'entryTypes'].forEach(function (k) { if (app[k] !== undefined) B[k] = app[k]; });
+  }
   function applyHome(data) {
     S.home = data;
     S.homeAt = Date.now();
+    appIn(data.app);
     if (S.staff) useKeep(S.staff.empId, data.useKey);
     if (data.levels) S.levels = data.levels;
     syncFaces(data.avatarTag);
@@ -7811,10 +8197,34 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function warmGps() {
     if (S.geoBusy || !(B.clock && B.clock.shop) || (S.geo && Date.now() - S.geo.t < 30000)) return;
     S.geoBusy = true;
-    locate(true).then(function () {
+    geoFresh().then(function () {
       S.geoBusy = false;
       if (S.view === 'staff') softRender();
     });
+  }
+  /**
+   * Where the phone is, as a clock-in sends it: found within the last 30 seconds, else the one being looked
+   * for now (never two at once), else looked for now.
+   */
+  function geoFresh() {
+    if (S.geo && Date.now() - S.geo.t < 30000) return Promise.resolve(S.geo);
+    if (S.geoP) return S.geoP;
+    var p = locate(true).then(function (g) {
+      if (S.geoP === p) S.geoP = null;
+      return g;
+    });
+    S.geoP = p;
+    return p;
+  }
+  /**
+   * The clock-in pressed: where the phone is, looked for while the person scans the QR or takes the photo,
+   * so it is in by the time they are done (a phone takes a second or so; it was looked for only after,
+   * when found more than 30 seconds before: the clock-in's result a second later). Only where the phone
+   * lets the page know already, so no question about it pops up over the camera.
+   */
+  function geoSoon() {
+    if (S.geo || HOOKS.locate) { geoFresh(); return; }
+    gpsAllowed().then(function (yes) { if (yes) geoFresh(); });
   }
   /** A QR already scanned that counts: from the app's camera, or from the link when links are allowed. */
   function scannedOk() {
@@ -9727,7 +10137,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var scanned = scannedOk();
     if (selfie && B.clock.phoneQr && !scanned) {
       // A phone opens one camera per tap, so the QR is its own tap before the selfie.
-      scanShopQr().then(function (q) {
+      var scanning = scanShopQr();
+      geoSoon();
+      scanning.then(function (q) {
         S.scanCode = q.qr;
         S.scanInApp = !!q.inApp;
         S.scanReadAt = q.readAt || '';
@@ -9740,14 +10152,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var shot = selfie ? takeSelfie() : Promise.resolve(null);
     // Already scanned (in the app, or by the link where links count), else scan now.
     var qrStep = scanned ? Promise.resolve({ qr: S.scanCode, inApp: S.scanInApp, readAt: S.scanReadAt }) : B.clock.phoneQr ? scanShopQr(true) : Promise.resolve({});
+    geoSoon();
     var before = inToday();
     spin(btn, true);
     Promise.all([shot, qrStep]).then(function (r) {
       var me = r[0];
       var q = r[1];
       showSaving();
-      var fresh = S.geo && Date.now() - S.geo.t < 30000;
-      return (fresh ? Promise.resolve(S.geo) : locate(true)).then(function (g) {
+      return geoFresh().then(function (g) {
         var data = { shift: S.shift, device: deviceId(), qr: q.qr || '', scannedInApp: !!q.inApp, qrPhoto: !!q.fromPhoto, qrReadAt: q.readAt || '', photo: me ? me.photo : q.photo || '', photoAge: me ? me.age : q.age };
         if (g) { data.lat = g.lat; data.lng = g.lng; data.acc = g.acc; }
         return clockWatched(call('clock', data, staffAuth()), before);
@@ -9781,14 +10193,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!S.shift) { toast('เลือกกะก่อน', 'bad'); return; }
     // The camera must open right away from the tap, before anything waits.
     var shot = forReview && S.posterShot ? Promise.resolve(S.posterShot) : takeSelfie(true);
+    geoSoon();
     var before = inToday();
     spin(btn, true);
     shot.then(function (me) {
       S.posterShot = me;
       if (!me.qr && !forReview) { spin(btn, false); posterMiss(me); return null; }
       showSaving();
-      var fresh = S.geo && Date.now() - S.geo.t < 30000;
-      return (fresh ? Promise.resolve(S.geo) : locate(true)).then(function (g) {
+      return geoFresh().then(function (g) {
         var data = { shift: S.shift, device: deviceId(), qr: forReview ? '' : me.qr, qrInPhoto: !forReview, review: !!forReview, photo: me.photo, photoAge: me.age };
         if (g) { data.lat = g.lat; data.lng = g.lng; data.acc = g.acc; }
         return clockWatched(call('clock', data, staffAuth()), before);
@@ -10388,6 +10800,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (keep) { LS.set(KEY.owner, S.owner); remember('owner', d); }
     S.ownerHome = d;
     S.ownerAt = Date.now();
+    appIn(d.app);
     S.pin = '';
     syncFaces(d.avatarTag);
     if (S.view === 'owner') render();
@@ -10453,6 +10866,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (!S.owner || S.owner.pin !== auth.ownerPin) return null;
       S.ownerHome = d;
       S.ownerAt = Date.now();
+      appIn(d.app);
       S.ownerErr = '';
       if (d.levels) { S.levels = d.levels; if (S.home) S.home.levels = d.levels; }
       if (LS.get(KEY.owner)) remember('owner', d);
@@ -10486,7 +10900,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function ownerChanged(d) {
     S.ownerSeq = (S.ownerSeq || 0) + 1;
     S.ownerLoad = null;
-    if (d) { S.ownerHome = d; S.ownerAt = Date.now(); }
+    if (d) { S.ownerHome = d; S.ownerAt = Date.now(); appIn(d.app); }
     if (LS.get(KEY.owner) && S.ownerHome) remember('owner', S.ownerHome);
   }
   function logoutOwner(msg) {
@@ -10501,6 +10915,35 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.view = B.page === 'owner' ? 'ownerLogin' : 'start';
     render();
     if (msg && S.view === 'start') toast(msg, 'bad');
+  }
+  /**
+   * The owner's password shorter than 8 digits (one set before 2.13.0, the PIN guard): a new one set before
+   * anything else, once (Api.gs apiOwner_ codeShort), saved as the settings' own (settingsSave ownerPin).
+   */
+  function ownerNewCode() {
+    var o = S.ownerHome;
+    return html`${topbar({ name: 'เจ้าของร้าน', sub: o.brand.name + ' Staff', av: ownerSeal() }, 'owner-menu', o.bell)}
+      <main class="wrap page"><div class="stack">
+        <section class="card pad-lg"><span class="eyebrow">ความปลอดภัย</span>
+          <p style="margin:8px 0 4px"><b>ตั้งรหัสเจ้าของร้านใหม่ก่อนเข้าใช้</b></p>
+          <p class="small muted mt0">รหัสเดิมสั้นไป รหัสใหม่เป็นตัวเลข 8–12 หลัก ตั้งครั้งเดียว แล้วเข้าหน้าเจ้าของร้านด้วยรหัสใหม่ได้ตามปกติ</p>
+          <label class="field"><span>รหัสใหม่</span><input class="input" id="new-code" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password"></label>
+          <label class="field"><span>ใส่รหัสใหม่อีกครั้ง</span><input class="input" id="new-code2" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password"></label>
+          <button class="btn primary block" style="margin-top:16px" data-act="owner-new-code">บันทึกรหัสใหม่</button>
+        </section>
+      </div></main>`;
+  }
+  /** PINs locked by wrong ones, or locked within the day (Api.gs pinLocksView_): each lifted with one press. */
+  function pinLocksCard(list) {
+    if (!list || !list.length) return '';
+    return html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ล็อกจากใส่ PIN ผิด</span></div>
+      <p class="small muted" style="margin:6px 16px 0">ใส่ผิดหลายครั้งติดกัน แอปล็อกชั่วคราว ครั้งต่อไปนานขึ้น · ถ้าเป็นคนในร้านที่ลืม กดปลดล็อกให้ได้เลย</p>
+      <div class="list">${list.map(function (x) {
+        var day = x.until ? ymdOf(new Date(x.until)) : '';
+        var until = day ? (day === ymdOf(now()) ? '' : thShort(day) + ' ') + isoTime(x.until) + ' น.' : '';
+        var sub = until ? 'ล็อกถึง ' + until + (x.locks > 1 ? ' · ครั้งที่ ' + x.locks : '') : 'ล็อกไปแล้ว ' + x.locks + ' ครั้งใน 1 วันที่ผ่านมา ครั้งต่อไปนานขึ้น';
+        return html`<div class="item">${icon('lock')}<span class="grow">${x.name}<span class="s" style="display:block">${sub}</span></span><button class="btn sm" data-act="pin-unlock" data-key="${x.key}">ปลดล็อก</button></div>`;
+      })}</div></section>`;
   }
   /** The owner's screen before its data. */
   function ownerOutline() {
@@ -10517,6 +10960,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   VIEWS.owner = function () {
     var o = S.ownerHome;
     if (!o || !B.employees) return ownerOutline();
+    if (o.codeShort) return ownerNewCode();
     var tab = S.ownerTab;
     var body = tab === 'pay' ? payView() : tab === 'team' ? html`${S.leaves && S.leaves.pending.length ? html`<div class="stack" style="margin-bottom:22px">${leaveApprovals()}</div>` : ''}${teamView()}` : tab === 'staff' ? staffEditor() : tab === 'settings' ? settingsView() : overview();
     return html`${topbar({ name: 'เจ้าของร้าน', sub: o.brand.name + ' Staff', av: ownerSeal() }, 'owner-menu', o.bell)}
@@ -10545,6 +10989,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="stack">
       <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}</div>
       ${o.update ? updateCard(o.update) : ''}
+      ${pinLocksCard(o.pinLocks)}
       ${pushCard()}
       ${tempUp ? tempOwnerCard(o.temp) : ''}
       ${due ? html`<section class="card hero pad-lg"><span class="eyebrow">ต้องจ่าย · เงินเดือน${due.month}${due.payDue ? ' · วันที่ ' + thShort(due.payDue) : ''}</span><div class="big" style="margin-top:6px">${money(due.total)}<small>บาท</small></div>
@@ -10653,8 +11098,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var SETTING_GROUPS = [
     ['บริษัท (หัวสลิป)', ['brandName', 'companyTh', 'companyEn', 'branch', 'taxId', 'address']],
     ['การลงเวลา', ['clockMode', 'phoneQr', 'qrScanInApp', 'qrLive', 'screenCam', 'phoneLock', 'shiftCheck', 'approverSelf', 'kioskPin', 'phoneSelfie', 'posterSelfie', 'kioskPhoto', 'radius']],
+    ['กะงาน', [], shiftsBox],
     ['มาสายและฝนตก', ['lateGraceMin', 'lateAllowed', 'lateCut', 'lateTimeFrom', 'rainGraceMin', 'rainLateMin', 'rainMinMm', 'rainLookbackMin', 'rainSoonChance', 'weatherKey']],
     ['ลาและขาดงาน', ['absentCut', 'noShowCut', 'suddenLeaveCut', 'suddenFrom']],
+    ['ประเภทการลา', [], leaveTypesBox],
     ['วันหยุดและวันจ่ายเงิน', ['daysOffPerMonth', 'fixedHolidays', 'floatingHolidays', 'setHolidays', 'closedDates', 'payUnusedDaysOff', 'payDay']],
     ['ประกันสังคม', ['ssoRate', 'ssoMin', 'ssoMax']],
     ['แจ้งเตือน', ['emailOnApprove', 'ownerEmail', 'lineToken', 'lineAnnounceLeave', 'lineRainNotice', 'lineNews', 'lineHour']],
@@ -10693,6 +11140,93 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${settingField(set)}
         <button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="githubToken">บันทึกกุญแจ</button></details>`;
   }
+  // ---- what the sheet held, changed here (ย้ายหลังบ้าน task 7): on Cloudflare the sheet is only a copy ----
+  /** Part of the start data changed on this page (the shifts, the types of leave): here, and in what this phone keeps of it. */
+  function bootSet(k, v) {
+    B[k] = v;
+    // (the shop's own comes with the overview, 2.13.0: kept with it, appIn)
+    if (S.ownerHome && S.ownerHome.app) { S.ownerHome.app[k] = v; ownerChanged(); }
+    var m = LS.get(MEM.boot);
+    if (m && m.data && k in m.data) { m.data[k] = v; LS.set(MEM.boot, m); }
+  }
+  /** What a sheet's fields ([data-g]) say now, less those as they were (`was`, its keys as the fields'): {key: text}. */
+  function formChanged(was) {
+    var out = {};
+    document.querySelectorAll('#sheet-body [data-g]').forEach(function (i) {
+      var k = i.dataset.g, v = String(i.value).trim();
+      if (!was || String(was[k] == null ? '' : was[k]) !== v) out[k] = v;
+    });
+    return out;
+  }
+  function tablesOf() { return (S.ownerHome && S.ownerHome.tables) || {}; }
+  function shiftOf(code) { return (B.shifts || []).filter(function (x) { return x.code === code; })[0] || null; }
+  function shiftDaysText(s) { return s.daysText != null ? s.daysText || 'ทุกวัน' : (s.days || []).length === 7 ? 'ทุกวัน' : ''; }
+  function shiftLine(s) {
+    // (the OT of the days it is used: a weekday shift's weekend OT says nothing)
+    var days = s.days || [];
+    var wk = days.some(function (d) { return d >= 1 && d <= 5; }), we = days.some(function (d) { return d === 0 || d === 6; });
+    var n = wk ? s.otWeekday : s.otWeekend;
+    var ot = wk && we && s.otWeekday !== s.otWeekend ? 'OT ในกะ จ.–ศ. ' + s.otWeekday + ' · ส.–อา. ' + s.otWeekend + ' ชม.' : n ? 'OT ในกะ ' + n + ' ชม.' : 'ไม่มี OT ในกะ';
+    return [s.start + '–' + s.end + ' น.', shiftDaysText(s), ot, s.note].filter(Boolean).join(' · ');
+  }
+  /** The shifts (the sheet "กะงาน"): each to change or delete, and one to add. */
+  function shiftsBox() {
+    return html`<p class="small muted mt0">เวลาเข้า–เลิกและ OT ในกะ ใช้คิดสายและเงินเดือน · แก้แล้วมีผลกับเงินเดือนรอบที่ยังไม่อนุมัติทั้งรอบ</p>
+      <div class="list">${(B.shifts || []).map(function (s) {
+        return html`<button class="item" style="padding-left:0;padding-right:0;width:100%;text-align:left" data-act="shift-open" data-id="${s.code}">${icon('clock')}<div class="grow"><div class="t">${s.code} · ${s.name}</div><div class="s">${shiftLine(s)}</div></div>${icon('right')}</button>`;
+      })}</div>
+      <button class="btn block" style="margin-top:8px" data-act="shift-open">${icon('plus')} เพิ่มกะ</button>`;
+  }
+  function shiftForm(code) {
+    var s = code ? shiftOf(code) : null;
+    if (code && !s) return;
+    var t = tablesOf();
+    var depts = t.depts || ['ครัว', 'หน้าร้าน'], types = t.shiftTypes || ['เช้า', 'กลาง', 'เย็น', 'เย็น ส.–อา.'];
+    var v = s ? shiftWas(s) : { dept: '', type: types[0], start: '', end: '', otWeekday: 0, otWeekend: 0, days: '', note: '' };
+    var two = function (a, b) { return html`<div class="two">${a}${b}</div>`; };
+    var field = function (k, label, attrs, help) { return html`<label class="field"><span>${label}</span><input class="input" data-g="${k}" value="${v[k]}" ${raw(attrs || '')}>${help ? html`<small>${help}</small>` : ''}</label>`; };
+    var pick = function (k, label, list) { return html`<label class="field"><span>${label}</span><select class="input" data-g="${k}">${list.map(function (x) { return html`<option value="${x[0]}" ${String(v[k]) === x[0] ? 'selected' : ''}>${x[1]}</option>`; })}</select></label>`; };
+    openSheet({ use: 'แก้ไข/เพิ่มกะงาน', title: s ? 'กะ ' + s.code + ' · ' + s.name : 'เพิ่มกะ', body: html`
+      ${s ? '' : field('code', 'รหัสกะ', 'maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="เช่น K5"', 'ตัวอักษรอังกฤษหรือตัวเลข 1–6 ตัว · เปลี่ยนภายหลังไม่ได้')}
+      ${two(pick('dept', 'แผนก', [['', 'ทุกแผนก']].concat(depts.map(function (d) { return [d, d]; }))), pick('type', 'ชื่อกะ', types.map(function (x) { return [x, x]; })))}
+      ${two(field('start', 'เข้างาน', 'type="time"'), field('end', 'เลิกงาน', 'type="time"'))}
+      ${two(field('otWeekday', 'OT ในกะ จ.–ศ. (ชม.)', 'inputmode="decimal"'), field('otWeekend', 'OT ในกะ ส.–อา. (ชม.)', 'inputmode="decimal"'))}
+      ${field('days', 'วันที่ใช้กะนี้', 'placeholder="ทุกวัน"', 'เช่น จ-ศ · ส-อา · จ,พ,ศ · เว้นว่าง = ทุกวัน')}
+      ${field('note', 'หมายเหตุ', 'maxlength="200"')}
+      <p class="small muted" style="margin:4px 0 0">เวลาและ OT ที่แก้ ใช้คิดเงินเดือนทุกวันของรอบที่ยังไม่อนุมัติ รวมวันที่ผ่านมาแล้ว · รอบที่อนุมัติแล้วไม่เปลี่ยน</p>`,
+      foot: html`${s ? html`<button class="btn danger" data-act="shift-delete" data-id="${s.code}">${icon('trash')} ลบกะ</button>` : html`<button class="btn" data-act="sheet-close">ยกเลิก</button>`}<button class="btn primary" data-act="shift-save" data-id="${s ? s.code : ''}">บันทึก</button>` });
+  }
+  /** A shift as its form's fields have it. */
+  function shiftWas(s) { return { dept: s.dept, type: s.type, start: s.start, end: s.end, otWeekday: s.otWeekday, otWeekend: s.otWeekend, days: s.daysText != null ? s.daysText : '', note: s.note || '' }; }
+  function leaveTypeLine(t) {
+    var cut = !t.cut ? 'ไม่หัก Incentive' : 'หัก Incentive ' + money(t.cut) + ' บาท/วัน' + (t.type === sickType() ? ' (สองวันแรก และวันที่ไม่มีใบรับรองแพทย์)' : t.advanceDays ? ' ถ้าแจ้งล่วงหน้าไม่ถึง ' + t.advanceDays + ' วัน' : '');
+    return [(t.paid ? 'ได้ค่าจ้าง' : 'ไม่ได้ค่าจ้าง') + (t.quota ? ' ' + t.quota + ' วัน/ปี' : ''), t.minYears ? 'เมื่อทำงานครบ ' + t.minYears + ' ปี' : '', cut].filter(Boolean).join(' · ');
+  }
+  /** The types of leave (the sheet "ประเภทการลา"): each to change, those the app does not know by name to delete, and one to add. */
+  function leaveTypesBox() {
+    return html`<p class="small muted mt0">สิทธิ์ต่อปี ค่าจ้าง และการหัก Incentive ของการลาแต่ละแบบ พนักงานเห็นตอนขอลา · แก้แล้วมีผลกับการลาทั้งปีนี้และเงินเดือนรอบที่ยังไม่อนุมัติ</p>
+      <div class="list">${(B.leaveTypes || []).map(function (t) {
+        return html`<button class="item" style="padding-left:0;padding-right:0;width:100%;text-align:left" data-act="ltype-open" data-id="${t.type}">${icon('leave')}<div class="grow"><div class="t">${t.type}</div><div class="s">${leaveTypeLine(t)}</div></div>${icon('right')}</button>`;
+      })}</div>
+      <button class="btn block" style="margin-top:8px" data-act="ltype-open">${icon('plus')} เพิ่มประเภทการลา</button>`;
+  }
+  function leaveTypeForm(name) {
+    var t = name ? leaveTypeOf(name) : null;
+    if (name && !t) return;
+    var v = t ? leaveTypeWas(t) : { quota: 0, paid: 'ใช่', cut: 0, advanceDays: 0, minYears: 0, note: '' };
+    var num = function (k, label, help) { return html`<label class="field"><span>${label}</span><input class="input" data-g="${k}" inputmode="decimal" value="${v[k]}">${help ? html`<small>${help}</small>` : ''}</label>`; };
+    var kept = (tablesOf().leaveKept || []).indexOf(name) >= 0;
+    openSheet({ use: 'แก้ไข/เพิ่มประเภทการลา', title: t ? t.type : 'เพิ่มประเภทการลา', body: html`
+      ${t ? '' : html`<label class="field"><span>ชื่อประเภท</span><input class="input" data-g="type" maxlength="40" autocomplete="off" placeholder="เช่น ลาบวช"><small>เปลี่ยนชื่อภายหลังไม่ได้</small></label>`}
+      <div class="two">${num('quota', 'สิทธิ์ต่อปี (วัน)')}<label class="field"><span>ได้ค่าจ้าง</span><select class="input" data-g="paid"><option ${v.paid === 'ใช่' ? 'selected' : ''}>ใช่</option><option ${v.paid === 'ไม่' ? 'selected' : ''}>ไม่</option></select></label></div>
+      <div class="two">${num('cut', 'หัก Incentive (บาท/วัน)')}${num('advanceDays', 'แจ้งก่อนกี่วันไม่หัก')}</div>
+      ${num('minYears', 'ต้องทำงานครบ (ปี)', 'ใช้สิทธิ์ได้เมื่อทำงานครบกี่ปี · 0 = ตั้งแต่เริ่มงาน')}
+      <label class="field"><span>หมายเหตุ</span><textarea class="input" data-g="note" maxlength="300">${v.note}</textarea><small>พนักงานเห็นตอนเลือกประเภทนี้</small></label>
+      <p class="small muted" style="margin:4px 0 0">แจ้งก่อนกี่วันไม่หัก: แจ้งก่อนวันลาอย่างน้อยเท่านี้ไม่หัก Incentive · 0 = หักทุกครั้งที่ลา${t && t.type === sickType() ? ' · ลาป่วยหักเฉพาะสองวันแรกและวันที่ไม่มีใบรับรองแพทย์' : ''} · ใช้กับการลาทั้งปีนี้และเงินเดือนรอบที่ยังไม่อนุมัติ รอบที่อนุมัติแล้วไม่เปลี่ยน</p>`,
+      foot: html`${t && !kept ? html`<button class="btn danger" data-act="ltype-delete" data-id="${t.type}">${icon('trash')} ลบ</button>` : html`<button class="btn" data-act="sheet-close">ยกเลิก</button>`}<button class="btn primary" data-act="ltype-save" data-id="${t ? t.type : ''}">บันทึก</button>` });
+  }
+  /** A type of leave as its form's fields have it. */
+  function leaveTypeWas(t) { return { quota: t.quota, paid: t.paid ? 'ใช่' : 'ไม่', cut: t.cut, advanceDays: t.advanceDays, minYears: t.minYears, note: t.note || '' }; }
   function settingsView() {
     var o = S.ownerHome;
     var set = o.settings;
@@ -10712,15 +11246,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           ${g[1].length ? html`<button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="${g[1].join(',')}">บันทึก${g[0]}</button>` : ''}</section>`;
       })}
       <section class="card"><div class="card-h"><span class="eyebrow">LINE</span></div>
-        <div class="small" style="line-height:1.7">กลุ่มพนักงาน: ${o.line.groupLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`} · LINE เจ้าของร้าน: ${o.line.ownerLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`} · สรุปรายวัน: ${o.line.dailyOn ? 'เปิด' : 'ปิด'}</div>
+        <div class="small" style="line-height:1.7">กลุ่มพนักงาน: ${o.line.groupLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`} · LINE เจ้าของร้าน: ${o.line.ownerLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`}</div>
+        <div class="list" style="margin-top:6px">${lineDailyRow(o.line, set)}</div>
         <ol class="small muted" style="padding-left:18px;margin:10px 0 0"><li>สร้าง LINE Official Account (ฟรี) เปิด Messaging API แล้ววาง Channel access token ในช่อง "แจ้งเตือน" ด้านบน</li><li>ตั้ง Webhook URL เป็นลิงก์แอปนี้ (${o.links.app || 'ลิงก์เว็บแอป'})</li><li>เชิญบอทเข้ากลุ่มพนักงาน แล้วพิมพ์ <b>เชื่อมระบบ ${o.line.linkCode}</b> ในกลุ่ม (เจ้าของร้านพิมพ์ในแชตกับบอทอีกครั้งด้วยรหัสใหม่)</li></ol>
-        <button class="btn sm" style="margin-top:10px" data-act="line-code">สร้างรหัสใหม่</button></section>
+        <div class="row wrapx" style="margin-top:10px"><button class="btn sm" data-act="line-code">สร้างรหัสใหม่</button>${o.line.ownerLinked ? html`<button class="btn sm" data-act="line-try">${icon('send')} ส่งข้อความทดสอบ</button>` : ''}</div></section>
       <section class="card"><div class="card-h"><span class="eyebrow">ข้อมูลและการสำรอง</span></div>
-        <p class="small muted mt0">ข้อมูลทั้งหมดอยู่ใน Google Sheet ของร้าน · สำรองทั้งไฟล์ให้เองทุกคืนตอนตี 4 (สำเนารายวันเก็บ 30 วัน สำเนาวันที่ 1 ของเดือนและก่อนอัปเดตทุกครั้งเก็บตลอด) · ส่งไฟล์ Excel ของข้อมูลทั้งหมดเข้าอีเมลสัปดาห์ละครั้ง · เงินเดือนที่อนุมัติแล้วเก็บแยกไว้ ไม่เปลี่ยนแม้แก้โปรแกรม</p>
+        <p class="small muted mt0">${o.backup && o.backup.sheetIsCopy ? 'ข้อมูลทั้งหมดอยู่ในระบบของร้าน · ทุกคืนตอนตี 4 คัดลอกลง Google Sheet ของร้านไว้เปิดดู (แก้ในชีตไม่มีผลกับแอป) แล้วสำรองทั้งไฟล์ (สำเนารายวันเก็บ 30 วัน สำเนาวันที่ 1 ของเดือนเก็บตลอด)' : 'ข้อมูลทั้งหมดอยู่ใน Google Sheet ของร้าน · สำรองทั้งไฟล์ให้เองทุกคืนตอนตี 4 (สำเนารายวันเก็บ 30 วัน สำเนาวันที่ 1 ของเดือนและก่อนอัปเดตทุกครั้งเก็บตลอด)'} · ส่งไฟล์ Excel ของข้อมูลทั้งหมดเข้าอีเมลสัปดาห์ละครั้ง · เงินเดือนที่อนุมัติแล้วเก็บแยกไว้ ไม่เปลี่ยนแม้แก้โปรแกรม</p>
         ${backupStatus(o.backup)}
+        ${o.backup && o.backup.restore ? html`<div class="list" style="margin:0 0 8px">${restoreRows(o.backup.restore)}</div>` : ''}
         ${settingField(set.backupMail)}${settingField(set.backupEmail)}
         <button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="backupMail,backupEmail">บันทึกการสำรอง</button>
-        <div class="row wrapx" style="margin-top:12px"><a class="btn sm" href="${o.links.sheet}" target="_blank" rel="noopener">${icon('sheet')} เปิด Google Sheet</a>${o.backup && o.backup.folder ? html`<a class="btn sm" href="${o.backup.folder}" target="_blank" rel="noopener">${icon('shield')} โฟลเดอร์สำรอง</a>` : ''}<button class="btn sm" data-act="backup">สำรองตอนนี้</button><button class="btn sm" data-act="backup-mail">${icon('mail')} ส่งเข้าอีเมลตอนนี้</button></div>
+        <div class="row wrapx" style="margin-top:12px">${o.backup && o.backup.sheet ? html`<a class="btn sm" href="${o.backup.sheet}" target="_blank" rel="noopener">${icon('sheet')} เปิด Google Sheet</a>` : ''}${o.backup && o.backup.folder ? html`<a class="btn sm" href="${o.backup.folder}" target="_blank" rel="noopener">${icon('shield')} โฟลเดอร์สำรอง</a>` : ''}<button class="btn sm" data-act="backup">สำรองตอนนี้</button><button class="btn sm" data-act="backup-mail">${icon('mail')} ส่งเข้าอีเมลตอนนี้</button><button class="btn sm" data-act="export-tables">${icon('download')} ส่งออกไฟล์ตาราง</button></div>
+        <p class="small muted" style="margin:8px 0 0">ส่งออกไฟล์ตาราง: ไฟล์ Excel ของทุกตารางลงเครื่องนี้ (ไม่มี PIN รหัสผ่าน และกุญแจ) เปิดดูหรือเก็บไว้เองได้</p>
         <p class="tiny muted" style="margin:10px 0 0">เวอร์ชัน ${o.version} · ตรวจฝนโดย <a href="https://www.weatherapi.com/" target="_blank" rel="noopener" title="Free Weather API">WeatherAPI.com</a></p></section>
     </div>`;
   }
@@ -10733,6 +11270,73 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="item" style="padding-left:0;padding-right:0">${icon('shield')}<div class="grow"><div class="t">สำรองล่าสุด</div><div class="s">${copy}</div>${b.error ? html`<div class="review-why">${whenAt(b.errorAt)} สำรองอัตโนมัติไม่สำเร็จ: ${b.error} · กด "สำรองตอนนี้" ถ้ายังไม่สำเร็จ ส่งข้อความนี้ให้ Claude ในแชต</div>` : b.stale ? html`<div class="review-why">ไม่ได้สำรองมา 3 วันแล้ว — กด "สำรองตอนนี้" (ระบบตั้งการสำรองทุกคืนใหม่ให้แล้ว) ถ้าพรุ่งนี้ยังขึ้นอยู่ ส่งข้อความนี้ให้ Claude ในแชต</div>` : ''}</div></div>
         <div class="item" style="padding-left:0;padding-right:0">${icon('mail')}<div class="grow"><div class="t">ส่งอีเมลล่าสุด</div><div class="s">${mail}</div>${b.mailOn && b.to && !b.offAccount ? html`<div class="review-why">อีเมลนี้อยู่ในบัญชีเดียวกับที่ติดตั้งแอป ถ้าเข้าบัญชีนี้ไม่ได้ก็เปิดอีเมลไม่ได้ด้วย · ใส่อีเมลของบัญชีอื่นด้านล่าง</div>` : ''}</div></div>
       </div>`;
+  }
+  /** The daily summary on LINE: on or off, and its hour (the settings' hour till the server says). */
+  function lineDailyRow(l, set) {
+    var hour = l.hour != null ? l.hour : set.lineHour ? set.lineHour.value : '';
+    return html`<div class="item" style="padding-left:0;padding-right:0">${icon('bell')}<div class="grow"><div class="t">สรุปรายวันทาง LINE</div><div class="s">${l.dailyOn ? 'เปิดอยู่ · ' : 'ปิดอยู่ · '}สรุปการลงเวลาของวันถึง LINE เจ้าของร้านทุกวันราว ${hour}:05 น. · เปลี่ยนเวลาที่ "แจ้งเตือน" ด้านบน</div></div><button class="btn sm" data-act="line-daily" data-on="${l.dailyOn ? '' : '1'}">${l.dailyOn ? 'ปิด' : 'เปิด'}</button></div>`;
+  }
+  /** On the shop's server on Cloudflare: the shop as it was, 30 days back; the last restore, and its undo. */
+  function restoreRows(r) {
+    var last = r.last;
+    var said = !last ? '' : last.kind === 'undo' ? ' · ย้อนการกู้เมื่อ ' + whenAt(last.when) : ' · กู้ล่าสุด ' + whenAt(last.when) + (last.at ? ' กลับไปเป็นเหมือน ' + whenAt(last.at) : '');
+    return html`<div class="item" style="padding-left:0;padding-right:0">${icon('refresh')}<div class="grow"><div class="t">กู้ข้อมูลย้อนหลัง</div><div class="s">ย้อนทั้งร้านกลับไปเป็นเหมือนเวลาที่เลือก ได้ถึง ${r.days} วัน${said}</div></div><button class="btn sm" data-act="restore-open">กู้ข้อมูล</button></div>
+      ${last && last.undo ? html`<div class="item" style="padding-left:0;padding-right:0">${icon('left')}<div class="grow"><div class="t">ย้อนการกู้</div><div class="s">ร้านกลับไปเป็นเหมือนก่อนกดกู้ครั้งล่าสุด</div></div><button class="btn sm" data-act="restore-undo">ย้อนการกู้</button></div>` : ''}`;
+  }
+  function restoreInfo() { return (S.ownerHome && S.ownerHome.backup && S.ownerHome.backup.restore) || null; }
+  /** How long `ms` is, in words: '3 ชม. 20 นาที', '2 วัน 4 ชม.'. */
+  function spanText(ms) {
+    var mi = Math.floor(ms / 60000), d = Math.floor(mi / 1440), h = Math.floor((mi % 1440) / 60), m = mi % 60;
+    return d ? d + ' วัน' + (h ? ' ' + h + ' ชม.' : '') : h ? h + ' ชม.' + (m ? ' ' + m + ' นาที' : '') : m + ' นาที';
+  }
+  /** The time picked in the restore sheet (ms), or NaN. */
+  function restoreAt() {
+    var d = ($('#rs-date') || {}).value, t = ($('#rs-time') || {}).value;
+    return d && t ? Date.parse(d + 'T' + t + ':00+07:00') : NaN;
+  }
+  /** What restoring to `ms` does, in words, and whether it can be done: {ok, text}. */
+  function restoreSay(ms) {
+    var r = restoreInfo();
+    if (!r || !isFinite(ms)) return { ok: false, text: 'เลือกวันและเวลาที่จะย้อนกลับไป' };
+    var gap = now().getTime() - ms;
+    if (gap < 60000) return { ok: false, text: 'เลือกเวลาที่ผ่านมาแล้วอย่างน้อย 1 นาที' };
+    if (ms < Date.parse(r.from)) return { ok: false, text: 'ย้อนได้ถึง ' + isoDate(r.from) + ' ' + isoTime(r.from) + ' น. เท่านั้น' };
+    var at = new Date(ms);
+    return { ok: true, text: 'ร้านจะกลับไปเป็นเหมือน ' + thDate(ymdOf(at)) + ' ' + hmOf(at) + ' น. (ย้อนไป ' + spanText(gap) + ') · ทุกอย่างที่บันทึกหลังจากนั้นหายไป' };
+  }
+  function restoreForm() {
+    var r = restoreInfo();
+    if (!r) return;
+    var at = new Date(Math.max(now().getTime() - 3600000, Date.parse(r.from) + 60000));
+    openSheet({ use: 'กู้ข้อมูลย้อนหลัง', title: 'กู้ข้อมูลย้อนหลัง', body: html`<p class="small muted mt0">ทั้งร้านกลับไปเป็นเหมือนเวลาที่เลือก: การลงเวลา การลา เงินเดือน พนักงาน ตั้งค่า และทุกอย่างที่บันทึกหลังเวลานั้นหายไป · ใช้เมื่อข้อมูลหายหรือถูกแก้ผิด · กู้แล้วย้อนการกู้ได้</p>
+      <div class="two"><label class="field"><span>วันที่</span><input class="input" type="date" id="rs-date" data-change="restore-when" min="${ymdOf(new Date(r.from))}" max="${ymdOf(now())}" value="${ymdOf(at)}"></label>
+      <label class="field"><span>เวลา</span><input class="input" type="time" id="rs-time" data-change="restore-when" value="${hmOf(at)}"></label></div>
+      <div class="hint" style="margin-top:4px">${icon('info')}<span id="rs-say">${restoreSay(Math.floor(at.getTime() / 60000) * 60000).text}</span></div>`,
+      foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn danger" data-act="restore-go">กู้ข้อมูล</button>` });
+  }
+  /** The shop put back: everything this phone kept of it goes, and the page opens anew (the server restarted on what was put back). */
+  function restoredGo(d) {
+    var r = d.restored || {};
+    var msg = r.undo ? 'ย้อนการกู้แล้ว: ร้านกลับไปเป็นเหมือนก่อนกดกู้ครั้งล่าสุด' : 'กู้ข้อมูลแล้ว' + (r.at ? ': ร้านกลับไปเป็นเหมือน ' + whenAt(r.at) : '');
+    if (d.unnoted) msg += ' · ระบบจำการกู้ครั้งนี้ไม่ได้ ถ้าต้องการย้อน ให้กู้ไปที่เวลาก่อนกดกู้ (' + d.pressed + ' น.)';
+    LS.set(KEY.told, { m: msg, at: Date.now() });
+    ['boot', 'kboot', 'home', 'owner', 'parts'].forEach(forget);
+    location.reload();
+  }
+  /** A message kept for the page opened anew (restoredGo): shown once. */
+  function toldNow() {
+    var t = LS.get(KEY.told);
+    if (!t) return;
+    LS.del(KEY.told);
+    if (Date.now() - t.at < 120000) setTimeout(function () { toast(t.m, 'ok'); }, 600);
+  }
+  // A step not to be taken by mistake (a delete, a restore), asked first: its button turns till it is done, the
+  // sheet staying up till then (`o`: title, text, yes, danger, back: the other button's HTML, work: its request, done).
+  var confirmWork = null;
+  function confirmThen(o) {
+    confirmWork = o;
+    openSheet({ title: o.title, body: html`<p style="margin:0 0 6px;color:var(--ink-2)">${o.text}</p>`,
+      foot: html`${o.back || html`<button class="btn" data-act="sheet-close">ยกเลิก</button>`}<button class="btn ${o.danger ? 'danger' : 'primary'}" data-act="confirm-work">${o.yes || 'ตกลง'}</button>` });
   }
   function settingField(f) {
     if (!f) return '';
@@ -14148,8 +14752,28 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }).then(function (sub) {
       PUSH.sub = sub || null;
       PUSH.checked = true;
+      // (the server moved, ย้ายหลังบ้าน: the helper asks this site's own for its notes from now on, with the same key)
+      if (sub) pushKept().then(function (key) { if (key && key.api !== SITE.api) pushKeep(Object.assign({}, key, { api: SITE.api })); });
       if (S.view === 'staff' || S.view === 'owner') softRender();
     }, function () { PUSH.checked = true; });
+  }
+  /** What this phone's helper keeps to ask for its notes (pushKeep), or null. Never fails. */
+  function pushKept() {
+    return new Promise(function (done) {
+      try {
+        var open = indexedDB.open(STORE + 'seoulful-push', 1);
+        open.onupgradeneeded = function () { open.result.createObjectStore('kv'); };
+        open.onerror = function () { done(null); };
+        open.onsuccess = function () {
+          try {
+            var tx = open.result.transaction('kv', 'readonly');
+            var got = tx.objectStore('kv').get('key');
+            tx.oncomplete = function () { open.result.close(); done(got.result || null); };
+            tx.onerror = tx.onabort = function () { open.result.close(); done(null); };
+          } catch (e) { done(null); }
+        };
+      } catch (e) { done(null); }
+    });
   }
   /** This site's own helper, or none: on the test app's site the shop's helper (a folder up) answers as well. */
   function swReg() {
@@ -14442,7 +15066,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   // -- the bell: what this person was told (the last 30 days)
   var bellList = null; // {notes, unread, phones} as last fetched
-  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', test: 'bell' };
+  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', 'pin-lock': 'lock', test: 'bell' };
   function noteWhen(iso) {
     var ms = now().getTime() - Date.parse(iso);
     if (ms < 60000) return 'เมื่อสักครู่';
@@ -15372,7 +15996,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           ? html`<button class="btn" data-act="fb-inbox">กลับ</button><button class="btn primary" data-act="fb-approve" data-id="${f.id}">เปลี่ยนใจ: อนุมัติ</button>`
           : html`<button class="btn primary" data-act="fb-inbox">กลับ</button>`;
     openSheet({ use: 'ความคิดเห็น · เปิดเรื่อง', title: FB_KINDS[f.kind] + ' · ' + f.name, wide: true, body: html`<div class="fb-detail"><div class="row wrapx" style="gap:8px"><span class="pill ${st[1]}">${st[0]}${f.issue ? ' #' + f.issue : ''}</span><span class="small muted">${whenAt(f.at)}</span></div>
-      ${f.text ? html`<p class="fb-body">${f.text}</p>` : ''}${media.length ? html`<div class="fb-media">${media}</div>` : ''}${f.device ? html`<div class="fb-device">${icon('phone')}<span>${f.device}</span></div>` : ''}${actions}</div>`, foot: foot });
+      ${f.text ? html`<p class="fb-body">${f.text}</p>` : ''}${media.length ? html`<div class="fb-media">${media}</div>` : ''}${f.device ? html`<div class="fb-device">${icon('phone')}<span>${f.device}</span></div>` : ''}${actions}
+      <div style="margin-top:20px;text-align:center"><button class="btn ghost sm danger" data-act="fb-delete" data-id="${f.id}">${icon('trash')} ลบเรื่องนี้</button></div></div>`, foot: foot });
     // Pictures come at once; a video when it is played.
     f.files.forEach(function (x, i) {
       if (x.t === 'video' || fbMedia[f.id + ':' + i]) return;
@@ -15436,6 +16061,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'nt-go': function (el) { goTo(el.dataset.go); },
     'confirm-yes': function () { var r = confirmResolve; confirmResolve = null; closeSheet(); if (r) r(true); },
     'confirm-no': function () { closeSheet(); },
+    'confirm-work': function (el) {
+      var o = confirmWork;
+      if (!o) return;
+      run(el, o.work()).then(function (d) { if (confirmWork === o) confirmWork = null; o.done(d); }, function () {});
+    },
     'print': function () { window.print(); },
     'save-image': function (el) { saveImage(el.dataset.target, el.dataset.name, el); },
 
@@ -15928,6 +16558,27 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var f = fbFind(el.dataset.id);
       if (f) copyText((fbList.briefs && fbList.briefs[f.id]) || fbBrief(f, ''), 'คัดลอกแล้ว วางในแชต Claude ได้เลย');
     },
+    // Deleted (in the sheet before the move): gone from the app, its files into the bin of the shop's Drive (Feedback.gs apiFeedbackDelete_).
+    'fb-delete': function (el) {
+      var f = fbFind(el.dataset.id);
+      if (!f) return;
+      var n = f.files.length;
+      var task = f.issue && (f.status === 'approved' || f.status === 'built') ? ' · งานที่ส่งให้ Claude แล้ว (#' + f.issue + ') ยังอยู่ ถ้าไม่ต้องการแล้วบอก Claude ในแชต' : '';
+      confirmThen({ title: 'ลบเรื่องนี้', text: 'เรื่องนี้ของ' + f.name + (n ? 'และไฟล์แนบ ' + n + ' ไฟล์' : '') + 'หายจากแอป ทั้งที่นี่และในแอปของ' + f.name + ' · แต้มที่' + f.name + 'ได้จากเรื่องนี้หายด้วย' + (n ? ' · ไฟล์แนบอยู่ในถังขยะของไดรฟ์ร้าน 30 วัน' : '') + task,
+        yes: 'ลบเรื่องนี้', danger: true, back: html`<button class="btn" data-act="fb-open" data-id="${f.id}">กลับ</button>`,
+        work: function () { return call('feedbackDelete', { id: f.id }, ownerAuth()); },
+        done: function (d) {
+          if (fbList) fbList.items = fbList.items.filter(function (x) { return x.id !== f.id; });
+          f.files.forEach(function (x, i) { var k = f.id + ':' + i; if (fbMedia[k]) { URL.revokeObjectURL(fbMedia[k]); delete fbMedia[k]; } });
+          if (S.ownerHome && S.ownerHome.feedback) {
+            fbCount(d.total);
+            ownerChanged();
+            if (S.view === 'owner' && S.ownerTab === 'overview') softRender();
+          }
+          openFeedbackInbox();
+          toast(d.notice, 'ok');
+        } });
+    },
     // The name at the top: ฉัน, one's own things.
     'staff-menu': function () {
       if (S.home) ACTIONS.tab({ dataset: { tab: 'me' } });
@@ -16308,7 +16959,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'retry-boot': function () { retryBoot(); },
     'retry-part': function (el) { var w = el.dataset.what; delete S.loadErr[w]; render(); if (RETRY_PART[w]) RETRY_PART[w](); },
     'retry-load': function () {
-      if (S.bootErr && !B.clock) { retryBoot(); return; }
+      if (S.bootErr && !B.employees) { retryBoot(); return; }
       var outline = S.view === 'owner' ? !S.ownerHome : !S.home;
       // An outline shows its shapes again; a note over older data says it is loading.
       if (outline) { S.ownerErr = ''; S.homeErr = ''; } else S.retrying = true;
@@ -16554,6 +17205,25 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       document.querySelectorAll('#sheet-body [data-f]').forEach(function (i) { fields[i.dataset.f] = i.value; });
       run(el, call('employeeSave', { id: el.dataset.id || undefined, fields: fields }, ownerAuth())).then(function (d) { closeSheet(); S.employees = d; render(); toast(d.notice, 'ok'); }, function () {});
     },
+    'pin-unlock': function (el) {
+      run(el, call('pinUnlock', { key: el.dataset.key }, ownerAuth())).then(function (d) {
+        if (S.ownerHome) S.ownerHome.pinLocks = d.pinLocks;
+        ownerChanged();
+        render(); toast(d.notice, 'ok');
+      }, function () {});
+    },
+    'owner-new-code': function (el) {
+      var a = String(($('#new-code') || {}).value || '').trim();
+      var b = String(($('#new-code2') || {}).value || '').trim();
+      if (!/^\d{8,12}$/.test(a)) { toast('รหัสใหม่ต้องเป็นตัวเลข 8–12 หลัก', 'bad'); return; }
+      if (a !== b) { toast('รหัสสองช่องไม่ตรงกัน ใส่ใหม่อีกครั้ง', 'bad'); return; }
+      run(el, call('settingsSave', { values: { ownerPin: a } }, ownerAuth())).then(function (d) {
+        S.owner = { pin: a };
+        if (LS.get(KEY.owner)) LS.set(KEY.owner, S.owner);
+        ownerChanged(d);
+        render(); toast('ตั้งรหัสใหม่แล้ว · ใช้รหัสนี้เข้าหน้าเจ้าของร้านครั้งต่อไป', 'ok');
+      }, function () {});
+    },
     'reset-pin': function (el) {
       run(el, call('employeePin', { id: el.dataset.id }, ownerAuth())).then(function (d) { closeSheet(); S.employees = d; render(); toast(d.notice, 'ok'); }, function () {});
     },
@@ -16604,6 +17274,60 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'line-code': function (el) { run(el, call('lineCode', {}, ownerAuth())).then(function (d) { S.ownerHome.line.linkCode = d.linkCode; ownerChanged(); render(); }, function () {}); },
     'backup': function (el) { run(el, call('backup', {}, ownerAuth())).then(function (d) { backupDone(d); }, function () {}); },
     'backup-mail': function (el) { run(el, call('backupMail', {}, ownerAuth())).then(function (d) { backupDone(d); }, function () {}); },
+    // what the sheet held, changed here (ย้ายหลังบ้าน task 7): the shifts, the types of leave, the daily summary on
+    // LINE, the tables as a file, the shop as it was
+    'shift-open': function (el) { shiftForm(el.dataset.id || ''); },
+    'shift-save': function (el) {
+      var code = el.dataset.id, add = !code;
+      var vals = formChanged(add ? null : shiftWas(shiftOf(code) || {}));
+      if (add) { code = vals.code || ''; delete vals.code; }
+      if (!add && !Object.keys(vals).length) { closeSheet(); toast('ไม่มีการเปลี่ยนแปลง', 'ok'); return; }
+      run(el, call('shiftSave', { code: code, add: add, values: vals }, ownerAuth())).then(function (d) { bootSet('shifts', d.shifts); closeSheet(); render(); toast(d.notice, 'ok'); }, function () {});
+    },
+    'shift-delete': function (el) {
+      var code = el.dataset.id;
+      confirmThen({ title: 'ลบกะ ' + code, text: 'กะนี้หายจากรายการ เลือกให้พนักงานไม่ได้อีก · ลบได้เฉพาะกะที่ยังไม่มีใครลงเวลา', yes: 'ลบกะ', danger: true, back: html`<button class="btn" data-act="shift-open" data-id="${code}">กลับ</button>`,
+        work: function () { return call('shiftDelete', { code: code }, ownerAuth()); },
+        done: function (d) { bootSet('shifts', d.shifts); closeSheet(); render(); toast(d.notice, 'ok'); } });
+    },
+    'ltype-open': function (el) { leaveTypeForm(el.dataset.id || ''); },
+    'ltype-save': function (el) {
+      var name = el.dataset.id, add = !name;
+      var vals = formChanged(add ? null : leaveTypeWas(leaveTypeOf(name) || {}));
+      if (add) { name = vals.type || ''; delete vals.type; }
+      if (!add && !Object.keys(vals).length) { closeSheet(); toast('ไม่มีการเปลี่ยนแปลง', 'ok'); return; }
+      run(el, call('leaveTypeSave', { type: name, add: add, values: vals }, ownerAuth())).then(function (d) { bootSet('leaveTypes', d.leaveTypes); closeSheet(); render(); toast(d.notice, 'ok'); }, function () {});
+    },
+    'ltype-delete': function (el) {
+      var name = el.dataset.id;
+      confirmThen({ title: 'ลบประเภท ' + name, text: 'ประเภทนี้หายจากรายการ พนักงานขอลาแบบนี้ไม่ได้อีก · ลบได้เฉพาะประเภทที่ยังไม่มีใครลา', yes: 'ลบประเภท', danger: true, back: html`<button class="btn" data-act="ltype-open" data-id="${name}">กลับ</button>`,
+        work: function () { return call('leaveTypeDelete', { type: name }, ownerAuth()); },
+        done: function (d) { bootSet('leaveTypes', d.leaveTypes); closeSheet(); render(); toast(d.notice, 'ok'); } });
+    },
+    'line-daily': function (el) {
+      run(el, call('lineDaily', { on: !!el.dataset.on }, ownerAuth())).then(function (d) { S.ownerHome.line = d.line; ownerChanged(); render(); toast(d.notice, 'ok'); }, function () {});
+    },
+    'line-try': function (el) { run(el, call('lineTry', {}, ownerAuth())).then(function (d) { toast(d.notice, 'ok'); }, function () {}); },
+    'export-tables': function (el) {
+      run(el, call('exportTables', {}, ownerAuth()).then(function (d) {
+        return xlsxFile(d).then(function (bytes) { downloadBlob(d.name + '.xlsx', new Blob([bytes], { type: XLSX_TYPE })); return d; });
+      }), function (d) { return 'ดาวน์โหลดไฟล์แล้ว · ' + d.tables.length + ' ตาราง'; }).then(function () {}, function () {});
+    },
+    'restore-open': function () { restoreForm(); },
+    'restore-go': function () {
+      var at = restoreAt(), say = restoreSay(at);
+      if (!say.ok) { toast(say.text, 'bad'); return; }
+      confirmThen({ title: 'ยืนยันกู้ข้อมูล', text: say.text + ' · กู้ผิดเวลา กด "ย้อนการกู้" ที่ ตั้งค่า › ข้อมูลและการสำรอง', yes: 'กู้ข้อมูล', danger: true, back: html`<button class="btn" data-act="restore-open">กลับ</button>`,
+        work: function () { var pressed = hmOf(now()); return call('restore', { at: at }, ownerAuth()).then(function (d) { d.pressed = pressed; return d; }); },
+        done: restoredGo });
+    },
+    'restore-undo': function () {
+      var r = restoreInfo(), last = r && r.last;
+      if (!last || !last.undo) return;
+      confirmThen({ title: 'ย้อนการกู้', text: 'ร้านกลับไปเป็นเหมือนก่อนกดกู้เมื่อ ' + whenAt(last.when) + ' · ทุกอย่างที่บันทึกหลังการกู้หายไป', yes: 'ย้อนการกู้', danger: true,
+        work: function () { var pressed = hmOf(now()); return call('restore', { undo: true }, ownerAuth()).then(function (d) { d.pressed = pressed; return d; }); },
+        done: restoredGo });
+    },
     // how the app is used (#283): what staff are told; the owner's look
     'use-about': function () { useAbout(); },
     'use-open': function () { openUse(); },
@@ -16633,6 +17357,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (el.id === 'cam-env' || el.id === 'cam-user') { onCameraFile(el); return; }
     if (el.dataset.change === 'lv-type' || el.dataset.change === 'lv-cost') leaveFormSync();
     if (el.dataset.change === 'lf-cert' && $('#lf-days')) $('#lf-days').hidden = !el.checked;
+    if (el.dataset.change === 'restore-when' && $('#rs-say')) $('#rs-say').textContent = restoreSay(restoreAt()).text;
     if (el.dataset.change === 'odo-keep') {
       var keep = el.value === '' ? '' : +el.value;
       call('orderItemSave', { id: el.dataset.id, keepDays: keep }, ownerAuth()).then(function () {
@@ -16739,6 +17464,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // Start
   // ======================================================================
   function start() {
+    toldNow();
     if (B.error) { S.view = 'error'; render(); return; }
     if (B.siteUrl && !S.stay) { S.view = 'moved'; render(); return; }
     if (S.kiosk && S.kiosk.token) {
@@ -16765,7 +17491,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (B.page === 'owner' || (S.owner && !S.staff)) {
       if (!S.owner) { S.view = 'ownerLogin'; render(); return; }
       var lastOwner = recall('owner');
-      if (lastOwner && !S.ownerHome) { S.ownerHome = lastOwner.data; S.ownerAt = lastOwner.at; }
+      if (lastOwner && !S.ownerHome) { S.ownerHome = lastOwner.data; S.ownerAt = lastOwner.at; appIn(S.ownerHome.app); }
       S.view = 'owner';
       render();
       loadOwner(true);
