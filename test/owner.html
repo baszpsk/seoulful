@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.1","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"4b59e6d1b8a9"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.1","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"da6d8199a3fc"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -1072,7 +1072,11 @@ html.i3-ui-coin .coin::before { content: none; }
 .shop-chips { position: relative; display: flex; gap: 6px; margin: 10px -2px 0; padding: 2px; overflow-x: auto; scrollbar-width: none; }
 .shop-chips::-webkit-scrollbar { display: none; }
 .shop-chips .chip { flex: none; padding: 7px 14px; font-size: 13.5px; font-weight: 600; }
-.shop-item.char { padding: 8px 4px 10px; }
+/* กล่องร้าน: ป้ายมุมซ้ายบนและกุญแจมุมขวาบนลงมาถึง 28px จากขอบบน รูปตัวอย่างทุกแบบเริ่มส่วนที่วาดใต้ 30px
+   (26 ต.ค. 2569: ป้าย "เหลือ 8 วัน" บังยอดหมวกแม่มดทั้งในรูปและบนตัวละคร และบังยอดผมของตัวละครทุกกล่องที่มีป้าย) ·
+   ตัวละครเต็มตัววาดไม่เกินกรอบของมัน จึงใช้ระยะบน 30px เท่ากล่องอื่น · รูปกลมมีหมวกยื่นเหนือรูปได้ถึง 24px
+   (หมวกแม่มด) จึงเลื่อนรูปลงอีก 25px (.shop-item .av) */
+.shop-item.char { padding: 30px 4px 10px; }
 .shop-item.char .char-svg { width: 62px; height: 115px; }
 .shop-fxp { position: relative; isolation: isolate; display: block; width: 62px; height: 115px; margin: 0 auto; }
 /* Whole outfits (LOOK_KITS) on the moves' page: what is had of each, and the move it gives. */
@@ -1403,7 +1407,7 @@ html.i3-ui-coin .coin::before { content: none; }
 .shop-item.locked { filter: saturate(.5); }
 .shop-lock { position: absolute; right: 6px; top: 6px; z-index: 2; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(43, 35, 32, .55); color: #fff; }
 .shop-lock svg { width: 11px; height: 11px; }
-.shop-item .av { width: 36px; height: 36px; font-size: 14px; }
+.shop-item .av { width: 36px; height: 36px; margin-top: 25px; font-size: 14px; }
 .shop-item .big { font-size: 28px; line-height: 36px; height: 36px; }
 /* ---------- the blind boxes: little figures to collect, a shelf to show them, and friends' shelves ---------- */
 :root { --cab-a: #fdf8ef; --cab-b: #f0e3cd; --cab-rim: rgba(160, 122, 63, .28); --board-a: #e6d3b1; --board-b: #c9ab7c; --sil: brightness(0); --sil-o: .13; --cab-glass: .28; --char-rim: none; }
