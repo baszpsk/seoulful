@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.1","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"6db9ee9f9b94"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.1","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"4b59e6d1b8a9"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -34,6 +34,8 @@
   // (the test app's names apart from the shop's, as the app's own STORE)
   var STORE = site.store || '';
   function get(k) { try { return JSON.parse(localStorage.getItem(STORE + k)); } catch (e) { return null; } }
+  // (มือถือจำ PIN มีหมดอายุ ดู liveSession 25 ต.ค. 2569)
+  function live(v) { return v && !(v.seen && Date.now() - v.seen > (v.idle || 2592000000)) ? v : null; }
   function stable(v) {
     if (Array.isArray(v)) return '[' + v.map(stable).join(',') + ']';
     if (v && typeof v === 'object') return '{' + Object.keys(v).sort().map(function (k) { return JSON.stringify(k) + ':' + stable(v[k]); }).join(',') + '}';
@@ -42,7 +44,7 @@
   function keyOf(body) { try { var r = JSON.parse(body); return r.action + '|' + stable(r.auth || {}) + '|' + stable(r.data || {}); } catch (e) { return ''; } }
   if ((get('seoulful.kiosk') || {}).token) return;
   var q = new URLSearchParams(location.search);
-  var page = String(site.page || q.get('page') || '').toLowerCase(), staff = get('seoulful.staff'), owner = get('seoulful.owner');
+  var page = String(site.page || q.get('page') || '').toLowerCase(), staff = live(get('seoulful.staff')), owner = live(get('seoulful.owner'));
   var list = [{ action: 'boot', auth: {}, data: { page: page, scan: q.get('in') || q.get('qr') || '', v: site.version || '' } }];
   if (page === 'owner' || (owner && !staff)) { if (owner && owner.pin) list.push({ action: 'owner', auth: { ownerPin: owner.pin }, data: {} }); }
   else if (staff && staff.empId) list.push({ action: 'home', auth: { empId: staff.empId, pin: staff.pin }, data: {} });
@@ -2953,6 +2955,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     del: function (k) { try { window.localStorage.removeItem(STORE + k); } catch (e) { /* storage unavailable */ } },
   };
   var HOOKS = window.__SEOULFUL_HOOKS__ || {};
+  // (มือถือจำ PIN มีหมดอายุ 25 ต.ค. 2569: ผู้อนุมัติและเจ้าของร้านไม่ได้ใช้ 30 นาที น้องไม่ได้เปิดแอป 30 วัน
+  // ใส่ PIN ใหม่ · การแจ้งเตือนในมือถือยังอยู่)
+  var IDLE_MS = { short: 30 * 60000, long: 30 * 86400000 };
+  function liveSession(key) {
+    var v = LS.get(key);
+    if (!v || !v.seen || Date.now() - v.seen <= (v.idle || IDLE_MS.long)) return v;
+    LS.del(key);
+    forget(key === KEY.owner ? 'owner' : 'home');
+    forget('parts');
+    return null;
+  }
   // What the app last showed, kept on this phone: the next open shows it at
   // once while the server is asked again; a staff screen only for the same
   // person on the same work day. Kept across an update too (the owner's
@@ -3040,11 +3053,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     login: null, homeErr: '', ownerErr: '', bootErr: '',
     // parts of a screen: why their last load failed, and which show remembered data until today's comes
     loadErr: {}, partStale: {},
-    staff: LS.get(KEY.staff), home: null, tab: 'home', sub: null, shift: null,
+    staff: liveSession(KEY.staff), home: null, tab: 'home', sub: null, shift: null,
     month: null, monthKey: null, slips: null,
     team: null, entries: null, leaves: null, exceptions: null,
     pay: null, payKey: null,
-    owner: LS.get(KEY.owner), ownerHome: null, ownerTab: 'overview', employees: null,
+    owner: liveSession(KEY.owner), ownerHome: null, ownerTab: 'overview', employees: null,
     kiosk: LS.get(KEY.kiosk),
     scanCode: B.scan || '',
     geoBusy: false,
@@ -7247,16 +7260,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    * approverName_); for an approver, the other one, or the owner.
    */
   function forgotPinText(e) {
-    var others = (B.employees || []).filter(function (x) { return x.role === 'approver' && x.id !== e.id; });
-    var who = others.length === 1 ? others[0].name : others.length ? 'ผู้อนุมัติ' : '';
-    return 'บอกเจ้าของร้านเพื่อขอ PIN · ถึงเวลาเข้างานแล้ว ' + (who ? 'บอก' + who + 'ให้ลงเวลาแทน ด้วยเวลาที่มาถึงร้าน' : 'ขอให้ลงเวลาแทนด้วยเวลาที่มาถึงร้าน');
+    // (ก่อนใส่ PIN แอปไม่รู้ว่าใครเป็นผู้อนุมัติ: หน้าเลือกชื่อไม่ส่งบทบาท 25 ต.ค. 2569)
+    return 'บอกเจ้าของร้านเพื่อขอ PIN · ถึงเวลาเข้างานแล้ว บอกผู้อนุมัติหรือเจ้าของร้านให้ลงเวลาแทน ด้วยเวลาที่มาถึงร้าน';
   }
   // (the name 18px under the picture, on the shop's screen too: no level's frame over it, dev/overlap.js)
   VIEWS.pin = function () {
     var e = empById(S.pickId) || {};
     return html`<div class="wrap"><div class="topbar"><div class="wrap" style="padding:0"><button class="icon-btn" data-act="back-start" aria-label="กลับ">${icon('left')}</button>${brand()}<span style="width:40px"></span></div></div>
-      <div class="pin-wrap">${avatar(e, 'lg')}<div class="hello" style="font-size:24px;margin-top:18px">${ownName(e)}</div><div class="muted small">ใส่ PIN ${e.pinLen || 4} หลัก${e.pin ? ' · แอปทดลอง: ' + e.pin : ''}</div>
-      ${pinPad(e.pinLen || 4, S.pin, S.pinErr)}
+      <div class="pin-wrap">${avatar(e, 'lg')}<div class="hello" style="font-size:24px;margin-top:18px">${ownName(e)}</div><div class="muted small">${e.pinLen ? 'ใส่ PIN ' + e.pinLen + ' หลัก' : 'ใส่ PIN แล้วกดตกลง'}${e.pin ? ' · แอปทดลอง: ' + e.pin : ''}</div>
+      ${pinPad(e.pinLen || 0, S.pin, S.pinErr)}
       ${S.pinHelp ? html`<div class="hint pin-help" style="margin-top:18px;text-align:left">${icon('info')}<span>${forgotPinText(e)}</span></div>` : html`<div class="foot-links" style="padding:18px 0 0"><button class="link" data-act="pin-forgot">ลืม PIN</button></div>`}</div></div>`;
   };
   VIEWS.ownerLogin = function () {
@@ -7285,7 +7297,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (S.pinBusy) return;
     var kiosk = S.view === 'kiosk';
     var typed = kiosk ? S.k.pin : S.pin;
-    var len = kiosk ? (empById(S.k.emp) || {}).pinLen || 4 : S.view === 'pin' ? (empById(S.pickId) || {}).pinLen || 4 : S.view === 'ownerCode' ? 6 : 0;
+    var len = kiosk ? (empById(S.k.emp) || {}).pinLen || 4 : S.view === 'pin' ? (empById(S.pickId) || {}).pinLen || 0 : S.view === 'ownerCode' ? 6 : 0;
     if (k === 'del') typed = typed.slice(0, -1);
     else if (k === 'ok') { submitPin(typed); return; }
     else if (typed.length < (len || 12)) typed += k;
@@ -7315,7 +7327,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     call('home', {}, { empId: id, pin: pin }, { once: true }).then(function (data) {
       S.pinBusy = false;
       S.login = null;
-      S.staff = { empId: id, pin: pin, name: ownName(e0) };
+      S.staff = { empId: id, pin: pin, name: ownName(e0), seen: Date.now(), idle: data && data.me && data.me.role === 'approver' ? IDLE_MS.short : IDLE_MS.long };
       LS.set(KEY.staff, S.staff);
       applyHome(data);
       remember('home', data, homeTag(id, data));
@@ -7495,7 +7507,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function camWanted() { return S.view === 'kiosk' && liveQrOn() && !!(B.clock && B.clock.screenCam); }
   function camNote() {
     var st = S.k.cam.state;
-    if (st === 'ok') return 'กล้องของจอ · ถ่ายภาพตอนสแกน';
+    if (st === 'ok') return 'กล้องของจอ · ถ่ายภาพตอนสแกน เก็บไว้ 3 เดือน';
     if (st === 'covered') return 'กล้องถูกบัง — QR จะขึ้นเมื่อกล้องเห็นภาพ';
     if (st === 'none') return 'เปิดกล้องของจอไม่ได้ — ลงเวลาได้ แต่ทุกคนจะรอผู้อนุมัติตรวจ · อนุญาตกล้องให้เว็บนี้แล้วเปิดจอใหม่';
     return 'กำลังเปิดกล้อง…';
@@ -7787,7 +7799,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     } else {
       var r = k.result;
       body = html`<div class="k-result ${r.tone || 'ok'}">${resultMark(r, true)}
-        <h2>${r.title}</h2>${(r.lines || []).map(function (l, i) { return html`<p class="${i === 0 ? 'first' : ''}">${l}</p>`; })}
+        <h2>${r.title}</h2>${(r.lines || []).filter(function (l) { return l !== 'ผู้อนุมัติจะดูรายการนี้อีกครั้ง'; }).map(function (l, i) { return html`<p class="${i === 0 ? 'first' : ''}">${l}</p>`; })}
         <div class="k-count"><i style="animation-duration:${r.tone === 'ok' ? 6 : 10}s"></i></div>
         <button class="btn" style="margin-top:22px" data-act="k-done">เสร็จ</button></div>`;
     }
@@ -7816,7 +7828,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var shifts = st.shifts || [];
     return html`<div class="k-panel"><div class="k-confirm">
       <div>${B.clock && B.clock.kioskPhoto ? html`<div class="cam"><video id="k-video" autoplay muted playsinline></video><div class="cam-note" id="k-cam-note">กำลังเปิดกล้อง…</div></div>
-        <p class="muted small center" style="margin-top:8px">ระบบถ่ายรูปตอนกดลงเวลาเป็นหลักฐาน</p>` : ''}</div>
+        <p class="muted small center" style="margin-top:8px">จอถ่ายรูปตอนกดลงเวลา · รูปเก็บไว้ 3 เดือน</p>` : ''}</div>
       <div>
         <div class="hello" style="font-size:28px;margin:0">${greeting()} ${ownName(e)}</div>
         <p class="muted" style="margin:4px 0 16px">เลือกกะที่เข้าทำงานวันนี้</p>
@@ -8014,6 +8026,36 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     render();
     if (msg) toast(msg, 'bad');
   }
+  // (มือถือจำ PIN มีหมดอายุ: กลับมาเปิดแอปหลังไม่ได้ใช้นานเกิน ใส่ PIN ใหม่ ไม่ปิดการแจ้งเตือน 25 ต.ค. 2569)
+  function lockIfIdle() {
+    if (S.owner && LS.get(KEY.owner) && !liveSession(KEY.owner)) {
+      closeSheet(); dropSession(); dropFaces();
+      S.owner = null; S.ownerHome = null; S.ownerErr = ''; S.pay = null; S.team = null; S.employees = null; S.leaves = null;
+      S.pin = ''; S.pinErr = '';
+      S.view = B.page === 'owner' ? 'ownerLogin' : 'start';
+      render();
+    } else if (S.staff && LS.get(KEY.staff) && !liveSession(KEY.staff)) {
+      closeSheet(); dropSession(); dropFaces();
+      S.staff = null; S.home = null; S.homeErr = ''; S.team = null; S.pay = null; S.leaves = null;
+      S.pin = ''; S.pinErr = '';
+      S.view = 'start';
+      render();
+    }
+  }
+  var touchedAt = 0;
+  function touchSession(force) {
+    var now = Date.now();
+    if (force !== true && now - touchedAt < 15000) return;
+    touchedAt = now;
+    if (S.owner && LS.get(KEY.owner)) { S.owner.seen = now; S.owner.idle = IDLE_MS.short; LS.set(KEY.owner, S.owner); }
+    if (S.staff && LS.get(KEY.staff)) { S.staff.seen = now; S.staff.idle = isApprover() ? IDLE_MS.short : IDLE_MS.long; LS.set(KEY.staff, S.staff); }
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') lockIfIdle();
+    else touchSession(true);
+  });
+  document.addEventListener('pointerdown', touchSession, true);
+  document.addEventListener('keydown', touchSession, true);
 
   // The staff's tabs (2.11): หน้าแรก · เพื่อน · ไอเดีย · ฉัน, and for the approvers ทีม (with what waits for
   // them). Leave, slips and the month's history are under ฉัน: there whenever needed, not the first thing seen.
@@ -8288,7 +8330,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${chips}
       ${gpsLine()}
       <button class="btn primary xl block" style="margin-top:14px" data-act="clock-in">${icon(needScan ? 'qr' : selfie ? 'camera' : 'clock')} ${label}</button>
-      ${selfie && !needScan ? html`<p class="muted small" style="margin:8px 2px 0">กล้องหน้าจะเปิด ถ่ายรูปตัวเองให้เห็นหน้าและในร้าน</p>` : ''}
+      ${selfie && !needScan ? html`<p class="muted small" style="margin:8px 2px 0">กล้องหน้าจะเปิด ถ่ายรูปตัวเองให้เห็นหน้าและในร้าน · รูปเก็บไว้ 3 เดือน</p>` : ''}
       ${needScan && !clockedHere() ? html`<div class="hint" style="margin-top:12px">${icon('qr')}<span>${B.clock.scanInApp
         ? html`กดปุ่มแล้ว<b>ส่องกล้องที่ป้าย QR ${where}</b> ลงเวลาให้เองเมื่อเห็น QR`
         : html`<b>เร็วที่สุด:</b> เปิดกล้องมือถือ สแกน QR ${where} แตะลิงก์ แล้วกดลงเวลา · หรือกดปุ่มนี้แล้วสแกน QR`}</span></div>` : ''}`;
@@ -8313,14 +8355,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var sickCut = ((B.leaveTypes || []).filter(function (x) { return x.type === sickType(); })[0] || {}).cut || 0;
     var from = r.suddenFrom && r.suddenFrom > workDate() ? ' (เริ่ม ' + thShort(r.suddenFrom) + ')' : '';
     openSheet({ title: 'กติกา Incentive', body: html`<ul class="rules">
-        <li>${icon('check')}<span>มาตรงเวลา ได้ Incentive เต็มทุกเดือน (เบี้ยขยัน ค่าหัวหน้า ค่าอยู่นาน)</span></li>
+        <li>${icon('check')}<span>มาตรงเวลา ได้ Incentive เต็มทุกเดือน</span></li>
         <li>${icon('clock')}<span>สายไม่เกิน ${r.grace} นาที ได้ ${r.allowed} ครั้งต่อเดือนโดยไม่หัก</span></li>
         <li>${icon('money')}<span>เข้างานช้ากว่าเวลากะ ได้เงินตามเวลาที่ทำจริง${r.lateTimeFrom && r.lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(r.lateTimeFrom) + ')' : ''}: นับทีละครึ่งชั่วโมง ปัดลง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง · เช่น กะเริ่ม 10:30 มาถึง 10:55 ค่าจ้างและ OT เท่าเดิม มาถึง 11:40 ได้น้อยลง 1 ชม. · ได้อนุญาตเข้างานช้าก็นับแบบนี้ แต่ไม่หัก Incentive</span></li>
         <li>${icon('rain')}<span>วันฝนตก สายได้ถึง ${r.rainGrace} นาที${r.rainLate > r.rainGrace ? ' · ฝนหนักมาถึงช้ากว่านั้นไม่เกิน ' + r.rainLate + ' นาที นับเป็นสายไม่เกินกำหนด' : ''} ค่อย ๆ มาให้ปลอดภัย · ฝนหนักจนออกจากบ้านไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน</span></li>
-        ${free.length ? html`<li>${icon('leave')}<span>${free.join(', ')}ตามสิทธิ์ ขอก่อนวันลา ไม่หัก</span></li>` : ''}
+        ${free.length ? html`<li>${icon('leave')}<span>${free.join(', ')}ตามสิทธิ์ที่อนุมัติแล้ว ไม่หัก</span></li>` : ''}
         ${biz.map(function (t) { return html`<li>${icon('cal')}<span>${t.type}แจ้งล่วงหน้า ${t.advanceDays} วันขึ้นไป ไม่หัก · แจ้งน้อยกว่านั้น หักวันละ ${money(t.cut)} บาท</span></li>`; })}
         <li>${icon('heart')}<span>ไม่สบาย รู้ตัวว่าไม่ไหวบอกผู้อนุมัติทันที ยิ่งเร็วยิ่งดี แล้วพักให้หาย${sickCut ? ' · ลาป่วยสองวันแรกหักวันละ ' + money(sickCut) + ' บาท · ตั้งแต่วันที่ ' + (r.sickNoteDay || 3) + ' มีใบรับรองแพทย์ไม่หัก (ส่งรูปใบให้ผู้อนุมัติภายใน ' + (r.noteLateDays || 3) + ' วันหลังกลับมาทำงาน) · นอนโรงพยาบาลไม่หัก' : ''} · มี${vacationType()}เหลือ ใช้แทนลาป่วยได้ ไม่หัก Incentive</span></li>
-        ${r.suddenCut ? html`<li>${icon('bell')}<span>ลาในวันนั้น หักเพิ่ม ${money(r.suddenCut)} บาท${from} ลาต่อกันหลายวันหักครั้งเดียว · ลาป่วยไม่หักส่วนนี้ · รู้ก่อนบอกก่อน เพื่อนจะได้จัดคนทัน</span></li>` : ''}
+        ${r.suddenCut ? html`<li>${icon('bell')}<span>ลาในวันนั้น หักเพิ่ม ${money(r.suddenCut)} บาท${from} ลาต่อกันหลายวันหักครั้งเดียว · ลาป่วยและลาพักร้อนไม่หักส่วนนี้ · รู้ก่อนบอกก่อน เพื่อนจะได้จัดคนทัน</span></li>` : ''}
         <li>${icon('info')}<span>ไปไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน ข้อความเดียวก็พอ · ไม่ได้บอกก่อนเวลาเข้างาน นับเป็นขาดงาน หัก ${money((r.absentCut || 0) + (r.noShowCut || 0))} บาทและไม่ได้ค่าจ้างวันนั้น (ป่วยยังได้ค่าจ้าง หัก ${money((r.absentCut || 0) + (r.noShowCut || 0))} บาทเท่ากัน)${from} · มาสายเกินกำหนดหักครั้งละ ${money(r.lateCut)} บาท น้อยกว่าไม่มาเสมอ</span></li>
         <li>${icon('shield')}<span>เดือนไหน Incentive ไม่พอหัก ส่วนที่เหลือหักเดือนถัดไปครั้งเดียว · มีเหตุสุดวิสัย บอกผู้อนุมัติพร้อมหลักฐาน ไม่หักได้</span></li>
       </ul>`, foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
@@ -8338,6 +8380,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="big">${cnt('inc', inc.now, 'm')}<small>/ ${money(inc.full)} บาท</small></div>
       <div class="bar" style="margin:14px 0 10px"><i style="width:${Math.max(0, Math.min(100, (inc.now / (inc.full || 1)) * 100))}%"></i></div>
       <div class="small muted">${inc.now >= inc.full ? 'ยังได้เต็ม — มาตรงเวลาต่อไปนะ' : 'มาตรงเวลาทุกวัน เดือนหน้าได้เต็ม ' + money(inc.full) + ' บาท'}</div>
+      ${(inc.cuts || []).length ? html`<div class="small inc-cuts" style="margin-top:6px">รายการหัก: ${inc.cuts.map(function (c) { return c.label + ' −' + money(c.amount) + ' บาท'; }).join(' · ')}${inc.carryOut ? ' · หักไม่พอ ยกไปหักรอบหน้า ' + money(inc.carryOut) + ' บาท' : ''}</div>` : ''}
       ${inc.refund > 0 ? html`<div class="small ok-text" style="margin-top:6px">${icon('check')} คืน Incentive ลาป่วย ${money(inc.refund)} บาท (ใบรับรองแพทย์ของเดือน${(inc.refunds || []).map(function (x) { return x.month; }).join(', ')}) จ่ายรวมในเดือนนี้</div>` : ''}
       ${onTimeRun(c)}`;
   }
@@ -8482,7 +8525,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var a = (l && l.arena) || { trophies: 0, left: 3, raids: 0 };
     i3Want('ar-arena');
     return html`<button class="card fr-plaza fr-arena ${a.raids ? 'hot' : ''}" data-act="arena-open"><span class="fr-arena-art"><i>${raw(FIG_ART('chili'))}</i><b>VS</b><i class="flip">${raw(FIG_ART('mochi'))}</i></span>
-      <span class="fr-plaza-tx"><b>ศึกน้อง</b><span>${a.raids ? 'มีคนบุกห้องคุณ ' + a.raids + ' ครั้ง · แก้แค้นได้' : html`${ui3('ui-trophy', '🏆')} ${a.trophies} ถ้วย · บุกได้อีก ${a.left} ครั้งวันนี้`}</span></span>${icon('right')}</button>`;
+      <span class="fr-plaza-tx"><b>ศึกน้อง</b><span>${a.raids ? 'มีคนบุกห้องคุณ ' + a.raids + ' ครั้ง · ท้ากลับได้' : html`${ui3('ui-trophy', '🏆')} ${a.trophies} ถ้วย · บุกได้อีก ${a.left} ครั้งวันนี้`}</span></span>${icon('right')}</button>`;
   }
   function friendCard(p, d, total) {
     var me = p.id === d.me;
@@ -9862,9 +9905,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var s = t.paid ? 'สิทธิ์ ' + t.quota + ' วัน/ปี' + (t.minYears ? ' (ทำงานครบ ' + t.minYears + ' ปี)' : '') : 'ไม่ได้ค่าจ้างวันที่ลา';
     if (t.type === sickType()) s += t.cut ? ' · สองวันแรกหัก Incentive ' + money(t.cut) + ' บาท/วัน · ตั้งแต่วันที่ ' + (r.sickNoteDay || 3) + ' มีใบรับรองแพทย์ไม่หัก · นอนโรงพยาบาลไม่หัก' : ' · ไม่หัก Incentive';
     else s += t.cut ? ' · หัก Incentive ' + money(t.cut) + ' บาท/วัน' + (t.advanceDays ? ' ถ้าแจ้งล่วงหน้าไม่ถึง ' + t.advanceDays + ' วัน' : '') : ' · ไม่หัก Incentive';
-    // The better choice, when there is one: vacation days left, asked ahead, cost nothing.
+    // The better choice, when there is one: vacation days left cost nothing (ลาพักร้อนที่อนุมัติแล้วไม่หัก แม้ขอในวันนั้น 25 ต.ค. 2569).
     var vac = ((S.home && S.home.leave && S.home.leave.balance) || []).filter(function (b) { return b.vacation; })[0];
-    if (t.cut && t.type !== sickType() && vac && vac.remaining > 0) s += ' · ' + vac.type + 'เหลือ ' + vac.remaining + ' วัน ใช้แทนได้ ขอก่อนวันลาไม่หัก';
+    if (t.cut && t.type !== sickType() && vac && vac.remaining > 0) s += ' · ' + vac.type + 'เหลือ ' + vac.remaining + ' วัน ใช้แทนได้ ไม่หัก';
     return s + (t.note ? ' · ' + t.note : '');
   }
   /**
@@ -9909,7 +9952,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     if (o.ill) return 'ไม่สบาย ใช้' + t.type + 'แทน' + sickType() + ' ไม่หัก Incentive';
     if (t.cut) out.push(t.advanceDays && ahead >= t.advanceDays ? 'แจ้งล่วงหน้า ' + ahead + ' วัน ไม่หัก Incentive' : 'หัก Incentive วันละ ' + money(t.cut) + ' บาท' + (t.advanceDays ? ' (แจ้งล่วงหน้า ' + t.advanceDays + ' วันขึ้นไปไม่หัก)' : ''));
-    if (ahead <= 0 && r.suddenCut && (t.type === vacationType() || t.cut || t.advanceDays) && suddenOn) out.push(run && run.sudden ? 'ต่อจากลาครั้งก่อน ไม่หักลากะทันหันซ้ำ' : 'ลาในวันนั้น หักเพิ่ม ' + money(r.suddenCut) + ' บาท (ขอก่อนวันลาไม่หักส่วนนี้)');
+    if (ahead <= 0 && r.suddenCut && t.type !== vacationType() && (t.cut || t.advanceDays) && suddenOn) out.push(run && run.sudden ? 'ต่อจากลาครั้งก่อน ไม่หักลากะทันหันซ้ำ' : 'ลาในวันนั้น หักเพิ่ม ' + money(r.suddenCut) + ' บาท (ขอก่อนวันลาไม่หักส่วนนี้)');
     return out.join(' · ') || 'ไม่หัก Incentive';
   }
   /** The days of a leave from `from` to `to`, the shop's closed days left out (as the payroll counts them). */
@@ -10370,7 +10413,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <p class="small muted mt0">ดู <b>รูปจากจอ</b> ว่าเป็นคนนั้นจริงและยืนสแกนอยู่ในร้าน · ถูกต้อง กด <b>ผ่าน</b> · ไม่ถูก กด <b>แก้เวลา</b> ใส่เวลาหรือกะที่ถูก · ต้องตรวจครบก่อนอนุมัติเงินเดือน</p>
       <div class="list">${list.map(function (x) {
         var mine = x.empId === me;
-        return html`<div class="item stacked" style="padding-left:0;padding-right:0">${avatar(empById(x.empId) || { name: x.name })}<div class="grow"><div class="t">${x.name}</div><div class="s">${thShort(x.date)} · ${x.in} น.${x.dist != null ? ' · ห่าง ' + distText(x.dist) : ''}</div>${x.why ? html`<div class="review-why">${x.why}</div>` : ''}</div>
+        return html`<div class="item stacked" style="padding-left:0;padding-right:0">${avatar(empById(x.empId) || { name: x.name })}<div class="grow"><div class="t">${x.name}</div><div class="s">${thShort(x.date)} · ${x.in} น.${x.dist != null ? ' · ห่าง ' + distText(x.dist) : x.away ? ' · นอกร้าน' : ''}</div>${x.why ? html`<div class="review-why">${x.why}</div>` : ''}</div>
           <div class="row wrapx" style="gap:6px;flex-basis:100%;justify-content:flex-end">${x.screenPhoto ? html`<button class="btn sm" data-act="photo" data-url="${x.screenPhoto}">${icon('image')} รูปจากจอ</button>` : ''}${x.photo ? html`<button class="btn sm" data-act="photo" data-url="${x.photo}">${icon('camera')} รูปจากมือถือ</button>` : ''}${mine ? html`<span class="small muted">รายการของคุณ — เจ้าของร้านตรวจ</span>` : html`<button class="btn sm" data-act="review-fix" data-id="${x.empId}" data-date="${x.date}" data-shift="${x.shift}" data-in="${x.in}">แก้เวลา</button><button class="btn sm primary" data-act="review-ok" data-id="${x.id}">ผ่าน</button>`}</div></div>`;
       })}</div></section>`;
   }
@@ -10385,7 +10428,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${rainBanner(t.rain, 'team')}
       ${reviewCard(t.reviews || [])}
       <div class="stats"><div class="stat"><b>${c.in}<small class="muted" style="font-size:13px">/${c.total - c.leave - (c.off || 0)}</small></b><span>ลงเวลาแล้ว</span></div><div class="stat ${c.in - c.late ? 'ok' : ''}"><b>${c.in - c.late}</b><span>ตรงเวลา</span></div><div class="stat"><b>${c.leave + (c.off || 0)}</b><span>ลา · หยุด</span></div><div class="stat"><b>${c.absent}</b><span>ขาด</span></div></div>
-      <div class="row wrapx"><button class="btn sm" data-act="open-entry">${icon('plus')} OT / ขาด / เบิก</button><button class="btn sm" data-act="open-entry" data-type="อนุญาตเข้างานช้า">${icon('clock')} อนุญาตเข้าช้า</button><button class="btn sm" data-act="open-rain">${icon('rain')} ฝนตก</button><button class="btn sm" data-act="open-exceptions">${icon('cal')} เวลาพิเศษ</button><button class="btn sm" data-act="photo-wall">${icon('image')} รูปวันนี้</button></div>
+      <div class="row wrapx"><button class="btn sm" data-act="open-entry">${icon('plus')} ${S.view === 'owner' ? 'OT / ขาด / เบิก' : 'OT / ขาดงาน'}</button><button class="btn sm" data-act="open-entry" data-type="อนุญาตเข้างานช้า">${icon('clock')} อนุญาตเข้าช้า</button><button class="btn sm" data-act="open-rain">${icon('rain')} ฝนตก</button><button class="btn sm" data-act="open-exceptions">${icon('cal')} เวลาพิเศษ</button><button class="btn sm" data-act="photo-wall">${icon('image')} รูปวันนี้</button></div>
       <section class="card flush">${b.rows.map(function (r) {
         return html`<div class="board-row">${avatar(r)}<div class="grow"><div class="t">${nameTag(r, r.name)}</div><div class="s">${r.dept}</div></div><div class="st">${boardState(r)}</div><button class="icon-btn" data-act="row-menu" data-id="${r.id}" aria-label="ตัวเลือกของ ${r.name}">${icon('more')}</button></div>`;
       })}</section>
@@ -10415,7 +10458,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="OT เพิ่ม">${icon('plus')} OT เพิ่ม</button>
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="อนุญาตเข้างานช้า">${icon('clock')} อนุญาตเข้างานช้า</button>
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="ขาดงาน">${icon('x')} ขาดงาน</button>
-      <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="หัก Incentive">${icon('alert')} หัก Incentive</button>
+      ${S.view === 'owner' ? html`<button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="หัก Incentive">${icon('alert')} หัก Incentive</button>` : ''}
       <button class="menu-item" data-act="open-leave-add" data-emp="${id}">${icon('leave')} บันทึกการลา</button>
       ${d ? (d.rain && d.rainShop ? rainShopHint(d, r.name) : html`<button class="menu-item" data-act="rain-toggle" data-id="${d.id}" data-emp="${id}" data-on="${!d.rain}">${icon('rain')} ${d.rain ? 'ยกเลิกฝนตก' : 'ยืนยันฝนตก (ผ่อนผันสาย)'}</button>`) : ''}
       ${pics}
@@ -10424,7 +10467,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function entryForm(o) {
     o = o || {};
-    var types = (B.entryTypes || []).filter(function (t) { return t.kind !== 'rain'; });
+    // (รายการที่เป็นเงิน เจ้าของร้านบันทึกเอง 25 ต.ค. 2569)
+    var types = (B.entryTypes || []).filter(function (t) { return t.kind !== 'rain' && (S.view === 'owner' || t.unit !== 'บาท'); });
     var type = o.type || 'OT เพิ่ม';
     var def = types.filter(function (t) { return t.type === type; })[0] || types[0];
     var kind = def.kind;
@@ -10696,6 +10740,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var res = d.payroll;
     var t = res.totals;
     var owner = S.view === 'owner';
+    var seesPay = !res.noMoney; // (ผู้อนุมัติไม่เห็นเงิน 25 ต.ค. 2569)
     var st = statusText(p);
     // Remembered numbers show at once; approving and paying wait for today's.
     var wait = S.partStale.pay ? 'disabled' : '';
@@ -10711,12 +10756,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="monthnav"><button class="icon-btn" data-act="pay-nav" data-delta="-1" aria-label="เดือนก่อน">${icon('left')}</button><div class="center"><b>เงินเดือน${res.period.month}</b><span class="sub">${res.period.label}</span></div><button class="icon-btn" data-act="pay-nav" data-delta="1" aria-label="เดือนถัดไป" ${p.key >= d.currentPeriod ? 'disabled' : ''}>${icon('right')}</button></div>
       <div class="status-bar ${p.status}"><span class="dot"></span><div class="grow"><b>${st[0]}</b><span>${st[1]}</span></div></div>
       ${d.lastDay && !p.status ? html`<div class="hint warn">${icon('alert')}<span>วันนี้เป็นวันสุดท้ายของรอบ ข้อมูลกะเย็นคืนนี้อาจยังไม่ครบ</span></div>` : ''}
-      ${d.changes.length ? html`<div class="warn-box"><b>ข้อมูลเปลี่ยนหลังอนุมัติ</b>${d.changes.map(function (c) { return html`<div>${c.name}: ${c.before == null ? '-' : money(c.before)} → ${c.after == null ? '-' : money(c.after)} บาท</div>`; })}<div>ยกเลิกอนุมัติแล้วอนุมัติใหม่เพื่อใช้ตัวเลขล่าสุด</div></div>` : ''}
-      <section class="card hero pad-lg"><span class="eyebrow">รวมจ่ายสุทธิ · ${t.headcount} คน</span><div class="big" style="margin-top:6px">${money(t.net)}<small>บาท</small></div>
-        <div class="row wrapx small" style="margin-top:12px;gap:14px;opacity:.85"><span>ค่าจ้าง ${money(t.base)}</span><span>OT ${money(t.otPay)} (${hrs(t.otHours)} ชม.)</span><span>Incentive ${money(t.incentive)}</span>${t.sso ? html`<span>ประกันสังคม −${money(t.sso)}</span>` : ''}${t.wht ? html`<span>ภาษี −${money(t.wht)}</span>` : ''}${t.advance ? html`<span>เบิก −${money(t.advance)}</span>` : ''}</div></section>
+      ${d.changes.length ? html`<div class="warn-box"><b>ข้อมูลเปลี่ยนหลังอนุมัติ</b>${d.changes.map(function (c) { return seesPay ? html`<div>${c.name}: ${c.before == null ? '-' : money(c.before)} → ${c.after == null ? '-' : money(c.after)} บาท</div>` : html`<div>${c.name}</div>`; })}<div>ยกเลิกอนุมัติแล้วอนุมัติใหม่เพื่อใช้ตัวเลขล่าสุด</div></div>` : ''}
+      ${seesPay ? html`<section class="card hero pad-lg"><span class="eyebrow">รวมจ่ายสุทธิ · ${t.headcount} คน</span><div class="big" style="margin-top:6px">${money(t.net)}<small>บาท</small></div>
+        <div class="row wrapx small" style="margin-top:12px;gap:14px;opacity:.85"><span>ค่าจ้าง ${money(t.base)}</span><span>OT ${money(t.otPay)} (${hrs(t.otHours)} ชม.)</span><span>Incentive ${money(t.incentive)}</span>${t.sso ? html`<span>ประกันสังคม −${money(t.sso)}</span>` : ''}${t.wht ? html`<span>ภาษี −${money(t.wht)}</span>` : ''}${t.advance ? html`<span>เบิก −${money(t.advance)}</span>` : ''}</div></section>` : html`<section class="card hero pad-lg"><span class="eyebrow">ลงเวลา · ${t.headcount} คน</span><div class="big" style="margin-top:6px">${t.workDays}<small>วันทำงาน</small></div>
+        <div class="row wrapx small" style="margin-top:12px;gap:14px;opacity:.85"><span>OT ${hrs(t.otHours)} ชม.</span><span>สาย ${t.lateMinor + t.lateMajor} ครั้ง</span><span>ลา ${t.leaveDays} วัน</span>${t.absentDays ? html`<span>ขาด ${t.absentDays} วัน</span>` : ''}</div></section>`}
       ${actions}
       <div>${res.employees.map(empCard)}</div>
-      <button class="btn block" data-act="excel">${icon('download')} ดาวน์โหลด Excel</button>
+      ${seesPay ? html`<button class="btn block" data-act="excel">${icon('download')} ดาวน์โหลด Excel</button>` : ''}
     </div>`;
   }
   /** The share of worked days on time, in whole percent (an older approved month may not count them). */
@@ -10742,7 +10788,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function empCard(e) {
     var lates = e.counts.lateMinor + e.counts.lateMajor;
-    return html`<button class="emp-card" data-act="emp-detail" data-id="${e.id}"><div class="top">${avatar(e)}<div class="grow"><b>${e.name}</b><div class="small muted">${e.dept}${e.probation ? ' · ทดลองงาน' : ''}</div></div><div class="net"><b>${money(e.pay.net)}</b><span>บาท</span></div></div>
+    return html`<button class="emp-card" data-act="emp-detail" data-id="${e.id}"><div class="top">${avatar(e)}<div class="grow"><b>${e.name}</b><div class="small muted">${e.dept}${e.probation ? ' · ทดลองงาน' : ''}</div></div>${e.pay ? html`<div class="net"><b>${money(e.pay.net)}</b><span>บาท</span></div>` : ''}</div>
       <div class="facts"><span class="pill">${e.counts.workDays} วัน</span><span class="pill gold">OT ${hrs(e.ot.hours)} ชม.</span>${lates ? html`<span class="pill">สาย ${lates}</span>` : ''}${e.counts.leaveDays ? html`<span class="pill">ลา ${e.counts.leaveDays}</span>` : ''}${e.counts.absent ? html`<span class="pill">ขาด ${e.counts.absent}</span>` : ''}${e.warnings.length ? html`<span class="pill warn">${icon('alert')} ${e.warnings.length}</span>` : ''}</div></button>`;
   }
   function empDetail(id) {
@@ -10752,10 +10798,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var rules = B.rules || {};
     openSheet({ use: 'เงินเดือนรายคน', title: e.name + ' · ' + S.pay.payroll.period.month, wide: true, body: html`<div class="stack">
       ${e.warnings.length ? html`<div class="warn-box">${e.warnings.map(function (w) { return html`<div>• ${w}</div>`; })}</div>` : ''}
-      <section class="card"><table class="lines">${e.earnings.map(function (l) { return html`<tr><td>${l.label}<span class="d">${l.detail}</span></td><td class="a">${money(l.amount, true)}</td></tr>`; })}
+      ${e.pay ? html`<section class="card"><table class="lines">${e.earnings.map(function (l) { return html`<tr><td>${l.label}<span class="d">${l.detail}</span></td><td class="a">${money(l.amount, true)}</td></tr>`; })}
         ${e.deductions.map(function (l) { return html`<tr class="neg"><td>${l.label}<span class="d">${l.detail}</span></td><td class="a">−${money(l.amount, true)}</td></tr>`; })}
-        <tr class="total"><td>รับสุทธิ</td><td class="a">${money(e.pay.net, true)} บาท</td></tr></table></section>
-      ${e.probation && !inc.diligenceFull ? '' : html`<section class="card"><div class="eyebrow" style="margin-bottom:8px">Incentive</div><table class="lines">
+        <tr class="total"><td>รับสุทธิ</td><td class="a">${money(e.pay.net, true)} บาท</td></tr></table></section>` : ''}
+      ${!inc || (e.probation && !inc.diligenceFull) ? '' : html`<section class="card"><div class="eyebrow" style="margin-bottom:8px">Incentive</div><table class="lines">
         <tr><td>เบี้ยขยัน</td><td class="a">${money(inc.diligenceFull)}</td></tr>
         <tr><td>ค่าหัวหน้า</td><td class="a">${money(inc.head)}</td></tr><tr><td>ค่าอยู่นาน</td><td class="a">${money(inc.tenure)}</td></tr>
         ${inc.cuts.map(function (c) { return html`<tr><td>หัก ${c.label}</td><td class="a">−${money(c.amount)}</td></tr>`; })}
@@ -10769,7 +10815,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       })}</tbody></table></div>
       ${e.entries.length ? html`<h3 class="h3">รายการเพิ่มเติม</h3><section class="card flush"><div class="list">${e.entries.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.type}</div><div class="s">${thDate(x.date)}${x.reason ? ' · ' + x.reason : ''} · ${x.by}</div></div><div class="r amt small">${x.kind === 'permit' ? 'เข้า ' + x.time : (x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)) + ' ' + x.unit}</div></div>`; })}</div></section>` : ''}
       ${e.leave.length ? html`<h3 class="h3">วันลา</h3><section class="card flush"><div class="list">${e.leave.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.type}</div><div class="s">${thDate(x.date)}</div></div><span class="pill ${x.paid ? 'ok' : 'warn'}">${x.paid ? 'ได้ค่าจ้าง' : 'ไม่ได้ค่าจ้าง'}</span>${x.cut ? html`<span class="pill">−${money(x.cut)}</span>` : ''}</div>`; })}</div></section>` : ''}
-    </div>`, foot: html`<button class="btn" data-act="copy-slip" data-id="${e.id}">${icon('chat')} คัดลอกส่ง LINE</button><button class="btn primary" data-act="sheet-close">ปิด</button>` });
+    </div>`, foot: html`${e.slip ? html`<button class="btn" data-act="copy-slip" data-id="${e.id}">${icon('chat')} คัดลอกส่ง LINE</button>` : ''}<button class="btn primary" data-act="sheet-close">ปิด</button>` });
   }
   /** Copied to paste elsewhere; where the phone will not let the page copy, shown to copy by hand (in the sheet up, or one of its own). */
   function copyText(text, said) {
@@ -10817,7 +10863,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function ownerIn(pin, d, keep) {
     S.pinBusy = false;
     S.login = null;
-    S.owner = { pin: pin };
+    S.owner = { pin: pin, seen: Date.now(), idle: IDLE_MS.short };
     if (keep) { LS.set(KEY.owner, S.owner); remember('owner', d); }
     S.ownerHome = d;
     S.ownerAt = Date.now();
@@ -11540,7 +11586,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <ul class="lv-rules">
         <li>ทุกคนอยู่ทีมเดียวกัน หน้าร้านและครัวได้เท่ากันต่อวันที่มา ไม่มีใครแพ้</li>
         <li>ช่วยได้: แนะนำเมนูเด่นและเครื่องดื่ม · อาหารออกไว ถูกต้อง · โต๊ะพร้อมรับลูกค้าใหม่เร็ว · ลูกค้าประทับใจจนกลับมาอีก</li>
-        <li>${t.last ? 'สัปดาห์ที่แล้ว ' + (t.last.reached ? 'ถึงเป้า (' + t.last.pct + '%)' : 'ได้ ' + t.last.pct + '% ของเป้า') : 'สัปดาห์แรกของเป้านี้'}${t.weeks ? ' · ถึงเป้ามาแล้ว ' + t.weeks + ' สัปดาห์' : ''}</li>
+        <li>${t.last ? 'สัปดาห์ที่แล้วก็ถึงเป้า (' + t.last.pct + '%) · ' : ''}ถึงเป้ามาแล้ว ${t.weeks || 1} สัปดาห์</li>
         <li>เจ้าของร้านใส่ยอดขายหลังปิดร้าน เปอร์เซ็นต์ขยับวันละครั้ง · แอปไม่แสดงยอดเงิน</li>
       </ul></div>`, foot: html`<button class="btn primary" data-act="sheet-close">ปิด</button>` });
   }
@@ -13242,7 +13288,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return html`<div class="ar-room ${rev ? 'rev' : ''}">${avatar(p, '', [p.lv, 0, p.look])}
           <div class="grow"><b>${nameLv(p.lv, p.name)}</b><span>${ui3('ui-trophy', '🏆')} ${p.trophies} · พลัง ${p.power}</span>
             <span class="ar-team-mini">${p.team.map(function (f) { var c = d.catalog[f.id] || []; return html`<i class="ar-mini" title="${c[0] || ''}">${raw(FIG_ART(f.id))}<em class="t-${f.taste}">${arTasteIc(d, f.taste)}</em>${f.plus ? html`<small>+${f.plus}</small>` : ''}</i>`; })}${p.team.length ? '' : html`<small class="muted">น้องพักฟื้นหมด</small>`}</span></div>
-          ${rev ? html`<button class="btn sm primary" data-act="ar-raid" data-id="${p.id}" data-rev="${rev}" ${can ? '' : 'disabled'}>แก้แค้น</button>` : html`<button class="btn sm" data-act="ar-raid" data-id="${p.id}" ${can && p.team.length ? '' : 'disabled'}>${p.done ? 'บุกแล้ว' : 'บุก'}</button>`}
+          ${rev ? html`<button class="btn sm primary" data-act="ar-raid" data-id="${p.id}" data-rev="${rev}" ${can ? '' : 'disabled'}>ท้ากลับ</button>` : html`<button class="btn sm" data-act="ar-raid" data-id="${p.id}" ${can && p.team.length ? '' : 'disabled'}>${p.done ? 'บุกแล้ว' : 'บุก'}</button>`}
         </div>`;
       })}</div>
       ${d.board.length ? html`<section class="card ar-board"><div class="card-h"><span class="eyebrow">ถ้วยมากสุด</span></div>${d.board.map(function (x, i) { return html`<div class="ar-board-row ${x.id === d.me ? 'me' : ''}"><span class="ideas-rank r${i + 1}">${i + 1}</span><b class="grow">${x.id === d.me ? 'ฉัน' : x.name}</b><span>${ui3('ui-trophy', '🏆')} ${x.trophies}</span></div>`; })}</section>` : ''}`;
@@ -13270,7 +13316,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function arenaLogTab(d) {
     return html`${d.log.length ? html`<section class="card flush"><div class="list">${d.log.map(function (x) {
         var what = x.att ? 'คุณบุกห้อง' + x.name : x.name + 'บุกห้องคุณ';
-        return html`<div class="item ar-log ${x.won ? 'won' : 'lost'}"><span class="ar-log-ic">${x.won ? ui3('ui-trophy', '🏆') : ui3('ui-boom', '💥')}</span><div class="grow"><div class="t">${what}${x.revenge ? ' (แก้แค้น)' : ''}</div><div class="s">${x.won ? 'ชนะ' : 'แพ้'}${x.t ? ' · ' + (x.t > 0 ? '+' : '') + x.t + ' ถ้วย' : ''} · ${whenAt(x.at)}</div></div>${x.answer ? html`<button class="btn sm primary" data-act="ar-raid" data-id="${x.who}" data-rev="${x.id}" ${d.closed ? 'disabled' : ''}>แก้แค้น</button>` : ''}</div>`;
+        return html`<div class="item ar-log ${x.won ? 'won' : 'lost'}"><span class="ar-log-ic">${x.won ? ui3('ui-trophy', '🏆') : ui3('ui-boom', '💥')}</span><div class="grow"><div class="t">${what}${x.revenge ? ' (ท้ากลับ)' : ''}</div><div class="s">${x.won ? 'ชนะ' : 'แพ้'}${x.t ? ' · ' + (x.t > 0 ? '+' : '') + x.t + ' ถ้วย' : ''} · ${whenAt(x.at)}</div></div>${x.answer ? html`<button class="btn sm primary" data-act="ar-raid" data-id="${x.who}" data-rev="${x.id}" ${d.closed ? 'disabled' : ''}>ท้ากลับ</button>` : ''}</div>`;
       })}</div></section>` : html`<p class="empty">ยังไม่มีศึก ลองบุกห้องเพื่อนดูสิ</p>`}`;
   }
   /** Choosing who goes: up to three ready figures (the strongest chosen at first), against the team in that room. */
@@ -13278,7 +13324,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var pk = arena.pick;
     var p = d.people.filter(function (x) { return x.id === pk.to; })[0] || { team: [], name: pk.name };
     return html`<div id="arena" class="ar-pick">
-      <section class="card ar-foe"><div class="card-h"><span class="eyebrow">${pk.revenge ? 'แก้แค้น' : 'บุกห้อง'}${p.name}</span><span class="small muted">${ui3('ui-trophy', '🏆')} ${p.trophies || 0}</span></div>
+      <section class="card ar-foe"><div class="card-h"><span class="eyebrow">${pk.revenge ? 'ท้ากลับ' : 'บุกห้อง'}${p.name}</span><span class="small muted">${ui3('ui-trophy', '🏆')} ${p.trophies || 0}</span></div>
         <div class="ar-def-row">${p.team.map(function (f) { var c = d.catalog[f.id] || []; return html`<span class="ar-foe-fig"><span class="ar-mini big">${raw(FIG_ART(f.id))}<em class="t-${f.taste}">${arTasteIc(d, f.taste)}</em></span><small>${c[0] || ''}${f.plus ? ' +' + f.plus : ''}</small></span>`; })}</div></section>
       <p class="small muted ar-rule">เลือก ${d.team} ตัว ออกตามลำดับที่แตะ · เลือกรสที่ชนะรสของเขา</p>
       <div class="ar-figs">${d.figs.map(function (f) { var i = pk.figs.indexOf(f.id); return arFigCard(d, f, { act: 'ar-sel', on: i >= 0, disabled: !!f.rest }); })}</div>
@@ -13921,8 +13967,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${runner.stage ? html`
         <section class="card run-info"><div class="card-h"><span class="eyebrow">${c.name} · ด่านวันนี้</span>${mine ? html`<span class="pill gold">ดีที่สุด ${runSecs(mine.ms)} วิ</span>` : ''}</div>
           <p class="small muted" style="margin:0">ด่านใหม่ทุกวัน · วิ่งขึ้นเห็ดเด้งพาข้ามเสาสูงเอง · เก็บดาวลดเวลาได้ดวงละ ${runSecs((RUN_SIM.star * 1000) / RUN_SIM.fps)} วิ · วิ่งได้ไม่จำกัด เก็บรอบที่เร็วที่สุด · เพื่อนที่วิ่งแล้ววันนี้วิ่งข้าง ๆ เป็นเงา${d.closed ? ' · พักช่วงร้านยุ่ง ถึง ' + d.closed.until + ' น.' : ''}${d.games ? ' · 🎮 ป้ายจากเกม' + gameLeftWords(d.games).replace(' · ', ' ') : ''}</p></section>
-        <section class="card run-board"><div class="card-h"><span class="eyebrow">อันดับวันนี้</span><span class="small muted">${d.board.length} คน</span></div>
-          ${d.board.length ? d.board.map(function (x, i) { return html`<div class="run-row ${x.id === d.me ? 'me' : ''}">${i < 3 ? html`<span class="medal">${ui3('ui-medal-' + (i + 1), ['🥇', '🥈', '🥉'][i])}</span>` : html`<span class="ideas-rank">${i + 1}</span>`}${avatar(x, '', [x.lv, 0, x.look])}<b class="grow">${x.id === d.me ? 'ฉัน' : x.name}</b>${x.stars ? html`<small class="run-st">${badgeArt('b-star')}${x.stars}</small>` : ''}<span class="run-t">${runSecs(x.ms)} วิ</span></div>`; }) : html`<p class="small muted" style="margin:4px 0 0">ยังไม่มีใครวิ่งวันนี้ · เป็นคนแรกเลย</p>`}</section>` : ''}
+        <section class="card run-board"><div class="card-h"><span class="eyebrow">3 อันดับแรกวันนี้</span></div>
+          ${d.board.length ? d.board.filter(function (x, i) { return i < 3 || x.id === d.me; }).map(function (x, i) { return html`<div class="run-row ${x.id === d.me ? 'me' : ''}">${i < 3 ? html`<span class="medal">${ui3('ui-medal-' + (i + 1), ['🥇', '🥈', '🥉'][i])}</span>` : html`<span class="ideas-rank"></span>`}${avatar(x, '', [x.lv, 0, x.look])}<b class="grow">${x.id === d.me ? 'ฉัน' : x.name}</b>${x.stars ? html`<small class="run-st">${badgeArt('b-star')}${x.stars}</small>` : ''}<span class="run-t">${runSecs(x.ms)} วิ</span></div>`; }) : html`<p class="small muted" style="margin:4px 0 0">ยังไม่มีใครวิ่งวันนี้ · เป็นคนแรกเลย</p>`}</section>` : ''}
     </div>`;
   }
   function runFoot() {
@@ -17058,7 +17104,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         var strips = d.items.some(function (x) { return x.screenUrl; });
         openSheet({ use: 'รูปตอนลงเวลา', title: 'รูปตอนลงเวลา · ' + thDate(d.date), wide: true, body: d.items.length
           ? html`<p class="muted small mt0">${strips ? html`<b>รูปจากจอ</b> = กล้องของจอในร้านตอนมีคนสแกน ต้องเห็นคนนั้นยืนสแกนอยู่ · ` : ''}<b>รูปจากมือถือ</b> = สิ่งที่กล้องมือถือเห็นตอนสแกน ต้องเป็นจอหรือป้ายในร้าน ไม่ใช่จอมือถืออีกเครื่อง · กรอบสีส้ม = รอตรวจ · ผู้อนุมัติลงแทนจะไม่มีรูป</p><div class="photo-wall ${strips ? 'wide' : ''}">${d.items.map(function (x) {
-            return html`<figure class="${x.review ? 'review' : ''}"><div class="shots ${x.screenUrl && x.dataUrl ? 'two' : ''}">${x.screenUrl ? html`<img class="strip" src="${x.screenUrl}" alt="รูปจากจอ: ${x.name}">` : ''}${x.dataUrl ? html`<img class="phone" src="${x.dataUrl}" alt="รูปจากมือถือ: ${x.name}">` : ''}</div><figcaption><b>${x.name}</b>${x.in} น.${x.dist != null ? ' · ห่าง ' + distText(x.dist) : ''}${x.review ? html`<span class="pill warn" style="margin-top:4px">รอตรวจ</span>` : ''}${x.why ? html`<div class="why">${x.why}</div>` : ''}</figcaption>${x.review ? html`<div class="row"><button class="btn sm" data-act="review-fix" data-id="${x.empId}" data-date="${d.date}" data-shift="${x.shift}" data-in="${x.in}">แก้เวลา</button><button class="btn sm primary" data-act="review-ok" data-id="${x.id}">ผ่าน</button></div>` : ''}</figure>`;
+            return html`<figure class="${x.review ? 'review' : ''}"><div class="shots ${x.screenUrl && x.dataUrl ? 'two' : ''}">${x.screenUrl ? html`<img class="strip" src="${x.screenUrl}" alt="รูปจากจอ: ${x.name}">` : ''}${x.dataUrl ? html`<img class="phone" src="${x.dataUrl}" alt="รูปจากมือถือ: ${x.name}">` : ''}</div><figcaption><b>${x.name}</b>${x.in} น.${x.dist != null ? ' · ห่าง ' + distText(x.dist) : x.away ? ' · นอกร้าน' : ''}${x.review ? html`<span class="pill warn" style="margin-top:4px">รอตรวจ</span>` : ''}${x.why ? html`<div class="why">${x.why}</div>` : ''}</figcaption>${x.review ? html`<div class="row"><button class="btn sm" data-act="review-fix" data-id="${x.empId}" data-date="${d.date}" data-shift="${x.shift}" data-in="${x.in}">แก้เวลา</button><button class="btn sm primary" data-act="review-ok" data-id="${x.id}">ผ่าน</button></div>` : ''}</figure>`;
           })}</div>`
           : html`<div class="empty">ยังไม่มีรูปตอนลงเวลาของวันนี้</div>` });
       }, function () {});
@@ -17161,7 +17207,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'excel': function (el) { downloadExcel(el); },
     'pay-approve': function (el) {
       var t = S.pay.payroll.totals;
-      confirmSheet({ title: 'อนุมัติเงินเดือน' + S.pay.payroll.period.month, text: 'รวมจ่ายสุทธิ ' + money(t.net) + ' บาท ' + t.headcount + ' คน — หลังอนุมัติจะแก้ข้อมูลเดือนนี้ไม่ได้จนกว่าจะยกเลิกอนุมัติ และระบบจะส่ง Excel ให้เจ้าของร้าน', yes: 'อนุมัติ' }).then(function (ok) {
+      confirmSheet({ title: 'อนุมัติเงินเดือน' + S.pay.payroll.period.month, text: (t.net != null ? 'รวมจ่ายสุทธิ ' + money(t.net) + ' บาท ' : 'ทั้งหมด ') + t.headcount + ' คน — หลังอนุมัติจะแก้ข้อมูลเดือนนี้ไม่ได้จนกว่าจะยกเลิกอนุมัติ และระบบจะส่ง Excel ให้เจ้าของร้าน', yes: 'อนุมัติ' }).then(function (ok) {
         if (!ok) return;
         run(el, call('payrollApprove', { period: S.payKey }, actorAuth())).then(function (d) { payChanged(d); render(); toast(d.notice, 'ok'); }, function () {});
       });
@@ -17239,7 +17285,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (!/^\d{8,12}$/.test(a)) { toast('รหัสใหม่ต้องเป็นตัวเลข 8–12 หลัก', 'bad'); return; }
       if (a !== b) { toast('รหัสสองช่องไม่ตรงกัน ใส่ใหม่อีกครั้ง', 'bad'); return; }
       run(el, call('settingsSave', { values: { ownerPin: a } }, ownerAuth())).then(function (d) {
-        S.owner = { pin: a };
+        S.owner = { pin: a, seen: Date.now(), idle: IDLE_MS.short };
         if (LS.get(KEY.owner)) LS.set(KEY.owner, S.owner);
         ownerChanged(d);
         render(); toast('ตั้งรหัสใหม่แล้ว · ใช้รหัสนี้เข้าหน้าเจ้าของร้านครั้งต่อไป', 'ok');
@@ -17252,7 +17298,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var values = {};
       el.dataset.keys.split(',').forEach(function (k) { var i = document.querySelector('[data-s="' + k + '"]'); if (i) values[k] = i.value; });
       run(el, call('settingsSave', { values: values }, ownerAuth())).then(function (d) {
-        if (values.ownerPin && !/^••••/.test(values.ownerPin)) { S.owner = { pin: values.ownerPin }; if (LS.get(KEY.owner)) LS.set(KEY.owner, S.owner); }
+        if (values.ownerPin && !/^••••/.test(values.ownerPin)) { S.owner = { pin: values.ownerPin, seen: Date.now(), idle: IDLE_MS.short }; if (LS.get(KEY.owner)) LS.set(KEY.owner, S.owner); }
         ownerChanged(d);
         render(); toast(d.notice, 'ok');
       }, function () {});
