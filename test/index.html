@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.1","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"51de3c476f54"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.1","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"cf570bb7ce51"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -9474,13 +9474,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   /** When the last round of reading the stores' sites ran (or, before any, the newest price). */
   function odoReadAt(p) { return (p.read && p.read.at) || p.at; }
-  /** What the last round could not read, a store each (prices kept from before), and how many prices are older than a day: '' when all is fresh. */
+  /** รอบล่าสุดอ่านไม่ได้กี่รายการต่อร้าน (ใช้ราคาเดิม) เว็บที่บล็อกการอ่าน และของในรายการที่ราคาเก่าเกินวัน: '' เมื่อทุกอย่างใหม่ */
   function odoPriceWarn(p) {
     p = p || {};
     var out = [];
     var r = p.read || {};
-    var miss = p.error ? [] : ['Makro', 'GO'].filter(function (s) { return r[s] && r[s].miss; }).map(function (s) { return s + ' ' + r[s].miss; });
+    // (miss รวมที่ยังไม่ทันเริ่ม left: ราคาเช้าอ่านทีละหน้า ของนอกรายการที่ไม่ทันอ่านต่อพรุ่งนี้ ไม่ต้องบอก)
+    var miss = p.error ? [] : ['Makro', 'GO'].filter(function (s) { return r[s] && r[s].miss > (r[s].left || 0); }).map(function (s) { return s + ' ' + (r[s].miss - (r[s].left || 0)); });
     if (miss.length) out.push('รอบล่าสุดอ่านไม่ได้ ' + miss.join(' · ') + ' รายการ ใช้ราคาเดิม');
+    (r.blocked || []).forEach(function (s) { out.push('เว็บ ' + s + ' บล็อกการอ่าน แอปหยุดอ่านเว็บนี้ 20 ชั่วโมง ใช้ราคาเดิม'); });
     if (p.old) out.push('ราคาเก่าเกิน ' + (p.staleH || 26) + ' ชม. ' + p.old + ' รายการ');
     return out.join(' · ');
   }
@@ -16420,9 +16422,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       run(el, call('orderPrices', {}, ownerAuth())).then(function (v) {
         odoSet(v);
         var r = v.refresh || {};
-        var miss = r.miss || {};
-        var bad = ['Makro', 'GO'].filter(function (s) { return miss[s]; }).map(function (s) { return s + ' ' + miss[s]; });
-        toast(r.checked ? 'เช็กราคาแล้ว ' + r.checked + ' รายการ' + (r.changed ? ' · ราคาเปลี่ยน ' + r.changed + ' รายการ' : ' · ราคาเท่าเดิม') + (bad.length ? ' · อ่านไม่ได้ ' + bad.join(' · ') + ' รายการ ใช้ราคาเดิม' : '') : 'เช็กราคาไม่สำเร็จ ใช้ราคาล่าสุด', r.checked ? 'ok' : 'bad');
+        if (r.test) return toast('แอปทดลองไม่อ่านเว็บร้านจริง ใช้ราคาตัวอย่าง', 'ok');
+        // (อ่านไม่ได้ต่อร้าน: ที่เว็บไม่ตอบ ไม่นับที่ยังไม่ทันอ่าน ซึ่งกดอีกครั้งได้)
+        var rd = (v.prices && v.prices.read) || {};
+        var bad = ['Makro', 'GO'].filter(function (s) { return rd[s] && rd[s].miss > (rd[s].left || 0); }).map(function (s) { return s + ' ' + (rd[s].miss - (rd[s].left || 0)); });
+        // (ที่ไม่ทันอ่าน: บอกให้กดอีกครั้งเมื่อยังมีของในรายการที่ราคาเก่า ที่เหลืออ่านในเช้านี้หรือเมื่อวานแล้ว)
+        var old = (v.prices && v.prices.old) || 0;
+        var more = (r.left && old ? ' · ราคาเก่าอีก ' + old + ' รายการ กดอีกครั้งเพื่ออ่านต่อ' : '') + ((r.blocked || []).length ? ' · เว็บ ' + r.blocked.join(' และ ') + ' บล็อกการอ่าน แอปหยุดอ่าน 20 ชั่วโมง' : '');
+        toast(r.checked ? 'เช็กราคาแล้ว ' + r.checked + ' รายการ' + (r.changed ? ' · ราคาเปลี่ยน ' + r.changed + ' รายการ' : ' · ราคาเท่าเดิม') + (bad.length ? ' · อ่านไม่ได้ ' + bad.join(' · ') + ' รายการ ใช้ราคาเดิม' : '') + more : 'เช็กราคาไม่สำเร็จ ใช้ราคาล่าสุด' + more, r.checked ? 'ok' : 'bad');
       }, function () {});
     },
     'odo-pick': function (el) { run(el, call('orderPick', { itemId: el.dataset.id, store: el.dataset.store }, ownerAuth())).then(odoSet, function () {}); },
