@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.1","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"e137dbf8f7d7"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.1","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"96ee91c8d1f6"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -8188,20 +8188,30 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!r || !r.starts || !r.starts.length) return '';
     var head, sub;
     var times = r.starts.map(function (x) { return 'กะ' + x.label + 'สายได้ถึง ' + x.until + ' น.'; }).join(' · ');
+    // (r.forecast: มีแต่วันฝนจากพยากรณ์ บอกว่าอาจมีฝน ไม่บอกว่าฝนตก)
+    var where = r.forecast ? 'พยากรณ์บอกว่าอาจมีฝนแถวร้าน' : 'ฝนตกแถวร้าน';
     if (mode === 'kiosk') {
-      head = 'ฝนตกแถวร้าน';
-      sub = 'ขอบคุณที่ฝ่าฝนมาทำงานนะ';
+      head = r.forecast ? 'อาจมีฝนแถวร้าน' : 'ฝนตกแถวร้าน';
+      sub = r.forecast ? 'ขอบคุณที่เผื่อเวลามาทำงานนะ' : 'ขอบคุณที่ฝ่าฝนมาทำงานนะ';
     } else if (mode === 'team') {
-      head = 'ฝนตกแถวร้าน · ' + r.starts.map(function (x) { return 'กะ' + x.label + ' เข้า ' + x.start + ' สายได้ถึง ' + x.until + ' น.'; }).join(' · ');
-      sub = (r.auto ? 'ระบบตรวจพบฝน กลุ่ม LINE ได้ข้อความเตือนให้เผื่อเวลาเดินทาง' : 'บันทึกฝนตกแล้ว') + ' · ถ้าฝนหยุด หรือที่ร้านไม่ได้ตก กด "ฝนหยุดแล้ว" กะที่เข้าไปแล้วยังได้ผ่อนผันตามเดิม';
+      head = where + ' · ' + r.starts.map(function (x) { return 'กะ' + x.label + ' เข้า ' + x.start + ' สายได้ถึง ' + x.until + ' น.'; }).join(' · ');
+      sub = (r.forecast ? 'ระบบผ่อนผันให้ตามพยากรณ์ ยังไม่ส่งกลุ่ม LINE' : r.auto ? 'ระบบตรวจพบฝน กลุ่ม LINE ได้ข้อความเตือนให้เผื่อเวลาเดินทาง' : 'บันทึกฝนตกแล้ว') + ' · ถ้าฝนหยุด หรือที่ร้านไม่ได้ตก กด "ฝนหยุดแล้ว" กะที่เข้าไปแล้วยังได้ผ่อนผันตามเดิม';
     } else {
       var m = (S.home && S.home.month) || {};
       var used = m.counts ? m.counts.lateMinor || 0 : null;
       var left = m.lateAllowed != null && used != null ? Math.max(0, m.lateAllowed - used) : null;
-      head = 'ฝนตกแถวร้าน · เผื่อเวลาเดินทาง ขับช้า ๆ นะ';
+      head = where + ' · เผื่อเวลาเดินทาง ขับช้า ๆ นะ';
       sub = left === 0 ? 'ออกจากบ้านเร็วขึ้นสักหน่อย จะได้ไม่ต้องรีบ' : 'ถ้าติดฝนจริง ' + times + (left ? ' (ผ่อนผันได้อีก ' + left + ' ครั้งในรอบนี้)' : '');
     }
     return html`<section class="rain-banner" role="status">${icon('rain')}<div class="grow"><b>${head}</b><span>${sub}</span>${mode === 'team' ? html`<button class="btn sm" style="margin-top:10px" data-act="rain-end">ฝนหยุดแล้ว</button>` : ''}</div></section>`;
+  }
+  /** ช่วงเวลาของรายการฝน (เวลาเข้ากะที่ได้ผ่อนผัน) แบบอ่านง่าย: เวลาเดียว = กะที่เข้าเวลานั้น · ช่วงกลับหัว = ปิดก่อนเข้ากะ */
+  function rainTimeText(time) {
+    var m = String(time || '').match(/^\s*(\d{1,2})[:.](\d{2})\s*[-–]\s*(\d{1,2})[:.](\d{2})\s*$/);
+    if (!m) return time || 'ทั้งวัน';
+    var a = ('0' + m[1]).slice(-2) + ':' + m[2];
+    var b = ('0' + m[3]).slice(-2) + ':' + m[4];
+    return a === b ? 'กะเข้า ' + a : a > b ? 'ปิดก่อนกะเข้า ' + a : time;
   }
   /** The points for coming on time on a rainy day (Levels.gs LEVEL_POINTS.rainOnTime), 0 when unknown. */
   function rainPts() {
@@ -8219,10 +8229,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (st.checkedIn && st.today) {
       var d = st.today;
       return html`<section class="card pad-lg">
-        <div class="card-h"><span class="eyebrow">วันนี้ · ${thDate(st.workDate)}</span>${d.rain ? html`<span class="pill rain">${icon('rain')} ฝนตก</span>` : ''}</div>
+        <div class="card-h"><span class="eyebrow">วันนี้ · ${thDate(st.workDate)}</span>${d.rain ? html`<span class="pill rain">${icon('rain')} ${d.rainForecast ? 'อาจมีฝน' : 'ฝนตก'}</span>` : ''}</div>
         <div class="row" style="align-items:flex-end;gap:14px"><div class="today-time">${String(d.in).slice(0, 5)}</div><div class="muted" style="padding-bottom:6px">เข้างาน · ${d.shiftName}</div></div>
         <div class="state-line">${lateTag(d, true)}${d.ot ? html`<span class="pill gold">OT ${hrs(d.ot)} ชม.</span>` : d.otNote ? html`<span class="pill">${d.otNote}</span>` : ''}${d.startReason ? html`<span class="pill">เริ่ม ${d.startUsed} · ${d.startReason}</span>` : ''}${d.paidNote ? html`<span class="pill">${d.paidNote}</span>` : ''}</div>
-        ${d.rain ? html`<p class="rain-thanks">${d.rainOnTime && rainPts() ? 'มาตรงเวลาวันฝนตก ได้แต้มพิเศษ +' + rainPts() + ' ' : ''}ขอบคุณที่ฝ่าฝนมาทำงานนะ</p>` : ''}
+        ${d.rain ? html`<p class="rain-thanks">${d.rainOnTime && rainPts() ? (d.rainForecast ? 'มาตรงเวลาวันที่อาจมีฝน' : 'มาตรงเวลาวันฝนตก') + ' ได้แต้มพิเศษ +' + rainPts() + ' ' : ''}${d.rainForecast ? 'ขอบคุณที่เผื่อเวลามาทำงานนะ' : 'ขอบคุณที่ฝ่าฝนมาทำงานนะ'}</p>` : ''}
       </section>`;
     }
     if (st.leaveToday || st.closedToday) {
@@ -9840,7 +9850,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <section class="card flush">${days.length ? days.map(function (d) {
         return html`<div class="day"><div class="d ${d.weekend ? 'we' : ''}"><b>${+d.date.slice(8, 10)}</b><span>${TH_DAYS[dowOf(d.date)]}</span></div>
           <div class="m"><b>${d.in ? String(d.in).slice(0, 5) : '-'}</b> <span class="s">น. · กะ${d.shiftType || d.shiftName} เริ่ม ${d.startUsed}</span>
-          <div class="tags">${lateTag(d)}${d.rain ? html`<span class="pill rain">${icon('rain')} ฝนตก${d.rainOnTime && rainPts() ? ' · +' + rainPts() + ' แต้ม' : ''}</span>` : ''}${d.ot ? html`<span class="pill gold">OT ${hrs(d.ot)} ชม.</span>` : ''}</div>
+          <div class="tags">${lateTag(d)}${d.rain ? html`<span class="pill rain">${icon('rain')} ${d.rainForecast ? 'อาจมีฝน' : 'ฝนตก'}${d.rainOnTime && rainPts() ? ' · +' + rainPts() + ' แต้ม' : ''}</span>` : ''}${d.ot ? html`<span class="pill gold">OT ${hrs(d.ot)} ชม.</span>` : ''}</div>
           ${d.startReason ? html`<div class="s">${d.startReason}</div>` : ''}${d.otNote ? html`<div class="s">${d.otNote}</div>` : ''}${d.paidNote ? html`<div class="s">${d.paidNote}</div>` : ''}</div></div>`;
       }) : html`<div class="empty">ยังไม่มีวันทำงานในเดือนนี้</div>`}</section>
       ${(m.entries || []).length ? html`<h3 class="h3">รายการที่ผู้อนุมัติบันทึก</h3><section class="card flush"><div class="list">${m.entries.map(function (x) {
@@ -10494,7 +10504,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     </div>`;
   }
   function entryRow(x, owner) {
-    var amount = x.kind === 'permit' ? 'เข้า ' + x.time : x.kind === 'rain' ? (x.time || 'ทั้งวัน') : (x.kind === 'ot' && x.qty > 0 ? '+' : '') + (x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)) + ' ' + x.unit;
+    var amount = x.kind === 'permit' ? 'เข้า ' + x.time : x.kind === 'rain' ? rainTimeText(x.time) : (x.kind === 'ot' && x.qty > 0 ? '+' : '') + (x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)) + ' ' + x.unit;
     return html`<div class="item"><div class="grow"><div class="t">${x.name} · ${x.type}${x.review ? html` <span class="pill warn">เจ้าของร้านตรวจ</span>` : ''}</div><div class="s">${thDate(x.date)}${x.reason ? ' · ' + x.reason : ''}${x.noOt ? ' · ไม่ได้ OT' : ''} · โดย ${x.by}${x.evidence ? html`<br>${x.evidence}` : ''}</div></div><div class="r amt small">${amount}</div>${owner ? html`<button class="btn sm" data-act="rain-keep" data-id="${x.id}">ถูกต้อง</button><button class="icon-btn" data-act="rain-drop" data-id="${x.id}" aria-label="ลบ">${icon('trash')}</button>` : html`<button class="icon-btn" data-act="delete-entry" data-id="${x.id}" data-kind="${x.kind}" data-emp="${x.empId}" aria-label="ลบ">${icon('trash')}</button>`}</div>`;
   }
   function rowMenu(id) {
@@ -11736,7 +11746,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <li>${icon('check')}<span>เรื่องที่บันทึก แล้วร้านแก้ให้<small>ได้ทุกคนที่บันทึกเรื่องนั้นก่อนร้านเริ่มแก้ คนละครั้ง · แก้แล้วกลับมาเกิดอีก บันทึกได้เป็นเรื่องใหม่</small></span><b>+${r.fixed}</b></li>
         ${r.onTime ? html`<li>${icon('clock')}<span>มาตรงเวลาครบ ${(l.onTime || {}).every || 5} วันติด<small>ได้ทุกครั้งที่ครบ · วันหยุดและวันลาไม่ตัดความต่อเนื่อง · สาย (วันฝนตกด้วย) หรือขาดโดยไม่ลา เริ่มนับใหม่</small></span><b>+${r.onTime}</b></li>
         <li>${icon('spark')}<span>ทั้งเดือนไม่สายเลย<small>ทำงาน 15 วันขึ้นไปในรอบเงินเดือน ไม่สายและไม่ขาด</small></span><b>+${r.onTimeMonth}</b></li>` : ''}
-        ${r.rainOnTime ? html`<li>${icon('rain')}<span>มาตรงเวลาวันฝนตก<small>วันที่ฝนตกแถวร้านช่วงก่อนเวลาเข้ากะ · ออกจากบ้านเร็วขึ้นสักหน่อย จะได้ไม่ต้องรีบ ขับช้า ๆ นะ · วันที่ได้อนุญาตเข้างานช้าไม่นับ</small></span><b>+${r.rainOnTime}</b></li>` : ''}
+        ${r.rainOnTime ? html`<li>${icon('rain')}<span>มาตรงเวลาวันฝนตก<small>วันที่ฝนตกแถวร้าน หรือพยากรณ์บอกว่าอาจมีฝน ช่วงก่อนเวลาเข้ากะ · ออกจากบ้านเร็วขึ้นสักหน่อย จะได้ไม่ต้องรีบ ขับช้า ๆ นะ · วันที่ได้อนุญาตเข้างานช้าไม่นับ</small></span><b>+${r.rainOnTime}</b></li>` : ''}
         <li>${icon('bulb')}<span>ส่งไอเดีย แจ้งปัญหา หรือถามเรื่องที่ไม่แน่ใจ<small>เรื่องร้านหรือแอปก็ได้ เรื่องเล็กแค่ไหนก็ได้แต้ม แม้ยังไม่ได้ทำ</small></span><b>+${r.sent}</b></li>
         <li>${icon('approve')}<span>เจ้าของร้านรับไปทำ</span><b>+${r.approved}</b></li>
         <li>${icon('spark')}<span>ได้ใช้จริงแล้ว</span><b>+${r.done}</b></li>
