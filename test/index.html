@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.1","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"cf570bb7ce51"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.1","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"c0f917dd9310"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -9474,17 +9474,38 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   /** When the last round of reading the stores' sites ran (or, before any, the newest price). */
   function odoReadAt(p) { return (p.read && p.read.at) || p.at; }
-  /** รอบล่าสุดอ่านไม่ได้กี่รายการต่อร้าน (ใช้ราคาเดิม) เว็บที่บล็อกการอ่าน และของในรายการที่ราคาเก่าเกินวัน: '' เมื่อทุกอย่างใหม่ */
+  /**
+   * รอบล่าสุดอ่านไม่ได้ชั่วคราวกี่รายการ ชิ้นไหน (ใช้ราคาเดิม) หน้าสินค้าที่ไม่มีแล้ว (หาลิงก์ใหม่) เว็บที่บล็อกการอ่าน และของในรายการ
+   * ที่ราคาเก่าเกินวัน: '' เมื่อทุกอย่างใหม่
+   */
   function odoPriceWarn(p) {
     p = p || {};
     var out = [];
     var r = p.read || {};
-    // (miss รวมที่ยังไม่ทันเริ่ม left: ราคาเช้าอ่านทีละหน้า ของนอกรายการที่ไม่ทันอ่านต่อพรุ่งนี้ ไม่ต้องบอก)
-    var miss = p.error ? [] : ['Makro', 'GO'].filter(function (s) { return r[s] && r[s].miss > (r[s].left || 0); }).map(function (s) { return s + ' ' + (r[s].miss - (r[s].left || 0)); });
-    if (miss.length) out.push('รอบล่าสุดอ่านไม่ได้ ' + miss.join(' · ') + ' รายการ ใช้ราคาเดิม');
+    var fail = p.error ? '' : odoFailText(p, 'รอบล่าสุดอ่านไม่ได้ ');
+    if (fail) out.push(fail);
+    if (odoGoneText(p)) out.push(odoGoneText(p));
     (r.blocked || []).forEach(function (s) { out.push('เว็บ ' + s + ' บล็อกการอ่าน แอปหยุดอ่านเว็บนี้ 20 ชั่วโมง ใช้ราคาเดิม'); });
     if (p.old) out.push('ราคาเก่าเกิน ' + (p.staleH || 26) + ' ชม. ' + p.old + ' รายการ');
     return out.join(' · ');
+  }
+  /**
+   * รอบล่าสุดอ่านไม่ได้ชั่วคราว {n, names} (งาน 324: ไม่นับที่ยังไม่ทันเริ่ม ซึ่งราคาเช้าอ่านต่อพรุ่งนี้ และหน้าสินค้าที่ไม่มีแล้ว ซึ่งบอกแยก ·
+   * ข้อมูลรุ่นก่อนไม่มี prices.fail: นับจากผลต่อร้าน ไม่มีชื่อ)
+   */
+  function odoFail(p) {
+    if (p.fail) return p.fail;
+    var r = p.read || {};
+    return { n: ['Makro', 'GO'].reduce(function (s, x) { return s + (r[x] ? Math.max(0, r[x].miss - (r[x].left || 0) - (r[x].gone || 0)) : 0); }, 0), names: '' };
+  }
+  function odoFailText(p, head) {
+    var f = odoFail(p);
+    return f.n ? head + f.n + ' รายการ' + (f.names ? ': ' + f.names : '') + ' ใช้ราคาเดิม' : '';
+  }
+  /** หน้าสินค้าที่ไม่มีแล้ว ชิ้นไหน และต้องทำอะไรต่อ (งาน 324): '' เมื่อไม่มี */
+  function odoGoneText(p) {
+    var g = p.gone || {};
+    return g.n ? 'หน้าสินค้าไม่มีแล้ว ' + g.n + ' รายการ: ' + g.names + ' บอก Claude บนคอมให้หาลิงก์ใหม่' : '';
   }
   function odoList(v) {
     var plan = v.plan;
@@ -9539,6 +9560,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function odoLine(l, store) {
     var notes = [];
+    if (l.gone) notes.push(html`<span class="pill warn">${icon('alert')} หน้าสินค้า ${store || (String(l.link).indexOf('makro') >= 0 ? 'Makro' : 'GO')} ไม่มีแล้ว หาลิงก์ใหม่</span>`);
     if (l.old) notes.push(html`<span class="pill warn">${icon('alert')} ราคาเก่า${l.checkedAt ? ' · เช็กล่าสุด ' + whenAt(l.checkedAt) : ' · ยังไม่เคยเช็ก'}</span>`);
     if (store === 'Shopee' && l.checkedAt) notes.push(html`<span class="pill">Claude เทียบ ${thShort(ymdOf(new Date(l.checkedAt)))}</span>`);
     if (l.tier) notes.push(html`<span class="pill gold">ราคาซื้อหลายชิ้น</span>`);
@@ -9552,7 +9574,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="s">${l.pname}</div>
         <div class="s">${l.q} ชิ้น × ${money(l.unitPrice, true)} ${l.per !== 1 ? '(ได้ ' + odNum(l.q * l.per) + ' ' + l.unit + ')' : ''} · ต้องการ ${odNum(l.need)} ${l.unit} · ${l.who.join(', ')}</div>
         ${(l.meals || []).length ? html`<div class="s">${l.meals.map(function (m) { return 'ทำ' + m.menu + ' ' + (m.people || '-') + ' คน' + (m.enough != null ? ' (พอ ' + odNum(m.enough) + ' ' + l.unit + ')' : '') + ' · ' + m.by; }).join(' · ')}</div>` : ''}
-        ${l.alt ? html`<div class="s">${odoAltText(l)}${l.alt.old ? ' (ราคาเก่า)' : ''}${l.alt.link ? html` · <a href="${l.alt.link}" target="_blank" rel="noopener">เปิดใน ${l.alt.store}</a>` : ''}</div>` : ''}
+        ${l.alt ? html`<div class="s">${odoAltText(l)}${l.alt.gone ? ' (หน้าสินค้าไม่มีแล้ว)' : l.alt.old ? ' (ราคาเก่า)' : ''}${l.alt.link ? html` · <a href="${l.alt.link}" target="_blank" rel="noopener">เปิดใน ${l.alt.store}</a>` : ''}</div>` : ''}
         ${l.backups && l.backups.length && !(l.alt && l.alt.store === l.backups[0].store && l.alt.pname === l.backups[0].pname) ? html`<div class="s muted">ถ้าหมด: ${odoBackupText(l.backups[0])}</div>` : ''}
         ${notes.length ? html`<div class="od-tags">${notes}</div>` : ''}
       </div><div class="r"><div class="amt">${money(l.cost)}</div>
@@ -9765,7 +9787,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function odoText(store) {
     var st = odo.v.plan.stores[store];
     return st.lines.map(function (l, i) {
-      return (i + 1) + '. ' + l.pname + ' × ' + l.q + ' ชิ้น ชิ้นละ ' + money(l.unitPrice, true) + ' (' + money(l.cost) + ' บาท)' + (l.old ? ' ราคาเก่า' : '') + '\n   ' + l.link +
+      return (i + 1) + '. ' + l.pname + ' × ' + l.q + ' ชิ้น ชิ้นละ ' + money(l.unitPrice, true) + ' (' + money(l.cost) + ' บาท)' + (l.gone ? ' หน้าสินค้าไม่มีแล้ว หาลิงก์ใหม่' : '') + (l.old ? ' ราคาเก่า' : '') + '\n   ' + l.link +
         (l.alt && l.alt.link ? '\n   อีกร้าน: ' + odoAltText(l) + ' ' + l.alt.link : '') +
         (l.backups || []).map(function (b, k) { return '\n   ' + (k ? 'ถ้าหมดอีก' : 'ถ้าหมด') + ': ' + odoBackupText(b); }).join('');
     }).join('\n') + '\nรวม ' + money(st.total) + ' บาท';
@@ -16423,13 +16445,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         odoSet(v);
         var r = v.refresh || {};
         if (r.test) return toast('แอปทดลองไม่อ่านเว็บร้านจริง ใช้ราคาตัวอย่าง', 'ok');
-        // (อ่านไม่ได้ต่อร้าน: ที่เว็บไม่ตอบ ไม่นับที่ยังไม่ทันอ่าน ซึ่งกดอีกครั้งได้)
-        var rd = (v.prices && v.prices.read) || {};
-        var bad = ['Makro', 'GO'].filter(function (s) { return rd[s] && rd[s].miss > (rd[s].left || 0); }).map(function (s) { return s + ' ' + (rd[s].miss - (rd[s].left || 0)); });
+        // (อ่านไม่ได้ชั่วคราว ชิ้นไหน: ไม่นับที่ยังไม่ทันอ่าน ซึ่งกดอีกครั้งได้ · หน้าสินค้าที่ไม่มีแล้วบอกแยก ให้หาลิงก์ใหม่)
+        var pr = v.prices || {};
+        var bad = odoFailText(pr, ' · อ่านไม่ได้ ');
+        var gone = odoGoneText(pr) ? ' · ' + odoGoneText(pr) : '';
         // (ที่ไม่ทันอ่าน: บอกให้กดอีกครั้งเมื่อยังมีของในรายการที่ราคาเก่า ที่เหลืออ่านในเช้านี้หรือเมื่อวานแล้ว)
-        var old = (v.prices && v.prices.old) || 0;
-        var more = (r.left && old ? ' · ราคาเก่าอีก ' + old + ' รายการ กดอีกครั้งเพื่ออ่านต่อ' : '') + ((r.blocked || []).length ? ' · เว็บ ' + r.blocked.join(' และ ') + ' บล็อกการอ่าน แอปหยุดอ่าน 20 ชั่วโมง' : '');
-        toast(r.checked ? 'เช็กราคาแล้ว ' + r.checked + ' รายการ' + (r.changed ? ' · ราคาเปลี่ยน ' + r.changed + ' รายการ' : ' · ราคาเท่าเดิม') + (bad.length ? ' · อ่านไม่ได้ ' + bad.join(' · ') + ' รายการ ใช้ราคาเดิม' : '') + more : 'เช็กราคาไม่สำเร็จ ใช้ราคาล่าสุด' + more, r.checked ? 'ok' : 'bad');
+        var old = pr.old || 0;
+        var more = gone + (r.left && old ? ' · ราคาเก่าอีก ' + old + ' รายการ กดอีกครั้งเพื่ออ่านต่อ' : '') + ((r.blocked || []).length ? ' · เว็บ ' + r.blocked.join(' และ ') + ' บล็อกการอ่าน แอปหยุดอ่าน 20 ชั่วโมง' : '');
+        toast(r.checked ? 'เช็กราคาแล้ว ' + r.checked + ' รายการ' + (r.changed ? ' · ราคาเปลี่ยน ' + r.changed + ' รายการ' : ' · ราคาเท่าเดิม') + bad + more : 'เช็กราคาไม่สำเร็จ ใช้ราคาล่าสุด' + more, r.checked ? 'ok' : 'bad');
       }, function () {});
     },
     'odo-pick': function (el) { run(el, call('orderPick', { itemId: el.dataset.id, store: el.dataset.store }, ownerAuth())).then(odoSet, function () {}); },
