@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.2","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"f1a3bb358e5c"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.3","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"278ca2b64897"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -524,7 +524,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 #scan-note.warn { color: var(--warn); font-weight: 600; }
 .streak { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 5px 12px; border-radius: 99px; background: rgba(233, 204, 146, .16); color: #e9cc92; font-size: 13px; font-weight: 600; }
 .streak svg { width: 15px; height: 15px; }
-.info-btn { border: 0; background: none; padding: 0 0 0 4px; color: inherit; opacity: .8; vertical-align: -3px; }
+.info-btn { border: 0; background: none; padding: 14px; margin: -14px -14px -14px -10px; color: inherit; opacity: .8; vertical-align: -3px; } /* พื้นที่แตะ 44×44 ไม่ดันบรรทัด (2.13.3) */
 .info-btn svg { width: 16px; height: 16px; }
 .rules { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
 .rules li { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.5; }
@@ -7514,7 +7514,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var st = S.k.cam.state;
     if (st === 'ok') return 'กล้องของจอ · ถ่ายภาพตอนสแกน เก็บไว้ 3 เดือน';
     if (st === 'covered') return 'กล้องถูกบัง — QR จะขึ้นเมื่อกล้องเห็นภาพ';
-    if (st === 'none') return 'เปิดกล้องของจอไม่ได้ — ลงเวลาได้ แต่ทุกคนจะรอผู้อนุมัติตรวจ · อนุญาตกล้องให้เว็บนี้แล้วเปิดจอใหม่';
+    if (st === 'none') return 'กล้องเปิดไม่ได้ แจ้งผู้อนุมัติ'; // (จอที่ทุกคนเห็นไม่บอกวิธีตรวจ วิธีแก้อยู่ในคู่มือ · 2.13.3)
     return 'กำลังเปิดกล้อง…';
   }
   function setCam(state) {
@@ -8181,14 +8181,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   };
 
   /**
-   * Rain mode. Staff are asked to take care, and their own screen states the
-   * rule plainly (the grace is a safety net, still one of their lates) with
-   * what they have left; the kiosk only thanks them; the team sees it all.
+   * โหมดฝน: น้องเห็นแค่ "อาจมีฝน เผื่อเวลาเดินทาง" ไม่บอกเวลาที่สายได้หรือครั้งที่ผ่อนผันเหลือ (2.13.3) ·
+   * จอในร้านแค่ขอบคุณ · ทีม (ผู้อนุมัติ) เห็นเวลาที่สายได้ของแต่ละกะ
    */
   function rainBanner(r, mode) {
     if (!r || !r.starts || !r.starts.length) return '';
     var head, sub;
-    var times = r.starts.map(function (x) { return 'กะ' + x.label + 'สายได้ถึง ' + x.until + ' น.'; }).join(' · ');
     // (r.forecast: มีแต่วันฝนจากพยากรณ์ บอกว่าอาจมีฝน ไม่บอกว่าฝนตก)
     var where = r.forecast ? 'พยากรณ์บอกว่าอาจมีฝนแถวร้าน' : 'ฝนตกแถวร้าน';
     if (mode === 'kiosk') {
@@ -8198,13 +8196,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       head = where + ' · ' + r.starts.map(function (x) { return 'กะ' + x.label + ' เข้า ' + x.start + ' สายได้ถึง ' + x.until + ' น.'; }).join(' · ');
       sub = (r.forecast ? 'ระบบผ่อนผันให้ตามพยากรณ์ ยังไม่ส่งกลุ่ม LINE' : r.auto ? 'ระบบตรวจพบฝน กลุ่ม LINE ได้ข้อความเตือนให้เผื่อเวลาเดินทาง' : 'บันทึกฝนตกแล้ว') + ' · ถ้าฝนหยุด หรือที่ร้านไม่ได้ตก กด "ฝนหยุดแล้ว" กะที่เข้าไปแล้วยังได้ผ่อนผันตามเดิม';
     } else {
-      var m = (S.home && S.home.month) || {};
-      var used = m.counts ? m.counts.lateMinor || 0 : null;
-      var left = m.lateAllowed != null && used != null ? Math.max(0, m.lateAllowed - used) : null;
-      head = where + ' · เผื่อเวลาเดินทาง ขับช้า ๆ นะ';
-      sub = left === 0 ? 'ออกจากบ้านเร็วขึ้นสักหน่อย จะได้ไม่ต้องรีบ' : 'ถ้าติดฝนจริง ' + times + (left ? ' (ผ่อนผันได้อีก ' + left + ' ครั้งในรอบนี้)' : '');
+      // (น้องเห็นแค่ให้เผื่อเวลา ไม่บอกเวลาที่สายได้หรือครั้งที่ผ่อนผันเหลือ · 2.13.3)
+      head = 'อาจมีฝน เผื่อเวลาเดินทาง';
+      sub = '';
     }
-    return html`<section class="rain-banner" role="status">${icon('rain')}<div class="grow"><b>${head}</b><span>${sub}</span>${mode === 'team' ? html`<button class="btn sm" style="margin-top:10px" data-act="rain-end">ฝนหยุดแล้ว</button>` : ''}</div></section>`;
+    return html`<section class="rain-banner" role="status">${icon('rain')}<div class="grow"><b>${head}</b>${sub ? html`<span>${sub}</span>` : ''}${mode === 'team' ? html`<button class="btn sm" style="margin-top:10px" data-act="rain-end">ฝนหยุดแล้ว</button>` : ''}</div></section>`;
   }
   /** ช่วงเวลาของรายการฝน (เวลาเข้ากะที่ได้ผ่อนผัน) แบบอ่านง่าย: เวลาเดียว = กะที่เข้าเวลานั้น · ช่วงกลับหัว = ปิดก่อนเข้ากะ */
   function rainTimeText(time) {
@@ -8369,34 +8365,36 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var biz = (B.leaveTypes || []).filter(function (x) { return x.cut && x.advanceDays && x.type !== sickType(); });
     var sickCut = ((B.leaveTypes || []).filter(function (x) { return x.type === sickType(); })[0] || {}).cut || 0;
     var from = r.suddenFrom && r.suddenFrom > workDate() ? ' (เริ่ม ' + thShort(r.suddenFrom) + ')' : '';
+    // (ลาที่โดนหักลาในวันนั้น ชื่อตามที่ตั้งไว้ เช่น ลากิจ หรือ ลาไม่รับค่าจ้าง · ลาป่วยและลาพักร้อนไม่โดน · 2.13.3)
+    var sudden = (B.leaveTypes || []).filter(function (x) { return x.type !== sickType() && x.type !== vacationType() && (x.cut > 0 || x.advanceDays > 0); }).map(function (x) { return x.type; }).join(' หรือ ') || 'ลา';
+    var noWord = money((r.absentCut || 0) + (r.noShowCut || 0));
     openSheet({ title: 'กติกา Incentive', body: html`<ul class="rules">
         <li>${icon('check')}<span>มาตรงเวลา ได้ Incentive เต็มทุกเดือน</span></li>
         <li>${icon('clock')}<span>สายไม่เกิน ${r.grace} นาที ได้ ${r.allowed} ครั้งต่อเดือนโดยไม่หัก</span></li>
-        <li>${icon('money')}<span>เข้างานช้ากว่าเวลากะ ได้เงินตามเวลาที่ทำจริง${r.lateTimeFrom && r.lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(r.lateTimeFrom) + ')' : ''}: นับทีละครึ่งชั่วโมง ปัดลง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง · เช่น กะเริ่ม 10:30 มาถึง 10:55 ค่าจ้างและ OT เท่าเดิม มาถึง 11:40 ได้น้อยลง 1 ชม. · ได้อนุญาตเข้างานช้าก็นับแบบนี้ แต่ไม่หัก Incentive</span></li>
-        <li>${icon('rain')}<span>วันฝนตก สายได้ถึง ${r.rainGrace} นาที${r.rainLate > r.rainGrace ? ' · ฝนหนักมาถึงช้ากว่านั้นไม่เกิน ' + r.rainLate + ' นาที นับเป็นสายไม่เกินกำหนด' : ''} ค่อย ๆ มาให้ปลอดภัย · ฝนหนักจนออกจากบ้านไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน</span></li>
+        <li>${icon('money')}<span>เข้างานช้ากว่าเวลากะ ได้เงินตามเวลาที่ทำจริง${r.lateTimeFrom && r.lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(r.lateTimeFrom) + ')' : ''}: นับทีละครึ่งชั่วโมง ปัดลง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง · เช่น กะเริ่ม 10:30 มาถึง 10:55 ค่าจ้างและ OT เท่าเดิม มาถึง 11:40 ได้น้อยลง 1 ชม. · ได้อนุญาตเข้างานช้า มาตามเวลาที่อนุญาตไม่หักเลย มาช้ากว่านั้นนับแบบนี้จากเวลาที่อนุญาต</span></li>
+        <li>${icon('rain')}<span>วันฝนตก เผื่อเวลาเดินทาง ค่อย ๆ มาให้ปลอดภัย</span></li>
         ${free.length ? html`<li>${icon('leave')}<span>${free.join(', ')}ตามสิทธิ์ที่อนุมัติแล้ว ไม่หัก</span></li>` : ''}
         ${biz.map(function (t) { return html`<li>${icon('cal')}<span>${t.type}แจ้งล่วงหน้า ${t.advanceDays} วันขึ้นไป ไม่หัก · แจ้งน้อยกว่านั้น หักวันละ ${money(t.cut)} บาท</span></li>`; })}
         <li>${icon('heart')}<span>ไม่สบาย รู้ตัวว่าไม่ไหวบอกผู้อนุมัติทันที ยิ่งเร็วยิ่งดี แล้วพักให้หาย${sickCut ? ' · ลาป่วยสองวันแรกหักวันละ ' + money(sickCut) + ' บาท · ตั้งแต่วันที่ ' + (r.sickNoteDay || 3) + ' มีใบรับรองแพทย์ไม่หัก (ส่งรูปใบให้ผู้อนุมัติภายใน ' + (r.noteLateDays || 3) + ' วันหลังกลับมาทำงาน) · นอนโรงพยาบาลไม่หัก' : ''} · มี${vacationType()}เหลือ ใช้แทนลาป่วยได้ ไม่หัก Incentive</span></li>
-        ${r.suddenCut ? html`<li>${icon('bell')}<span>ลาในวันนั้น หักเพิ่ม ${money(r.suddenCut)} บาท${from} ลาต่อกันหลายวันหักครั้งเดียว · ลาป่วยและลาพักร้อนไม่หักส่วนนี้ · รู้ก่อนบอกก่อน เพื่อนจะได้จัดคนทัน</span></li>` : ''}
-        <li>${icon('info')}<span>ไปไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน ข้อความเดียวก็พอ · ไม่ได้บอกก่อนเวลาเข้างาน นับเป็นขาดงาน หัก ${money((r.absentCut || 0) + (r.noShowCut || 0))} บาทและไม่ได้ค่าจ้างวันนั้น (ป่วยยังได้ค่าจ้าง หัก ${money((r.absentCut || 0) + (r.noShowCut || 0))} บาทเท่ากัน)${from} · มาสายเกินกำหนดหักครั้งละ ${money(r.lateCut)} บาท น้อยกว่าไม่มาเสมอ</span></li>
-        <li>${icon('shield')}<span>เดือนไหน Incentive ไม่พอหัก ส่วนที่เหลือหักเดือนถัดไปครั้งเดียว · มีเหตุสุดวิสัย บอกผู้อนุมัติพร้อมหลักฐาน ไม่หักได้</span></li>
+        ${r.suddenCut ? html`<li>${icon('bell')}<span>ลาในวันนั้น คือขอ${sudden} ในวันที่หยุดหรือย้อนหลัง หักเพิ่ม ${money(r.suddenCut)} บาท${from} · ลาติดกันหลายวันหักครั้งเดียว · ลาป่วยและลาพักร้อนไม่โดน</span></li>` : ''}
+        <li>${icon('info')}<span>ไปไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน</span></li>
+        <li>${icon('info')}<span>ไม่บอก นับเป็นขาดงาน หัก ${noWord} บาท ไม่ได้ค่าจ้างวันนั้น${from} · ป่วย ${sickCut ? 'บอกก่อนหัก ' + money(sickCut) + ' บาท' : 'บอกก่อนไม่หัก'} บอกหลังหัก ${noWord} บาท ได้ค่าจ้าง</span></li>
+        ${r.lateCut ? html`<li>${icon('clock')}<span>มาสายเกินกำหนด หักครั้งละ ${money(r.lateCut)} บาท</span></li>` : ''}
+        <li>${icon('shield')}<span>เดือนไหน Incentive ไม่พอหัก ส่วนที่เหลือหักเดือนถัดไปครั้งเดียว</span></li>
       </ul>`, foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
   }
   /** The run of on-time days (leave and days off do not break it) and the points it is heading for. */
   function onTimeRun(c) {
     var o = S.home && S.home.level && S.home.level.onTime;
     var run = o ? o.run : c.streak || 0;
-    if (run < 2 && !(o && run)) return '';
-    return html`<span class="streak">${icon('spark')} ตรงเวลาติดต่อกัน ${cnt('run', run)} วัน${o ? ' · อีก ' + o.left + ' วันได้ +' + o.pts + ' แต้ม' : ''}</span>`;
+    // (การ์ด Incentive เหลือแถวนี้ จึงขึ้นเสมอเมื่อมีแต้มให้ลุ้น · ยังไม่มีวันติดต่อกัน = ตรงเวลาติดต่อกันอีก N วัน · 2.13.3)
+    if (!o && run < 2) return '';
+    var next = o ? 'อีก ' + o.left + ' วัน +' + o.pts + ' แต้ม' : '';
+    return html`<span class="streak">${icon('spark')} ${run ? html`ตรงเวลาติดต่อกัน ${cnt('run', run)} วัน${next ? ' · ' + next : ''}` : 'ตรงเวลาติดต่อกัน' + next}</span>`;
   }
-  /** The month's Incentive, which lates and leave can cut (#259). */
+  /** การ์ด Incentive หน้าแรก: เหลือวันตรงเวลาติดต่อกันกับแต้มที่จะได้ และปุ่ม ⓘ กติกา · ไม่บอกยอดเงิน แถบ หรือรายการหัก (ยอดอยู่ในสลิป · 2.13.3) */
   function monthIncentive(inc, c) {
     return html`<div class="eyebrow" style="margin-bottom:4px">Incentive เดือนนี้<button class="info-btn" data-act="open-rules" aria-label="กติกา Incentive">${icon('info')}</button></div>
-      <div class="big">${cnt('inc', inc.now, 'm')}<small>/ ${money(inc.full)} บาท</small></div>
-      <div class="bar" style="margin:14px 0 10px"><i style="width:${Math.max(0, Math.min(100, (inc.now / (inc.full || 1)) * 100))}%"></i></div>
-      <div class="small muted">${inc.now >= inc.full ? 'ยังได้เต็ม — มาตรงเวลาต่อไปนะ' : 'มาตรงเวลาทุกวัน เดือนหน้าได้เต็ม ' + money(inc.full) + ' บาท'}</div>
-      ${(inc.cuts || []).length ? html`<div class="small inc-cuts" style="margin-top:6px">รายการหัก: ${inc.cuts.map(function (c) { return c.label + ' −' + money(c.amount) + ' บาท'; }).join(' · ')}${inc.carryOut ? ' · หักไม่พอ ยกไปหักรอบหน้า ' + money(inc.carryOut) + ' บาท' : ''}</div>` : ''}
-      ${inc.refund > 0 ? html`<div class="small ok-text" style="margin-top:6px">${icon('check')} คืน Incentive ลาป่วย ${money(inc.refund)} บาท (ใบรับรองแพทย์ของเดือน${(inc.refunds || []).map(function (x) { return x.month; }).join(', ')}) จ่ายรวมในเดือนนี้</div>` : ''}
       ${onTimeRun(c)}`;
   }
   function monthCard(m) {
@@ -9869,7 +9867,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     else if (x.note && x.free) s.push('มีใบรับรองแพทย์');
     if (x.lateTold) s.push('บอกหลังเวลาเข้างาน');
     if (x.ill) s.push('ไม่สบาย ใช้แทน' + sickType());
-    if (x.waive) s.push('เหตุสุดวิสัย');
+    if (x.waive) s.push('ยกเว้นการหัก');
     if (x.cut > 0) s.push('หัก Incentive ' + money(x.cut) + ' บาท');
     return s.length ? ' · ' + s.join(' · ') : '';
   }
@@ -10110,7 +10108,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     var work = workIn.value, off = $('#lv-from').value;
     var note = $('#lv-note');
-    if (note) note.textContent = 'มาทำงานวันหยุดประจำ แล้วหยุดวันอื่นแทนในรอบเงินเดือนเดียวกัน · ไม่หักและไม่เพิ่มเงิน';
+    if (note) note.textContent = 'มาทำงานวันหยุดประจำ แล้วหยุดวันอื่นแทน ก่อนหรือหลังก็ได้ ข้ามรอบเงินเดือนได้ · ไม่หักและไม่เพิ่มเงิน · วันหยุดประจำที่ร้านปิดสลับไม่ได้ ได้พักร้อนเพิ่ม 1 วันแทน';
     var wn = $('#lv-work-note');
     if (wn) wn.textContent = dayOff != null ? 'วันหยุดประจำ: วัน' + TH_DAYS_LONG[dayOff] : $('#lv-emp') && S.leaves ? 'ยังไม่ได้ตั้งวันหยุดประจำ — เจ้าของร้านตั้งได้ที่ พนักงาน' : '';
     var r = B.rules || {};
@@ -10208,10 +10206,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="stats" style="grid-template-columns:repeat(3,1fr)"><div class="stat"><b>${b.quota}</b><span>สิทธิ์ปีนี้</span></div><div class="stat"><b>${b.used}</b><span>ใช้แล้ว</span></div><div class="stat"><b>${b.remaining}</b><span>เหลือ</span></div></div>
       <section class="card flush"><div class="list">
         <div class="item"><div class="grow"><div class="t">พักร้อนตามกฎหมาย</div><div class="s">${b.annual ? (b.annualOn ? 'ทำงานครบ ' + b.annualYears + ' ปี วันที่ ' + thShort(b.annualOn) + ' ใช้ได้ตั้งแต่วันนั้น' : 'ทำงานครบ ' + b.annualYears + ' ปีแล้ว') : b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ได้เมื่อทำงานครบ ' + b.annualYears + ' ปี'}</div></div><div class="r amt">${b.annual} วัน</div></div>
-        <div class="item"><div class="grow"><div class="t">วันหยุดตามประเพณี เลือกวันหยุดเอง</div><div class="s">${b.setMissing ? 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน' : 'ได้ 1 วันต่อวันหยุดตามประเพณี 1 วันที่ร้านเปิดทำการ'}</div></div><div class="r amt">${b.credits.length} วัน</div></div>
+        <div class="item"><div class="grow"><div class="t">วันหยุดตามประเพณี เลือกวันหยุดเอง</div><div class="s">${b.setMissing ? 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน' : 'ได้ 1 วันต่อวันหยุดตามประเพณี 1 วันที่ร้านเปิดทำการ'}</div></div><div class="r amt">${b.credits.length} วัน</div></div>${(b.offCredits || []).length ? html`<div class="item"><div class="grow"><div class="t">ร้านปิดตรงวันหยุดประจำ</div><div class="s">ใช้วันหยุดแล้ว ได้พักร้อนเพิ่มวันละ 1 วัน</div></div><div class="r amt">${b.offCredits.length} วัน</div></div>` : ''}
       </div></section>
-      ${b.credits.length ? html`<section class="card flush"><div class="list">${b.credits.map(function (d) {
-        return html`<div class="item"><div class="grow"><div class="t">${thDate(d)}</div><div class="s">${(b.creditNames || {})[d] || 'วันหยุดตามประเพณี'}</div></div>${d <= today ? html`<span class="pill ok">${icon('check')} ได้แล้ว</span>` : html`<span class="pill">จะได้</span>`}</div>`;
+      ${b.credits.concat(b.offCredits || []).length ? html`<section class="card flush"><div class="list">${b.credits.concat(b.offCredits || []).sort().map(function (d) {
+        return html`<div class="item"><div class="grow"><div class="t">${thDate(d)}</div><div class="s">${(b.creditNames || {})[d] || (b.offCreditNames || {})[d] || 'วันหยุดตามประเพณี'}</div></div>${d <= today ? html`<span class="pill ok">${icon('check')} ได้แล้ว</span>` : html`<span class="pill">จะได้</span>`}</div>`;
       })}</div></section>` : ''}
       <div class="hint">${icon('cal')}<span><b>ร้านปิดทุกปี</b> ${fixedHolidayText()} — ไม่ต้องลา</span></div>
     </div>`, foot: html`<button class="btn primary" data-act="sheet-close">ปิด</button>` });
@@ -10630,7 +10628,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <label class="field"><span>วันที่</span><input class="input" type="date" id="en-date" value="${o.date || workDate()}"></label>
       ${kind === 'permit'
         ? html`<label class="field"><span>เวลาที่อนุญาตให้เข้างาน</span><input class="input" type="time" id="en-time" value="${o.time || ''}"></label><label class="check"><input type="checkbox" id="en-noot" ${o.noOt ? 'checked' : ''}><span>วันนี้ไม่ได้ OT ในกะ</span></label>
-          <p class="muted small" style="margin:-4px 0 10px">ไม่นับสาย ไม่หัก Incentive · ได้เงินตามเวลาที่ทำจริง${(B.rules || {}).lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(B.rules.lateTimeFrom) + ')' : ''}: เวลาตั้งแต่เวลาเข้ากะถึงตอนมาถึง นับทีละครึ่งชั่วโมง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง</p>`
+          <p class="muted small" style="margin:-4px 0 10px">มาตามเวลาที่อนุญาต ไม่นับสาย ไม่หัก Incentive ได้ค่าจ้างและ OT เต็ม · มาช้ากว่านั้นนับสายจากเวลาที่อนุญาต</p>`
         : html`<label class="field"><span>จำนวน (${def.unit})</span><input class="input" type="number" inputmode="decimal" step="${kind === 'ot' ? '0.5' : '1'}" id="en-qty" value="${o.qty || (kind === 'absent' ? 1 : kind === 'incentiveCut' ? (B.rules || {}).lateCut || '' : '')}"></label>
           ${kind === 'incentiveCut' ? html`<p class="muted small" style="margin:-4px 0 10px">หักจาก Incentive ไม่หักเงินเดือน · ถ้า Incentive ไม่พอ ส่วนที่เหลือยกไปหักรอบหน้าครั้งเดียว</p>` : ''}
           ${kind === 'ot' ? html`<div class="chips qty-chips" role="group" aria-label="เลือกชั่วโมง OT">${[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4].map(function (h) { return html`<button type="button" class="chip" data-act="ot-qty" data-h="${h}" aria-pressed="${String(o.qty) === String(h)}">${h === 0.5 ? '30 นาที' : hrs(h) + ' ชม.'}</button>`; })}</div>` : ''}`}
@@ -11323,7 +11321,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     ['มาสายและฝนตก', ['lateGraceMin', 'lateAllowed', 'lateCut', 'lateTimeFrom', 'rainGraceMin', 'rainLateMin', 'rainMinMm', 'rainLookbackMin', 'rainSoonChance', 'weatherKey']],
     ['ลาและขาดงาน', ['absentCut', 'noShowCut', 'suddenLeaveCut', 'suddenFrom']],
     ['ประเภทการลา', [], leaveTypesBox],
-    ['วันหยุดและวันจ่ายเงิน', ['daysOffPerMonth', 'fixedHolidays', 'floatingHolidays', 'setHolidays', 'closedDates', 'payUnusedDaysOff', 'payDay']],
+    ['วันหยุดและวันจ่ายเงิน', ['daysOffPerMonth', 'fixedHolidays', 'floatingHolidays', 'setHolidays', 'closedDates', 'payUnusedDaysOff', 'autoAbsent', 'payDay']],
     ['ประกันสังคม', ['ssoRate', 'ssoMin', 'ssoMax']],
     ['แจ้งเตือน', ['emailOnApprove', 'ownerEmail', 'lineToken', 'lineAnnounceLeave', 'lineRainNotice', 'lineNews', 'lineHour']],
     ['ความคิดเห็นจากพนักงาน', [], githubHelp],
@@ -14890,6 +14888,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function pushCan() { return !!(SITE && 'serviceWorker' in navigator && 'PushManager' in window && window.Notification); }
   /** Who this phone's notes are for: the person signed in, or the owner. */
   function pushTo() { return S.view === 'owner' ? 'OWNER' : (S.staff && S.staff.empId) || ''; }
+  /** ชื่อคนที่มือถือเครื่องนี้รับแจ้งเตือนให้ เมื่อเปิดในหน้านี้ (2.13.3) */
+  function pushWho() { return S.view === 'owner' ? 'เจ้าของร้าน' : (S.home && S.home.me && S.home.me.name) || (S.staff && S.staff.name) || 'คุณ'; }
+  /** มือถือเครื่องนี้เปิดแจ้งเตือนไว้ให้อีกคน (เข้าคนละชื่อในเครื่องเดียว): บอกว่าของใคร และกดเปิดเพื่อเปลี่ยนมาเป็นของคนที่เข้าอยู่ (2.13.3) */
+  function pushElse() {
+    var kept = LS.get(KEY.push);
+    if (!kept || !kept.to || kept.to === pushTo()) return '';
+    var name = kept.name || (kept.to === 'OWNER' ? 'เจ้าของร้าน' : 'คนอื่น');
+    return html`<p class="push-hint">ตอนนี้มือถือเครื่องนี้รับแจ้งเตือนของ ${name} อยู่ · กดเปิดแจ้งเตือนเพื่อเปลี่ยนมาเป็นของ ${pushWho()}</p>`;
+  }
   function myBell() { return S.view === 'owner' ? S.ownerHome && S.ownerHome.bell : S.home && S.home.bell; }
   /**
    * This phone: on (told), off (can be, not yet), home (iPhone: to the home screen first), old (an
@@ -15179,7 +15186,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     spin(btn, true);
     return got.then(function (it) {
       return call('pushOn', { endpoint: it.endpoint, device: it.device || deviceName() }, auth).then(function (d) {
-        LS.set(KEY.push, { to: to, at: Date.now() });
+        LS.set(KEY.push, { to: to, at: Date.now(), name: pushWho() });
         var keep = HOOKS.push ? Promise.resolve(HOOKS.push.keep(d.token)) : pushKeep({ api: SITE.api, token: d.token, page: to === 'OWNER' ? 'owner.html' : './', server: key });
         return keep.then(function () { return d; });
       });
@@ -15198,9 +15205,24 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       toast(e.message || 'เปิดแจ้งเตือนไม่สำเร็จ ลองอีกครั้ง', e.quiet ? '' : 'bad');
     });
   }
+  /**
+   * ลองส่งแล้ว: ผลจริงจากบริการแจ้งเตือนทีละเครื่อง (ส่งในคำขอเลย) · เครื่องที่ยกเลิกรับแล้ว (404/410) ถูกลบ
+   * ถ้าเป็นเครื่องนี้ (ไม่เหลือเครื่องไหน) มีปุ่มเปิดแจ้งเตือนใหม่ (2.13.3)
+   */
+  function pushTried(d) {
+    var list = (d && d.results) || [];
+    var b = myBell();
+    if (b && d && d.on != null) b.phones = d.on;
+    var again = !!d && d.on === 0;
+    render();
+    openSheet({ title: 'ผลลองส่งแจ้งเตือน', body: html`<p class="small muted" style="margin:0 0 10px">มือถือที่รับแจ้งเตือนของ ${(d && d.who) || pushWho()}</p><section class="card flush"><div class="list">${list.map(function (r) {
+        return html`<div class="item"><span class="pill ${r.ok ? 'ok' : 'warn'}">${icon(r.ok ? 'check' : 'alert')}</span><div class="grow"><div class="t">${r.device}</div><div class="s">${r.text}</div></div></div>`;
+      })}</div></section>`,
+      foot: again ? html`<button class="btn" data-act="sheet-close">ไว้ทีหลัง</button><button class="btn primary" data-act="push-on">${icon('bell')} เปิดแจ้งเตือนใหม่</button>` : html`<button class="btn primary block" data-act="sheet-close">ตกลง</button>` });
+  }
   /** Just turned on: try one, to see (and feel) it come. */
   function pushDone() {
-    openSheet({ title: 'เปิดแจ้งเตือนแล้ว', body: html`<div class="push-here">${icon('check')}<div class="grow"><b>มือถือเครื่องนี้จะเด้งเมื่อมีเรื่องใหม่</b><span>ลองส่งดูว่าเด้งและสั่นไหม ใช้เวลาไม่กี่วินาที</span></div></div>${pushVibeTip()}`,
+    openSheet({ title: 'เปิดแจ้งเตือนแล้ว', body: html`<div class="push-here">${icon('check')}<div class="grow"><b>มือถือเครื่องนี้รับแจ้งเตือนของ ${pushWho()} แล้ว</b><span>ลองส่งดูว่าเด้งและสั่นไหม ใช้เวลาไม่กี่วินาที</span></div></div>${pushVibeTip()}`,
       foot: html`<button class="btn" data-act="sheet-close">ไว้ทีหลัง</button><button class="btn primary" data-act="push-test">${icon('bell')} ลองส่งแจ้งเตือน</button>` });
   }
   function pushVibeTip() {
@@ -15272,7 +15294,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <button class="btn primary block" style="margin-top:14px" data-act="push-on">${icon('refresh')} เปิดแล้ว ลองอีกครั้ง</button></section>`;
     }
     return html`<section class="card push-card">${head('เปิดแจ้งเตือน ไม่พลาดเรื่องสำคัญ')}
-      <p>มือถือจะเด้งและสั่นเมื่อมีเรื่องของคุณ เช่น</p>${what}
+      <p>มือถือจะเด้งและสั่นเมื่อมีเรื่องของคุณ เช่น</p>${what}${pushElse()}
       <button class="btn primary block" data-act="push-on">${icon('bell')} เปิดแจ้งเตือน</button>
       <p class="push-hint">มือถือจะถาม ให้กด "อนุญาต" (Allow) · ไม่มีโฆษณา มีแต่เรื่องของร้าน</p></section>`;
   }
@@ -15301,7 +15323,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var st = pushState();
     if (st === 'wait') return '';
     if (st !== 'on') return pushCard();
-    return html`<div class="push-here">${icon('check')}<div class="grow"><b>มือถือเครื่องนี้เปิดแจ้งเตือนแล้ว</b><span>มีเรื่องใหม่จะเด้งและสั่น · ลองส่งดูได้</span></div><button class="btn sm" data-act="push-test">ลองส่ง</button></div>`;
+    return html`<div class="push-here">${icon('check')}<div class="grow"><b>มือถือเครื่องนี้เปิดแจ้งเตือนแล้ว</b><span>รับแจ้งเตือนของ ${pushWho()} · มีเรื่องใหม่จะเด้งและสั่น · ลองส่งดูได้</span></div><button class="btn sm" data-act="push-test">ลองส่ง</button></div>`;
   }
   function bellBody() {
     var d = bellList;
@@ -16279,7 +16301,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // notifications (Push.gs): the bell, turning them on, a try, a note's place
     'bell-open': function () { openBell(); },
     'push-on': function (el) { pushEnable(el); },
-    'push-test': function (el) { run(el, call('pushTest', {}, actorAuth()), function (d) { return d.notice; }).then(function () { if (bellShown()) loadBell(); }, function () {}); },
+    'push-test': function (el) { run(el, call('pushTest', {}, actorAuth())).then(pushTried, function () {}); },
     'nt-go': function (el) { goTo(el.dataset.go); },
     'confirm-yes': function () { var r = confirmResolve; confirmResolve = null; closeSheet(); if (r) r(true); },
     'confirm-no': function () { closeSheet(); },
