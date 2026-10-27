@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.3","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"631fbff9abd5"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.4","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"4cbc17797780"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -876,10 +876,14 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
   --r4: conic-gradient(#ffffff, #b5c2d6, #e8edff, #9aabc6, #ffffff);
   --r5: conic-gradient(#a5f3fc, #22d3ee, #a78bfa, #f0abfc, #a5f3fc);
   --r6: conic-gradient(#fde68a, #f59e0b, #f43f5e, #a855f7, #22d3ee, #fde68a);
+  --r7: conic-gradient(#fff7cc, #fbbf24, #f43f5e, #a855f7, #fbbf24, #fff7cc);
+  --r8: conic-gradient(#e0e7ff, #a855f7, #ec4899, #38bdf8, #22d3ee, #a855f7, #e0e7ff);
   --nm3: linear-gradient(100deg, #8a5c12, #c38a27 35%, #dcaa4c 50%, #c38a27 65%, #8a5c12);
   --nm4: linear-gradient(100deg, #455469, #74859f 30%, #a4b3c8 50%, #74859f 70%, #455469);
   --nm5: linear-gradient(100deg, #0e7490, #6d28d9 30%, #c026d3 50%, #6d28d9 70%, #0e7490);
   --nm6: linear-gradient(100deg, #b45309, #e11d48 25%, #7c3aed 50%, #0891b2 75%, #b45309);
+  --nm7: linear-gradient(100deg, #92400e, #d97706 20%, #e11d48 40%, #7c3aed 60%, #d97706 80%, #92400e);
+  --nm8: linear-gradient(100deg, #4c1d95, #7c3aed 20%, #db2777 40%, #2563eb 60%, #0891b2 80%, #4c1d95);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -887,6 +891,8 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
     --nm4: linear-gradient(100deg, #aab8cc, #ffffff 50%, #aab8cc);
     --nm5: linear-gradient(100deg, #67e8f9, #c4b5fd 30%, #f9a8d4 50%, #c4b5fd 70%, #67e8f9);
     --nm6: linear-gradient(100deg, #fcd34d, #fb7185 25%, #c084fc 50%, #67e8f9 75%, #fcd34d);
+    --nm7: linear-gradient(100deg, #fde68a, #fbbf24 20%, #fb7185 40%, #c084fc 60%, #fbbf24 80%, #fde68a);
+    --nm8: linear-gradient(100deg, #e9d5ff, #c084fc 20%, #f9a8d4 40%, #93c5fd 60%, #67e8f9 80%, #e9d5ff);
   }
 }
 :root[data-theme="dark"], .kiosk {
@@ -894,6 +900,8 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
   --nm4: linear-gradient(100deg, #aab8cc, #ffffff 50%, #aab8cc);
   --nm5: linear-gradient(100deg, #67e8f9, #c4b5fd 30%, #f9a8d4 50%, #c4b5fd 70%, #67e8f9);
   --nm6: linear-gradient(100deg, #fcd34d, #fb7185 25%, #c084fc 50%, #67e8f9 75%, #fcd34d);
+  --nm7: linear-gradient(100deg, #fde68a, #fbbf24 20%, #fb7185 40%, #c084fc 60%, #fbbf24 80%, #fde68a);
+  --nm8: linear-gradient(100deg, #e9d5ff, #c084fc 20%, #f9a8d4 40%, #93c5fd 60%, #67e8f9 80%, #e9d5ff);
 }
 .av.lv { isolation: isolate; }
 /* Their character's head over the circle (avHead): up out of it at the top, in it below. Until it comes
@@ -911,6 +919,8 @@ html.c3:not(.c3-slow) .av.h3:not(.h3-on):not(.h3-late) > b, html.c3:not(.c3-slow
 .av.lv4 { --lv-ring: var(--r4); --lv-glow: 0 0 16px rgba(190, 206, 232, .8); }
 .av.lv5 { --lv-ring: var(--r5); --lv-glow: 0 0 18px rgba(103, 232, 249, .55), 0 0 26px rgba(167, 139, 250, .35); }
 .av.lv6 { --lv-ring: var(--r6); --lv-glow: 0 0 20px rgba(244, 114, 182, .5), 0 0 34px rgba(245, 158, 11, .35); }
+.av.lv7 { --lv-ring: var(--r7); --lv-glow: 0 0 22px rgba(251, 191, 36, .6), 0 0 38px rgba(244, 114, 182, .4); }
+.av.lv8 { --lv-ring: var(--r8); --lv-glow: 0 0 24px rgba(167, 139, 250, .65), 0 0 42px rgba(56, 189, 248, .45); }
 .av.lv4::before, .av.lv5::before, .av.lv6::before { animation: lv-turn 6s linear infinite; }
 /* A level's 3D frame (i3Want): 1.8 times the circle across, the circle in its middle, behind the head
    (what is on the head comes up over it); still, its light its own. Past the circle it reaches up to .24
@@ -921,6 +931,8 @@ html.i3-lv-1 .av.lv1::before, html.i3-lv-2 .av.lv2::before, html.i3-lv-3 .av.lv3
 html.i3-lv-1 .av.lv1 { --lv3: var(--i3-lv-1); } html.i3-lv-2 .av.lv2 { --lv3: var(--i3-lv-2); } html.i3-lv-3 .av.lv3 { --lv3: var(--i3-lv-3); } html.i3-lv-4 .av.lv4 { --lv3: var(--i3-lv-4); } html.i3-lv-5 .av.lv5 { --lv3: var(--i3-lv-5); } html.i3-lv-6 .av.lv6 { --lv3: var(--i3-lv-6); }
 .av.lv5::before { animation-duration: 4.5s; }
 .av.lv6::before { inset: -4.5px; animation-duration: 3s; -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.6px), #000 calc(100% - 3.2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3.6px), #000 calc(100% - 3.2px)); }
+.av.lv7::before { filter: drop-shadow(0 0 2.5px rgba(253, 224, 71, .95)); }
+.av.lv8::before { filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px rgba(168, 85, 247, .9)); }
 @keyframes lv-turn { to { transform: rotate(1turn); } }
 .av-crown { position: absolute; z-index: 2; left: 50%; top: -38%; width: 64%; height: 48%; transform: translateX(-50%) rotate(-10deg); color: #f4c54f; filter: drop-shadow(0 1px 1.5px rgba(70, 40, 0, .5)); pointer-events: none; }
 .av-crown svg { display: block; width: 100%; height: 100%; fill: currentColor; stroke: #9a6414; stroke-width: 1.3; }
@@ -929,6 +941,8 @@ html.i3-lv-1 .av.lv1 { --lv3: var(--i3-lv-1); } html.i3-lv-2 .av.lv2 { --lv3: va
 .nm.lv4 { background-image: var(--nm4); animation: nm-shine 4s linear infinite; }
 .nm.lv5 { background-image: var(--nm5); animation: nm-shine 3.2s linear infinite; }
 .nm.lv6 { background-image: var(--nm6); animation: nm-shine 2.4s linear infinite; }
+.nm.lv7 { background-image: var(--nm7); animation-duration: 2s; }
+.nm.lv8 { background-image: var(--nm8); animation-duration: 1.7s; }
 @keyframes nm-shine { to { background-position: -200% 0; } }
 .nm-spark { display: inline-block; width: .8em; height: .8em; margin-left: 3px; font-style: normal; line-height: 1; vertical-align: .55em; color: #b46cf5; animation: nm-twinkle 1.8s ease-in-out infinite; }
 .nm-spark svg { display: block; width: 100%; height: 100%; fill: currentColor; stroke: currentColor; stroke-width: 1; }
@@ -1797,6 +1811,8 @@ html.i3-ui-stand .shop-top.stage .shop-char::before { opacity: 1; }
 .dm.done span { text-decoration: line-through; text-decoration-color: rgba(0, 0, 0, .25); }
 .dm.done .dm-ck { background: var(--gold); color: #fff; box-shadow: none; }
 .dm-stamps { display: flex; align-items: center; gap: 5px; margin-top: 10px; }
+.dm-work { display: flex; align-items: center; gap: 8px; width: 100%; margin: 8px 0 0; padding: 8px 10px; border: 0; border-radius: 12px; background: rgba(245, 158, 11, .14); color: var(--ink-2); font: inherit; font-size: 13px; line-height: 1.4; text-align: left; cursor: pointer; }
+.dm-work svg { flex: none; width: 16px; height: 16px; }
 .dm-stamps .st { position: relative; flex: 1; display: grid; place-items: center; height: 40px; border-radius: 12px; background: var(--inset); font-style: normal; }
 .dm-stamps .st b { font-size: 11px; font-weight: 600; color: var(--muted); }
 .dm-stamps .st.today { box-shadow: inset 0 0 0 1.5px var(--gold); }
@@ -2415,6 +2431,11 @@ html.i3-box-s1-body.i3-box-s1-lid .bx-svg.s1 .bx-body, html.i3-box-s2-body.i3-bo
 .av-fx.f-sweets { --fx-img: var(--i3-fx-candy, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23f9a8d4' d='M4 9l3 3-3 3zM20 9l-3 3 3 3z'/%3E%3Ccircle cx='12' cy='12' r='5.5' fill='%23f472b6'/%3E%3Cpath d='M9 9.5c2 1 4 3 5.5 5.5' stroke='%23fff' stroke-width='1.6' fill='none'/%3E%3C/svg%3E")); }
 .av-fx.f-sweets > i:nth-child(2) { --fx-img: var(--i3-fx-lolli, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v12' stroke='%23d6d3d1' stroke-width='1.6'/%3E%3Ccircle cx='12' cy='8' r='6' fill='%23a78bfa'/%3E%3Cpath d='M8 8a4 4 0 0 1 8 0 3 3 0 0 1-6 0 1.6 1.6 0 0 1 3 0' stroke='%23fff' stroke-width='1.2' fill='none'/%3E%3C/svg%3E")); }
 .av-fx.f-sweets > i:nth-child(3) { --fx-img: var(--i3-fx-cookie, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='7' fill='%23fde68a' stroke='%23f59e0b'/%3E%3Ccircle cx='9.5' cy='10' r='1.2' fill='%23b45309'/%3E%3Ccircle cx='14' cy='13.5' r='1.2' fill='%23b45309'/%3E%3C/svg%3E")); }
+/* ออร่าครบชุดที่ 3 (ภาพวาด ยังไม่มีภาพสามมิติ) */
+.av-fx.f-kfood { --fx-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 20L20 4' stroke='%23a16207' stroke-width='1.6'/%3E%3Crect x='5' y='13' width='6' height='4' rx='2' transform='rotate(-45 8 15)' fill='%23ef4444'/%3E%3Crect x='9.5' y='8.5' width='6' height='4' rx='2' transform='rotate(-45 12.5 10.5)' fill='%23f87171'/%3E%3Crect x='14' y='4' width='6' height='4' rx='2' transform='rotate(-45 17 6)' fill='%23ef4444'/%3E%3C/svg%3E"); }
+.av-fx.f-kfood > i:nth-child(2) { --fx-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='8' fill='%231f2937'/%3E%3Ccircle cx='12' cy='12' r='6.3' fill='%23fff'/%3E%3Ccircle cx='12' cy='10' r='1.6' fill='%23facc15'/%3E%3Ccircle cx='9.6' cy='13.2' r='1.4' fill='%23f97316'/%3E%3Ccircle cx='14.4' cy='13.2' r='1.4' fill='%2322c55e'/%3E%3Ccircle cx='12' cy='14.6' r='1.1' fill='%23f472b6'/%3E%3C/svg%3E"); }
+.av-fx.f-kfood > i:nth-child(3) { --fx-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M15 5c3 1 4 4 2 7c-2 4-7 7-12 7c4-2 7-5 8-9c.5-2 .5-4 2-5z' fill='%23ef4444'/%3E%3Cpath d='M15 5c0-2 1-3 3-3' stroke='%2316a34a' stroke-width='1.6' fill='none'/%3E%3C/svg%3E"); }
+.bx-svg.s3 .bx-d { filter: hue-rotate(150deg) saturate(1.1); }
 @media (prefers-reduced-motion: reduce) {
   .sh-slot .fig-svg, .sh-slot .sh-fig::after, .sh-chip .sh-gem, .bx-layer .bx-box, .bx-rays, .bx-fig .fig-svg, .bx-hint, .bx-info h2.rainbow { animation: none !important; }
   .bx-bits { display: none; }
@@ -2456,6 +2477,19 @@ html.i3-box-s1-body.i3-box-s1-lid .bx-svg.s1 .bx-body, html.i3-box-s2-body.i3-bo
 .fb-starters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .fb-starter { border: 0; padding: 7px 13px; border-radius: 99px; background: var(--inset); color: var(--ink-2); font-size: 13.5px; font-weight: 500; transition: transform .45s var(--spring), background-color .2s; }
 .fb-starter:active { transform: scale(.93); transition-duration: .1s; background: var(--gold-soft); }
+.fb-tolog { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; margin: 10px 0 0; padding: 10px 12px; border: 0; border-radius: 14px; background: var(--inset); color: var(--ink-2); font: inherit; font-size: 13.5px; line-height: 1.35; text-align: left; cursor: pointer; }
+.fb-tolog > span { flex: 1; }
+.fb-tolog svg { width: 18px; height: 18px; flex: none; }
+.fb-tolog:active { transform: scale(.98); transition-duration: .1s; }
+.dl-photo { position: relative; margin-top: 12px; }
+.dl-photo img { display: block; max-width: 100%; max-height: 240px; border-radius: 12px; }
+.dl-photo .fb-x { right: auto; left: 6px; top: 6px; }
+.dl-photo-add { position: relative; display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 10px 12px; border: 1.5px dashed var(--line-strong); border-radius: 12px; color: var(--muted); font-size: 14px; cursor: pointer; }
+.dl-photo-add input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.dl-photo-add svg { width: 20px; height: 20px; flex: none; }
+.dl-photos { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.dl-photo-btn { min-height: 44px; }
+.dl-photo-big { display: block; max-width: 100%; max-height: 70vh; margin-top: 8px; border-radius: 12px; }
 #fb-text { min-height: 104px; }
 .fb-tips { display: grid; gap: 7px; margin: 14px 2px 0; }
 .fb-tip { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
@@ -2904,6 +2938,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   .poster h3 { font-size: 26pt; }
   .poster p { font-size: 15pt; }
 }
+/* 2.13.4 (T2 T4–T6): ปุ่มที่แตะบ่อยสูงอย่างน้อย 44 (Apple HIG) เฉพาะที่นี่ ไม่แก้ .btn.sm ที่ใช้ทั้งแอป */
+.btn.sm.tap { height: 44px; }
+.fb-mine-btn { min-height: 44px; }
+.dl-pick .chip, .dl-cats button, .fb-starter, .seg [data-act="fb-kind"] { min-height: 44px; }
+.lv-chip, .dm { min-height: 44px; }
+.topbar .icon-btn { width: 44px; height: 44px; }
 </style>
 </head>
 <body>
@@ -2949,7 +2989,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // The fox from the shop's logo, traced from its logo files (the app writes
   // the name in its own type). dev/icons.js draws the home-screen icons from it.
   var LOGO = {"fox":"M408.5 21.1a118 118 0 0 0-20.8 27.4 108 108 0 0 0-5.6 80c5.6 16.8 10.9 23.7 34.6 45.3a128 128 0 0 1 38.8 70.6c1 4.3 2 7.4 2.5 7 1.1-1.2 5.7-27.8 6.5-37.9a95 95 0 0 0-9.2-47c-14.5-31.8-16.6-53-7.7-80.6 1.9-5.8 3.4-11.2 3.4-12s-4.7-8.5-10.4-17.1a198 198 0 0 1-21.5-39.9l-1.7-5.1zm111.2 3c-21.7 9.3-32.5 17.2-43.5 31.7a102 102 0 0 0-21.9 65.2c.7 13 3.2 21.9 10.1 37 12.2 26.3 14.6 46.4 9.1 78.3a167 167 0 0 0-2.3 16.8c.5 1.4 14-15 19-23.1a120 120 0 0 0 18.8-68.6c0-25.5 6.7-43.2 23.5-63 8.3-9.8 8.7-12.5 4.9-31.9a149 149 0 0 1-1.8-28.7 79 79 0 0 0-1.1-19.7c-.5 0-7.2 2.7-14.8 6M307.6 72.8a99 99 0 0 0 5.1 86.4c13.5 26.4 30.1 38.9 64.3 48.3a123 123 0 0 1 61.6 41.6 36 36 0 0 0 6 6.6c.3-.3-.2-4-1.1-8.2-6-28.9-15.5-47.3-32.8-63.5-25.1-23.5-31.8-31.7-37.8-46.2a90 90 0 0 1-6.8-27.2c-1.2-10.3-1.8-11.1-10.9-16.2A203 203 0 0 1 320 69l-8.6-8zM597 71.6a106 106 0 0 0-67.3 51.6c-6.7 13.5-8.7 22.8-9.7 45.3-1.2 25.3-3.3 35.6-10.3 50.8a169 169 0 0 1-21 32.4 31 31 0 0 0-5.7 8.3c2 0 19.5-9.3 27.6-14.5a117 117 0 0 0 27.5-25.4c2.7-3.6 7.7-12.2 11-19.1 10.3-21 17.7-31.3 28.7-40.3 7.7-6.3 16.5-11.4 28.3-16.2 4.5-2 9-4.2 10-5 2.7-2.6 4.7-7.4 8.4-20.9 4-14.5 8.6-26.9 14.4-38.4 2.3-4.6 3.9-8.7 3.6-9.2-1-1.6-37.9-1-45.5.6m-533 10c-7.6 8.7-12.9 23.4-16.6 46.2a95 95 0 0 1-7.3 27c-25 59.3-33.2 115.3-24 163 9.2 47.6 40.6 85 72 85.5q29.6.4 41.3-57.3c3.6-18 5-34.7 4.3-54.5-1.2-32.9-6.7-56.3-16.2-68l-2.4-3-2 2a109 109 0 0 0-15 27 129 129 0 0 0-6.2 52.4c.3 5.4.1 6.6-1.4 7.8-4.3 3-5.6 1-6.8-10.8-4-40.4 15.7-85 44-99.7 4.5-2.3 13.5-5.6 21.2-7.7 18-5 32.5-10 39-13.8a59 59 0 0 0 24.5-30c.5-2.2.3-2.7-1.6-3.1a948 948 0 0 0-33.3-2.2c-31.1-1.6-34.4-2.2-37.5-5.9-3.6-4.4-16.6-7.5-34.5-8.2l-14-.6-2.8-8.6C84.5 106 70.5 78 68 78c-.5 0-2.3 1.6-4 3.5m51.3.7a112 112 0 0 0-15.4 23.1c-2.9 6.4-5.3 17.4-4 18.2.3.2 6.8.7 14.4 1l13.9.8-.8-2.9a133 133 0 0 1-3.6-24.9c0-3.8-.4-9.7-.8-13l-.6-5.9zm-10.9 63.1c-1.7.8-3.6 2-4.3 3-1 1.3-.8 1.8 1.7 3.6a26 26 0 0 0 18.7 3.3c6-1.2 13-5 11.7-6.2-3.7-3.6-22.6-6-27.8-3.7m123 .7c-.4.7-.2 2.3 3.5 24.5 4 24 11.2 38.8 26.5 54 25.5 25.4 52 34.3 84.5 28.5a147 147 0 0 1 44.5-1.1 173 173 0 0 1 39.4 13.7 91 91 0 0 0 14.2 6.2c1.5-.5-13.5-19-22.2-27.3a104 104 0 0 0-49.6-27.4 103 103 0 0 1-30.6-12.3c-14.6-9.4-22.7-18.8-34.7-40-4-7-7.8-13.3-8.6-13.9a199 199 0 0 0-29.1-3l-32.6-2.2c-2.6-.2-5 0-5.2.3m409.1 2.6q-46 7.1-66.8 38.6c-2 2.9-6 10.5-9.1 16.8a118 118 0 0 1-18.8 29.5 140 140 0 0 1-43.3 32.6c-5.8 3-10.6 5.7-10.6 6.1 0 1.1 15.6 1 28.5-.2 27.1-2.6 43.3-10 70-32 7.7-6.3 23.8-14.5 34-17.2a116 116 0 0 1 24-2.7c8.8-.3 16.7-1 17.7-1.6s5.9-6 11-12a237 237 0 0 1 34.6-33.5l6.3-4.4-11.5-5.8c-30.2-15.1-42.7-17.8-66-14.2m-503 85.2a187 187 0 0 1 15 56.7c1.5 13 1.6 16.8.5 28.5a179 179 0 0 1-9.3 45 291 291 0 0 1-22.8 48.4c0 .2 3.8-1.2 8.5-3a79 79 0 0 1 31.6-7.2c7.8.4 11.3 2.4 14.2 7.9 2 3.9 2 10.8-.7 30.9a511 511 0 0 0-.6 71c1.3 18.7 5 51.9 6.1 54.8l.8 2.2h25.6c18.7 0 25.5-.3 25.5-1.2 0-.6-2.8-5.4-6.2-10.7-16.4-25.2-24.2-49.6-22.4-69.5 1.4-14.8 1.7-16 22.5-87.3 7.8-26.8 8.5-43.3 2.5-64-9.6-33.6-41-71-84-100.1-6.8-4.6-8-5-6.9-2.4m492-.2a91 91 0 0 0-39.5 21.9 124 124 0 0 1-36.3 21.5 184 184 0 0 1-50.2 8.3l-5 .3 7.5 3.6c18 8.6 33.3 12.2 52 12a71 71 0 0 0 23.5-2.7c18.3-5 21.8-5.6 34.5-5.7a95 95 0 0 1 52 14.3c3.7 2.1 7.4 3.9 8.3 3.9s7.3-2.5 14-5.6a434 434 0 0 1 49-17.5l4.7-1.4-8.5-10.8c-14.9-18.8-24.5-27-40.8-34.8-13.6-6.4-21.6-8.1-41.2-8.5-12.7-.3-18.8 0-24 1.2M197 267.5c0 .3 4.8 6.5 10.8 13.9a210 210 0 0 1 25.1 38.6c2.8 5.2 8.2 13.7 11.9 19a259 259 0 0 0 37.1 39.2c40.8 33 87.6 45.3 144.9 38.2l5.2-.6 8.6 8.3c35 33.9 44.8 75.6 27.3 116.3-2 4.9-6.3 13-9.3 18s-5.6 9.5-5.6 10c0 1 47.8.8 48.4-.2.3-.5-.1-18.6-.9-40.3L498 453q-1-35.6-2.3-36.6a21 21 0 0 0-6.6-2.9 48 48 0 0 1-29-22.2c-2-4-2.4-7.2-3.1-20.3a159 159 0 0 0-2.3-21.5c-11.6-46.6-68-75.4-159.6-81.5-14.7-1-98-1.4-98-.5m286 27.3c0 2.5 31.7 35.1 39.5 40.7a90 90 0 0 0 42.7 16.4c28 5 47 15.9 65.5 37.5l5 6 7.4.7c4 .4 12.2.8 18 .8 13.2.1 29.8 1.7 40.9 4a26 26 0 0 0 8.8 1c.5-1.2-7.8-31.8-10.5-38.6q-6-15.2-20.9-29.3a105 105 0 0 0-30.8-21.6 69 69 0 0 0-36.1-7.7 78 78 0 0 0-27 3.8 94 94 0 0 1-29.5 4.2c-13 .4-17.1.1-25.6-1.6-12.4-2.6-28-7.9-38.5-13.2-8.3-4.1-8.9-4.3-8.9-3.1m-7 12.7a246 246 0 0 0 7.7 27C502.2 391 530 434.6 563 458.2c4.8 3.4 16.4 9.9 26.7 14.9 19.5 9.4 28.8 15 39.6 23.6 3.8 3 7 5.3 7.2 5.1a355 355 0 0 0 6.6-32.3c3.8-27.4-8.6-60.6-31-82.5-13.5-13.2-24.8-18.6-49-23.5-36.6-7.4-57.5-20.8-85-54.5q-1.8-2.2-2-1.5m-448.5 72c2.3 6.4 7.5 16.7 21.2 42.5 6.2 11.7 9.7 21.7 11.7 34 5.2 32.5-4.6 70.8-27 105.6-3 4.7-5.5 8.7-5.5 9 0 .2 7 .4 15.3.4 13.4 0 15.6-.2 16.9-1.7.8-1 3-6 4.7-11.3L115 414.7c0-.1-6.6-.2-14.7-.2A80 80 0 0 1 32 382.1c-2.6-3.5-5.2-7-5.8-8-.7-.9-.1 1.5 1.3 5.4m329.8 56.8c29.1 37.3 33.5 75.3 13.3 115.4-2 4-5 9.3-6.7 12-1.6 2.5-3 5-3 5.5s10.8.8 24 .8h24v-8.2c0-4.6-1-34.8-2-67.3l-2-60.6c0-1.4-2.4-1.7-18.2-2.2-10-.4-21.4-1.3-25.3-2.1-11.4-2.5-11.3-2.5-4.1 6.7"};
-  var KEY = { staff: 'seoulful.staff', owner: 'seoulful.owner', kiosk: 'seoulful.kiosk', device: 'seoulful.device', push: 'seoulful.push', pushKey: 'seoulful.pushkey', told: 'seoulful.told' };
+  var KEY = { staff: 'seoulful.staff', owner: 'seoulful.owner', kiosk: 'seoulful.kiosk', device: 'seoulful.device', push: 'seoulful.push', dlDraft: 'seoulful.dldraft', pushKey: 'seoulful.pushkey', told: 'seoulful.told' };
   // The test app's site sits under the shop's (dev/staging.js), so a phone gives both one storage: the
   // test app's names start with SITE.store, and neither ever reads the other's.
   var STORE = (SITE && SITE.store) || '';
@@ -3171,8 +3211,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function avatar(e, cls, lv) {
     var l = lv || lvOf(e);
     var look = l[2] || {};
-    var ring = (l[0] ? ' lv lv' + l[0] : '') + (look.f ? ' fx' : '');
-    if (l[0]) i3Want('lv-' + l[0]);
+    var ring = (l[0] ? ' lv ' + lvCls(l[0]) : '') + (look.f ? ' fx' : '');
+    if (l[0]) i3Want('lv-' + Math.min(l[0], 6));
     // (the coins' 3D picture, wanted wherever there are people: what they have and what things cost)
     i3Want('ui-coin');
     if (look.f) fx3Want(look.f);
@@ -3202,9 +3242,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   // ---- levels (Levels.gs) -----------------------------------------------------
   // The name is the prize: each level's ring round the initials, the name in gold and brighter from there.
-  var LV_NAMES = ['ยังไม่มีระดับ', 'ทองแดง', 'เงิน', 'ทอง', 'แพลทินัม', 'เพชร', 'ตำนาน'];
-  var LV_LOOK = ['', 'กรอบทองแดงรอบชื่อ', 'กรอบเงินเรืองแสง', 'ชื่อสีทอง', 'ชื่อประกายแพลทินัม', 'ชื่อประกายเพชร', 'ชื่อสีรุ้งเรืองแสง'];
-  var LV_UP = ['', 'ชื่อของคุณมีกรอบทองแดงแล้ว', 'ชื่อของคุณมีกรอบเงินเรืองแสงแล้ว', 'ชื่อของคุณเป็นสีทองแล้ว', 'ชื่อของคุณเป็นประกายแพลทินัมแล้ว', 'ชื่อของคุณเป็นประกายเพชรแล้ว', 'ชื่อของคุณเป็นสีรุ้งเรืองแสง ตำนานของร้าน'];
+  var LV_NAMES = ['ยังไม่มีระดับ', 'ทองแดง', 'เงิน', 'ทอง', 'แพลทินัม', 'เพชร', 'ตำนาน', 'มหาตำนาน', 'ตำนานจักรวาล'];
+  var LV_LOOK = ['', 'กรอบทองแดงรอบชื่อ', 'กรอบเงินเรืองแสง', 'ชื่อสีทอง', 'ชื่อประกายแพลทินัม', 'ชื่อประกายเพชร', 'ชื่อสีรุ้งเรืองแสง', 'ชื่อสีรุ้งทอง + รัศมีทองรอบรูป', 'ชื่อสีจักรวาล + รัศมีดาวรอบรูป'];
+  var LV_UP = ['', 'ชื่อของคุณมีกรอบทองแดงแล้ว', 'ชื่อของคุณมีกรอบเงินเรืองแสงแล้ว', 'ชื่อของคุณเป็นสีทองแล้ว', 'ชื่อของคุณเป็นประกายแพลทินัมแล้ว', 'ชื่อของคุณเป็นประกายเพชรแล้ว', 'ชื่อของคุณเป็นสีรุ้งเรืองแสง ตำนานของร้าน', 'ชื่อของคุณเป็นสีรุ้งทอง มีรัศมีทองรอบรูปแล้ว', 'ชื่อของคุณเป็นสีจักรวาล มีรัศมีดาวรอบรูป ระดับสูงสุดของร้าน'];
+  /** คลาสหน้าตาของระดับ: ระดับเกินตำนานใช้กรอบตำนาน (lv6) แล้วเพิ่มรัศมีและสีชื่อของตัวเอง */
+  function lvCls(n) { return n > 6 ? 'lv6 lv' + n : 'lv' + n; }
   /** Everyone's [level, crown], as last heard: from the start, the home screen, the owner's or the shop's screen. */
   function lvMap() { return ((S.levels || B.levels) || {}).map || {}; }
   function lvOf(e) { var id = e && (e.id || e.empId); return (id && lvMap()[id]) || [0, 0]; }
@@ -3212,7 +3254,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function nameLv(lv, text, sign) {
     var after = sign && LOOK_ART[sign] ? html`<i class="nm-badge" aria-hidden="true">${badgeArt(sign)}</i>` : '';
     if (lv < 3) return after ? html`${text}${after}` : text;
-    return html`<span class="nm lv${lv}">${text}</span>${lv >= 5 ? html`<i class="nm-spark lv${lv}" aria-hidden="true">${art3('ui-spark-' + Math.min(lv, 6), raw(icon('spark')))}</i>` : ''}${after}`;
+    return html`<span class="nm ${lvCls(lv)}">${text}</span>${lv >= 5 ? html`<i class="nm-spark ${lvCls(lv)}" aria-hidden="true">${art3('ui-spark-' + Math.min(lv, 6), raw(icon('spark')))}</i>` : ''}${after}`;
   }
   function nameTag(e, text) { var l = lvOf(e); return nameLv(l[0], text, (l[2] || {}).b); }
   // What goes by a name in 3D (#182): soft vinyl toys with a coat of shine, as the games' icons are now,
@@ -4801,6 +4843,134 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           '<path d="M50 21.5C50 14.5 48 10.5 44 7.5" stroke="#d3c4a4" stroke-width="3.2" fill="none" stroke-linecap="round"/>' +
           face(50, 72, 1, 'cat');
       },
+      // ชุดที่ 3 น้องๆ เมนูเด่น เมนูจริงของร้าน (ภาพวาด · ยังไม่มีแบบสามมิติ) · ชื่อภาพคงเดิม ชื่อเมนูอยู่ BOX_FIGS ใน Levels.gs
+      // แซลมอนดองเกาหลี
+      kimchi: function (u) {
+        return '<defs>' + rad(u + 'b', [[0, '#fff1e8'], [0.5, '#ffad8f'], [1, '#f2734f']]) + '</defs>' + SHADOW +
+          arms('#f08060', '#c2412b', 22, 80, 78, 80) + feet('#c2412b', 40, 60, 108) +
+          '<path d="M50 30C70 30 78 52 76 74C74 96 64 106 50 106C36 106 26 96 24 74C22 52 30 30 50 30Z" fill="url(#' + u + 'b)" stroke="#c2412b" stroke-width="1.2"/>' +
+          '<path d="M50 30C44 20 34 18 30 22C34 26 40 30 44 34M50 30C56 20 66 18 70 22C66 26 60 30 56 34" fill="#86c95a" stroke="#4d8f2c" stroke-width="1.1"/>' +
+          '<path d="M50 40V100" stroke="#fff" stroke-width="2" opacity=".55" stroke-linecap="round"/>' +
+          '<g fill="#d63a24" opacity=".7"><circle cx="34" cy="62" r="1.6"/><circle cx="66" cy="58" r="1.4"/><circle cx="38" cy="90" r="1.5"/><circle cx="63" cy="92" r="1.6"/><circle cx="70" cy="78" r="1.2"/></g>' +
+          face(50, 72, 1, 'smile');
+      },
+      // ต๊อกบกกีซอสโรเซ่
+      tteok: function (u) {
+        return '<defs>' + lin(u + 'b', [[0, '#ff8f6b'], [0.5, '#f25c3a'], [1, '#c8341c']], 1, 0) + '</defs>' + SHADOW +
+          arms('#f25c3a', '#b32d17', 24, 82, 76, 82) + feet('#b32d17', 40, 60, 108) +
+          '<rect x="27" y="34" width="46" height="72" rx="23" fill="url(#' + u + 'b)" stroke="#b32d17" stroke-width="1.2"/>' +
+          '<ellipse cx="40" cy="56" rx="4" ry="12" fill="#fff" opacity=".3"/>' +
+          '<g fill="#fff3c4"><ellipse cx="44" cy="44" rx="1.6" ry="1"/><ellipse cx="58" cy="50" rx="1.6" ry="1"/><ellipse cx="38" cy="92" rx="1.6" ry="1"/><ellipse cx="62" cy="96" rx="1.6" ry="1"/></g>' +
+          face(50, 72, 1, 'open');
+      },
+      // บะหมี่เย็น
+      mandu: function (u) {
+        return '<defs>' + lin(u + 'b', [[0, '#f1f5f9'], [0.5, '#cbd5e1'], [1, '#94a3b8']]) + '</defs>' + SHADOW +
+          arms('#cbd5e1', '#64748b', 16, 86, 84, 86) + feet('#64748b', 40, 60, 108) +
+          '<path d="M14 62H86C86 88 70 104 50 104C30 104 14 88 14 62Z" fill="url(#' + u + 'b)" stroke="#64748b" stroke-width="1.2"/>' +
+          '<ellipse cx="50" cy="62" rx="36" ry="9" fill="#e0f2fe" stroke="#64748b" stroke-width="1"/>' +
+          '<path d="M24 63q4-5 8 0t8 0t8 0t8 0t8 0t8 0" fill="none" stroke="#78716c" stroke-width="1.6" stroke-linecap="round"/>' +
+          '<g fill="#fff" stroke="#7dd3fc" stroke-width=".8" opacity=".9"><rect x="24" y="53" width="9" height="8" rx="2"/><rect x="66" y="54" width="8" height="7" rx="2"/></g>' +
+          '<path d="M41 59A9 9 0 0 1 59 59Z" fill="#fff" stroke="#e5e7eb" stroke-width=".8"/><circle cx="50" cy="56" r="3.4" fill="#fbbf24"/>' +
+          face(50, 82, 1, 'smile');
+      },
+      // คิมบับทอดเนื้อ
+      gimbap: function (u) {
+        return SHADOW + arms('#2f3a2f', '#141a14', 18, 78, 82, 78) + feet('#2f3a2f', 40, 60, 108) +
+          '<circle cx="50" cy="70" r="35" fill="#1f2a1f" stroke="#0d130d" stroke-width="1.2"/><circle cx="50" cy="70" r="30" fill="#fbfaf5"/>' +
+          '<g opacity=".9"><circle cx="50" cy="52" r="5" fill="#facc15"/><circle cx="38" cy="58" r="4.5" fill="#f97316"/><circle cx="62" cy="58" r="4.5" fill="#22c55e"/><circle cx="44" cy="46" r="3" fill="#f472b6"/><circle cx="56" cy="46" r="3" fill="#a16207"/></g>' +
+          '<g fill="#e9e4d4"><circle cx="34" cy="80" r="1.4"/><circle cx="66" cy="84" r="1.4"/><circle cx="50" cy="96" r="1.4"/><circle cx="28" cy="70" r="1.2"/><circle cx="72" cy="70" r="1.2"/></g>' +
+          face(50, 76, 1, 'smile');
+      },
+      // จาจังมยอน
+      ramyeon: function (u) {
+        return '<defs>' + lin(u + 'b', [[0, '#fafaf9'], [1, '#d6d3d1']]) + '</defs>' + SHADOW +
+          arms('#e7e5e4', '#78716c', 24, 82, 76, 82) + feet('#78716c', 40, 60, 108) +
+          '<path d="M24 44H76L70 104H30Z" fill="url(#' + u + 'b)" stroke="#78716c" stroke-width="1.2" stroke-linejoin="round"/>' +
+          '<path d="M22 44C26 30 40 26 50 30C60 26 74 30 78 44Z" fill="#3b2416" stroke="#1c110a" stroke-width="1.1"/>' +
+          '<path d="M30 40q4-6 8 0t8 0t8 0t8 0t8 0" fill="none" stroke="#86efac" stroke-width="1.3"/>' +
+          '<rect x="30" y="88" width="40" height="7" rx="3.5" fill="#fff" opacity=".85"/>' +
+          face(50, 66, 1, 'smile', { shades: true });
+      },
+      // อิตาเลียนโซดาน้ำผึ้งเจลลี่
+      banana: function (u) {
+        return '<defs>' + rad(u + 'b', [[0, '#fff7c2'], [0.55, '#fde047'], [1, '#e6b400']]) + '</defs>' + SHADOW +
+          arms('#fbd535', '#c79a00', 20, 84, 80, 84) + feet('#c79a00', 40, 60, 108) +
+          '<path d="M38 30H62V40C78 46 82 60 82 76C82 96 70 106 50 106C30 106 18 96 18 76C18 60 22 46 38 40Z" fill="url(#' + u + 'b)" stroke="#c79a00" stroke-width="1.2"/>' +
+          '<rect x="36" y="22" width="28" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>' +
+          '<ellipse cx="36" cy="64" rx="5" ry="12" fill="#fff" opacity=".4"/>' +
+          face(50, 78, 1, 'open');
+      },
+      // จับแช
+      bibim: function (u) {
+        return '<defs>' + lin(u + 'b', [[0, '#d6d3d1'], [1, '#a8a29e']]) + '</defs>' + SHADOW +
+          arms('#c4bfbb', '#78716c', 16, 86, 84, 86) + feet('#78716c', 40, 60, 108) +
+          '<path d="M14 62H86C86 88 70 104 50 104C30 104 14 88 14 62Z" fill="url(#' + u + 'b)" stroke="#78716c" stroke-width="1.2"/>' +
+          '<ellipse cx="50" cy="62" rx="36" ry="9" fill="#fbfaf5" stroke="#78716c" stroke-width="1"/>' +
+          '<ellipse cx="32" cy="58" rx="7" ry="4" fill="#22c55e"/><ellipse cx="68" cy="58" rx="7" ry="4" fill="#f97316"/><ellipse cx="42" cy="54" rx="5" ry="3" fill="#a16207"/><ellipse cx="60" cy="53" rx="5" ry="3" fill="#ef4444"/>' +
+          '<path d="M30 58q5-7 10 0t10 0t10 0t10 0M34 54q4-6 8 0t8 0t8 0t8 0" fill="none" stroke="#b45309" stroke-width="1.5" stroke-linecap="round" opacity=".75"/><g fill="#fff"><circle cx="46" cy="51" r=".9"/><circle cx="56" cy="55" r=".9"/><circle cx="39" cy="56" r=".9"/></g>' +
+          face(50, 82, 1, 'smile');
+      },
+      // เอ็นข้อไก่ทอดซอสกระเทียม
+      chicken: function (u) {
+        return '<defs>' + rad(u + 'b', [[0, '#ffd58a'], [0.55, '#e9a23b'], [1, '#b8691c']]) + '</defs>' + SHADOW +
+          arms('#e3a03e', '#a35d16', 20, 80, 80, 80) + feet('#a35d16', 40, 60, 108) +
+          '<path d="M50 30C72 30 82 50 80 72C78 96 66 106 50 106C34 106 22 96 20 72C18 50 28 30 50 30Z" fill="url(#' + u + 'b)" stroke="#a35d16" stroke-width="1.2"/>' +
+          '<g fill="#f6c46b" stroke="#c07a22" stroke-width=".7"><circle cx="30" cy="60" r="3"/><circle cx="70" cy="62" r="3"/><circle cx="34" cy="92" r="2.6"/><circle cx="66" cy="94" r="2.8"/><circle cx="50" cy="100" r="2.4"/></g>' +
+          '<path d="M22 50C36 44 64 44 78 50L78 56C64 50 36 50 22 56Z" fill="#ef4444" stroke="#b91c1c" stroke-width="1"/><path d="M76 52l8-4l-2 8z" fill="#ef4444" stroke="#b91c1c" stroke-width="1"/>' +
+          face(50, 74, 1, 'open');
+      },
+      // เนื้อสไลด์ย่างกระเทียมพริกไทย
+      odeng: function (u) {
+        return '<defs>' + lin(u + 'b', [[0, '#fde7b0'], [1, '#e7b96a']]) + '</defs>' + SHADOW +
+          '<path d="M50 14V112" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>' +
+          arms('#f2cf8a', '#b8862f', 20, 78, 80, 78) + feet('#b8862f', 40, 60, 108) +
+          '<path d="M26 34Q50 26 74 34Q66 46 74 58Q66 70 74 82Q66 94 74 104Q50 110 26 104Q34 94 26 82Q34 70 26 58Q34 46 26 34Z" fill="url(#' + u + 'b)" stroke="#b8862f" stroke-width="1.2" stroke-linejoin="round"/>' +
+          '<path d="M30 58H70M30 82H70" stroke="#d9a453" stroke-width="1.2" opacity=".7"/>' +
+          face(50, 70, 1, 'smile');
+      },
+      // คอร์นชีส
+      corndog: function (u) {
+        return '<defs>' + lin(u + 'b', [[0, '#fcd581'], [0.5, '#eaa83c'], [1, '#c98320']], 1, 0) + '</defs>' + SHADOW +
+          arms('#e9a53c', '#a86a14', 26, 74, 74, 74) + feet('#a86a14', 42, 58, 108) +
+          '<rect x="30" y="20" width="40" height="80" rx="20" fill="url(#' + u + 'b)" stroke="#a86a14" stroke-width="1.2"/>' +
+          '<g fill="#fff3c4" opacity=".8"><rect x="38" y="30" width="3" height="2" rx="1"/><rect x="56" y="36" width="3" height="2" rx="1"/><rect x="44" y="88" width="3" height="2" rx="1"/><rect x="58" y="84" width="3" height="2" rx="1"/></g>' +
+          '<path d="M33 34L40 28L46 34L52 28L58 34L64 28L67 32" fill="none" stroke="#dc2626" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
+          face(50, 62, 1, 'open');
+      },
+      // ซุปกระดูกหมู
+      hoppang: function (u) {
+        return '<defs>' + lin(u + 'b', [[0, '#c08a6e'], [1, '#8a5440']]) + '</defs>' + SHADOW +
+          arms('#b07a60', '#6b3a28', 16, 86, 84, 86) + feet('#6b3a28', 40, 60, 108) +
+          '<path d="M14 62H86C86 88 70 104 50 104C30 104 14 88 14 62Z" fill="url(#' + u + 'b)" stroke="#6b3a28" stroke-width="1.2"/>' +
+          '<ellipse cx="50" cy="62" rx="36" ry="9" fill="#f5e6c8" stroke="#6b3a28" stroke-width="1"/>' +
+          '<g fill="#fffbeb"><rect x="39" y="54" width="22" height="5" rx="2.5"/><circle cx="39" cy="54.5" r="3"/><circle cx="39" cy="58.5" r="3"/><circle cx="61" cy="54.5" r="3"/><circle cx="61" cy="58.5" r="3"/></g>' +
+          '<g fill="#22c55e"><circle cx="28" cy="62" r="1.6"/><circle cx="72" cy="61" r="1.5"/><circle cx="56" cy="65" r="1.4"/><circle cx="44" cy="65" r="1.3"/></g><g fill="#dc2626"><circle cx="34" cy="65" r="1"/><circle cx="66" cy="65" r="1"/></g>' +
+          '<path d="M16 72C16 42 32 32 50 32C68 32 84 42 84 72" fill="none" stroke="#1f2937" stroke-width="4" stroke-linecap="round"/>' +
+          '<rect x="8" y="64" width="12" height="20" rx="5" fill="#2563eb" stroke="#1e3a8a" stroke-width="1.2"/><rect x="80" y="64" width="12" height="20" rx="5" fill="#2563eb" stroke="#1e3a8a" stroke-width="1.2"/>' +
+          '<circle cx="14" cy="74" r="2" fill="#93c5fd"/><circle cx="86" cy="74" r="2" fill="#93c5fd"/>' +
+          face(50, 84, 1, 'smile');
+      },
+      // หมูสามชั้นย่างซอสเกาหลี
+      samgyeop: function (u) {
+        return SHADOW + arms('#f4a7a0', '#b45a52', 20, 82, 80, 82) + feet('#b45a52', 40, 60, 108) +
+          '<rect x="22" y="38" width="56" height="68" rx="14" fill="#f9c6be" stroke="#b45a52" stroke-width="1.2"/>' +
+          '<path d="M23 56H77M23 80H77M23 96H77" stroke="#fff4f0" stroke-width="5"/><path d="M23 50H77M23 88H77" stroke="#e98c80" stroke-width="2" opacity=".7"/>' +
+          '<path d="M26 40C26 24 74 24 74 40Z" fill="#111827" stroke="#000" stroke-width="1"/><path d="M26 40H16C13 40 13 44 18 44H30Z" fill="#111827"/><rect x="44" y="30" width="12" height="5" rx="2" fill="#f59e0b"/>' +
+          face(50, 66, 1, 'smile');
+      },
+      // บูเดจิเกหม้อทองคำ
+      king: function (u) {
+        return '<defs>' + lin(u + 'b', [[0, '#fff1a8'], [0.5, '#f5c542'], [1, '#c8931a']]) + '</defs>' + SHADOW +
+          arms('#f1c040', '#a87a10', 14, 80, 86, 80) + feet('#a87a10', 40, 60, 108) +
+          '<path d="M16 54H84V84C84 98 72 106 50 106C28 106 16 98 16 84Z" fill="url(#' + u + 'b)" stroke="#a87a10" stroke-width="1.2"/>' +
+          '<rect x="8" y="58" width="10" height="6" rx="3" fill="#c8931a"/><rect x="82" y="58" width="10" height="6" rx="3" fill="#c8931a"/>' +
+          '<ellipse cx="50" cy="54" rx="34" ry="7" fill="#e11d48" stroke="#a87a10" stroke-width="1"/>' +
+          '<path d="M34 46L36 28L44 38L50 24L56 38L64 28L66 46Z" fill="#facc15" stroke="#b45309" stroke-width="1.1" stroke-linejoin="round"/>' +
+          '<circle cx="50" cy="40" r="2.2" fill="#ef4444"/><circle cx="40" cy="42" r="1.6" fill="#38bdf8"/><circle cx="60" cy="42" r="1.6" fill="#22c55e"/>' +
+          '<ellipse cx="30" cy="74" rx="4" ry="9" fill="#fff" opacity=".4"/>' +
+          face(50, 78, 1, 'smile');
+      },
       lime: function (u) {
         return '<defs>' + rad(u + 'b', [[0, '#c3ec86'], [0.55, '#80c646'], [1, '#4f962b']]) + '</defs>' + SHADOW +
           arms('#78bd40', '#4a8f28', 18, 80, 82, 80) + feet('#4a8f28', 40, 60, 107.5, 6) +
@@ -5691,12 +5861,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // from the app shown to it hidden, goes as the app is put away, in the background (nobody waits for it),
   // with the key the server gave its person (never the PIN); one that could not go, the next time. Staff
   // are told at the foot of ฉัน (use-about), the owner looks at it at ภาพรวม › การใช้แอป.
+  // 2.13.4 (E4 E5): เริ่มกรอกฟอร์มแล้วส่งไหม (ชื่อฟอร์มเท่านั้น) การ์ดชวนบันทึกขึ้นจอไหม เปิดแอปจากแจ้งเตือนไหน
+  // (useFormBegin useSeenWatch useFromPush)
   var USE_Q = 'seoulful.use', USE_KEYS = 'seoulful.usekeys', USE_LAST = 'seoulful.uselast';
   // (a stretch is cut in two after 30 minutes or 800 events: the shop's screen is never put away)
   var USE_EV_MAX = 800, USE_SPAN = 30 * 60000, USE_Q_MAX = 60, USE_Q_SIZE = 400000, USE_SEND_BYTES = 60000;
   // (one sent but not heard of goes again this long on: 20 s on the server on Cloudflare, where it goes while the app is on screen, useNow)
   var USE_AGAIN = EDGE ? 20000 : 600000;
-  var USE = { cur: null, page: '', act: null, wait: {}, seq: 0, dev: '', last: '' };
+  var USE = { cur: null, page: '', act: null, wait: {}, seq: 0, dev: '', last: '', seen: {}, go: '' };
   var USE_VIEW = { loading: 'กำลังเปิด', moved: 'แอปย้ายที่', error: 'เปิดไม่ได้', offline: 'ไม่มีเน็ต', start: 'เลือกชื่อ', pin: 'ใส่ PIN', ownerLogin: 'ใส่รหัสเจ้าของร้าน', ownerCode: 'ใส่รหัสจากอีเมล' };
   var USE_TAB = { home: 'หน้าแรก', team: 'ทีม', friends: 'เพื่อน', ideas: 'ไอเดีย', me: 'ฉัน', history: 'ประวัติการทำงาน', slips: 'สลิปเงินเดือน', leave: 'วันลา', order: 'สั่งของ', approve: 'อนุมัติ' };
   var USE_OWNER_TAB = { overview: 'ภาพรวม', pay: 'เงินเดือน', team: 'ทีม', staff: 'พนักงาน', settings: 'ตั้งค่า' };
@@ -5711,6 +5883,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function useStart(kind, t0) {
     USE.cur = { id: useId(), at: 0, t0: t0, kind: kind, who: '', kiosk: '', ver: CODE_VERSION, ev: [], shown: null, fresh: null, errs: 0 };
     USE.page = '';
+    // (การ์ดขึ้นจอนับครั้งเดียวต่อการเปิดหรือกลับเข้าแอป · กดแจ้งเตือนตอนแอปยังไม่ขึ้นจอ นับตอนขึ้นจอ)
+    if (kind !== 'more') {
+      USE.seen = {};
+      if (USE.go) { useEv('n', USE.go); USE.go = ''; }
+    }
   }
   function useEv(k) {
     var u = USE.cur;
@@ -5778,7 +5955,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!u || action === 'usage') return 0;
     var a = USE.act;
     var n = ++USE.seq;
-    USE.wait[n] = { id: u.id, t: performance.now(), action: action, by: a && performance.now() - a.t < 2000 ? a.act : '' };
+    var pressed = a && performance.now() - a.t < 2000;
+    USE.wait[n] = { id: u.id, t: performance.now(), action: action, by: pressed ? a.act : '', form: pressed ? useFormOther() : '' };
     return n;
   }
   // วัดบนมือถือ (13 ต.ค. 2569): what a phone measured went only as the app was put away (useSend). The owner's
@@ -5805,6 +5983,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var w = n ? USE.wait[n] : null;
     if (!w) return;
     delete USE.wait[n];
+    // (ฟอร์มอื่นในแผ่น: ปุ่มที่กดในแผ่นนั้นส่งถึงหลังบ้านสำเร็จ = ส่งแล้ว)
+    if (res === 'ok' && w.form && USE_FORMS[w.form]) useFormSent(w.form);
     var u = USE.cur;
     if (!u || u.id !== w.id) return;
     u.ev.push(['c', Math.max(0, Math.round((w.t - u.t0) / 100) / 10), w.action, Math.round(performance.now() - w.t), String(res || ''), w.by]);
@@ -5815,6 +5995,52 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var u = USE.cur;
     if (!u || ++u.errs > 20) return;
     useEv('x', String(msg).slice(0, 160));
+  }
+  // ---- บอกเจ้าของ (2.13.4 E4 E5): ฟอร์มที่เริ่มกรอกแล้วส่งไหม การ์ดชวนบันทึกขึ้นจอ เปิดแอปจากแจ้งเตือน ----
+  // ฟอร์มเก็บแค่ชื่อกับขั้น (1 เริ่มกรอก · 2 ส่งสำเร็จ พร้อมจำนวนเรื่อง) ไม่เก็บสิ่งที่พิมพ์ · หลังบ้านนับรายสัปดาห์
+  // เริ่ม − ส่ง = เริ่มแล้วไม่ส่ง · ที่พิมพ์ค้างที่แอปเก็บไว้ (บันทึกหน้างาน ความคิดเห็น) กลับมาส่งทีหลังไม่นับเริ่มซ้ำ
+  var USE_FORMS = {};
+  function useFormBegin(name, kept) {
+    if (USE_FORMS[name]) return;
+    USE_FORMS[name] = 1;
+    if (!kept) useEv('f', name, 1);
+  }
+  function useFormSent(name, n) {
+    useFormBegin(name);
+    delete USE_FORMS[name];
+    useEv('f', name, 2, n || 1);
+  }
+  /** ฟอร์มอื่นของพนักงานในแผ่นที่เปิดอยู่ (ชื่อแผ่น) · นอกแผ่นไม่นับ เช่น ช่องค้นหา */
+  function useFormOther() {
+    return S.view === 'staff' && sheetState ? 'แผ่น ' + useSheetName(sheetState) : '';
+  }
+  document.addEventListener('input', function (ev) {
+    var el = ev.target;
+    if (!el || !el.dataset || el.dataset.dl || el.id === 'fb-text' || /^(search|password|file)$/.test(el.type || '')) return;
+    var name = useFormOther();
+    if (name) useFormBegin(name);
+  }, true);
+  /** การ์ดที่มี data-seen ขึ้นจอจริง (เห็นครึ่งการ์ดขึ้นไป) ครั้งเดียวต่อการเปิดหรือกลับเข้าแอป */
+  var useSeenObs = null;
+  function useSeenWatch(app) {
+    if (!window.IntersectionObserver || !app) return;
+    if (!useSeenObs) {
+      useSeenObs = new IntersectionObserver(function (list) {
+        list.forEach(function (x) {
+          var name = x.target.dataset.seen;
+          if (!name || !x.isIntersecting || x.intersectionRatio < 0.5 || document.visibilityState === 'hidden' || USE.seen[name]) return;
+          USE.seen[name] = 1;
+          useEv('v', name);
+        });
+      }, { threshold: [0.5] });
+    }
+    useSeenObs.disconnect();
+    Array.prototype.forEach.call(app.querySelectorAll('[data-seen]'), function (el) { useSeenObs.observe(el); });
+  }
+  /** เปิดแอปจากแจ้งเตือน: ที่แจ้งเตือนชี้ไป (go) · แอปยังไม่ขึ้นจอ นับตอนขึ้นจอ (useStart) */
+  function useFromPush(go) {
+    go = String(go || 'bell').slice(0, 20);
+    if (USE.cur && document.visibilityState !== 'hidden') useEv('n', go); else USE.go = go;
   }
   /** The phone, in a few words: its system, browser, from the home screen or not, screen, memory, connection. */
   function useDev() {
@@ -6844,6 +7070,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     tick();
     usePage();
     useShown(app);
+    useSeenWatch(app);
   }
   /** Which tab of the tab bar on the screen is chosen (-1: none). */
   function tabIndex(root) {
@@ -8422,18 +8649,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var me = h.me;
     var approver = me.role === 'approver';
     var st = h.status || {};
+    // ลงเวลาก่อนเกม: การ์ดลงเวลาอยู่จอแรกเสมอ แถวชิปเกมอยู่ใต้งานของวันนี้ · การ์ดชวนบันทึกอยู่ใต้การ์ดลงเวลา (เจ้าของ ok 27 ต.ค. 2569)
     return html`<div class="stack">
       <div class="hello-row"><div class="hello">${greeting()}<br>${nameTag(me, ownName(me))}${S.homeErr ? staleNote(S.homeAt) : ''}</div>${h.level ? html`<div class="me-duo">${h.level.look && h.level.look.p ? html`<button class="me-pet pet-box ${h.level.pet && !h.level.pet.today ? 'wants' : ''}" data-act="pet-pat" aria-label="ลูบหัว${h.level.pet ? h.level.pet.name : 'สัตว์เลี้ยง'}">${raw(PET_ART(h.level.look.p, h.level.look))}</button>` : ''}<button class="me-char" data-act="char-go" aria-label="ตัวละครของฉัน แตะเพื่อเล่นท่า">${raw(charOf(h.level.look))}${chFx(h.level.look)}</button></div>` : ''}</div>
-      ${h.level ? welcomeCard(h.level) : ''}
-      ${h.level ? html`<div class="lv-chips">${levelChip(h.level)}${shelfChip(h.level)}${plazaChip(h.level)}<button class="lv-chip" data-act="shop-open"><span class="gem">${icon('bag')}</span><span>แต่งตัว</span>${icon('right')}</button></div>${questRow(h.level.quest)}${salesRow(h.sales)}` : ''}
       ${!st.checkedIn && !st.leaveToday && !st.closedToday ? rainBanner(h.rain, 'home') : ''}
       ${todayCard()}
+      ${ideasLink(h)}
       ${checkDue(h.check)}
       ${dailyDue(h.daily)}
       ${pushCard()}
+      ${h.level ? welcomeCard(h.level) : ''}
+      ${h.level ? html`<div class="lv-chips">${levelChip(h.level)}${shelfChip(h.level)}${plazaChip(h.level)}<button class="lv-chip" data-act="shop-open"><span class="gem">${icon('bag')}</span><span>แต่งตัว</span>${icon('right')}</button></div>${questRow(h.level.quest)}${salesRow(h.sales)}` : ''}
       ${h.level ? dayCard(h.level.day) : ''}
       ${fbCheer(h.feedback)}
-      ${ideasLink(h)}
       ${monthCard(h.month)}
       ${orderCard(h.order)}
       ${h.order && h.order.keeper ? mealCard(h.order.staffMeal, false) : ''}
@@ -8449,7 +8677,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!d) return '';
     var mine = (d.mine || []).filter(function (x) { return x.date === d.today; }).length;
     var r = (h.level && h.level.rules) || { note: 2 };
-    return html`<button class="card ideas-link" data-act="tab" data-tab="ideas"><span class="fb-ico">${icon('note')}</span><div class="grow"><b>${mine ? 'วันนี้บันทึกแล้ว ' + mine + ' เรื่อง' : 'วันนี้ที่ร้านเป็นยังไงบ้าง'}</b><span>บันทึกหน้างาน · ส่งไอเดีย · เรื่องละ +${r.note} แต้ม</span></div>${icon('right')}</button>`;
+    return html`<button class="card ideas-link" data-act="ideas-invite" data-seen="ชวนบันทึก"><span class="fb-ico">${icon('note')}</span><div class="grow"><b>${mine ? 'วันนี้บันทึกแล้ว ' + mine + ' เรื่อง' : 'วันนี้ที่ร้านเป็นยังไงบ้าง'}</b><span>บันทึกหน้างาน · ส่งไอเดีย · เรื่องละ +${r.note} แต้ม</span></div>${icon('right')}</button>`;
   }
   function ideasView() {
     var h = S.home;
@@ -8458,10 +8686,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="stack">
       <div class="page-h"><div class="hello" style="font-size:26px;margin:0">ช่วยกันทำร้านให้ดีขึ้น</div><span class="small muted">ทุกเรื่องที่บอก เจ้าของร้านอ่านทุกเรื่อง และได้แต้ม</span></div>
       ${dailyDue(d)}
+      ${dailyCard(d)}
       ${fbCheer(h.feedback)}
       ${ideasScore(l, d)}
       ${ideasChamp(l)}
-      ${dailyCard(d)}
       ${feedbackInvite(h.feedback)}
     </div>`;
   }
@@ -8492,8 +8720,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${row(c.month, ui3('ui-crown', '👑'), 'ดาวเด่นเดือนที่แล้ว', 'ผ้าคลุมดาวเด่น')}
       <div class="champ-race"><span>สัปดาห์นี้ฉันได้ <b>${w.mine}</b> แต้ม · เฉลี่ย ${lvRate(w.rate)}/วัน</span><span class="${w.need ? 'muted' : 'ok'}">${w.need ? 'อีก ' + w.need + ' แต้มได้ดาวเด่น' : 'ถึงแล้ว รักษาไว้ถึงวันอาทิตย์'}</span></div>
       <i class="q-bar"><i style="width:${w.mine + w.need ? Math.round((w.mine / (w.mine + w.need)) * 100) : 0}%"></i></i>
-      <p class="small muted" style="margin:8px 0 0">ได้ทุกคนที่แต้มเฉลี่ยตั้งแต่ ${c.rate || 2} แต้มต่อวันที่มาทำงาน (ราวบันทึกวันละเรื่อง) ไม่ต้องแข่งกับใคร ลา ป่วย หรือวันหยุดไม่เสียเปรียบ · ทั้งสัปดาห์ (อย่างน้อย ${c.weekMin} แต้ม) ได้ป้ายดาวเด่น · ทั้งเดือน (อย่างน้อย ${c.monthMin} แต้ม) ได้ผ้าคลุมดาวเด่น ระหว่างเดือนได้ใส่มงกุฎ${c.old ? ' · สัปดาห์นี้คนที่ได้มากสุดได้ด้วยตามกติกาเดิม' : ''} · ${got}</p>
+      <div class="row" style="justify-content:space-between;align-items:center;gap:8px;margin-top:8px"><span class="small muted">ได้ทุกคนที่ทำถึง ไม่ต้องแข่งกับใคร${c.weeks || c.months ? ' · ' + got : ''}</span><button class="btn sm ghost tap" data-act="champ-rules">ดูกติกา</button></div>
     </section>`;
+  }
+  /** กติกาดาวเด่นเต็ม ข้อความเดิมทุกคำ เปิดจากปุ่ม ดูกติกา บนการ์ด (2.13.4 T3: การ์ดเหลือบรรทัดเดียว) */
+  function openChampRules() {
+    var c = S.home && S.home.level && S.home.level.champ;
+    if (!c) return;
+    var got = c.weeks || c.months ? 'ฉันเคยได้ ' + [c.weeks ? 'ดาวเด่น ' + c.weeks + ' สัปดาห์' : '', c.months ? 'ผ้าคลุม ' + c.months + ' เดือน' : ''].filter(Boolean).join(' · ') : 'บันทึกหน้างานเรื่องละ +2 แต้ม';
+    openSheet({ title: 'ดาวเด่นช่วยร้าน', body: html`<p class="mt0">ได้ทุกคนที่แต้มเฉลี่ยตั้งแต่ ${c.rate || 2} แต้มต่อวันที่มาทำงาน (ราวบันทึกวันละเรื่อง) ไม่ต้องแข่งกับใคร ลา ป่วย หรือวันหยุดไม่เสียเปรียบ · ทั้งสัปดาห์ (อย่างน้อย ${c.weekMin} แต้ม) ได้ป้ายดาวเด่น · ทั้งเดือน (อย่างน้อย ${c.monthMin} แต้ม) ได้ผ้าคลุมดาวเด่น ระหว่างเดือนได้ใส่มงกุฎ${c.old ? ' · สัปดาห์นี้คนที่ได้มากสุดได้ด้วยตามกติกาเดิม' : ''} · ${got}</p>`, foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
   }
   /** Points a work day, as read: 2.5, 3, 0. */
   function lvRate(r) { r = +r || 0; return String(Math.round(r * 10) / 10); }
@@ -8685,7 +8920,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${row('data-act="refresh-home"', 'refresh', 'รีเฟรชข้อมูล', '')}
         <button class="item danger" data-act="logout-staff"><span class="me-ic">${icon('logout')}</span><div class="grow"><div class="t">ออกจากระบบในเครื่องนี้</div></div></button>
       </div></section>
-      <button class="use-note" data-act="use-about">${icon('info')}<span>ร้านเก็บสถิติการใช้แอป (เปิดหน้าไหน กดปุ่มไหน แอปตอบเร็วไหม) เพื่อปรับปรุงแอปให้เร็วและใช้ง่ายขึ้น ไม่เก็บสิ่งที่พิมพ์ · <u>ดูรายละเอียด</u></span></button>
+      <button class="use-note" data-act="use-about">${icon('info')}<span>ร้านเก็บสถิติการใช้แอป (เปิดหน้าไหน กดปุ่มไหน เริ่มกรอกแล้วส่งไหม แอปตอบเร็วไหม) เพื่อปรับปรุงแอปให้เร็วและใช้ง่ายขึ้น ไม่เก็บสิ่งที่พิมพ์ · <u>ดูรายละเอียด</u></span></button>
     </div>`;
   }
 
@@ -10512,7 +10747,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // Clocked in with this phone: the how-to under the button is not needed again.
     if (S.staff) LS.set('seoulful.clocked.' + S.staff.empId, 1);
     openSheet({ title: 'ลงเวลาเข้างาน', body: html`<div class="result ${r.tone}">${resultMark(r)}<h2>${r.title}</h2>${r.lines.map(function (l, i) { return html`<p class="${i === 0 ? 'first' : ''}">${l}</p>`; })}</div>`,
-      foot: html`<button class="btn primary" data-act="sheet-close">เรียบร้อย</button>` });
+      foot: html`<button class="btn" data-act="dl-goto">${icon('note')} เจออะไรในร้าน บันทึก</button><button class="btn primary" data-act="sheet-close">เรียบร้อย</button>` });
     charGo($('.res-char'));
   }
   /**
@@ -10565,7 +10800,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="list">${list.map(function (x) {
         var mine = x.empId === me;
         return html`<div class="item stacked" style="padding-left:0;padding-right:0">${avatar(empById(x.empId) || { name: x.name })}<div class="grow"><div class="t">${x.name}</div><div class="s">${thShort(x.date)} · ${x.in} น.${x.dist != null ? ' · ห่าง ' + distText(x.dist) : x.away ? ' · นอกร้าน' : ''}</div>${x.why ? html`<div class="review-why">${x.why}</div>` : ''}</div>
-          <div class="row wrapx" style="gap:6px;flex-basis:100%;justify-content:flex-end">${x.screenPhoto ? html`<button class="btn sm" data-act="photo" data-url="${x.screenPhoto}">${icon('image')} รูปจากจอ</button>` : ''}${x.photo ? html`<button class="btn sm" data-act="photo" data-url="${x.photo}">${icon('camera')} รูปจากมือถือ</button>` : ''}${mine ? html`<span class="small muted">รายการของคุณ — เจ้าของร้านตรวจ</span>` : html`<button class="btn sm" data-act="review-fix" data-id="${x.empId}" data-date="${x.date}" data-shift="${x.shift}" data-in="${x.in}">แก้เวลา</button><button class="btn sm primary" data-act="review-ok" data-id="${x.id}">ผ่าน</button>`}</div></div>`;
+          <div class="row wrapx" style="gap:6px;flex-basis:100%;justify-content:flex-end">${x.screenPhoto ? html`<button class="btn sm tap" data-act="photo" data-url="${x.screenPhoto}">${icon('image')} รูปจากจอ</button>` : ''}${x.photo ? html`<button class="btn sm tap" data-act="photo" data-url="${x.photo}">${icon('camera')} รูปจากมือถือ</button>` : ''}${mine ? html`<span class="small muted">รายการของคุณ — เจ้าของร้านตรวจ</span>` : html`<button class="btn sm tap" data-act="review-fix" data-id="${x.empId}" data-date="${x.date}" data-shift="${x.shift}" data-in="${x.in}">แก้เวลา</button><button class="btn sm primary tap" data-act="review-ok" data-id="${x.id}">ผ่าน</button>`}</div></div>`;
       })}</div></section>`;
   }
   function teamView() {
@@ -10741,7 +10976,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return html`<div class="item stacked">${avatar(empById(l.empId) || { name: l.name })}<div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${l.swap ? leaveWhen(l) + ' · ไม่หักและไม่เพิ่มเงิน' : thRange(l.from, l.to) + ' · ' + l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}<div class="s">ขอเมื่อ ${whenAt(l.requestedAt)}${!l.swap && leaveAskedOnDay(l) && l.type !== sickType() && !l.ill ? ' · ขอในวันลา' : ''}</div>${leaveFreeTag(l)}</div>
           <div class="row" style="width:100%;justify-content:flex-end">${mine
             ? html`<span class="pill">รอเจ้าของร้านอนุมัติ</span>`
-            : html`${l.swap ? '' : html`<button class="btn sm ghost" data-act="open-leave-free" data-id="${l.id}" data-decide="1">${l.type === sickType() ? 'ใบแพทย์ / ' : ''}ไม่หัก…</button>`}<button class="btn sm" data-act="decide-leave" data-id="${l.id}" data-ok="false">ไม่อนุมัติ</button><button class="btn sm primary" data-act="decide-leave" data-id="${l.id}" data-ok="true">อนุมัติ</button>`}</div></div>`;
+            : html`${l.swap ? '' : html`<button class="btn sm ghost tap" data-act="open-leave-free" data-id="${l.id}" data-decide="1">${l.type === sickType() ? 'ใบแพทย์ / ' : ''}ไม่หัก…</button>`}<button class="btn sm tap" data-act="decide-leave" data-id="${l.id}" data-ok="false">ไม่อนุมัติ</button><button class="btn sm primary tap" data-act="decide-leave" data-id="${l.id}" data-ok="true">อนุมัติ</button>`}</div></div>`;
       })}</div>` : html`<div class="empty">ไม่มีคำขอรออนุมัติ</div>`}</section>
       ${L.recent.length ? html`<details class="card flush"><summary class="item" style="cursor:pointer"><span class="grow t">การลาล่าสุด (${L.recent.length})</span></summary><div class="list">${L.recent.map(function (l) {
         var st = LEAVE_STATUS[l.status] || [l.status, ''];
@@ -11224,7 +11459,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${salesOwnerCard(o.sales)}
       ${orderOwnerCard(o.order)}
       ${feedbackCard(o.feedback)}
-      ${pushTeamCard(o.push)}
+      ${pushTeamCard(o.push, o.pushFails)}
       ${useCard(o.usage)}
       ${(o.rainReview || []).length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ฝนตกที่ควรตรวจ</span></div><p class="small muted" style="margin:6px 16px 0">ข้อมูลอากาศไม่ตรงกับที่บันทึก บันทึกย้อนหลัง หรือปิดตอนที่ยังมีฝน · ถูกต้อง = คงไว้ · ลบ = ทุกคนที่ลงเวลาในช่วงนั้นไม่ได้ผ่อนผันฝนตก</p><div class="list">${o.rainReview.map(function (x) { return entryRow(x, true); })}</div></section>` : ''}
       ${(o.clockFixes || []).length ? html`<section class="card flush"><button class="item" data-act="clock-fixes">${icon('clock')}<span class="grow">แก้เวลาและผ่อนผันสาย ${o.clockFixes.length} รายการ<span class="s" style="display:block">ลงแทน แก้ ลบ อนุญาตเข้าช้า ฝนตก · 45 วัน · แจ้งคุณทุกครั้งแล้ว</span></span>${icon('right')}</button></section>` : ''}
@@ -11325,10 +11560,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     ['ประกันสังคม', ['ssoRate', 'ssoMin', 'ssoMax']],
     ['แจ้งเตือน', ['emailOnApprove', 'ownerEmail', 'lineToken', 'lineAnnounceLeave', 'lineRainNotice', 'lineNews', 'lineHour']],
     ['ความคิดเห็นจากพนักงาน', [], githubHelp],
-    ['บันทึกหน้างาน', ['dailyLeads', 'menuList']],
+    ['บันทึกหน้างาน', ['dailyLeads', 'menuList', 'dailyAsk']],
     ['เกมของทีม', ['gameClosed']],
     ['เช็กมาตรฐาน (หัวหน้าเช็ก)', ['checkTimes', 'checkFront', 'checkKitchen']],
-    ['เป้ายอดขายทีม (แต้มทุกคน)', ['salesTarget', 'salesGrow', 'salesPoints']],
+    ['เป้ายอดขายทีม (แต้มทุกคน)', ['salesTarget', 'salesPoints']],
     ['ความปลอดภัย', ['ownerPin']],
   ];
   /**
@@ -11612,13 +11847,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** Under the greeting: the level, the points, and how far the next level is. */
   function levelChip(l) {
     if (!l) return '';
-    if (l.lv) i3Want('lv-' + l.lv);
+    if (l.lv) i3Want('lv-' + Math.min(l.lv, 6));
     i3Want('ui-coin');
     i3Want('fx-heart');
     var names = lvNames(l);
     var what = l.lv ? html`ระดับ<b>${names[l.lv]}</b> · ${cnt('pts', l.points)} แต้ม` : html`<b>เริ่มสะสมแต้ม</b>`;
     var more = l.next == null ? '' : l.lv ? 'อีก ' + (l.next - l.points) + ' ถึง' + names[l.lv + 1] : 'บันทึก 1 เรื่องได้' + LV_LOOK[1];
-    return html`<button class="lv-chip" data-act="lv-open"><span class="gem ${l.lv ? 'lv' + l.lv : ''}">${icon(l.crown ? 'crown' : 'spark')}</span><span>${what}${more ? html` <small>· ${more}</small>` : ''}</span>${icon('right')}</button>`;
+    return html`<button class="lv-chip" data-act="lv-open"><span class="gem ${l.lv ? lvCls(l.lv) : ''}">${icon(l.crown ? 'crown' : 'spark')}</span><span>${what}${more ? html` <small>· ${more}</small>` : ''}</span>${icon('right')}</button>`;
   }
   function lvNames(l) { return l && l.levels ? l.levels.map(function (x) { return x[1]; }) : LV_NAMES; }
   /** The room: how many figures, and what waits there (an offer to swap, compliments, a free box, a new series), said with a glow. */
@@ -11676,6 +11911,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="dm-list">${day.missions.map(function (m) {
         return html`<button class="dm ${m.done ? 'done' : ''}" data-act="dm-go" data-kind="${m.kind}"><i class="dm-ck">${icon(m.done ? 'check' : MISSION_ICON[m.kind] || 'star')}</i><span>${m.name}</span></button>`;
       })}</div>
+      ${day.stamp || day.work ? '' : html`<button class="dm-work" data-act="dm-go" data-kind="note">${icon(MISSION_ICON.note)}<span>${day.missions.filter(function (m) { return m.done; }).length >= day.need ? 'อีกนิดเดียว: มาตรงเวลาหรือบันทึกหน้างาน 1 เรื่อง แสตมป์วันนี้ก็มา' : 'วันที่ได้แสตมป์ต้องมาตรงเวลาหรือบันทึกหน้างาน 1 เรื่องด้วย'}</span></button>`}
       <div class="dm-stamps">${day.week.days.map(function (on, i) {
         return html`<i class="st ${on ? 'on' : ''} ${i === ti ? 'today' : ''} ${on && i === ti && justNow ? 'pop' : ''}"><b>${TH_DAYS[(i + 1) % 7]}</b>${on ? html`<span class="st-ink">${icon('star')}</span>` : ''}</i>`;
       })}<span class="st-box ${day.week.box ? 'got' : ''}" aria-label="กล่องฟรี">${icon('gift')}</span></div>
@@ -11773,7 +12009,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var l = o.last;
     return html`<span class="eyebrow">${thShort(w.start)} – ${thShort(w.end)}</span>
       <div class="big" style="margin:4px 0">${money(w.total)}<small> บาท${w.target ? ' / ' + money(w.target) : ''}</small></div>
-      ${w.target ? html`<i class="q-bar"><i style="width:${Math.min(100, w.pct || 0)}%"></i></i><p class="small muted" style="margin:8px 0 0">${w.pct}% · ${w.auto ? 'เป้าอัตโนมัติ: เฉลี่ย 4 สัปดาห์ก่อน +' + o.grow + '%' : 'เป้าที่ตั้งเอง'} · ลูกค้า ${money(w.customers)} คน · ถึงเป้าแล้ว ${o.reached} สัปดาห์${l.target ? ' · สัปดาห์ที่แล้ว ' + l.pct + '%' + (l.reached ? ' ถึงเป้า' : '') : ''}</p>` : html`<p class="small muted" style="margin:6px 0 0">ยังไม่มีเป้า: ใส่ยอดขายครบ 5 วันขึ้นไปสัก 2 สัปดาห์ แอปตั้งให้ หรือตั้งเองที่ ตั้งค่า</p>`}
+      ${w.target ? html`<i class="q-bar"><i style="width:${Math.min(100, w.pct || 0)}%"></i></i><p class="small muted" style="margin:8px 0 0">${w.pct}% · ${w.auto ? 'เป้าอัตโนมัติ: เฉลี่ย 4 สัปดาห์ก่อน' : 'เป้าที่ตั้งเอง'} · ลูกค้า ${money(w.customers)} คน · ถึงเป้าแล้ว ${o.reached} สัปดาห์${l.target ? ' · สัปดาห์ที่แล้ว ' + l.pct + '%' + (l.reached ? ' ถึงเป้า' : '') : ''}</p>` : html`<p class="small muted" style="margin:6px 0 0">ยังไม่มีเป้า: ใส่ยอดขายครบ 5 วันขึ้นไปสัก 2 สัปดาห์ แอปตั้งให้ หรือตั้งเองที่ ตั้งค่า</p>`}
       <p class="small muted" style="margin:6px 0 0">ถึงเป้า ทุกคนที่มาทำงานสัปดาห์นั้นได้ +${o.pts} แต้มต่อวันที่มา · พนักงานเห็นแค่ % ไม่เห็นยอดเงิน</p>`;
   }
   /** A day's sales or customers, saved as the box is left. */
@@ -12730,12 +12966,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // frame (icons.js), laid in their places (the lid flies off the same); from when both have come, the
   // drawn box till then and where there are no 3D files.
   function boxWant(series) {
+    if (series === 's3') return; // ชุดที่ 3 ยังไม่มีภาพกล่องสามมิติ ใช้กล่องที่วาด
     var s = series === 's2' ? 's2' : 's1';
     i3Want('box-' + s + '-body');
     i3Want('box-' + s + '-lid');
   }
   function boxArt(series) {
-    var s = series === 's2' ? 's2' : 's1';
+    var s = series === 's2' || series === 's3' ? series : 's1';
     var art = BOX_ART.replace('class="bx-svg"', 'class="bx-svg ' + s + '"');
     // The sweets' box: pink, with a cream ribbon.
     if (s === 's2') {
@@ -13420,7 +13657,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var tabs = [['fight', 'บุกห้องเพื่อน'], ['team', 'น้องของฉัน'], ['log', 'ประวัติ']];
     return html`<div id="arena">
       <section class="ar-head"><div class="ar-cup"><b>${ui3('ui-trophy', '🏆')} ${d.trophies}</b><span>ถ้วย${d.rank ? ' · อันดับ ' + d.rank : ''}</span></div>
-        <div class="ar-head-tx"><b>${d.closed ? 'พักช่วงร้านยุ่ง ถึง ' + d.closed.until + ' น.' : 'บุกได้อีก ' + d.left + '/' + d.perDay + ' ครั้งวันนี้'}</b><span>ชนะได้ถ้วย ไม่มีใครเสียของ · น้องที่ล้มพักฟื้น ${d.rest} ชม.</span></div></section>
+        <div class="ar-head-tx"><b>${d.closed ? 'พักช่วงร้านยุ่ง ถึง ' + d.closed.until + ' น.' : 'บุกได้อีก ' + d.left + '/' + d.perDay + ' ครั้งวันนี้'}</b><span>ชนะได้ถ้วย ห้องที่โดนบุกไม่เสียถ้วย ไม่มีใครเสียของ · น้องที่ล้มพักฟื้น ${d.rest} ชม.</span></div></section>
       ${d.closed ? html`<p class="ar-closed">${icon('clock')} ศึกน้องพักช่วงร้านยุ่ง ${d.closedTimes.map(function (w) { return w[0] + '–' + w[1]; }).join(' และ ')} น. มาสู้กันตอนพักนะ</p>` : ''}
       ${d.calm ? html`<p class="ar-closed">${icon('shield')} ตอนนี้คุณพักจากศึก ห้องของคุณไม่ถูกบุก และคุณไม่บุกห้องใคร · กลับมาเล่นได้ที่ ฉัน › เล่นแกล้งกับเพื่อน</p>` : ''}
       <div class="seg ar-tabs" role="tablist">${tabs.map(function (t) { return html`<button aria-pressed="${arena.tab === t[0]}" data-act="ar-tab" data-tab="${t[0]}">${t[1]}${t[0] === 'log' && d.log.some(function (x) { return x.answer; }) ? html`<i class="rm-dot">!</i>` : ''}</button>`; })}</div>
@@ -14625,7 +14862,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="dl-tiles">${dlTopics().map(function (t) { return html`<button class="dl-tile ${t[0]}" data-act="dl-quick" data-topic="${t[0]}">${icon(DL_ICON[t[0]] || 'chat')}<span>${DL_SHORT[t[0]] || t[1]}</span></button>`; })}</div>
       ${dlFixingList(d)}
       ${news.length ? html`<button class="dl-news" data-act="dl-mine">${icon('check')}<span>เจ้าของร้านดูเรื่องที่คุณบันทึกแล้ว ${news.length} เรื่อง · ขอบคุณที่บอกนะ</span>${icon('right')}</button>` : ''}
-      <div class="fb-foot"><span>${icon('team')}<span>${team.today ? 'วันนี้ทีมบันทึก ' + team.today + ' เรื่อง' : 'วันนี้ยังไม่มีใครบันทึก'}${team.fixed ? html`<br>เดือนนี้ร้านแก้แล้ว ${team.fixed} เรื่อง` : ''}</span></span>${(d.mine || []).length ? html`<button class="fb-mine-btn" data-act="dl-mine">ของฉัน${mineToday ? ' ' + mineToday : ''}${news.length ? html`<i class="dot" aria-label="เจ้าของร้านดูแล้ว"></i>` : ''}${icon('right')}</button>` : ''}</div>
+      <div class="fb-foot"><span>${icon('team')}<span>${team.today ? 'วันนี้ทีมบันทึก ' + team.today + ' เรื่อง' : 'วันนี้ยังไม่มีใครบันทึก'}${team.fixed ? html`<br>เดือนนี้ร้านแก้แล้ว ${team.fixed} เรื่อง` : ''}</span></span>${(d.mine || []).length ? html`<button class="fb-mine-btn" data-act="dl-mine">บันทึกของฉัน${mineToday ? ' ' + mineToday : ''}${news.length ? html`<i class="dot" aria-label="เจ้าของร้านดูแล้ว"></i>` : ''}${icon('right')}</button>` : ''}</div>
     </section>`;
   }
   /** What a note is about (a name tapped, or typed) and a few words. */
@@ -14705,6 +14942,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!dl) return;
     dl.items[key] = dl.items[key] || { menu: '', detail: '' };
     dl.items[key].menu = name;
+    dlSave();
     var box = $('#dl-menu-' + key);
     if (box) box.value = name;
     dlPickDraw(key);
@@ -14717,14 +14955,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var t = dlTopic(key);
     dl = { date: workDate(), quick: key, open: key, items: {}, cat: {} };
     dl.items[key] = { menu: '', detail: '' };
-    openSheet({ title: t[1], body: html`<div class="fb-prompt"><h3>${t[2]}</h3><p>เขียนสั้น ๆ ก็พอ${DL_NO_NAMES[key] ? ' · เล่าว่าเกิดอะไร ไม่ต้องบอกว่าใครทำ ร้านอยากแก้ที่ต้นเหตุ' : ''} · พิมพ์ไม่ถนัด แตะไมค์บนแป้นพิมพ์แล้วพูดได้</p></div>${dlFields(key, true)}<p class="small muted" style="margin:10px 2px 0">${icon('clock')} ไม่ต้องรีบ ทำงานก่อน บันทึกหลังเลิกงานได้แต้มเท่ากัน · เรื่องเดียวกันเพื่อนบันทึกด้วยได้ ได้แต้มทุกคน</p>`,
+    var back = dlRestore(key);
+    openSheet({ title: t[1], body: html`<div class="fb-prompt"><h3>${t[2]}</h3><p>เขียนสั้น ๆ ก็พอ${DL_NO_NAMES[key] ? ' · เล่าว่าเกิดอะไร ไม่ต้องบอกว่าใครทำ ร้านอยากแก้ที่ต้นเหตุ' : ''} · พิมพ์ไม่ถนัด แตะไมค์บนแป้นพิมพ์แล้วพูดได้</p></div>${dlFields(key, true)}<p class="small muted" style="margin:10px 2px 0">${icon('clock')} ไม่ต้องรีบ ทำงานก่อน บันทึกหลังเลิกงานได้แต้มเท่ากัน · เรื่องเดียวกันเพื่อนบันทึกด้วยได้ ได้แต้มทุกคน</p>${dlPhotoBox()}`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="dl-send">${icon('send')} บันทึก</button>` });
     wireDailyForm();
+    if (back) toast('ที่พิมพ์ค้างไว้ยังอยู่ ส่งต่อได้เลย', 'tip');
   }
   /** The day, topic by topic: the ones tapped happened; the rest did not. */
   function openDailyForm(date) {
     dl = { date: date || workDate(), open: null, items: {}, cat: {} };
+    var back = dlRestore();
+    if (back) dl.open = Object.keys(dl.items)[0];
     showDailyForm();
+    if (back) toast('ที่พิมพ์ค้างไว้ยังอยู่ ส่งต่อได้เลย', 'tip');
   }
   function showDailyForm() {
     openSheet({ use: 'สรุปหน้างาน', title: 'สรุปหน้างาน' + (dl.date === workDate() ? 'วันนี้' : ' ' + dlDay(dl.date)), body: dailyFormBody(), foot: dailyFormFoot() });
@@ -14739,19 +14982,61 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         var has = dlFilled(v);
         var open = dl.open === t[0];
         return html`<div class="dl-row ${has ? 'has' : ''}"><button data-act="dl-toggle" data-topic="${t[0]}" aria-expanded="${open}">${icon(DL_ICON[t[0]] || 'chat')}<span class="grow"><b>${t[2]}</b>${has && !open ? html`<small>${[v.menu, v.detail].filter(function (x) { return String(x || '').trim(); }).join(' — ')}</small>` : ''}</span><span class="dl-mark">${icon(has ? 'check' : open ? 'x' : 'plus')}</span></button>${open ? dlFields(t[0]) : ''}</div>`;
-      })}</div>`;
+      })}</div>${dlPhotoBox()}`;
   }
   function dailyFormFoot() {
     var n = dlCount();
     return html`<button class="btn" data-act="sheet-close">ยกเลิก</button>${n ? html`<button class="btn primary" data-act="dl-send">${icon('send')} ส่ง ${n} เรื่อง</button>` : html`<button class="btn primary" data-act="dl-none">${dl.date === workDate() ? 'วันนี้' : 'วันนั้น'}ไม่มีเรื่อง</button>`}`;
   }
   /** Typing keeps what is written; the send button counts the topics filled. */
+  /**
+   * ที่พิมพ์ค้างในบันทึกหน้างาน เก็บในเครื่องต่อคนต่อวัน: ปิดแผ่น แอปถูกปิด หรือกดแจ้งเตือนเรื่องอื่น กลับมาเปิดก็ยังอยู่
+   * ส่งแล้วลบ · คนอื่นที่เข้าในเครื่องเดียวกันไม่เห็น (2.13.4 · ข้อเสนอเป้าหลัก: เริ่มเขียนแล้วไม่ส่ง)
+   */
+  function dlSave() {
+    if (dl && S.staff && Object.keys(dl.items).some(function (k) { return dlFilled(dl.items[k]); })) useFormBegin('บันทึกหน้างาน');
+    if (!dl || dl.again || !S.staff) return;
+    var kept = LS.get(KEY.dlDraft);
+    var items = kept && kept.emp === S.staff.empId && kept.date === dl.date && kept.items ? kept.items : {};
+    Object.keys(dl.items).forEach(function (k) {
+      var v = dl.items[k];
+      if (dlFilled(v)) items[k] = { menu: String(v.menu || ''), detail: String(v.detail || '') };
+      else delete items[k];
+    });
+    if (Object.keys(items).length) LS.set(KEY.dlDraft, { emp: S.staff.empId, date: dl.date, items: items });
+    else LS.del(KEY.dlDraft);
+  }
+  /** ใส่ที่พิมพ์ค้างของคนนี้วันนี้กลับเข้าแผ่น (only: เฉพาะหัวข้อเดียวของแผ่นเร็ว) · คืน true ถ้ามี */
+  function dlRestore(only) {
+    var kept = LS.get(KEY.dlDraft);
+    if (!dl || !kept || !kept.items || !S.staff || kept.emp !== S.staff.empId || kept.date !== dl.date) return false;
+    var got = false;
+    Object.keys(kept.items).forEach(function (k) {
+      if ((only && k !== only) || !dlFilled(kept.items[k])) return;
+      dl.items[k] = { menu: String(kept.items[k].menu || ''), detail: String(kept.items[k].detail || '') };
+      got = true;
+    });
+    if (got) useFormBegin('บันทึกหน้างาน', true);
+    return got;
+  }
+  /** ส่งสำเร็จ: ลบที่ส่งไปแล้วออกจากที่เก็บในเครื่อง (แผ่นเร็วลบเฉพาะหัวข้อนั้น หัวข้ออื่นที่พิมพ์ค้างยังอยู่) */
+  function dlSent(none) {
+    var kept = LS.get(KEY.dlDraft);
+    if (!dl || dl.again || !kept || !kept.items) return;
+    if (!none && dl.quick) {
+      delete kept.items[dl.quick];
+      if (Object.keys(kept.items).length) { LS.set(KEY.dlDraft, kept); return; }
+    }
+    LS.del(KEY.dlDraft);
+  }
   function wireDailyForm() {
+    wireDailyPhoto();
     Array.prototype.forEach.call(document.querySelectorAll('[data-dl]'), function (el) {
       el.oninput = function () {
         var k = el.dataset.dl;
         dl.items[k] = dl.items[k] || { menu: '', detail: '' };
         dl.items[k][el.dataset.f] = el.value;
+        dlSave();
         if (el.dataset.f === 'menu') dlPickDraw(k);
         if (dl.quick) return;
         setSheetFoot(dailyFormFoot());
@@ -14770,16 +15055,62 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (pick && pick.firstElementChild) pick.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     else if (box) box.focus();
   }
+  /** รูปที่แนบกับบันทึก 1 รูป ไม่บังคับ: ช่องแนบ หรือรูปที่เลือกแล้วพร้อมปุ่มเอาออก */
+  function dlPhotoBox() {
+    if (!dl) return '';
+    return html`<div class="dl-photo" id="dl-photo">${dl.photo ? html`<img src="${dl.photo}" alt="รูปที่แนบ"><button class="fb-x" data-act="dl-photo-x" aria-label="เอารูปออก">${icon('x')}</button>` : html`<label class="dl-photo-add">${icon('image')}<span>แนบรูป 1 รูป (ไม่บังคับ)</span><input type="file" id="dl-photo-in" accept="image/*"></label>`}</div>`;
+  }
+  function dlPhotoRedraw() {
+    var box = $('#dl-photo');
+    if (box) box.outerHTML = String(dlPhotoBox());
+    wireDailyPhoto();
+  }
+  /** รูปที่เลือก ย่อแบบรูปลงเวลา (ด้านยาว 720 จุด JPEG 0.7) เก็บไว้รูปเดียว */
+  function wireDailyPhoto() {
+    var inp = $('#dl-photo-in');
+    if (!inp) return;
+    inp.onchange = function () {
+      var file = inp.files && inp.files[0];
+      if (!file || !dl) return;
+      fileImage(file).then(function (r) {
+        var url = drawScaled(r.img, r.img.naturalWidth, r.img.naturalHeight, 720).toDataURL('image/jpeg', 0.7);
+        r.done();
+        if (!dl) return;
+        dl.photo = url;
+        dlPhotoRedraw();
+      }, function () { toast('เปิดรูปนี้ไม่ได้ ลองเลือกรูปอื่น', 'bad'); });
+    };
+  }
+  /** เจ้าของเปิดรูปที่แนบทีละรูป: รูปที่เปิดไว้ก่อนหน้าปิดก่อน ไม่โหลดหลายรูปพร้อมกัน */
+  function openDailyPhoto(btn) {
+    var shut = function () { Array.prototype.forEach.call(document.querySelectorAll('.dl-photo-big'), function (x) { x.remove(); }); };
+    shut();
+    run(btn, call('dailyPhoto', { id: btn.dataset.id }, ownerAuth())).then(function (d) {
+      var box = btn.closest('.dl-photos');
+      if (!d || !d.dataUrl || !box) return;
+      shut();
+      box.insertAdjacentHTML('afterend', String(html`<img class="dl-photo-big" src="${d.dataUrl}" alt="รูปที่แนบกับบันทึก">`));
+    }, function () {});
+  }
+  /** ไปหัวข้อบันทึกหน้างานในแท็บไอเดีย: จากแผ่นหลังลงเวลา (E3) และทางลัดในความคิดเห็น */
+  function goDailyLog() {
+    if (sheetState) closeSheet();
+    if (S.tab !== 'ideas') { S.tab = 'ideas'; S.sub = null; window.scrollTo(0, 0); render(); }
+    setTimeout(function () { var card = $('.dl-card'); if (card) card.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 80);
+  }
   function sendDaily(btn, none) {
     if (!dl) return;
     var items = dl.again ? [dl.items.again] : Object.keys(dl.items).filter(function (k) { return dlFilled(dl.items[k]); }).map(function (k) { return { topic: k, menu: String(dl.items[k].menu || '').trim(), detail: String(dl.items[k].detail || '').trim() }; });
     if (!items.length && !none) { toast('พิมพ์สั้น ๆ สักนิดก่อนนะ', 'tip'); return; }
     var draft = dl.draft || (dl.draft = randomDraft());
     var date = dl.date;
+    var photo = none ? '' : dl.photo || '';
     var had = S.home && S.home.level ? S.home.level.points : null;
-    run(btn, sendAgainOnLoss(function () { return call('dailySend', { draft: draft, date: date, items: items, none: !!none }, staffAuth()); })).then(function (d) {
+    run(btn, sendAgainOnLoss(function () { return call('dailySend', { draft: draft, date: date, items: items, none: !!none, photo: photo }, staffAuth()); })).then(function (d) {
       if (S.home) { S.home.daily = d.daily; if (d.level) S.home.level = d.level; }
       if (d.levels) { S.levels = d.levels; if (S.home) S.home.levels = d.levels; }
+      dlSent(!!none);
+      if (none) delete USE_FORMS['บันทึกหน้างาน']; else useFormSent('บันทึกหน้างาน', items.length);
       dl = null;
       closeSheet();
       render();
@@ -14807,7 +15138,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var list = (d && d.fixing) || [];
     if (!list.length) return '';
     return html`<div class="dl-fixing"><span class="eyebrow">ร้านกำลังแก้ · เจออีกบอกได้เลย</span>${list.map(function (t) {
-      return html`<div class="dl-fx">${icon('tool')}<div class="grow"><b>${dlThingName(t)}</b>${t.ownerNote ? html`<small>ร้าน: ${t.ownerNote}</small>` : html`<small>ตั้งแต่${dlDay(t.since)}</small>`}</div>${t.today ? html`<span class="pill ok">${icon('check')} บอกแล้ววันนี้</span>` : html`<button class="btn sm" data-act="dl-again" data-key="${t.key}">วันนี้เจออีก</button>`}</div>`;
+      return html`<div class="dl-fx">${icon('tool')}<div class="grow"><b>${dlThingName(t)}</b>${t.ownerNote ? html`<small>ร้าน: ${t.ownerNote}</small>` : html`<small>ตั้งแต่${dlDay(t.since)}</small>`}</div>${t.today ? html`<span class="pill ok">${icon('check')} บอกแล้ววันนี้</span>` : html`<button class="btn sm tap" data-act="dl-again" data-key="${t.key}">วันนี้เจออีก</button>`}</div>`;
     })}</div>`;
   }
   /** "Happened again today": the thing, what the owner means to do, and a few words if there are any. */
@@ -14880,7 +15211,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // A phone that says yes buzzes when something of its person's moves; the bell at the top has the
   // same notes for every phone. Until this phone is on, the home screen asks (no way to put it away);
   // the owner and the approvers see who has not turned it on yet.
-  var PUSH = { sub: null, checked: false, msg: false, reg: null, key: '', prep: false };
+  var PUSH = { sub: null, checked: false, msg: false, reg: null, key: '', prep: false, fresh: false, renew: false };
   function isIOS() { return /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
   function inLine() { return /\bLine\//i.test(navigator.userAgent); }
   /** Opened from the home screen's icon (iPhone: only there can a web app be told). */
@@ -14969,7 +15300,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         if (ev.source && ev.source.scriptURL && ev.source.scriptURL !== new URL('sw.js', location.href).href) return;
         var m = ev.data || {};
         if (m.type === 'seoulful-notes') bellNews(m.unread, m.notes);
-        if (m.type === 'seoulful-go') goTo(m.go);
+        if (m.type === 'seoulful-go') { useFromPush(m.go); goTo(m.go); }
       });
     }
     swReg().then(function (reg) {
@@ -15142,17 +15473,50 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function pushPrep() {
     if (HOOKS.push || !pushCan() || PUSH.prep) return;
     var st = pushState();
-    if (st !== 'off' && st !== 'blocked') return;
+    if (st !== 'off' && st !== 'blocked' && st !== 'on') return;
     PUSH.prep = true;
-    pushReg().catch(function () { PUSH.prep = false; });
-    if (!PUSH.key) PUSH.key = LS.get(KEY.pushKey) || '';
-    if (!PUSH.key) call('pushKey', {}, actorAuth()).then(function (d) { PUSH.key = d.key; LS.set(KEY.pushKey, d.key); }, function () {});
+    if (st !== 'on') pushReg().catch(function () { PUSH.prep = false; });
+    // ถามกุญแจจากหลังบ้านทุกครั้งที่เปิดแอป ไม่ใช้ตัวที่จำในเครื่อง: เครื่องที่ลงทะเบียนกับกุญแจเก่าไม่ได้รับอะไรเลย (VapidPkHashMismatch) จึงลงทะเบียนใหม่เอง (2.13.4)
+    call('pushKey', {}, actorAuth()).then(function (d) {
+      if (!d || !d.key) return;
+      PUSH.key = d.key;
+      PUSH.fresh = true;
+      LS.set(KEY.pushKey, d.key);
+      if (PUSH.sub && !sameKey(PUSH.sub, d.key)) pushRenew(PUSH.sub);
+    }, function () { if (!PUSH.key) PUSH.key = LS.get(KEY.pushKey) || ''; });
+  }
+  /**
+   * มือถือเครื่องนี้ลงทะเบียนไว้กับกุญแจเก่าของแอป: ยกเลิกแล้วลงทะเบียนใหม่ด้วยกุญแจของหลังบ้านเอง ไม่ต้องลบแอปออกจากหน้าจอโฮม
+   * (เฉพาะเครื่องที่คนนี้เปิดแจ้งเตือนไว้เอง) · มือถือไม่ยอมเมื่อไม่มีคนกด: การ์ดแจ้งเตือนขึ้นปุ่ม "เปิดแจ้งเตือน" พร้อมบอกว่าต้องเปิดใหม่ (2.13.4)
+   */
+  function pushRenew(sub) {
+    var auth = actorAuth();
+    var to = pushTo();
+    var kept = LS.get(KEY.push);
+    if (!auth || !kept || kept.to !== to || Notification.permission !== 'granted') return Promise.resolve(false);
+    var key = PUSH.key;
+    var old = sub.endpoint;
+    return sub.unsubscribe().catch(function () {}).then(function () {
+      PUSH.sub = null;
+      call('pushOff', { endpoint: old }, auth).catch(function () {});
+      return (PUSH.reg ? Promise.resolve(PUSH.reg) : pushReg()).then(function (reg) {
+        return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uBytes(key) });
+      }).then(function (made) {
+        return call('pushOn', { endpoint: made.endpoint, device: deviceName() }, auth).then(function (d) {
+          PUSH.sub = made;
+          LS.set(KEY.push, { to: to, at: Date.now(), name: pushWho() });
+          var b = myBell();
+          if (b) b.phones = d.on;
+          return pushKeep({ api: SITE.api, token: d.token, page: to === 'OWNER' ? 'owner.html' : './', server: key });
+        });
+      });
+    }).then(function () { PUSH.renew = false; return true; }, function () { PUSH.renew = true; return false; }).then(function (ok) { softRender(); return ok; });
   }
   /** "เปิดแจ้งเตือน": the phone asks its person (first, from this very tap), then signs up with the shop. */
   function pushEnable(btn) {
     var auth = actorAuth();
     var to = pushTo();
-    var key = PUSH.key || LS.get(KEY.pushKey) || '';
+    var key = PUSH.fresh ? PUSH.key : ''; // กุญแจจากหลังบ้านรอบนี้เท่านั้น ไม่ใช้ตัวที่จำในเครื่อง (2.13.4)
     var got;
     if (HOOKS.push) got = HOOKS.push.enable();
     else if (!pushCan()) return;
@@ -15172,6 +15536,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         var reg = r[1][0];
         key = r[1][1].key;
         PUSH.key = key;
+        PUSH.fresh = true;
         LS.set(KEY.pushKey, key);
         // The shop has no phone of this person's: a subscription kept here may be one its service dropped.
         var b = myBell();
@@ -15193,6 +15558,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }).then(function (d) {
       spin(btn, false);
       PUSH.checked = true;
+      PUSH.renew = false;
       var b = myBell();
       if (b) b.phones = d.on;
       if (S.view === 'owner') ownerChanged(); else if (S.home && S.staff) remember('home', S.home, homeTag(S.staff.empId, S.home));
@@ -15293,23 +15659,26 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
             : html`<li>แตะไอคอนหน้าชื่อเว็บด้านบน (ซ้ายของที่อยู่เว็บ)</li><li>สิทธิ์ (Permissions) › การแจ้งเตือน (Notifications) › อนุญาต</li>`}</ol>
         <button class="btn primary block" style="margin-top:14px" data-act="push-on">${icon('refresh')} เปิดแล้ว ลองอีกครั้ง</button></section>`;
     }
-    return html`<section class="card push-card">${head('เปิดแจ้งเตือน ไม่พลาดเรื่องสำคัญ')}
-      <p>มือถือจะเด้งและสั่นเมื่อมีเรื่องของคุณ เช่น</p>${what}${pushElse()}
+    return html`<section class="card push-card">${head(PUSH.renew ? 'แจ้งเตือนหยุดไป กดเปิดใหม่ครั้งเดียว' : 'เปิดแจ้งเตือน ไม่พลาดเรื่องสำคัญ')}
+      ${PUSH.renew ? html`<p><b>แอปเปลี่ยนกุญแจแจ้งเตือน มือถือเครื่องนี้จึงต้องเปิดใหม่ กดปุ่มด้านล่างครั้งเดียว</b></p>` : ''}<p>มือถือจะเด้งและสั่นเมื่อมีเรื่องของคุณ เช่น</p>${what}${pushElse()}
       <button class="btn primary block" data-act="push-on">${icon('bell')} เปิดแจ้งเตือน</button>
       <p class="push-hint">มือถือจะถาม ให้กด "อนุญาต" (Allow) · ไม่มีโฆษณา มีแต่เรื่องของร้าน</p></section>`;
   }
   /** For the owner and the approvers: who is told, and who not yet (the people still working). */
-  function pushTeamCard(p) {
-    if (!p || !(p.off || []).length) return '';
-    var all = p.on.length + p.off.length;
-    return html`<section class="card push-team"><div class="card-h"><span class="eyebrow">${icon('bell')} แจ้งเตือนในมือถือของทีม</span><span class="pill">เปิดแล้ว ${p.on.length}/${all} คน</span></div>
-      <p>ยังไม่เปิด: ${p.off.join(', ')}</p>
-      <p class="muted">ชวนให้กด "เปิดแจ้งเตือน" บนหน้าแรกของแอป · iPhone ต้องเพิ่มแอปลงหน้าจอโฮมก่อน (มีวิธีในการ์ด)</p></section>`;
+  function pushTeamCard(p, fails) {
+    var off = !!(p && (p.off || []).length);
+    var bad = !!(fails && fails.n);
+    if (!off && !bad) return '';
+    var all = p ? p.on.length + p.off.length : 0;
+    return html`<section class="card push-team"><div class="card-h"><span class="eyebrow">${icon('bell')} แจ้งเตือนในมือถือของทีม</span>${p ? html`<span class="pill">เปิดแล้ว ${p.on.length}/${all} คน</span>` : ''}</div>
+      ${off ? html`<p>ยังไม่เปิด: ${p.off.join(', ')}</p>
+      <p class="muted">ชวนให้กด "เปิดแจ้งเตือน" บนหน้าแรกของแอป · iPhone ต้องเพิ่มแอปลงหน้าจอโฮมก่อน (มีวิธีในการ์ด)</p>` : ''}
+      ${bad ? html`<p class="small"><b>ส่งไม่สำเร็จ ${fails.days} วันล่าสุด ${fails.n} ครั้ง</b> · ${fails.why.map(function (w) { return w.text + ' ' + w.n + ' ครั้ง'; }).join(' · ')}</p>` : ''}</section>`;
   }
 
   // -- the bell: what this person was told (the last 30 days)
   var bellList = null; // {notes, unread, phones} as last fetched
-  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', 'order-wait': 'cart', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', 'pin-lock': 'lock', test: 'bell' };
+  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', 'daily-new': 'note', 'daily-seen': 'check', 'daily-ask': 'note', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', 'order-wait': 'cart', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', 'pin-lock': 'lock', test: 'bell' };
   function noteWhen(iso) {
     var ms = now().getTime() - Date.parse(iso);
     if (ms < 60000) return 'เมื่อสักครู่';
@@ -15382,6 +15751,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (go === 'bell' || !go) { if (!bellShown()) openBell(); return; }
     if (owner) {
       if (go === 'fb') { openFeedbackInbox(); return; }
+      if (go === 'daily-new') { openDailyInbox(); return; }
       if (go === 'order-fix') { openOrderOwner('coming'); return; }
       if (go === 'order') { openOrderOwner('list'); return; }
       if (go === 'temp') { openTemp(); return; }
@@ -15396,6 +15766,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (go === 'order') { if (sheetState) closeSheet(); openOrder(); return; }
     if (go === 'ideas') { tab('ideas'); return; }
     if (go === 'fb-mine') { openMyFeedback(); return; }
+    if (go === 'daily-ask') { if (sheetState) closeSheet(); openDailyForm(); return; }
     if (go === 'daily-mine') { openDailyMine(); return; }
     if (go === 'thanks') { openThanksMine(); return; }
     if (go === 'daily') {
@@ -15613,10 +15984,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function useAbout() {
     openSheet({ title: 'สถิติการใช้แอป', body: html`<div class="stack">
       <p class="mt0">ร้านเก็บว่าแอปถูกใช้อย่างไร เพื่อดูว่าตรงไหนช้า ตรงไหนใช้ยาก แล้วปรับให้เร็วและใช้ง่ายขึ้น</p>
-      <div class="hint">${icon('list')}<span><b>ที่เก็บ</b> เปิดแอปตอนไหนและนานเท่าไหร่ อยู่หน้าไหน กดปุ่มไหน แอปตอบช้าหรือเร็ว ข้อความแจ้งปัญหาที่ขึ้น และรุ่นของมือถือกับเบราว์เซอร์</span></div>
+      <div class="hint">${icon('list')}<span><b>ที่เก็บ</b> เปิดแอปตอนไหนและนานเท่าไหร่ อยู่หน้าไหน กดปุ่มไหน เปิดแอปจากแจ้งเตือนไหม การ์ดชวนบันทึกขึ้นจอไหม เริ่มกรอกบันทึก ความคิดเห็น หรือฟอร์มอื่นแล้วส่งหรือไม่ (นับเป็นครั้ง ไม่เก็บสิ่งที่พิมพ์) แอปตอบช้าหรือเร็ว ข้อความแจ้งปัญหาที่ขึ้น และรุ่นของมือถือกับเบราว์เซอร์</span></div>
       <div class="hint">${icon('lock')}<span><b>ที่ไม่เก็บ</b> สิ่งที่พิมพ์ (รวมถึง PIN) รูป และตำแหน่ง</span></div>
       <div class="hint">${icon('user')}<span><b>ใครเห็น</b> เจ้าของร้านเห็นของแต่ละคน · ทุกสัปดาห์ส่งสรุปแบบไม่มีชื่อให้ Claude ผู้ช่วยที่ปรับปรุงแอป ช่วยดูว่าควรแก้ตรงไหนก่อน</span></div>
-      <div class="hint">${icon('clock')}<span><b>เก็บนานเท่าไหร่</b> 60 วัน แล้วลบเอง</span></div>
+      <div class="hint">${icon('clock')}<span><b>เก็บนานเท่าไหร่</b> ราว 1 ปี แล้วลบเอง (ถ้าเต็มก่อน ลบสัปดาห์เก่าสุดก่อน)</span></div>
       <p class="small muted mt0">สงสัยอะไรถามเจ้าของร้านได้เลย · อยากให้แอปดีขึ้นตรงไหน บอกได้ที่แท็บไอเดีย</p></div>`,
       foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
   }
@@ -15626,6 +15997,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function useDur(min) { return min >= 60 ? Math.round(min / 6) / 10 + ' ชม.' : min >= 1 ? Math.round(min) + ' นาที' : Math.round(min * 60) + ' วิ'; }
   function useWeek(ymd) { return thShort(ymd) + ' – ' + thShort(addDays(ymd, 6)); }
   /** On the overview: the last 7 days in a few numbers (worked out at night), and Claude's advice when it has come. */
+  /** เหตุที่สรุปรายสัปดาห์ไม่ถึง Claude บอกเจ้าของ (Usage.gs useSendState_) หรือ '' เมื่อถึง */
+  function useSendLine(x) {
+    if (!x || x.state === 'ok') return '';
+    if (x.state === 'test') return 'แอปทดลองไม่ส่งสรุปถึง Claude (แอปจริงส่งทุกวันจันทร์)';
+    if (x.state === 'no key') return 'สรุปรายสัปดาห์ยังไม่ถึง Claude: ยังไม่ได้เชื่อมกิตฮับ (ตั้งค่า › ความคิดเห็นจากพนักงาน › เชื่อมกิตฮับ)';
+    return 'ส่งสรุปถึง Claude ไม่สำเร็จ' + (x.week ? ' (สัปดาห์ ' + useWeek(x.week) + ')' : '') + (x.error ? ': ' + x.error : '');
+  }
   function useCard(u) {
     var pills = [];
     if (u && u.opens) {
@@ -15637,7 +16015,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<button class="card dl-card use-card" data-act="use-open" style="width:100%;text-align:left">
       <div class="fb-invite-h"><span class="fb-ico">${icon('phone')}</span><div class="grow"><span class="eyebrow">การใช้แอป · 7 วันล่าสุด</span><b>${u && u.opens ? 'เข้าแอป ' + u.opens + ' ครั้ง · ' + u.people + ' คน' : 'ดูว่าทีมใช้แอปอย่างไร ตรงไหนช้า'}</b></div>${icon('right')}</div>
       ${pills.length ? html`<div class="row wrapx" style="gap:6px">${pills.map(function (p) { return html`<span class="pill">${p}</span>`; })}</div><p class="small muted" style="margin:8px 0 0">เวลาที่ใช้ตามปกติ (ครึ่งหนึ่งของครั้งเร็วกว่านี้)</p>` : ''}
+      ${u && u.opens && u.notes != null ? html`<p class="small use-told" style="margin:8px 0 0">บอกเจ้าของ: บันทึกหน้างาน ${u.notes} เรื่อง · ความคิดเห็น ${u.fb} เรื่อง · เริ่มกรอกแล้วไม่ส่ง ${u.unsent} ครั้ง</p>` : ''}
       ${u && u.advice ? html`<div class="hint" style="margin-top:12px">${icon('spark')}<span><b>Claude แนะนำแล้ว</b> · สัปดาห์ ${useWeek(u.advice)} · แตะเพื่ออ่าน</span></div>` : u && u.waiting ? html`<p class="small muted" style="margin:8px 0 0">ส่งสรุปให้ Claude แล้ว รอคำแนะนำ</p>` : ''}
+      ${u && useSendLine(u.send) ? html`<p class="small use-send" style="margin:8px 0 0">${useSendLine(u.send)}</p>` : ''}
     </button>`;
   }
   function openUse() {
@@ -15689,10 +16069,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var max = Math.max.apply(null, d.hours.concat([1]));
     var people = function (p) { return html`<b>${p.name}</b> <span class="small muted">${p.role}</span>
       <div class="s">เข้าแอป ${p.opens} ครั้ง · ใช้ ${useDur(p.min)}${p.game ? ' · เกม ' + useDur(p.game) + (p.gameInShift ? ' (ระหว่างกะ ' + useDur(p.gameInShift) + ')' : '') : ''}${p.problems ? ' · ขึ้นปัญหา ' + p.problems + ' ครั้ง' : ''}${p.last ? ' · ล่าสุด ' + noteWhen(p.last) : ''}</div>
+      ${p.notes || p.fb || p.unsent ? html`<div class="s">บอกเจ้าของ: บันทึก ${p.notes} เรื่อง · ความคิดเห็น ${p.fb} · เริ่มกรอกแล้วไม่ส่ง ${p.unsent}</div>` : ''}
       ${p.top.length ? html`<div class="s">ใช้บ่อย: ${p.top.map(function (x) { return x.name + ' ×' + x.n; }).join(' · ')}</div>` : ''}
       ${p.pages.length ? html`<div class="s">อยู่นาน: ${p.pages.map(function (x) { return x.page + ' ' + useDur(x.min); }).join(' · ')}</div>` : ''}
       ${p.dev ? html`<div class="s">${p.dev}</div>` : ''}`; };
     return html`<div id="use-rep" class="stack">${seg}${advice}
+      ${(d.forms || []).length || (d.cards || []).length ? sec('บอกเจ้าของ', rows((d.forms || []).map(function (x) { return { t: x.form, s: 'เริ่มกรอก ' + x.began + ' · ส่ง ' + x.sent + ' ครั้ง' + (x.items !== x.sent ? ' (' + x.items + ' เรื่อง)' : '') + ' · เริ่มแล้วไม่ส่ง ' + x.unsent + ' · ' + x.people + ' คน' }; }).concat((d.cards || []).map(function (c) { return { t: 'การ์ด' + c.card + ' (หน้าแรก)', s: 'ขึ้นจอ ' + c.seen + ' ครั้ง · ' + c.people + ' คน · แตะ ' + c.tap + ' ครั้ง' }; })), function (x) { return html`${x.t}<div class="s">${x.s}</div>`; }), 'เริ่มกรอก = พิมพ์หรือเลือกอย่างน้อย 1 อย่าง · ไม่เก็บสิ่งที่พิมพ์') : ''}
+      ${(d.pushOpen || []).length ? sec('เปิดแอปจากแจ้งเตือน', rows(d.pushOpen, function (x) { return html`${x.name}<div class="s">${x.n} ครั้ง · ${x.people} คน</div>`; })) : ''}
       ${sec('ความเร็ว', kv([
         ['เปิดแอปจนเห็นหน้าแรก', d.open.shown50, d.open.shown90],
         ['เปิดแอปจนข้อมูลล่าสุดมา', d.open.fresh50, d.open.fresh90],
@@ -15709,7 +16092,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${sec('ข้อความปัญหาที่ขึ้น', d.problems.length ? rows(d.problems.slice(0, 10), function (x) { return html`${x.msg}<div class="s">${x.n} ครั้ง · ${x.people} คน</div>`; }) : html`<p class="small muted mt0">ไม่มี</p>`, d.crashes.length ? 'หน้าแอปสะดุด (ข้อผิดพลาดในโค้ด) ' + d.crashes.reduce(function (n, x) { return n + x.n; }, 0) + ' ครั้ง · Claude ได้รายละเอียดในสรุปรายสัปดาห์' : '')}
       ${(d.notes || []).length ? sec('แจ้งเตือนที่แอปส่ง', rows(d.notes, function (x) { return html`${x.title}<div class="s">${x.n} ครั้ง · ${x.days} วัน</div>`; })) : ''}
       ${d.devices.length ? sec('มือถือและรุ่นแอป', rows(d.devices.slice(0, 8), function (x) { return html`${x.dev}<div class="s">${x.people} คน</div>`; }), 'รุ่นแอป: ' + d.versions.map(function (v) { return v.ver + ' (' + v.n + ')'; }).join(' · ')) : ''}
-      <p class="small muted">เก็บ ${d.keepDays} วัน${d.from ? ' · ข้อมูลตั้งแต่ ' + thShort(ymdOf(new Date(d.from))) : ''} · ทุกวันจันทร์ส่งสรุปแบบไม่มีชื่อให้ Claude</p>
+      <p class="small muted">เก็บราว 1 ปี (เต็มก่อนลบสัปดาห์เก่าสุด)${d.from ? ' · ข้อมูลตั้งแต่ ' + thShort(ymdOf(new Date(d.from))) : ''} · ทุกวันจันทร์ส่งสรุปแบบไม่มีชื่อให้ Claude${useSendLine(d.send) ? ' · ' + useSendLine(d.send) : ''}</p>
     </div>`;
   }
   /** The owner's page of notes; then Claude's summaries are brought back from GitHub, without waiting. */
@@ -15727,6 +16110,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var fixable = g.topic !== 'praise';
     return html`<div class="dl-group"><div class="t">${icon(DL_ICON[g.topic] || 'chat')}<span>${DL_SHORT[g.topic] || g.topic}${g.menu ? ' · ' + g.menu : ''}</span>${g.count > 1 ? html`<span class="pill gold">×${g.count}${g.days > 1 ? ' · ' + g.days + ' วัน' : ''}</span>` : ''}${dlStatusPill(g.status)}${g.again ? html`<span class="pill warn">เจออีก ${g.again}</span>` : ''}${g.back ? html`<span class="pill warn">${icon('alert')} เคยแก้แล้ว กลับมาอีก</span>` : ''}${g.redo ? html`<span class="pill">${icon('edit')} เพิ่มรายละเอียดแล้ว</span>` : ''}</div>
       ${(g.details || []).length || g.detail ? html`<div class="s">${(g.details || [g.detail]).join(' / ')}</div>` : ''}
+      ${(g.photos || []).length ? html`<div class="dl-photos">${g.photos.map(function (id, i) { return html`<button class="btn sm dl-photo-btn" data-act="dl-photo-open" data-id="${id}">${icon('image')} ดูรูป${g.photos.length > 1 ? ' ' + (i + 1) : ''}</button>`; })}</div>` : ''}
       ${(g.people || []).length ? html`<div class="s">${g.people.join(', ')}${g.ownerNote ? ' · ตอบ: ' + g.ownerNote : ''}</div>` : ''}
       ${acts && g.status === 'void' ? html`<div class="acts"><button class="btn sm" data-act="dl-mark" data-ids="${ids}" data-status="fresh">นับแต้มกลับ</button></div>`
         : acts && g.status === 'fixing' ? html`<div class="acts"><button class="btn sm" data-act="dl-fix" data-ids="${ids}">${icon('check')} แก้แล้ว</button><button class="btn sm ghost" data-act="dl-mark" data-ids="${ids}" data-status="unfix">เลิกแก้</button></div>`
@@ -15847,9 +16231,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var news = fbNews(f).length;
     return html`<section class="card fb-invite">
       <div class="fb-invite-h"><span class="fb-ico">${icon('spark')}</span><div class="grow"><span class="eyebrow">ส่งความคิดเห็น</span><b>ช่วยกันทำร้านและแอปให้ดีขึ้น</b></div></div>
-      <p class="small muted">เรื่องเล็กแค่ไหนก็ส่งได้ ไม่แน่ใจก็ส่ง ไม่มีเรื่องไหนผิด · เจ้าของร้านเห็นคนเดียว และตอบทุกเรื่อง</p>
-      <div class="fb-go three"><button class="fb-big idea" data-act="fb-new" data-kind="idea">${icon('bulb')}<b>มีไอเดีย</b><span>เรื่องร้าน หรือแอป</span></button><button class="fb-big" data-act="fb-new" data-kind="bug">${icon('tool')}<b>เจอปัญหา</b><span>ของในร้าน หรือแอป</span></button><button class="fb-big ask" data-act="fb-new" data-kind="ask">${icon('chat')}<b>ไม่แน่ใจ</b><span>ถามก่อนได้</span></button></div>
-      <div class="fb-foot"><span>${icon('team')}${team.sent ? 'ทีมเราเสนอ ' + team.sent + ' เรื่อง' + (team.done ? ' · ใช้ได้แล้ว ' + team.done : '') : 'ยังไม่มีใครเสนอ เป็นคนแรกเลย'}</span>${f.count ? html`<button class="fb-mine-btn" data-act="fb-mine">ของฉัน ${f.count}${news ? html`<i class="dot" aria-label="มีความคืบหน้า"></i>` : ''}${icon('right')}</button>` : ''}</div>
+      <p class="small muted">ไอเดียทำร้านหรือแอปให้ดีขึ้น และเรื่องแอป เล็กแค่ไหนก็ส่งได้ · เจ้าของร้านเห็นคนเดียว และตอบทุกเรื่อง</p>
+      <div class="fb-go three"><button class="fb-big idea" data-act="fb-new" data-kind="idea">${icon('bulb')}<b>มีไอเดีย</b><span>ทำร้านหรือแอปให้ดีขึ้น</span></button><button class="fb-big" data-act="fb-new" data-kind="bug">${icon('tool')}<b>แอปมีปัญหา</b><span>ค้าง กดไม่ไป ตัวเลขไม่ตรง</span></button><button class="fb-big ask" data-act="fb-new" data-kind="ask">${icon('chat')}<b>ถามเรื่องแอป</b><span>ใช้ยังไง ทำได้ไหม</span></button></div>
+      <button class="fb-tolog" data-act="dl-goto">${icon('note')}<span><b>เรื่องในร้าน บันทึกหน้างาน</b><br>ของหมด ของเสีย ลูกค้าบ่น ความสะอาด</span>${icon('right')}</button>
+      <div class="fb-foot"><span>${icon('team')}${team.sent ? 'ทีมเราเสนอ ' + team.sent + ' เรื่อง' + (team.done ? ' · ใช้ได้แล้ว ' + team.done : '') : 'ยังไม่มีใครเสนอ เป็นคนแรกเลย'}</span>${f.count ? html`<button class="fb-mine-btn" data-act="fb-mine">ที่ฉันเสนอ ${f.count}${news ? html`<i class="dot" aria-label="มีความคืบหน้า"></i>` : ''}${icon('right')}</button>` : ''}</div>
     </section>`;
   }
   var FB_CHEER = {
@@ -15866,16 +16251,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   // Sentences to start from: tap one, then finish it in your own words (the shop's things first: small ones count most).
   var FB_STARTERS = {
-    idea: [['อยากให้ร้าน…', 'อยากให้ร้าน'], ['ย้ายของให้หยิบง่าย', 'ย้าย'], ['ลูกค้าถามบ่อย', 'ลูกค้าถามบ่อยว่า'], ['ทำแบบนี้เร็วขึ้น', 'ถ้าทำแบบนี้น่าจะเร็วขึ้น: '], ['อยากให้แอป…', 'อยากให้แอป'], ['อยากให้เตือน…', 'อยากให้แอปเตือนเมื่อ']],
-    bug: [['ของในร้านเสีย', 'ของในร้านเสีย: '], ['ทำงานลำบาก', 'ทำงานลำบากตอน'], ['หน้าค้าง', 'แอปค้างตอน'], ['กดแล้วไม่ไป', 'กดแล้วไม่ไปตรง'], ['ตัวเลขไม่ตรง', 'ตัวเลขไม่ตรง: '], ['สแกนไม่ได้', 'สแกน QR ไม่ได้ตอน']],
-    ask: [['ไม่แน่ใจว่า…', 'ไม่แน่ใจว่า'], ['แบบนี้ปกติไหม', 'เห็นว่า… แบบนี้ปกติไหม'], ['ทำแบบนี้ได้ไหม', 'ทำแบบนี้ได้ไหม: '], ['ใครดูแลเรื่อง…', 'เรื่องนี้ใครดูแล: ']],
+    idea: [['อยากให้ร้าน…', 'อยากให้ร้าน'], ['ย้ายของให้หยิบง่าย', 'ย้าย'], ['ลดขั้นตอน', 'ขั้นตอนนี้ลดได้ไหม: '], ['ทำแบบนี้เร็วขึ้น', 'ถ้าทำแบบนี้น่าจะเร็วขึ้น: '], ['อยากให้แอป…', 'อยากให้แอป'], ['อยากให้เตือน…', 'อยากให้แอปเตือนเมื่อ']],
+    // ความคิดเห็นเหลือเรื่องแอปและไอเดีย เรื่องในร้านบันทึกหน้างาน (เจ้าของ ok 27 ต.ค. 2569) · ชนิดเดิม idea bug ask คงไว้ ข้อมูลเดิมไม่เปลี่ยน
+    bug: [['หน้าค้าง', 'แอปค้างตอน'], ['กดแล้วไม่ไป', 'กดแล้วไม่ไปตรง'], ['ตัวเลขไม่ตรง', 'ตัวเลขไม่ตรง: '], ['สแกนไม่ได้', 'สแกน QR ไม่ได้ตอน'], ['แอปช้า', 'แอปช้าตอน'], ['แจ้งเตือนไม่มา', 'แจ้งเตือนไม่มาตอน']],
+    ask: [['ไม่แน่ใจว่า…', 'ไม่แน่ใจว่า'], ['แบบนี้ปกติไหม', 'แอปขึ้นว่า… แบบนี้ปกติไหม'], ['แอปทำได้ไหม', 'แอปทำแบบนี้ได้ไหม: '], ['กดตรงไหน', 'อยากทำ… ต้องกดตรงไหน']],
   };
   var FB_TITLE = 'ช่วยกันทำร้านและแอปให้ดีขึ้น';
   // A draft kept on the phone (words only) until it is sent: no hurry, no loss.
   function fbDraftKey() { return 'seoulful.fbdraft.' + ((S.staff && S.staff.empId) || ''); }
-  function fbDraftSave() { if (fb) LS.set(fbDraftKey(), { kind: fb.kind, text: fb.text || '' }); }
+  function fbDraftSave() { if (fb) LS.set(fbDraftKey(), { kind: fb.kind, text: fb.text || '' }); if (fb && String(fb.text || '').trim()) useFormBegin('ความคิดเห็น'); }
   function openFeedbackForm(kind) {
-    if (!fb) { var kept = LS.get(fbDraftKey()) || {}; fb = { kind: kind || kept.kind || 'idea', text: kept.text || '', files: [] }; }
+    if (!fb) { var kept = LS.get(fbDraftKey()) || {}; fb = { kind: kind || kept.kind || 'idea', text: kept.text || '', files: [] }; if (String(kept.text || '').trim()) useFormBegin('ความคิดเห็น', true); }
     else if (kind) fb.kind = kind;
     if (!FB_STARTERS[fb.kind]) fb.kind = 'idea';
     openSheet({ title: FB_TITLE, body: feedbackFormBody(), foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="fb-send">${icon('send')} ส่งเลย</button>` });
@@ -15893,11 +16279,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var me = S.home && S.home.me;
     return html`<div class="seg" role="radiogroup" aria-label="เรื่อง">
         <button aria-pressed="${fb.kind === 'idea'}" data-act="fb-kind" data-kind="idea">${icon('bulb')}มีไอเดีย</button>
-        <button aria-pressed="${bug}" data-act="fb-kind" data-kind="bug">${icon('tool')}เจอปัญหา</button>
-        <button aria-pressed="${ask}" data-act="fb-kind" data-kind="ask">${icon('chat')}ไม่แน่ใจ</button></div>
-      <div class="fb-prompt"><h3>${ask ? 'ไม่แน่ใจว่าเป็นเรื่องไหม? ถามได้เลย' : bug ? 'เจออะไรไม่ดี เล่าให้ฟังหน่อย' : 'มีอะไรที่ทำให้ร้านหรือแอปดีขึ้นได้อีก?'}</h3><p>${ask ? 'เล่าสิ่งที่เห็นหรือสงสัย เจ้าของร้านดูให้เองว่าควรทำอะไร' : bug ? 'ในร้านหรือในแอปก็ได้ แนบรูปหรือวิดีโอได้ ไม่ต้องพิมพ์เยอะ' : 'เรื่องเล็กแค่ไหนก็ส่งได้ เรื่องเล็กมักช่วยร้านได้มากที่สุด เขียนสั้น ๆ ก็พอ'}</p></div>
+        <button aria-pressed="${bug}" data-act="fb-kind" data-kind="bug">${icon('tool')}แอปมีปัญหา</button>
+        <button aria-pressed="${ask}" data-act="fb-kind" data-kind="ask">${icon('chat')}ถามเรื่องแอป</button></div>
+      <div class="fb-prompt"><h3>${ask ? 'สงสัยเรื่องแอป? ถามได้เลย' : bug ? 'แอปมีปัญหาตรงไหน เล่าให้ฟังหน่อย' : 'มีอะไรที่ทำให้ร้านหรือแอปดีขึ้นได้อีก?'}</h3><p>${ask ? 'เล่าสิ่งที่เห็นหรือสงสัย เจ้าของร้านดูให้เองว่าควรทำอะไร' : bug ? 'แคปหน้าจอหรืออัดวิดีโอแนบได้ ไม่ต้องพิมพ์เยอะ' : 'เรื่องเล็กแค่ไหนก็ส่งได้ เรื่องเล็กมักช่วยร้านได้มากที่สุด เขียนสั้น ๆ ก็พอ'}</p></div>
+      <button class="fb-tolog" data-act="dl-goto">${icon('note')}<span><b>เรื่องในร้าน บันทึกหน้างานแทน</b><br>ของหมด ของเสีย ลูกค้าบ่น ความสะอาด</span>${icon('right')}</button>
       <div class="fb-starters">${FB_STARTERS[fb.kind].map(function (x, i) { return html`<button class="fb-starter" data-act="fb-start" data-i="${i}">${x[0]}</button>`; })}</div>
-      <textarea class="input" id="fb-text" maxlength="2000" aria-label="${ask ? 'สิ่งที่สงสัย' : bug ? 'ปัญหาที่เจอ' : 'ไอเดียของคุณ'}" placeholder="${ask ? 'เช่น ไม่แน่ใจว่าซอสที่เปิดแล้วเก็บได้กี่วัน' : bug ? 'เช่น ไฟหน้าร้านดวงซ้ายกะพริบ หรือ กดแท็บสลิปแล้วหน้าค้าง' : 'เช่น ย้ายแก้วน้ำไว้ใกล้ประตูครัว เสิร์ฟได้เร็วขึ้น'}">${fb.text}</textarea>
+      <textarea class="input" id="fb-text" maxlength="2000" aria-label="${ask ? 'สิ่งที่สงสัย' : bug ? 'ปัญหาที่เจอ' : 'ไอเดียของคุณ'}" placeholder="${ask ? 'เช่น ขอลาครึ่งวันกดตรงไหน' : bug ? 'เช่น กดแท็บสลิปแล้วหน้าค้าง' : 'เช่น ย้ายแก้วน้ำไว้ใกล้ประตูครัว เสิร์ฟได้เร็วขึ้น'}">${fb.text}</textarea>
       <div class="fb-files">${fb.files.map(function (x, i) {
         return html`<div class="fb-file">${x.t === 'video' ? html`<video src="${x.url}#t=0.1" muted playsinline preload="metadata"></video><span class="fb-badge">${icon('play')}</span>` : html`<img src="${x.url}" alt="">`}<button class="fb-x" data-act="fb-remove" data-i="${i}" aria-label="เอาไฟล์นี้ออก">${icon('x')}</button></div>`;
       })}${fb.files.length < FB_MAX_FILES ? html`<label class="fb-add">${icon('image')}<span>แคปหน้าจอ<br>รูป / วิดีโอ</span><input type="file" id="fb-input" accept="image/*,video/*" multiple></label>` : ''}</div>
@@ -16050,6 +16437,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       mine.files.forEach(function (f) { URL.revokeObjectURL(f.url); });
       if (fb === mine) fb = null;
       LS.del(fbDraftKey());
+      useFormSent('ความคิดเห็น');
       S.fbMine = d.mine;
       // Just sent: not news for its sender.
       fbLooked(d.mine.filter(function (x) { return x.id === 'FB-' + draft; }));
@@ -16061,9 +16449,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       openSheet({ title: FB_TITLE, body: html`<div class="result ok fb-thanks"><div class="mark">${icon('check')}<span class="burst">${[0, 45, 90, 135, 180, 225, 270, 315].map(function (a) { return html`<i style="--a:${a}deg"></i>`; })}</span></div>
           <h2>${mine.kind === 'ask' ? 'ขอบคุณที่ถามนะ!' : 'ขอบคุณที่กล้าบอกนะ!'}</h2><p class="first">ส่งถึงเจ้าของร้านแล้ว · เจ้าของร้านตอบทุกเรื่อง</p>
           <ol class="fb-steps"><li class="on">ส่งแล้ว</li><li>เจ้าของร้านอ่าน</li><li>ร้านรับไปทำ</li><li>ใช้ได้แล้ว</li></ol>
-          <p class="small muted">มีความคืบหน้าเมื่อไร หน้าแรกจะบอก · ดูได้ตลอดที่ "ของฉัน"</p>
+          <p class="small muted">มีความคืบหน้าเมื่อไร หน้าแรกจะบอก · ดูได้ตลอดที่ "ที่ฉันเสนอ"</p>
           ${n > 1 || got > 0 ? html`<p class="fb-count">${icon('spark')} ${[n > 1 ? 'คุณช่วยเสนอแล้ว ' + n + ' เรื่อง' : '', got > 0 ? '+' + got + ' แต้ม' : ''].filter(String).join(' · ')}</p>` : ''}</div>`,
-        foot: html`<button class="btn" data-act="fb-mine">ของฉัน</button><button class="btn primary" data-act="sheet-close">เรียบร้อย</button>` });
+        foot: html`<button class="btn" data-act="fb-mine">ที่ฉันเสนอ</button><button class="btn primary" data-act="sheet-close">เรียบร้อย</button>` });
       lvCheck(d.level);
     }, function (e) {
       openFeedbackForm();
@@ -17179,6 +17567,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'dl-clear': function (el) { dlPickName(el.dataset.topic, ''); },
     'dl-cat': function (el) { dlCat(el.dataset.topic, +el.dataset.i); },
     'dl-send': function (el) { sendDaily(el, false); },
+    'dl-goto': function () { goDailyLog(); },
+    'dl-photo-x': function () { if (dl) { dl.photo = ''; dlPhotoRedraw(); } },
+    'dl-photo-open': function (el) { openDailyPhoto(el); },
     'dl-none': function () { askDailyNone(); },
     'dl-mine': function () { openDailyMine(); },
     'dl-del': function (el) {
@@ -17300,7 +17691,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         var strips = d.items.some(function (x) { return x.screenUrl; });
         openSheet({ use: 'รูปตอนลงเวลา', title: 'รูปตอนลงเวลา · ' + thDate(d.date), wide: true, body: d.items.length
           ? html`<p class="muted small mt0">${strips ? html`<b>รูปจากจอ</b> = กล้องของจอในร้านตอนมีคนสแกน ต้องเห็นคนนั้นยืนสแกนอยู่ · ` : ''}<b>รูปจากมือถือ</b> = สิ่งที่กล้องมือถือเห็นตอนสแกน ต้องเป็นจอหรือป้ายในร้าน ไม่ใช่จอมือถืออีกเครื่อง · กรอบสีส้ม = รอตรวจ · ผู้อนุมัติลงแทนจะไม่มีรูป</p><div class="photo-wall ${strips ? 'wide' : ''}">${d.items.map(function (x) {
-            return html`<figure class="${x.review ? 'review' : ''}"><div class="shots ${x.screenUrl && x.dataUrl ? 'two' : ''}">${x.screenUrl ? html`<img class="strip" src="${x.screenUrl}" alt="รูปจากจอ: ${x.name}">` : ''}${x.dataUrl ? html`<img class="phone" src="${x.dataUrl}" alt="รูปจากมือถือ: ${x.name}">` : ''}</div><figcaption><b>${x.name}</b>${x.in} น.${x.dist != null ? ' · ห่าง ' + distText(x.dist) : x.away ? ' · นอกร้าน' : ''}${x.review ? html`<span class="pill warn" style="margin-top:4px">รอตรวจ</span>` : ''}${x.why ? html`<div class="why">${x.why}</div>` : ''}</figcaption>${x.review ? html`<div class="row"><button class="btn sm" data-act="review-fix" data-id="${x.empId}" data-date="${d.date}" data-shift="${x.shift}" data-in="${x.in}">แก้เวลา</button><button class="btn sm primary" data-act="review-ok" data-id="${x.id}">ผ่าน</button></div>` : ''}</figure>`;
+            return html`<figure class="${x.review ? 'review' : ''}"><div class="shots ${x.screenUrl && x.dataUrl ? 'two' : ''}">${x.screenUrl ? html`<img class="strip" src="${x.screenUrl}" alt="รูปจากจอ: ${x.name}">` : ''}${x.dataUrl ? html`<img class="phone" src="${x.dataUrl}" alt="รูปจากมือถือ: ${x.name}">` : ''}</div><figcaption><b>${x.name}</b>${x.in} น.${x.dist != null ? ' · ห่าง ' + distText(x.dist) : x.away ? ' · นอกร้าน' : ''}${x.review ? html`<span class="pill warn" style="margin-top:4px">รอตรวจ</span>` : ''}${x.why ? html`<div class="why">${x.why}</div>` : ''}</figcaption>${x.review ? html`<div class="row"><button class="btn sm tap" data-act="review-fix" data-id="${x.empId}" data-date="${d.date}" data-shift="${x.shift}" data-in="${x.in}">แก้เวลา</button><button class="btn sm primary tap" data-act="review-ok" data-id="${x.id}">ผ่าน</button></div>` : ''}</figure>`;
           })}</div>`
           : html`<div class="empty">ยังไม่มีรูปตอนลงเวลาของวันนี้</div>` });
       }, function () {});
@@ -17617,6 +18008,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     // how the app is used (#283): what staff are told; the owner's look
     'use-about': function () { useAbout(); },
+    'champ-rules': function () { openChampRules(); },
+    'ideas-invite': function () { ACTIONS.tab({ dataset: { tab: 'ideas' } }); },
     'use-open': function () { openUse(); },
     'use-days': function (el) { loadUse(+el.dataset.days === 30 ? 30 : 7); },
   };
@@ -17829,6 +18222,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var go = q.get('go');
     if (go && /^[a-z-]{2,12}$/.test(go)) {
       S.goAfter = go;
+      useFromPush(go);
       q.delete('go');
       try { history.replaceState(null, '', location.pathname + (String(q) ? '?' + q : '') + location.hash); } catch (e) { /* the address keeps it */ }
     }
