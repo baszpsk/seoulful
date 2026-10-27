@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.1","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"96ee91c8d1f6"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.2","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"197f3a09b417"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -6239,7 +6239,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return v;
     }, function (e) {
       spin(btn, false);
-      toast(e.message, 'bad');
+      // (CONFIRM: ถามยืนยันอีกครั้งแทนข้อความผิดพลาด เช่น อนุมัติสลับวันหยุดที่ทำงานติดกันนาน · งาน 327)
+      if (e.code !== 'CONFIRM') toast(e.message, 'bad');
       if (e.code === 'AUTH' && S.view === 'staff') logoutStaff();
       throw e;
     });
@@ -9920,13 +9921,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           ? html`<button class="stat" style="text-align:left;padding:14px" data-act="vacation-info"><span>${b.type} ${icon('info')}</span>${body}</button>`
           : html`<div class="stat" style="text-align:left;padding:14px"><span>${b.type}</span>${body}</div>`;
       })}</div>
-      <div class="hint">${icon('cal')}<span>ร้านปิด ${fixedHolidayText()} ไม่ต้องลา · แตะลาพักร้อนเพื่อดูว่าได้กี่วัน</span></div>
+      <div class="hint">${icon('cal')}<span>${S.home.me && S.home.me.dayOff != null ? 'วันหยุดประจำ: วัน' + TH_DAYS_LONG[S.home.me.dayOff] + ' · ' : ''}ร้านปิด ${fixedHolidayText()} ไม่ต้องลา · แตะลาพักร้อนเพื่อดูว่าได้กี่วัน</span></div>
       <h3 class="h3">ปฏิทินของทีม</h3>
       ${calCard(S.cal || L.calendar)}
       <h3 class="h3">คำขอของฉัน</h3>
       <section class="card flush">${(L.requests || []).length ? html`<div class="list">${L.requests.map(function (l) {
         var st = LEAVE_STATUS[l.status] || [l.status, ''];
-        return html`<div class="item"><div class="grow"><div class="t">${l.type} · ${thRange(l.from, l.to)}</div><div class="s">${l.days} วัน${l.reason ? ' · ' + l.reason : ''}${l.decisionNote ? ' · ' + l.decisionNote : ''}</div>${leaveFreeTag(l)}</div>
+        return html`<div class="item"><div class="grow"><div class="t">${l.type} · ${leaveWhen(l)}</div><div class="s">${l.swap ? 'ไม่หักและไม่เพิ่มเงิน' : l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}${l.decisionNote ? ' · ' + l.decisionNote : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}${leaveFreeTag(l)}</div>
           <div class="r"><span class="pill ${st[1]}">${st[0]}</span>${l.status === 'pending' ? html`<div><button class="link small" data-act="cancel-leave" data-id="${l.id}">ยกเลิก</button></div>` : ''}</div></div>`;
       })}</div>` : html`<div class="empty">ยังไม่มีคำขอลา</div>`}</section>
     </div>`;
@@ -9942,12 +9943,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var types = B.leaveTypes || [];
     var r = B.rules || {};
     var sick = !!types[0] && types[0].type === sickType();
+    // (สลับวันหยุดขอได้เมื่อตั้งวันหยุดประจำแล้ว · ฟอร์มของผู้อนุมัติหลังบ้านตรวจให้ · งาน 327)
+    var myOff = S.home && S.home.me ? S.home.me.dayOff : null;
     return html`${opts.pickEmp ? html`<label class="field"><span>พนักงาน</span><select class="input" id="lv-emp" data-change="lv-cost">${(B.employees || []).map(function (e) { return html`<option value="${e.id}">${e.name}</option>`; })}</select></label>` : ''}
-      <label class="field"><span>ประเภทการลา</span><select class="input" id="lv-type" data-change="lv-type">${types.map(function (t) { return html`<option value="${t.type}">${t.type}</option>`; })}</select><small id="lv-note">${leaveTypeNote(types[0])}</small></label>
-      <div class="two"><label class="field"><span>ตั้งแต่</span><input class="input" type="date" id="lv-from" data-change="lv-cost" value="${opts.from || today}"></label>
-      <label class="field"><span>ถึง</span><input class="input" type="date" id="lv-to" data-change="lv-cost" value="${opts.to || today}"></label></div>
+      <label class="field"><span>ประเภทการลา</span><select class="input" id="lv-type" data-change="lv-type">${types.map(function (t) { return html`<option value="${t.type}">${t.type}</option>`; })}${opts.pickEmp || myOff != null ? html`<option value="${swapType()}">${swapType()}</option>` : ''}</select><small id="lv-note">${leaveTypeNote(types[0])}</small></label>
+      <label class="field" id="lv-work-row" hidden><span>มาทำงานวันหยุดประจำวันที่</span><input class="input" type="date" id="lv-work" data-change="lv-cost"><small id="lv-work-note"></small></label>
+      <div class="two"><label class="field"><span id="lv-from-label">ตั้งแต่</span><input class="input" type="date" id="lv-from" data-change="lv-cost" value="${opts.from || today}"></label>
+      <label class="field" id="lv-to-row"><span>ถึง</span><input class="input" type="date" id="lv-to" data-change="lv-cost" value="${opts.to || today}"></label></div>
       <label class="check" id="lv-ill-row" hidden><input type="checkbox" id="lv-ill" data-change="lv-cost"><span>ไม่สบาย ใช้แทน${sickType()}<small>ไม่หัก Incentive แม้ลาในวันนั้น</small></span></label>
-      ${opts.pickEmp ? html`<label class="field"><span>แจ้งลาเมื่อ</span><input class="input" type="date" id="lv-asked" data-change="lv-cost" value="${today}" max="${today}"><small>วันที่พนักงานบอกว่าจะลา · บอกก่อนวันลาไม่ถูกหักเพิ่ม</small></label>
+      ${opts.pickEmp ? html`<label class="field" id="lv-asked-row"><span>แจ้งลาเมื่อ</span><input class="input" type="date" id="lv-asked" data-change="lv-cost" value="${today}" max="${today}"><small>วันที่พนักงานบอกว่าจะลา · บอกก่อนวันลาไม่ถูกหักเพิ่ม</small></label>
         <div class="field" id="lv-told-row"><span>บอกก่อนเวลาเข้างานไหม</span>
           <div class="chips"><button type="button" class="chip" aria-pressed="false" data-act="lv-told" data-v="before">บอกก่อนเวลาเข้างาน</button><button type="button" class="chip" aria-pressed="false" data-act="lv-told" data-v="after">ไม่ได้บอก หรือบอกหลังเวลาเข้างาน</button></div>
           <small>ไม่ได้บอกก่อนเวลาเข้างาน วันแรกนับเป็นขาดงาน แม้มาบอกทีหลัง · ป่วยให้เลือก${sickType()} ได้ค่าจ้าง วันแรกหักเท่าขาดงาน · เหตุสุดวิสัยติ๊กด้านล่าง</small></div>
@@ -9956,7 +9960,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           <div class="two" id="lv-cert-days" hidden><label class="field"><span>ใบให้หยุดตั้งแต่</span><input class="input" type="date" id="lv-cert-from" data-change="lv-cost"></label><label class="field"><span>ถึง</span><input class="input" type="date" id="lv-cert-to" data-change="lv-cost"></label></div>
           <label class="check"><input type="checkbox" id="lv-hospital" data-change="lv-cost"><span>นอนโรงพยาบาล<small>ไม่หัก Incentive ทั้งครั้ง · ดูใบรับรองแพทย์หรือเอกสารโรงพยาบาล</small></span></label>
         </div>
-        <label class="check"><input type="checkbox" id="lv-waive-on" data-change="lv-cost"><span>เหตุสุดวิสัย ไม่หัก Incentive<small>เช่น อุบัติเหตุ น้ำท่วมบ้าน คนในบ้านป่วยหนัก · ดูหลักฐานก่อน</small></span></label>
+        <label class="check" id="lv-waive-row"><input type="checkbox" id="lv-waive-on" data-change="lv-cost"><span>เหตุสุดวิสัย ไม่หัก Incentive<small>เช่น อุบัติเหตุ น้ำท่วมบ้าน คนในบ้านป่วยหนัก · ดูหลักฐานก่อน</small></span></label>
         <input class="input" id="lv-waive" maxlength="200" placeholder="เหตุผลและหลักฐานที่เห็น (คุณและเจ้าของร้านเห็น)" hidden style="margin-top:8px">` : ''}
       <label class="field"><span>เหตุผล</span><textarea class="input" id="lv-reason" maxlength="300" placeholder="เช่น กลับบ้านต่างจังหวัด, ไม่สบาย"></textarea></label>
       ${opts.pickEmp ? '' : html`<div class="hint" id="lv-vac" ${sick && vacationLeft() > 0 ? '' : 'hidden'} style="margin-top:12px">${icon('heart')}<span class="grow">${vacationType()}เหลือ ${vacationLeft()} วัน ใช้แทน${sickType()}ได้ ไม่หัก Incentive</span><button type="button" class="btn sm" data-act="lv-use-vac">ใช้วันพักร้อนแทน</button></div>`}
@@ -10021,12 +10025,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (ahead <= 0 && r.suddenCut && t.type !== vacationType() && (t.cut || t.advanceDays) && suddenOn) out.push(run && run.sudden ? 'ต่อจากลาครั้งก่อน ไม่หักลากะทันหันซ้ำ' : 'ลาในวันนั้น หักเพิ่ม ' + money(r.suddenCut) + ' บาท (ขอก่อนวันลาไม่หักส่วนนี้)');
     return out.join(' · ') || 'ไม่หัก Incentive';
   }
-  /** The days of a leave from `from` to `to`, the shop's closed days left out (as the payroll counts them). */
+  /** The days of a leave from `from` to `to`, the shop's closed days left out (as the payroll counts them) · ไม่นับวันหยุดประจำ (งาน 327) */
   function leaveDates(from, to) {
     var r = B.rules || {};
     var fixed = r.fixedHolidays || [];
+    var off = lvDayOff();
     var out = [];
-    for (var d = from, i = 0; d <= to && i < 62; d = addDays(d, 1), i++) if (fixed.indexOf(d.slice(5)) < 0) out.push(d);
+    for (var d = from, i = 0; d <= to && i < 62; d = addDays(d, 1), i++) if (fixed.indexOf(d.slice(5)) < 0 && dowOf(d) !== off) out.push(d);
     return out.length ? out : [from];
   }
   /** The annual leave days this person has left to take (their own leave form). */
@@ -10041,8 +10046,86 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var b = ((S.leaves && S.leaves.balances) || []).filter(function (x) { return x.id === emp.value; })[0];
     return (b && b.runs) || [];
   }
+  // ---- สลับวันหยุด (งาน 327): มาทำงานวันหยุดประจำแล้วหยุดวันอื่นแทน ไม่หักและไม่เพิ่มเงิน ----
+  function swapType() { return (B.rules && B.rules.swapType) || 'สลับวันหยุด'; }
+  /** วันของคำขอแบบสั้น: สลับวันหยุด 'หยุด พ. 14 ต.ค. แทน จ. 12 ต.ค.' · การลาเหมือนเดิม */
+  function leaveWhen(l) {
+    if (!l.swap) return thRange(l.from, l.to);
+    return 'หยุด ' + TH_DAYS[dowOf(l.from)] + ' ' + thShort(l.from) + ' แทน ' + (l.workOn ? TH_DAYS[dowOf(l.workOn)] + ' ' + thShort(l.workOn) : '-');
+  }
+  /** วันหยุดประจำ (0 = อาทิตย์) ของคนในฟอร์มลา: ตัวเอง หรือคนที่ผู้อนุมัติเลือก · ยังไม่ตั้งหรือไม่รู้ = null */
+  function lvDayOff() {
+    var emp = $('#lv-emp');
+    if (!emp) return S.home && S.home.me && S.home.me.dayOff != null ? S.home.me.dayOff : null;
+    var b = ((S.leaves && S.leaves.balances) || []).filter(function (x) { return x.id === emp.value; })[0];
+    return b && b.dayOff != null ? b.dayOff : null;
+  }
+  /** คำขอลาและสลับวันหยุดของคนในฟอร์มลา */
+  function lvReqs() {
+    var emp = $('#lv-emp');
+    if (!emp) return (S.home && S.home.leave && S.home.leave.requests) || [];
+    var L = S.leaves || { pending: [], recent: [] };
+    return L.pending.concat(L.recent).filter(function (x) { return x.empId === emp.value; });
+  }
+  /**
+   * ทำงานติดกันกี่วันถ้ามาทำงาน work (วันหยุดประจำ) แล้วหยุด off แทน: นับวันร้านปิด การลาและการสลับวันหยุดที่อนุมัติแล้ว
+   * หรือรออนุมัติ (แบบเดียวกับ daySwapRun_ ใน Payroll.gs · หลังบ้านคิดอีกครั้งตอนส่ง)
+   */
+  function swapRun(dayOff, work, off, reqs) {
+    var fixed = (B.rules && B.rules.fixedHolidays) || [];
+    var offs = {}, works = {};
+    (reqs || []).forEach(function (l) {
+      if (l.status !== 'approved' && l.status !== 'pending') return;
+      if (l.swap) { offs[l.from] = true; if (l.workOn) works[l.workOn] = true; return; }
+      for (var d = l.from, i = 0; d <= (l.to || l.from) && i < 62; d = addDays(d, 1), i++) offs[d] = true;
+    });
+    offs[off] = true;
+    works[work] = true;
+    var isOff = function (d) { return fixed.indexOf(d.slice(5)) >= 0 || !!offs[d] || (dowOf(d) === dayOff && !works[d]); };
+    if (isOff(work)) return 0;
+    var a = work, b = work;
+    for (var i = 0; i < 62 && !isOff(addDays(a, -1)); i++) a = addDays(a, -1);
+    for (var j = 0; j < 62 && !isOff(addDays(b, 1)); j++) b = addDays(b, 1);
+    return daysBetween(a, b) + 1;
+  }
+  /** ฟอร์มลาเมื่อเลือกสลับวันหยุด: วันที่มาทำงานและวันหยุดแทน ซ่อนช่องของการลา และเตือนเมื่อทำงานติดกันนานเกิน · คืน true เมื่อเป็นสลับวันหยุด */
+  function lvSwapSync(swap) {
+    var show = function (id, on) { var x = $(id); if (x) x.hidden = !on; };
+    show('#lv-work-row', swap);
+    show('#lv-to-row', !swap);
+    show('#lv-asked-row', !swap);
+    show('#lv-waive-row', !swap);
+    var toRow = $('#lv-to-row');
+    if (toRow) toRow.parentNode.classList.toggle('two', !swap);
+    var lab = $('#lv-from-label');
+    if (lab) lab.textContent = swap ? 'หยุดแทนวันที่' : 'ตั้งแต่';
+    if (!swap) return false;
+    ['#lv-ill-row', '#lv-told-row', '#lv-cert-row', '#lv-vac', '#lv-waive'].forEach(function (id) { show(id, false); });
+    var dayOff = lvDayOff();
+    var workIn = $('#lv-work');
+    if (dayOff != null && !workIn.value) {
+      var next = workDate();
+      for (var i = 0; i < 7 && dowOf(next) !== dayOff; i++) next = addDays(next, 1);
+      workIn.value = next;
+    }
+    var work = workIn.value, off = $('#lv-from').value;
+    var note = $('#lv-note');
+    if (note) note.textContent = 'มาทำงานวันหยุดประจำ แล้วหยุดวันอื่นแทนในรอบเงินเดือนเดียวกัน · ไม่หักและไม่เพิ่มเงิน';
+    var wn = $('#lv-work-note');
+    if (wn) wn.textContent = dayOff != null ? 'วันหยุดประจำ: วัน' + TH_DAYS_LONG[dayOff] : $('#lv-emp') && S.leaves ? 'ยังไม่ได้ตั้งวันหยุดประจำ — เจ้าของร้านตั้งได้ที่ พนักงาน' : '';
+    var r = B.rules || {};
+    var text = 'ไม่หักและไม่เพิ่มเงิน';
+    if (dayOff != null && work && off && dowOf(work) === dayOff && dowOf(off) !== dayOff) {
+      var n = swapRun(dayOff, work, off, lvReqs());
+      if (n > (r.maxRun || 6) && r.swapWarn) text = String(r.swapWarn).replace('{N}', n);
+    }
+    var c = $('#lv-cost');
+    if (c) c.lastElementChild.textContent = text;
+    return true;
+  }
   /** The leave form as it is filled in: what shows for the type and the days, what it costs. */
   function leaveFormSync() {
+    if (lvSwapSync(!!$('#lv-type') && $('#lv-type').value === swapType())) return;
     var t = leaveTypeOf($('#lv-type') ? $('#lv-type').value : '');
     var sick = !!t && t.type === sickType();
     var from = $('#lv-from').value, to = $('#lv-to').value || from;
@@ -10090,6 +10173,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var sick = !!t && t.type === sickType();
     var illRow = $('#lv-ill-row');
     var v = { empId: pickEmp ? $('#lv-emp').value : undefined, type: $('#lv-type').value, from: $('#lv-from').value, to: $('#lv-to').value, reason: $('#lv-reason').value, ill: !!(illRow && !illRow.hidden && $('#lv-ill').checked) };
+    if (v.type === swapType()) {
+      v.workOn = $('#lv-work').value;
+      v.to = v.from;
+    }
     if (pickEmp) {
       v.askedOn = $('#lv-asked').value;
       v.cert = sick && $('#lv-cert').checked;
@@ -10653,15 +10740,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="row between"><div class="hello" style="font-size:24px;margin:0">คำขอลา</div><button class="btn sm" data-act="open-leave-add">${icon('plus')} บันทึกการลา</button></div>
       <section class="card flush">${L.pending.length ? html`<div class="list">${L.pending.map(function (l) {
         var mine = S.view !== 'owner' && S.home && S.home.me && l.empId === S.home.me.id;
-        return html`<div class="item stacked">${avatar(empById(l.empId) || { name: l.name })}<div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${thRange(l.from, l.to)} · ${l.days} วัน${l.reason ? ' · ' + l.reason : ''}</div><div class="s">ขอเมื่อ ${whenAt(l.requestedAt)}${leaveAskedOnDay(l) && l.type !== sickType() && !l.ill ? ' · ขอในวันลา' : ''}</div>${leaveFreeTag(l)}</div>
+        return html`<div class="item stacked">${avatar(empById(l.empId) || { name: l.name })}<div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${l.swap ? leaveWhen(l) + ' · ไม่หักและไม่เพิ่มเงิน' : thRange(l.from, l.to) + ' · ' + l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}<div class="s">ขอเมื่อ ${whenAt(l.requestedAt)}${!l.swap && leaveAskedOnDay(l) && l.type !== sickType() && !l.ill ? ' · ขอในวันลา' : ''}</div>${leaveFreeTag(l)}</div>
           <div class="row" style="width:100%;justify-content:flex-end">${mine
             ? html`<span class="pill">รอเจ้าของร้านอนุมัติ</span>`
-            : html`<button class="btn sm ghost" data-act="open-leave-free" data-id="${l.id}" data-decide="1">${l.type === sickType() ? 'ใบแพทย์ / ' : ''}ไม่หัก…</button><button class="btn sm" data-act="decide-leave" data-id="${l.id}" data-ok="false">ไม่อนุมัติ</button><button class="btn sm primary" data-act="decide-leave" data-id="${l.id}" data-ok="true">อนุมัติ</button>`}</div></div>`;
+            : html`${l.swap ? '' : html`<button class="btn sm ghost" data-act="open-leave-free" data-id="${l.id}" data-decide="1">${l.type === sickType() ? 'ใบแพทย์ / ' : ''}ไม่หัก…</button>`}<button class="btn sm" data-act="decide-leave" data-id="${l.id}" data-ok="false">ไม่อนุมัติ</button><button class="btn sm primary" data-act="decide-leave" data-id="${l.id}" data-ok="true">อนุมัติ</button>`}</div></div>`;
       })}</div>` : html`<div class="empty">ไม่มีคำขอรออนุมัติ</div>`}</section>
       ${L.recent.length ? html`<details class="card flush"><summary class="item" style="cursor:pointer"><span class="grow t">การลาล่าสุด (${L.recent.length})</span></summary><div class="list">${L.recent.map(function (l) {
         var st = LEAVE_STATUS[l.status] || [l.status, ''];
         var mine = S.view !== 'owner' && S.home && S.home.me && l.empId === S.home.me.id;
-        return html`<div class="item"><div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${thRange(l.from, l.to)} · ${l.days} วัน${l.decidedBy ? ' · ' + l.decidedBy : ''}</div>${leaveFreeTag(l)}</div><span class="pill ${st[1]}">${st[0]}</span>${l.status === 'approved' && !mine ? html`<button class="icon-btn" data-act="open-leave-free" data-id="${l.id}" aria-label="${l.type === sickType() ? 'ใบรับรองแพทย์ นอนโรงพยาบาล หรือไม่หัก Incentive' : 'ไม่หัก Incentive'}">${icon('note')}</button>` : ''}${l.status === 'approved' ? html`<button class="icon-btn" data-act="revoke-leave" data-id="${l.id}" aria-label="ยกเลิกการลา">${icon('x')}</button>` : ''}</div>`;
+        return html`<div class="item"><div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${l.swap ? leaveWhen(l) : thRange(l.from, l.to) + ' · ' + l.days + ' วัน'}${l.decidedBy ? ' · ' + l.decidedBy : ''}</div>${leaveFreeTag(l)}</div><span class="pill ${st[1]}">${st[0]}</span>${l.status === 'approved' && !mine && !l.swap ? html`<button class="icon-btn" data-act="open-leave-free" data-id="${l.id}" aria-label="${l.type === sickType() ? 'ใบรับรองแพทย์ นอนโรงพยาบาล หรือไม่หัก Incentive' : 'ไม่หัก Incentive'}">${icon('note')}</button>` : ''}${l.status === 'approved' ? html`<button class="icon-btn" data-act="revoke-leave" data-id="${l.id}" aria-label="ยกเลิกการลา">${icon('x')}</button>` : ''}</div>`;
       })}</div></details>` : ''}`;
   }
   /**
@@ -11118,6 +11205,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var rem = o.reminders || {};
     var tempUp = !!(o.temp && o.temp.need && !o.temp.booked && !o.temp.closed);
     (rem.setMissing || []).forEach(function (y) { todo.unshift(['cal', 'ใส่วันหยุดตามประเพณีปี ' + (+y + 543) + ' (ตามประกาศวันหยุดสถาบันการเงิน)', 'settings']); });
+    if ((rem.dayOffMissing || []).length) todo.push(['cal', 'ตั้งวันหยุดประจำ ' + rem.dayOffMissing.length + ' คน (' + rem.dayOffMissing.join(', ') + ') — ระหว่างนี้หยุดได้ตามวันหยุดต่อรอบแบบเดิม', 'staff']);
     if ((rem.startMissing || []).length) todo.unshift(['team', 'ใส่วันเริ่มงาน ' + rem.startMissing.length + ' คน (' + rem.startMissing.join(', ') + ') — ระหว่างนี้ยังไม่ได้พักร้อนตามอายุงาน', 'staff']);
     return html`<div class="stack">
       <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}</div>
@@ -11199,12 +11287,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="stack"><div class="row between"><div class="hello" style="font-size:24px;margin:0">พนักงาน</div><button class="btn primary sm" data-act="edit-emp">${icon('plus')} เพิ่ม</button></div>
       <section class="card flush"><div class="list">${d.employees.map(function (e) {
         var off = e.status === 'ลาออก';
-        return html`<button class="item" data-act="edit-emp" data-id="${e.id}" style="${off ? 'opacity:.5' : ''}">${avatar({ id: e.id, name: e.display || e.nick, nick: e.display || e.nick, dept: e.dept })}<div class="grow"><div class="t">${e.display || e.nick} <span class="muted small">${e.id}</span></div><div class="s">${e.dept || '-'}${e.role === 'ผู้อนุมัติ' ? ' · ผู้อนุมัติ' : ''}${e.employment === 'ทดลองงาน' ? ' · ทดลองงาน' + (e.probationEnd ? ' ถึง ' + thShort(e.probationEnd) : ' (ยังไม่ใส่วันผ่านโปร)') : ''}${off ? ' · ลาออก' : ''}</div></div><div class="r small"><div class="amt">${money(e.rate)}</div><div class="muted">PIN ${e.pin}</div></div></button>`;
+        return html`<button class="item" data-act="edit-emp" data-id="${e.id}" style="${off ? 'opacity:.5' : ''}">${avatar({ id: e.id, name: e.display || e.nick, nick: e.display || e.nick, dept: e.dept })}<div class="grow"><div class="t">${e.display || e.nick} <span class="muted small">${e.id}</span></div><div class="s">${e.dept || '-'}${e.role === 'ผู้อนุมัติ' ? ' · ผู้อนุมัติ' : ''}${e.employment === 'ทดลองงาน' ? ' · ทดลองงาน' + (e.probationEnd ? ' ถึง ' + thShort(e.probationEnd) : ' (ยังไม่ใส่วันผ่านโปร)') : ''}${e.dayOff ? ' · หยุดวัน' + e.dayOff : ''}${off ? ' · ลาออก' : ''}</div></div><div class="r small"><div class="amt">${money(e.rate)}</div><div class="muted">PIN ${e.pin}</div></div></button>`;
       })}</div></section></div>`;
   }
   var EMP_FIELDS = [
     ['ข้อมูลพนักงาน', [['nick', 'ชื่อเล่น'], ['display', 'ชื่อที่แสดงในแอป', 'ไม่บังคับ · ชื่อที่อยากให้แอปเรียก ถ้าว่างใช้ชื่อเล่น · ชื่อเล่นซ้ำกันไม่ต้องใส่อะไร แอปเติมแผนกให้เองเฉพาะในรายการรวม (เช่น นิดครัว)'], ['fullName', 'ชื่อ-นามสกุล (ในสลิป)'], ['citizenId', 'เลขบัตรประชาชน'], ['bank', 'บัญชีรับเงิน']]],
-    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date']]],
+    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ ไม่หักและไม่เพิ่มเงิน · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date']]],
     ['ค่าจ้าง', [['employment', 'สถานะการจ้าง', 'employment'], ['probationEnd', 'วันผ่านโปร', 'date', 'ตั้งแต่วันนี้ได้เงินเดือน + Incentive + ประกันสังคม'], ['probationRate', 'ค่าแรงช่วงทดลองงาน (บาท/วัน)', 'num'], ['probationWht', 'ภาษีหัก ณ ที่จ่ายช่วงทดลองงาน (%)', 'num'], ['payType', 'ประเภทค่าจ้าง', 'payTypes'], ['rate', 'เงินเดือน/ค่าแรง (บาท)', 'num'], ['otRate', 'ค่า OT (บาท/ชม.)', 'num', 'เว้นว่าง = 1.5 เท่าตามกฎหมาย'], ['sso', 'หักประกันสังคม', 'yesno']]],
     ['Incentive', [['diligence', 'เบี้ยขยัน (บาท)', 'num'], ['headAllowance', 'ค่าหัวหน้า (บาท)', 'num'], ['tenureAllowance', 'ค่าอยู่นาน (บาท)', 'num']]],
     ['อื่น ๆ', [['note', 'หมายเหตุ']]],
@@ -11215,9 +11303,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var opts = d.options;
     var input = function (f) {
       var key = f[0], type = f[2], v = e[key] == null ? '' : e[key];
-      var list = { depts: opts.depts, roles: opts.roles, statuses: opts.statuses, employment: opts.employment, payTypes: opts.payTypes, yesno: ['ใช่', 'ไม่'] }[type];
+      var list = { depts: opts.depts, roles: opts.roles, statuses: opts.statuses, employment: opts.employment, payTypes: opts.payTypes, yesno: ['ใช่', 'ไม่'], days: [['', 'ยังไม่ตั้ง']].concat(TH_DAYS_LONG.map(function (x) { return [x, 'วัน' + x]; })) }[type];
       var ctl = list
-        ? html`<select class="input" data-f="${key}">${list.map(function (x) { return html`<option ${String(v) === x ? 'selected' : ''}>${x}</option>`; })}</select>`
+        ? html`<select class="input" data-f="${key}">${list.map(function (x) { var o = Array.isArray(x) ? x : [x, x]; return html`<option value="${o[0]}" ${String(v) === o[0] ? 'selected' : ''}>${o[1]}</option>`; })}</select>`
         : html`<input class="input" data-f="${key}" type="${type === 'date' ? 'date' : type === 'num' ? 'number' : 'text'}" ${type === 'num' ? 'inputmode="decimal" step="any"' : ''} value="${v}">`;
       return html`<label class="field"><span>${f[1]}</span>${ctl}${f[3] ? html`<small>${f[3]}</small>` : ''}</label>`;
     };
@@ -17238,37 +17326,61 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }, function () {});
     },
     'submit-leave-add': function (el) {
-      if ($('#lv-waive-on').checked && !$('#lv-waive').value.trim()) { toast('ใส่เหตุผลของเหตุสุดวิสัยก่อน', 'bad'); $('#lv-waive').focus(); return; }
-      if (!$('#lv-told-row').hidden && !lvTold()) { toast('เลือกก่อนว่าพนักงานบอกก่อนเวลาเข้างานไหม', 'bad'); return; }
-      run(el, call('leaveAdd', leaveValues(true), actorAuth())).then(function (d) { closeSheet(); S.leaves = d; render(); toast(d.notice + (d.line ? ' · ' + d.line : ''), 'ok'); if (S.team) loadTeam(); }, function () {});
+      var swap = $('#lv-type').value === swapType();
+      if (!swap && $('#lv-waive-on').checked && !$('#lv-waive').value.trim()) { toast('ใส่เหตุผลของเหตุสุดวิสัยก่อน', 'bad'); $('#lv-waive').focus(); return; }
+      if (!swap && !$('#lv-told-row').hidden && !lvTold()) { toast('เลือกก่อนว่าพนักงานบอกก่อนเวลาเข้างานไหม', 'bad'); return; }
+      var v = leaveValues(true);
+      var send = function () {
+        run(el, call('leaveAdd', v, actorAuth())).then(function (d) { closeSheet(); S.leaves = d; render(); toast(d.notice + (d.line ? ' · ' + d.line : ''), 'ok'); if (S.team) loadTeam(); }, function (e) {
+          // (สลับวันหยุดที่ทำให้ทำงานติดกันนาน: ถามยืนยันอีกครั้ง ไม่บล็อก · งาน 327)
+          if (e.code !== 'CONFIRM') return;
+          confirmSheet({ title: 'ยืนยันบันทึก', text: e.message, yes: 'บันทึก', no: 'ยังไม่บันทึก' }).then(function (yes) {
+            if (!yes) return;
+            v.confirmed = true;
+            send();
+          });
+        });
+      };
+      send();
     },
     'decide-leave': function (el) {
-      // Done at once on the screen; the server confirms, or it is put back with the reason.
       var ok = el.dataset.ok === 'true';
       var id = el.dataset.id;
-      var before = S.leaves;
-      var l = before ? before.pending.filter(function (x) { return x.id === id; })[0] : null;
-      if (before) S.leaves = Object.assign({}, before, { pending: before.pending.filter(function (x) { return x.id !== id; }) });
-      // The number waiting, on the menu and the overview, goes down with it.
-      var counts = [S.home && S.home.approver, S.view === 'owner' && S.ownerHome].filter(function (c) { return l && c && c.pendingLeaves > 0; });
-      counts.forEach(function (c) { c.pendingLeaves--; });
-      leavesShown();
-      toast((l ? l.name + ' · ' : '') + (ok ? 'อนุมัติการลาแล้ว' : 'ไม่อนุมัติการลา'), 'ok');
-      call('leaveDecide', { id: id, approve: ok }, actorAuth()).then(function (d) {
-        S.leaves = d;
-        partAt.leaves = Date.now();
-        keepPart('leaves', d);
+      // (สลับวันหยุดที่ทำให้ทำงานติดกันนาน: ผู้อนุมัติกดยืนยันอีกครั้ง ไม่บล็อก · งาน 327)
+      var ask = function (text) {
+        confirmSheet({ title: 'ยืนยันอนุมัติ', text: text, yes: 'อนุมัติ', no: 'ยังไม่อนุมัติ' }).then(function (yes) { if (yes) decide(true); });
+      };
+      var waiting = S.leaves ? S.leaves.pending.filter(function (x) { return x.id === id; })[0] : null;
+      if (ok && waiting && waiting.warn) return ask(waiting.warn);
+      decide(false);
+      function decide(confirmed) {
+        // Done at once on the screen; the server confirms, or it is put back with the reason.
+        var before = S.leaves;
+        var l = before ? before.pending.filter(function (x) { return x.id === id; })[0] : null;
+        if (before) S.leaves = Object.assign({}, before, { pending: before.pending.filter(function (x) { return x.id !== id; }) });
+        // The number waiting, on the menu and the overview, goes down with it.
+        var counts = [S.home && S.home.approver, S.view === 'owner' && S.ownerHome].filter(function (c) { return l && c && c.pendingLeaves > 0; });
+        counts.forEach(function (c) { c.pendingLeaves--; });
         leavesShown();
-        if (d.line) toast(d.line, 'ok');
-        if (S.home && S.home.approver) loadHome(true, true);
-        if (S.view === 'owner') loadOwner(true, true);
-        if (S.team) loadTeam();
-      }, function (e) {
-        S.leaves = before;
-        counts.forEach(function (c) { c.pendingLeaves++; });
-        leavesShown();
-        toast(e.message, 'bad');
-      });
+        var what = l && l.swap ? 'สลับวันหยุด' : 'การลา';
+        toast((l ? l.name + ' · ' : '') + (ok ? 'อนุมัติ' + what + 'แล้ว' : 'ไม่อนุมัติ' + what), 'ok');
+        call('leaveDecide', { id: id, approve: ok, confirmed: confirmed || undefined }, actorAuth()).then(function (d) {
+          S.leaves = d;
+          partAt.leaves = Date.now();
+          keepPart('leaves', d);
+          leavesShown();
+          if (d.line) toast(d.line, 'ok');
+          if (S.home && S.home.approver) loadHome(true, true);
+          if (S.view === 'owner') loadOwner(true, true);
+          if (S.team) loadTeam();
+        }, function (e) {
+          S.leaves = before;
+          counts.forEach(function (c) { c.pendingLeaves++; });
+          leavesShown();
+          if (e.code === 'CONFIRM') return ask(e.message);
+          toast(e.message, 'bad');
+        });
+      }
     },
     'revoke-leave': function (el) {
       confirmSheet({ title: 'ยกเลิกการลา', text: 'ยกเลิกการลาที่อนุมัติแล้วนี้ใช่ไหม', yes: 'ยกเลิกการลา', danger: true }).then(function (ok) {
