@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.4","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"4cbc17797780"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.5","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"6fa10deb4c6a"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -2253,6 +2253,8 @@ html.i3-rn-ball-0 .fr-run .rn-b { bottom: 22px; width: 26px; height: 26px; borde
 .shop-new.game.rare { background: linear-gradient(135deg, #c4b5fd, #f0abfc); color: #3b0764; }
 .shop-games { margin: 10px 0 0; padding: 10px 12px; border-radius: 14px; background: #f5f3ff; color: #5b21b6; }
 .run-row { display: flex; align-items: center; gap: 10px; padding: 17px 0; }
+/* เหรียญห่างรูปให้พ้นกรอบระดับ: ปีกและช่อใบไม้ยื่นพ้นวง .24 ของวง (9.6 px จากวง 40 px) อีโมจิเหรียญบางเครื่องกว้างเกินกล่อง 24 px (Windows 24.7) · แถวที่ไม่มีเหรียญเว้นเท่ากัน รูปทุกแถวจึงตรงกัน */
+.run-row .medal, .run-row .ideas-rank { margin-right: 6px; }
 .run-row.me b { color: var(--gold-ink); }
 .run-t { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 14px; }
 .run-st { font-size: 12px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -4892,14 +4894,22 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           '<rect x="30" y="88" width="40" height="7" rx="3.5" fill="#fff" opacity=".85"/>' +
           face(50, 66, 1, 'smile', { shades: true });
       },
-      // อิตาเลียนโซดาน้ำผึ้งเจลลี่
+      // อิตาเลียนโซดาน้ำผึ้งเจลลี่: แก้วโซดาสีน้ำผึ้ง เจลลี่น้ำผึ้งก้นแก้ว น้ำแข็ง หลอด น้ำผึ้งไหลจากขอบ (วาดใหม่ 2.13.5)
       banana: function (u) {
-        return '<defs>' + rad(u + 'b', [[0, '#fff7c2'], [0.55, '#fde047'], [1, '#e6b400']]) + '</defs>' + SHADOW +
-          arms('#fbd535', '#c79a00', 20, 84, 80, 84) + feet('#c79a00', 40, 60, 108) +
-          '<path d="M38 30H62V40C78 46 82 60 82 76C82 96 70 106 50 106C30 106 18 96 18 76C18 60 22 46 38 40Z" fill="url(#' + u + 'b)" stroke="#c79a00" stroke-width="1.2"/>' +
-          '<rect x="36" y="22" width="28" height="10" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>' +
-          '<ellipse cx="36" cy="64" rx="5" ry="12" fill="#fff" opacity=".4"/>' +
-          face(50, 78, 1, 'open');
+        return '<defs>' + lin(u + 'b', [[0, '#fffdf2'], [0.38, '#fff1a8'], [0.72, '#ffcc5c'], [1, '#f29d1f']]) + '</defs>' + SHADOW +
+          '<path d="M57 44L67 13L77 10" stroke="#fb7185" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '<path d="M57 44L67 13L77 10" stroke="#fff" stroke-width="5" fill="none" stroke-dasharray="3 4" opacity=".75" stroke-linejoin="round"/>' +
+          arms('#ffe08a', '#c98a12', 21, 76, 79, 76) + feet('#b7791f', 40, 60, 108) +
+          '<path d="M24 30H76L70.5 102C70 105 68 107 65 107H35C32 107 30 105 29.5 102Z" fill="url(#' + u + 'b)" stroke="#b7791f" stroke-width="1.2"/>' +
+          '<ellipse cx="50" cy="36" rx="25" ry="3.6" fill="#fffbe8" stroke="#ead27a" stroke-width=".8"/>' +
+          '<g fill="#fff" opacity=".8" stroke="#cfe3f3" stroke-width=".8"><rect x="31" y="37" width="10" height="9" rx="2.2" transform="rotate(-10 36 41)"/><rect x="45" y="39" width="9" height="8" rx="2" transform="rotate(6 49 43)"/></g>' +
+          '<path d="M29.5 41L33.5 97" stroke="#fff" stroke-width="2.4" opacity=".5" stroke-linecap="round"/>' +
+          '<g fill="none" stroke="#fff" stroke-width="1" opacity=".9"><circle cx="40" cy="52" r="1.3"/><circle cx="67" cy="56" r="1.6"/><circle cx="64" cy="79" r="1.3"/><circle cx="37" cy="80" r="1.5"/><circle cx="58" cy="48" r="1.1"/></g>' +
+          '<g fill="#ec8a0e" opacity=".9" stroke="#b45309" stroke-width=".8"><rect x="35" y="94" width="9" height="8" rx="2.4"/><rect x="46" y="96" width="9" height="8" rx="2.4"/><rect x="57" y="93" width="8.5" height="8" rx="2.4"/><rect x="41" y="86" width="8" height="7" rx="2.2" transform="rotate(-12 45 89.5)"/><rect x="53" y="85" width="8" height="7" rx="2.2" transform="rotate(10 57 88.5)"/></g>' +
+          '<g fill="#fff" opacity=".65"><circle cx="38" cy="96.5" r="1.1"/><circle cx="49" cy="98.5" r="1.1"/><circle cx="60" cy="95.5" r="1.1"/><circle cx="44" cy="88.5" r="1"/><circle cx="56" cy="87.5" r="1"/></g>' +
+          '<path d="M66 29.6C66.5 34 69 36 69 40.5A2.6 2.6 0 0 1 63.8 40.5C63.8 37 65.6 34.5 66 29.6Z" fill="#f59e0b" stroke="#c2730a" stroke-width=".7"/>' +
+          '<ellipse cx="50" cy="30" rx="26" ry="3.4" fill="none" stroke="#e8eef4" stroke-width="1.4"/>' +
+          face(50, 64, 1, 'open');
       },
       // จับแช
       bibim: function (u) {
@@ -4920,23 +4930,37 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           '<path d="M22 50C36 44 64 44 78 50L78 56C64 50 36 50 22 56Z" fill="#ef4444" stroke="#b91c1c" stroke-width="1"/><path d="M76 52l8-4l-2 8z" fill="#ef4444" stroke="#b91c1c" stroke-width="1"/>' +
           face(50, 74, 1, 'open');
       },
-      // เนื้อสไลด์ย่างกระเทียมพริกไทย
+      // เนื้อสไลด์ย่างกระเทียมพริกไทย: เนื้อย่างสามชิ้นซ้อนกัน รอยตะแกรง ขอบชมพู กระเทียมเจียวและพริกไทยด้านบน (วาดใหม่ 2.13.5)
       odeng: function (u) {
-        return '<defs>' + lin(u + 'b', [[0, '#fde7b0'], [1, '#e7b96a']]) + '</defs>' + SHADOW +
-          '<path d="M50 14V112" stroke="#b45309" stroke-width="3" stroke-linecap="round"/>' +
-          arms('#f2cf8a', '#b8862f', 20, 78, 80, 78) + feet('#b8862f', 40, 60, 108) +
-          '<path d="M26 34Q50 26 74 34Q66 46 74 58Q66 70 74 82Q66 94 74 104Q50 110 26 104Q34 94 26 82Q34 70 26 58Q34 46 26 34Z" fill="url(#' + u + 'b)" stroke="#b8862f" stroke-width="1.2" stroke-linejoin="round"/>' +
-          '<path d="M30 58H70M30 82H70" stroke="#d9a453" stroke-width="1.2" opacity=".7"/>' +
-          face(50, 70, 1, 'smile');
+        var slice = function (a) {
+          return '<g transform="rotate(' + a + ' 50 102)"><path d="M30 38C42 33 58 33 70 38C75 54 75 86 70 100C58 105 42 105 30 100C25 86 25 54 30 38Z" fill="#a4552f" stroke="#6e3018" stroke-width="1.2"/>' +
+            '<path d="M31.5 39C43 34.6 57 34.6 68.5 39" stroke="#f29b9b" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>';
+        };
+        return '<defs>' + lin(u + 'b', [[0, '#d88a5a'], [0.55, '#b5653a'], [1, '#8f4424']]) + '</defs>' + SHADOW +
+          slice(-15) + slice(15) +
+          arms('#b5633a', '#6e3018', 21, 80, 79, 80) + feet('#6e3018', 40, 60, 108) +
+          '<path d="M26 35C40 29 60 29 74 35C80 51 80 89 74 103C61 109 39 109 26 103C20 89 20 51 26 35Z" fill="url(#' + u + 'b)" stroke="#6e3018" stroke-width="1.2"/>' +
+          '<path d="M28 36C41 30.6 59 30.6 72 36" stroke="#f4a3a3" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+          '<g stroke="#5e2a12" stroke-width="2.6" stroke-linecap="round" opacity=".5"><path d="M28 52L42 41M37 55L56 39M52 55L70 41M29 99L41 90M42 103L59 90M58 102L71 92"/></g>' +
+          '<g fill="#fbeec9" stroke="#d6a548" stroke-width=".9"><ellipse cx="39" cy="31" rx="5.2" ry="3.3" transform="rotate(-18 39 31)"/><ellipse cx="51" cy="28" rx="5.4" ry="3.4"/><ellipse cx="63" cy="31.5" rx="5" ry="3.2" transform="rotate(16 63 31.5)"/><ellipse cx="68" cy="86" rx="3.6" ry="2.4" transform="rotate(20 68 86)"/><ellipse cx="31" cy="64" rx="3.4" ry="2.3" transform="rotate(-25 31 64)"/></g>' +
+          '<path d="M37 31.6l4-1.2M49 28h4M61 31l4 1.2" stroke="#e2bf73" stroke-width=".8" stroke-linecap="round"/>' +
+          '<g fill="#2a1c13"><circle cx="34" cy="46" r=".9"/><circle cx="62" cy="48" r=".9"/><circle cx="46" cy="58" r=".8"/><circle cx="70" cy="62" r=".85"/><circle cx="31" cy="88" r=".9"/><circle cx="64" cy="95" r=".9"/><circle cx="50" cy="94" r=".8"/><circle cx="57" cy="36.5" r=".8"/><circle cx="44" cy="35.6" r=".8"/></g>' +
+          face(50, 72, 1, 'grin');
       },
-      // คอร์นชีส
+      // คอร์นชีส: ข้าวโพดกับชีสยืดเกรียมหน้าในกระทะเหล็กร้อน ไอร้อนลอย (วาดใหม่ 2.13.5)
       corndog: function (u) {
-        return '<defs>' + lin(u + 'b', [[0, '#fcd581'], [0.5, '#eaa83c'], [1, '#c98320']], 1, 0) + '</defs>' + SHADOW +
-          arms('#e9a53c', '#a86a14', 26, 74, 74, 74) + feet('#a86a14', 42, 58, 108) +
-          '<rect x="30" y="20" width="40" height="80" rx="20" fill="url(#' + u + 'b)" stroke="#a86a14" stroke-width="1.2"/>' +
-          '<g fill="#fff3c4" opacity=".8"><rect x="38" y="30" width="3" height="2" rx="1"/><rect x="56" y="36" width="3" height="2" rx="1"/><rect x="44" y="88" width="3" height="2" rx="1"/><rect x="58" y="84" width="3" height="2" rx="1"/></g>' +
-          '<path d="M33 34L40 28L46 34L52 28L58 34L64 28L67 32" fill="none" stroke="#dc2626" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
-          face(50, 62, 1, 'open');
+        return '<defs>' + rad(u + 'b', [[0, '#fffbe6'], [0.55, '#ffe58a'], [1, '#f2b632']], 0.5, 0.4, 0.75) + lin(u + 'p', [[0, '#4a4a4a'], [1, '#1c1c1c']]) + '</defs>' + SHADOW +
+          '<path d="M40 25c-3-4 3-6 0-10M50 21c-3-4 3-6 0-10M60 25c-3-4 3-6 0-10" stroke="#cbd5e1" stroke-width="2" fill="none" stroke-linecap="round" opacity=".85"/>' +
+          arms('#ffe07a', '#c99a1a', 15, 74, 85, 74) + feet('#2a2a2a', 40, 60, 108) +
+          '<path d="M85 95L96 88" stroke="#2a2a2a" stroke-width="6" stroke-linecap="round"/>' +
+          '<path d="M17 92C15 62 30 35 50 35C70 35 85 62 83 92Z" fill="url(#' + u + 'b)" stroke="#d9a520" stroke-width="1.2"/>' +
+          '<g fill="#d98c2b" opacity=".45"><ellipse cx="42" cy="45" rx="6" ry="3"/><ellipse cx="60" cy="49" rx="5" ry="2.6"/><ellipse cx="29" cy="62" rx="3.4" ry="2.2"/><ellipse cx="72" cy="66" rx="3.2" ry="2"/></g>' +
+          '<g fill="#ffc21a" stroke="#e09a00" stroke-width=".7"><rect x="23" y="71" width="5" height="6" rx="2.2"/><rect x="72" y="73" width="5" height="6" rx="2.2"/><rect x="35" y="51" width="4.6" height="5.4" rx="2"/><rect x="56" y="40" width="4.6" height="5.4" rx="2"/><rect x="66" y="52" width="4.6" height="5.4" rx="2"/><rect x="47" y="45" width="4.4" height="5.2" rx="2"/><rect x="28" y="80" width="5" height="5.6" rx="2.2"/><rect x="67" y="82" width="5" height="5.6" rx="2.2"/></g>' +
+          '<g fill="#4c9a2a"><circle cx="47" cy="40" r="1"/><circle cx="54" cy="46" r=".9"/><circle cx="39" cy="59" r=".9"/><circle cx="64" cy="47" r="1"/><circle cx="31" cy="72" r=".9"/></g>' +
+          '<path d="M10 90H90L86 104C85 106 83 107 81 107H19C17 107 15 106 14 104Z" fill="url(#' + u + 'p)" stroke="#111" stroke-width="1.2"/>' +
+          '<path d="M11 90.5H89" stroke="#666" stroke-width="2.4" stroke-linecap="round"/>' +
+          '<path d="M27 89.5v6a2.6 2.6 0 0 0 5.2 0v-6ZM63 89.5v9a2.6 2.6 0 0 0 5.2 0v-9Z" fill="#ffe58a" stroke="#d9a520" stroke-width=".8"/>' +
+          face(50, 66, 1, 'open');
       },
       // ซุปกระดูกหมู
       hoppang: function (u) {
@@ -12065,7 +12089,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <section class="card"><ul class="lv-rules">
         <li>${icon('note')}<span>บันทึกหน้างาน 1 เรื่อง<small>บันทึกได้ไม่จำกัด · เรื่องเดียวกันเพื่อนบันทึกด้วยได้ ได้แต้มเท่ากันทุกคน · ไม่ต้องรีบ ทำงานก่อน บันทึกหลังเลิกงานได้แต้มเท่ากัน · คนเดิมบันทึกเรื่องเดิมซ้ำในวันเดียวกันนับครั้งเดียว</small></span><b>+${r.note}</b></li>
         <li>${icon('tool')}<span>เรื่องที่ร้านกำลังแก้ แล้ววันนี้เจออีก<small>กด "วันนี้เจออีก" ในการ์ดบันทึกหน้างาน วันละครั้ง ไม่ต้องพิมพ์ใหม่ · ช่วยให้ร้านรู้ว่าวิธีแก้ได้ผลหรือยัง</small></span><b>+${r.again || 1}</b></li>
-        <li>${icon('check')}<span>เรื่องที่บันทึก แล้วร้านแก้ให้<small>ได้ทุกคนที่บันทึกเรื่องนั้นก่อนร้านเริ่มแก้ คนละครั้ง · แก้แล้วกลับมาเกิดอีก บันทึกได้เป็นเรื่องใหม่</small></span><b>+${r.fixed}</b></li>
+        <li>${icon('check')}<span>เรื่องที่บันทึก แล้วร้านแก้ให้<small>ได้ทุกคนที่บันทึกเรื่องนั้นก่อนร้านเริ่มแก้ คนละครั้ง · แก้แล้วกลับมาเกิดอีก บันทึกได้เป็นเรื่องใหม่${l.fixLuck ? ' · ลุ้นกล่องฟรีด้วย โอกาส 1 ใน ' + l.fixLuck : ''}</small></span><b>+${r.fixed}</b></li>
         ${r.onTime ? html`<li>${icon('clock')}<span>มาตรงเวลาครบ ${(l.onTime || {}).every || 5} วันติด<small>ได้ทุกครั้งที่ครบ · วันหยุดและวันลาไม่ตัดความต่อเนื่อง · สาย (วันฝนตกด้วย) หรือขาดโดยไม่ลา เริ่มนับใหม่</small></span><b>+${r.onTime}</b></li>
         <li>${icon('spark')}<span>ทั้งเดือนไม่สายเลย<small>ทำงาน 15 วันขึ้นไปในรอบเงินเดือน ไม่สายและไม่ขาด</small></span><b>+${r.onTimeMonth}</b></li>` : ''}
         ${r.rainOnTime ? html`<li>${icon('rain')}<span>มาตรงเวลาวันฝนตก<small>วันที่ฝนตกแถวร้าน หรือพยากรณ์บอกว่าอาจมีฝน ช่วงก่อนเวลาเข้ากะ · ออกจากบ้านเร็วขึ้นสักหน่อย จะได้ไม่ต้องรีบ ขับช้า ๆ นะ · วันที่ได้อนุญาตเข้างานช้าไม่นับ</small></span><b>+${r.rainOnTime}</b></li>` : ''}
@@ -12074,6 +12098,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <li>${icon('spark')}<span>ได้ใช้จริงแล้ว</span><b>+${r.done}</b></li>
         <li>${icon('gift')}<span>ขึ้นระดับใหม่<small>เปิดได้ที่ห้องของฉัน</small></span><b>กล่องฟรี</b></li>
         <li>${icon('team')}<span>ภารกิจทีมประจำสัปดาห์สำเร็จ<small>ทุกคนที่มาทำงานสัปดาห์นั้นได้ · ภารกิจเปลี่ยนทุกวันจันทร์ ทุกคนอยู่ทีมเดียวกัน</small></span><b>กล่องฟรี</b></li>
+        ${l.fixLuck ? html`<li>${icon('check')}<span>เรื่องที่บันทึก แล้วร้านแก้ให้<small>ลุ้นทุกเรื่องที่ได้แต้มนี้ โอกาส 1 ใน ${l.fixLuck} · ได้แล้วบอกในข้อความ ร้านแก้เรื่องที่คุณบันทึกแล้ว · กล่องเปิดได้ที่ห้องของฉัน</small></span><b>ลุ้นกล่องฟรี</b></li>` : ''}
         ${r.teamSales ? html`<li>${icon('star')}<span>ร้านถึงเป้ายอดขายประจำสัปดาห์<small>ทุกคนที่มาทำงานสัปดาห์นั้นได้ทุกวันที่มา เท่ากันทุกคน · นับในระดับและเหรียญ ไม่นับในดาวเด่นและมงกุฎ</small></span><b>+${r.teamSales}/วัน</b></li>` : ''}
       </ul></section>
       <h3 class="h3">ระดับทั้งหมด</h3>
@@ -15116,8 +15141,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       render();
       var got = d.level && had != null ? d.level.points - had : 0;
       // A new level says it all; otherwise the thanks, and the points.
-      if (!lvCheck(d.level)) toast(d.notice + (got > 0 ? ' · +' + got + ' แต้ม' : ''), 'ok');
+      if (!lvCheck(d.level)) toast(d.notice + (got > 0 ? ' · +' + got + ' แต้ม' : '') + coinsToBox(d.level, ' · '), 'ok');
     }, function () {});
+  }
+  /**
+   * หลังส่งบันทึกหรือความคิดเห็น: อีกกี่เหรียญได้กล่อง บรรทัดเดียว (2.13.5 ให้เห็นว่าเรื่องที่บอกพาไปใกล้กล่องแค่ไหน
+   * แต้มไม่เปลี่ยน) · เหรียญพอแล้วบอกว่าเปิดได้ · ไม่รู้เหรียญ: ''
+   */
+  function coinsToBox(l, sep) {
+    var b = l && l.box;
+    var c = l && l.coins;
+    if (!b || !c || !b.price) return '';
+    return (sep || '') + (c.left >= b.price ? 'เหรียญพอเปิดกล่องแล้ว ที่ห้องของฉัน' : 'อีก ' + (b.price - c.left) + ' เหรียญได้กล่อง');
   }
   /** "Nothing today": one gentle second look first, then it is sent. */
   function askDailyNone() {
@@ -16450,7 +16485,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           <h2>${mine.kind === 'ask' ? 'ขอบคุณที่ถามนะ!' : 'ขอบคุณที่กล้าบอกนะ!'}</h2><p class="first">ส่งถึงเจ้าของร้านแล้ว · เจ้าของร้านตอบทุกเรื่อง</p>
           <ol class="fb-steps"><li class="on">ส่งแล้ว</li><li>เจ้าของร้านอ่าน</li><li>ร้านรับไปทำ</li><li>ใช้ได้แล้ว</li></ol>
           <p class="small muted">มีความคืบหน้าเมื่อไร หน้าแรกจะบอก · ดูได้ตลอดที่ "ที่ฉันเสนอ"</p>
-          ${n > 1 || got > 0 ? html`<p class="fb-count">${icon('spark')} ${[n > 1 ? 'คุณช่วยเสนอแล้ว ' + n + ' เรื่อง' : '', got > 0 ? '+' + got + ' แต้ม' : ''].filter(String).join(' · ')}</p>` : ''}</div>`,
+          ${n > 1 || got > 0 ? html`<p class="fb-count">${icon('spark')} ${[n > 1 ? 'คุณช่วยเสนอแล้ว ' + n + ' เรื่อง' : '', got > 0 ? '+' + got + ' แต้ม' : ''].filter(String).join(' · ')}</p>` : ''}${coinsToBox(d.level) ? html`<p class="fb-count">${icon('gift')} ${coinsToBox(d.level)}</p>` : ''}</div>`,
         foot: html`<button class="btn" data-act="fb-mine">ที่ฉันเสนอ</button><button class="btn primary" data-act="sheet-close">เรียบร้อย</button>` });
       lvCheck(d.level);
     }, function (e) {
