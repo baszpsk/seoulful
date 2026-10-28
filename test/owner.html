@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.5","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"6fa10deb4c6a"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.6","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"c71a6d89b671"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -1852,6 +1852,15 @@ html.i3-pz-shop-day .pz-art.day .pz3-shop.pz-d, html.i3-pz-shop-lit .pz-art.lit 
 .ideas-link .grow { display: grid; gap: 2px; min-width: 0; }
 .ideas-link b { font-size: 15px; }
 .ideas-link .grow span { font-size: 13px; color: var(--muted); }
+/* 2.13.6 ปุ่มบอกเรื่องเด่นสุดบนหน้าแรก (หัวใจของแอป: น้องบอกปัญหาเจ้าของ) */
+.ideas-link.tell-hero { padding: 18px 16px; border: 2px solid var(--gold); background: linear-gradient(135deg, var(--gold-soft), transparent 75%); box-shadow: 0 8px 22px rgba(160, 120, 40, .16); }
+.ideas-link.tell-hero .fb-ico { width: 52px; height: 52px; border-radius: 16px; background: var(--gold); color: #fff; }
+.ideas-link.tell-hero b { font-size: 18px; }
+.ideas-link.tell-hero .grow span { font-size: 13.5px; }
+/* 2.13.6 ทีมใช้แอป 7 วัน (หน้าเจ้าของ) */
+.team-use .team-sum { margin: 6px 16px 0; }
+.team-use .team-row.zero .t b { color: #b4532a; }
+.team-use .team-off { color: #b4532a; font-weight: 600; }
 .ideas-score { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 12px 8px; }
 .ideas-num { display: grid; justify-items: center; align-content: start; text-align: center; gap: 2px; }
 .ideas-num b { font-size: 26px; font-weight: 700; color: var(--gold-ink); line-height: 1.1; }
@@ -3876,7 +3885,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var kp = svg._k3 && svg._k3.k === key ? svg._k3 : KEPT3.mem[key];
       if (kp && !svg.classList.contains('c3-on')) { svg._k3 = kp; c3Put(svg, kp.u, true); }
       if (kp && kp.v === C3.mod.version && kp.d >= c3Sharp()) { C3.pics[key] = kp.u; continue; }
-      c3Watch(svg);
+      // 2.13.6: ตัวละครของน้องบนหน้าแรก (ตัวเดียว) ทำภาพสามมิติทันที ไม่รอเลื่อนมาใกล้จอ เพราะปุ่มแต่งตัวย้ายไปท้ายหน้า
+      // แต่งตัวเสร็จหน้ายังอยู่ท้ายหน้า เลื่อนขึ้นมาเห็นชุดใหม่แบบสามมิติเลยเหมือนเดิม · ตัวที่ยังไม่มีขนาด (หน้าซ่อนอยู่) รอเห็นจอตามเดิม
+      if (svg.closest('.me-char') && svg.getBoundingClientRect().height) c3Near([{ isIntersecting: true, target: svg }], { unobserve: function () {} });
+      else c3Watch(svg);
     }
     // The figures, pets and shelf things (each with a 3D file).
     var things = document.querySelectorAll('svg[data-c3o]:not(.c3-seen)');
@@ -8676,21 +8688,21 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // ลงเวลาก่อนเกม: การ์ดลงเวลาอยู่จอแรกเสมอ แถวชิปเกมอยู่ใต้งานของวันนี้ · การ์ดชวนบันทึกอยู่ใต้การ์ดลงเวลา (เจ้าของ ok 27 ต.ค. 2569)
     return html`<div class="stack">
       <div class="hello-row"><div class="hello">${greeting()}<br>${nameTag(me, ownName(me))}${S.homeErr ? staleNote(S.homeAt) : ''}</div>${h.level ? html`<div class="me-duo">${h.level.look && h.level.look.p ? html`<button class="me-pet pet-box ${h.level.pet && !h.level.pet.today ? 'wants' : ''}" data-act="pet-pat" aria-label="ลูบหัว${h.level.pet ? h.level.pet.name : 'สัตว์เลี้ยง'}">${raw(PET_ART(h.level.look.p, h.level.look))}</button>` : ''}<button class="me-char" data-act="char-go" aria-label="ตัวละครของฉัน แตะเพื่อเล่นท่า">${raw(charOf(h.level.look))}${chFx(h.level.look)}</button></div>` : ''}</div>
+      ${ideasLink(h)}
       ${!st.checkedIn && !st.leaveToday && !st.closedToday ? rainBanner(h.rain, 'home') : ''}
       ${todayCard()}
-      ${ideasLink(h)}
-      ${checkDue(h.check)}
       ${dailyDue(h.daily)}
-      ${pushCard()}
-      ${h.level ? welcomeCard(h.level) : ''}
-      ${h.level ? html`<div class="lv-chips">${levelChip(h.level)}${shelfChip(h.level)}${plazaChip(h.level)}<button class="lv-chip" data-act="shop-open"><span class="gem">${icon('bag')}</span><span>แต่งตัว</span>${icon('right')}</button></div>${questRow(h.level.quest)}${salesRow(h.sales)}` : ''}
-      ${h.level ? dayCard(h.level.day) : ''}
+      ${checkDue(h.check)}
+      ${approver && h.approver && h.approver.pendingLeaves ? html`<button class="card row" style="width:100%;text-align:left" data-act="tab" data-tab="team">${icon('approve')}<span class="grow"><b>มีคำขอลารออนุมัติ ${h.approver.pendingLeaves} รายการ</b></span>${icon('right')}</button>` : ''}
       ${fbCheer(h.feedback)}
-      ${monthCard(h.month)}
+      ${pushCard()}
       ${orderCard(h.order)}
       ${h.order && h.order.keeper ? mealCard(h.order.staffMeal, false) : ''}
       ${parCard(h.order)}
-      ${approver && h.approver && h.approver.pendingLeaves ? html`<button class="card row" style="width:100%;text-align:left" data-act="tab" data-tab="team">${icon('approve')}<span class="grow"><b>มีคำขอลารออนุมัติ ${h.approver.pendingLeaves} รายการ</b></span>${icon('right')}</button>` : ''}
+      ${h.level ? welcomeCard(h.level) : ''}
+      ${h.level ? html`<div class="lv-chips">${levelChip(h.level)}${shelfChip(h.level)}${plazaChip(h.level)}<button class="lv-chip" data-act="shop-open"><span class="gem">${icon('bag')}</span><span>แต่งตัว</span>${icon('right')}</button></div>${questRow(h.level.quest)}${salesRow(h.sales)}` : ''}
+      ${h.level ? dayCard(h.level.day) : ''}
+      ${monthCard(h.month)}
     </div>`;
   }
 
@@ -8701,7 +8713,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!d) return '';
     var mine = (d.mine || []).filter(function (x) { return x.date === d.today; }).length;
     var r = (h.level && h.level.rules) || { note: 2 };
-    return html`<button class="card ideas-link" data-act="ideas-invite" data-seen="ชวนบันทึก"><span class="fb-ico">${icon('note')}</span><div class="grow"><b>${mine ? 'วันนี้บันทึกแล้ว ' + mine + ' เรื่อง' : 'วันนี้ที่ร้านเป็นยังไงบ้าง'}</b><span>บันทึกหน้างาน · ส่งไอเดีย · เรื่องละ +${r.note} แต้ม</span></div>${icon('right')}</button>`;
+    return html`<button class="card ideas-link tell-hero" data-act="ideas-invite" data-seen="ชวนบันทึก"><span class="fb-ico">${icon('note')}</span><div class="grow"><b>${mine ? 'วันนี้บันทึกแล้ว ' + mine + ' เรื่อง' : 'วันนี้ที่ร้านเป็นยังไงบ้าง'}</b><span>บันทึกหน้างาน · ส่งไอเดีย · เรื่องละ +${r.note} แต้ม</span></div>${icon('right')}</button>`;
   }
   function ideasView() {
     var h = S.home;
@@ -9921,7 +9933,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${rc.map(function (r) { return html`<div class="od-q-row"><b>${r.name}</b><p class="small" style="margin:4px 0 6px">${r.store}: <a href="${r.link}" target="_blank" rel="noopener">${r.pname}</a> · ${money(r.price, true)} บาท${r.per !== 1 ? ' (= ' + odNum(r.per) + ' ' + r.unit + ')' : ''}${r.note ? ' · ' + r.note : ''}</p><div class="od-yn two"><button class="btn sm ghost" data-act="odo-recheck" data-id="${r.productId}" data-ok="0">ไม่ใช้</button><button class="btn sm primary" data-act="odo-recheck" data-id="${r.productId}" data-ok="1">ใช้ต่อ</button></div></div>`; })}</section>` : ''}
       <section class="card od-q"><div class="card-h"><span class="eyebrow">ของแทน · ยี่ห้อหรือขนาดอื่นที่ Claude และแอปหาไว้</span></div>
         <p class="small" style="margin:0 0 10px">ใช้แทนได้ = แอปเลือกได้เมื่อของเดิมหมดหรือของแทนถูกกว่า · ไม่ใช้ = ไม่ซื้อเลย · ตอบครั้งเดียว ต่อไปแอปทำเอง</p>
-        ${n.yes + n.no ? html`<button class="btn block" data-act="odo-sub-all">${icon('check')} ตอบตามที่ Claude แนะนำ (ใช้แทนได้ ${n.yes} · ไม่ใช้ ${n.no}) · ที่ควรลองก่อน ${n.test} คู่${nf ? ' และที่แอปเจอเอง ' + nf + ' คู่' : ''} ตอบเองทีหลัง</button>` : v.subs.length ? html`<p class="small muted" style="margin:0">ไม่มีคู่ที่ Claude แนะนำแล้ว · ตอบเองทีละคู่</p>` : html`<p class="small muted" style="margin:0">ตอบครบทุกคู่แล้ว</p>`}
+        ${n.yes + n.no ? html`<button class="btn block" data-act="odo-sub-all">${icon('check')} ตอบตามที่ Claude แนะนำ ${n.yes + n.no} คู่</button><p class="small muted od-sub-all-s" style="margin:6px 4px 0">ใช้แทนได้ ${n.yes} · ไม่ใช้ ${n.no} · ที่ควรลองก่อน ${n.test} คู่${nf ? ' และที่แอปเจอเอง ' + nf + ' คู่' : ''} ตอบเองทีหลัง</p>` : v.subs.length ? html`<p class="small muted" style="margin:0">ไม่มีคู่ที่ Claude แนะนำแล้ว · ตอบเองทีละคู่</p>` : html`<p class="small muted" style="margin:0">ตอบครบทุกคู่แล้ว</p>`}
         ${v.subs.map(function (s) {
           return html`<div class="od-q-row"><b>${s.name}</b>${s.inList ? html` <span class="pill warn">อยู่ในรายการสั่ง</span>` : ''}
             <p class="small" style="margin:4px 0 6px">ของเดิม: ${s.main ? s.main.store + ' ' + s.main.pname + ' ' + money(s.main.price, true) + ' บาท' + (s.main.stock === false ? ' (หมด)' : '') : '-'}${s.max && s.per > s.max ? ' · ขนาดนี้เกินที่ตั้งไว้ครั้งละ ' + odNum(s.max) + ' ' + s.unit + ': ตอบใช้แทนได้ = ที่เก็บพอ ' + odNum(s.per) + ' ' + s.unit : ''}</p>
@@ -11466,8 +11478,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if ((rem.startMissing || []).length) todo.unshift(['team', 'ใส่วันเริ่มงาน ' + rem.startMissing.length + ' คน (' + rem.startMissing.join(', ') + ') — ระหว่างนี้ยังไม่ได้พักร้อนตามอายุงาน', 'staff']);
     return html`<div class="stack">
       <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}</div>
-      ${o.update ? updateCard(o.update) : ''}
+      ${teamUseCard(o.team)}
       ${pinLocksCard(o.pinLocks)}
+      ${dailyOwnerCard(o.daily)}
+      ${feedbackCard(o.feedback)}
+      ${o.update ? updateCard(o.update) : ''}
       ${pushCard()}
       ${tempUp ? tempOwnerCard(o.temp) : ''}
       ${due ? html`<section class="card hero pad-lg"><span class="eyebrow">ต้องจ่าย · เงินเดือน${due.month}${due.payDue ? ' · วันที่ ' + thShort(due.payDue) : ''}</span><div class="big" style="margin-top:6px">${money(due.total)}<small>บาท</small></div>
@@ -11478,11 +11493,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <button class="btn block" style="margin-top:14px" data-act="go-pay" data-key="${cur.period.key}">ดูรายคน</button></section>
       <div class="stats"><div class="stat"><b>${cnt('in', c.in)}<small class="muted" style="font-size:13px">/${c.total - c.leave - (c.off || 0)}</small></b><span>ลงเวลาวันนี้</span></div><div class="stat ${c.in - c.late ? 'ok' : ''}"><b>${c.in - c.late}</b><span>ตรงเวลาวันนี้</span></div><div class="stat"><b>${c.leave + (c.off || 0)}</b><span>ลา · หยุด</span></div><button class="stat ${o.pendingLeaves ? 'warn' : ''}" data-act="owner-tab" data-tab="team"><b>${o.pendingLeaves}</b><span>รออนุมัติลา</span></button></div>
       ${tempUp ? '' : tempOwnerCard(o.temp)}
-      ${dailyOwnerCard(o.daily)}
       ${checkOwnerCard(o.check)}
       ${salesOwnerCard(o.sales)}
       ${orderOwnerCard(o.order)}
-      ${feedbackCard(o.feedback)}
       ${pushTeamCard(o.push, o.pushFails)}
       ${useCard(o.usage)}
       ${(o.rainReview || []).length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ฝนตกที่ควรตรวจ</span></div><p class="small muted" style="margin:6px 16px 0">ข้อมูลอากาศไม่ตรงกับที่บันทึก บันทึกย้อนหลัง หรือปิดตอนที่ยังมีฝน · ถูกต้อง = คงไว้ · ลบ = ทุกคนที่ลงเวลาในช่วงนั้นไม่ได้ผ่อนผันฝนตก</p><div class="list">${o.rainReview.map(function (x) { return entryRow(x, true); })}</div></section>` : ''}
@@ -15701,13 +15714,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   /** For the owner and the approvers: who is told, and who not yet (the people still working). */
   function pushTeamCard(p, fails) {
-    var off = !!(p && (p.off || []).length);
+    // 2.13.6: ใครยังไม่เปิดแจ้งเตือนบอกในการ์ด ทีมใช้แอป 7 วัน บนสุดแทน (ไม่บอกซ้ำ) · การ์ดนี้เหลือแจ้งเตือนที่ส่งไม่สำเร็จ
     var bad = !!(fails && fails.n);
-    if (!off && !bad) return '';
+    if (!bad) return '';
     var all = p ? p.on.length + p.off.length : 0;
     return html`<section class="card push-team"><div class="card-h"><span class="eyebrow">${icon('bell')} แจ้งเตือนในมือถือของทีม</span>${p ? html`<span class="pill">เปิดแล้ว ${p.on.length}/${all} คน</span>` : ''}</div>
-      ${off ? html`<p>ยังไม่เปิด: ${p.off.join(', ')}</p>
-      <p class="muted">ชวนให้กด "เปิดแจ้งเตือน" บนหน้าแรกของแอป · iPhone ต้องเพิ่มแอปลงหน้าจอโฮมก่อน (มีวิธีในการ์ด)</p>` : ''}
       ${bad ? html`<p class="small"><b>ส่งไม่สำเร็จ ${fails.days} วันล่าสุด ${fails.n} ครั้ง</b> · ${fails.why.map(function (w) { return w.text + ' ' + w.n + ' ครั้ง'; }).join(' · ')}</p>` : ''}</section>`;
   }
 
@@ -16038,6 +16049,44 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (x.state === 'test') return 'แอปทดลองไม่ส่งสรุปถึง Claude (แอปจริงส่งทุกวันจันทร์)';
     if (x.state === 'no key') return 'สรุปรายสัปดาห์ยังไม่ถึง Claude: ยังไม่ได้เชื่อมกิตฮับ (ตั้งค่า › ความคิดเห็นจากพนักงาน › เชื่อมกิตฮับ)';
     return 'ส่งสรุปถึง Claude ไม่สำเร็จ' + (x.week ? ' (สัปดาห์ ' + useWeek(x.week) + ')' : '') + (x.error ? ': ' + x.error : '');
+  }
+  // ---- 2.13.6 ทีมใช้แอป 7 วัน: บนสุดหน้าเจ้าของ (Usage.gs useTeam_) ----
+  /** เปิดแอปล่าสุดแบบอ่านง่าย (จากงานกลางคืน: วันนี้ที่เปิดหลังเที่ยงคืนยังไม่นับ) */
+  function teamSeen(iso) {
+    if (!iso) return 'ไม่ได้เปิดแอป 7 วัน';
+    var d = Math.round((Date.parse(ymdOf(now())) - Date.parse(ymdOf(new Date(iso)))) / 86400000);
+    return d <= 0 ? 'เปิดแอปวันนี้' : d === 1 ? 'เปิดแอปเมื่อวาน' : 'เปิดแอป ' + d + ' วันก่อน';
+  }
+  /** รายคน: บอกกี่เรื่อง (คนที่ยังไม่บอกขึ้นก่อน) เปิดแอปล่าสุด แจ้งเตือน · ระดับและแต้มบรรทัดเล็ก · แตะดูรายละเอียด */
+  function teamUseCard(t) {
+    var list = (t && t.list) || [];
+    if (!list.length) return '';
+    var fresh = !!t.at;
+    var told = list.reduce(function (n, x) { return n + x.told; }, 0);
+    var zero = list.filter(function (x) { return !x.told; }).length;
+    var on = list.filter(function (x) { return x.push; }).length;
+    return html`<section class="card flush team-use"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">${icon('team')} ทีมใช้แอป · 7 วันถึงเมื่อคืน</span><span class="pill">${fresh ? 'บอก ' + told + ' เรื่อง' : 'รอสรุปคืนนี้'}</span></div>
+      <p class="small muted team-sum">${fresh ? (zero ? 'ยังไม่ได้บอกเรื่อง ' + zero + ' คน · ' : 'บอกเรื่องครบทุกคน · ') : ''}แจ้งเตือนเปิดแล้ว ${on}/${list.length} คน</p>
+      <div class="list">${list.map(function (x) {
+        return html`<button class="item team-row ${fresh && !x.told ? 'zero' : ''}" data-act="team-one" data-id="${x.id}"><div class="grow"><div class="t">${x.name}${fresh ? html` · <b>${x.told ? 'บอก ' + x.told + ' เรื่อง' : 'ยังไม่ได้บอก'}</b>` : ''}</div>
+          <div class="s">${fresh ? teamSeen(x.last) + ' · ' : ''}${x.push ? 'แจ้งเตือนเปิดแล้ว' : html`<span class="team-off">ยังไม่เปิดแจ้งเตือน</span>`}</div>
+          <div class="s small muted">${x.lv ? 'ระดับ' + LV_NAMES[x.lv] : 'ยังไม่มีระดับ'} · ${x.month} แต้มเดือนนี้${x.crown ? ' · ใส่มงกุฎ' : ''}</div></div>${icon('right')}</button>`;
+      })}</div>
+      ${on < list.length ? html`<p class="small muted" style="margin:0 16px 14px">ชวนคนที่ยังไม่เปิดให้กด "เปิดแจ้งเตือน" บนหน้าแรกของแอป · iPhone ต้องเพิ่มแอปลงหน้าจอโฮมก่อน (มีวิธีในการ์ด)</p>` : ''}</section>`;
+  }
+  /** หน้ารายละเอียดของคนหนึ่ง: ที่บอก การใช้แอป เกม แต้มสะสม (ของละเอียดทั้งหมดอยู่ที่ การใช้แอป) */
+  function openTeamOne(id) {
+    var t = S.ownerHome && S.ownerHome.team;
+    var x = ((t && t.list) || []).filter(function (y) { return y.id === id; })[0];
+    if (!x) return;
+    var fresh = !!t.at;
+    openSheet({ title: x.name + ' · 7 วันถึงเมื่อคืน', body: html`<div class="stack">
+      ${fresh ? html`<div class="hint">${icon('note')}<span><b>บอกเจ้าของ ${x.told} เรื่อง</b> · บันทึกหน้างาน ${x.notes} · ความคิดเห็น ${x.fb}</span></div>
+      <div class="hint">${icon('phone')}<span><b>${teamSeen(x.last)}</b> · เข้าแอป ${x.opens} ครั้ง · ใช้ ${x.min} นาที · เล่นเกม ${x.game} นาที</span></div>` : html`<p class="small muted mt0">ตัวเลขการใช้แอปมาหลังสรุปคืนนี้</p>`}
+      <div class="hint">${icon('bell')}<span>${x.push ? 'แจ้งเตือนเปิดแล้ว' : 'ยังไม่เปิดแจ้งเตือน: ชวนกด "เปิดแจ้งเตือน" บนหน้าแรก (iPhone เพิ่มแอปลงหน้าจอโฮมก่อน)'}</span></div>
+      <div class="hint">${icon('spark')}<span><b>${x.lv ? 'ระดับ' + LV_NAMES[x.lv] : 'ยังไม่มีระดับ'}${x.crown ? ' · ใส่มงกุฎเดือนนี้' : ''}</b> · แต้มเดือนนี้ ${x.month} · สะสมทั้งหมด ${x.all} แต้ม</span></div>
+      <p class="small muted mt0">หน้าที่เปิด ปุ่มที่กด และความเร็วของแอปรายคน ดูได้ที่ การใช้แอป</p></div>`,
+      foot: html`<button class="btn" data-act="use-open">การใช้แอป</button><button class="btn primary" data-act="sheet-close">ปิด</button>` });
   }
   function useCard(u) {
     var pills = [];
@@ -18046,6 +18095,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'champ-rules': function () { openChampRules(); },
     'ideas-invite': function () { ACTIONS.tab({ dataset: { tab: 'ideas' } }); },
     'use-open': function () { openUse(); },
+    'team-one': function (el) { openTeamOne(el.dataset.id); },
     'use-days': function (el) { loadUse(+el.dataset.days === 30 ? 30 : 7); },
   };
 
