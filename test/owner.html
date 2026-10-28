@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.6","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"c71a6d89b671"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.7","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"eb5d6f54f269"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -9355,6 +9355,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="card flush od-list">${x.items.map(odRow)}</div>${x.staff ? odExtrasBox() : ''}</section>`;
     });
   }
+  /** 2.13.7 ปุ่มของหมดด่วน: เลือกของ ติ๊กครบ 2 ข้อถึงส่งได้ เจ้าของได้แจ้งเตือนทันที */
+  function odUrgentBtn() {
+    return html`<button class="btn block od-urgent" data-act="od-urgent">${icon('alert')} ของหมดด่วน</button>`;
+  }
+  function odUrgentSheet() {
+    var items = (S.od.items || []).slice().sort(function (a, b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
+    openSheet({ title: 'ของหมดด่วน', body: html`<div class="stack">
+      <label class="field"><span>ของที่หมด</span><select id="odu-item" data-change="odu"><option value="">เลือกของ</option>${items.map(function (it) { return html`<option value="${it.id}">${it.name}</option>`; })}</select></label>
+      <label class="check"><input type="checkbox" id="odu-a" data-change="odu"><span>ไม่พอใช้ถึงปิดร้านวันนี้</span></label>
+      <label class="check"><input type="checkbox" id="odu-b" data-change="odu"><span>ไม่มีของมาส่งวันนี้</span></label>
+      <p class="small muted" style="margin:0">กดเมื่อจำเป็นจริงเท่านั้น เพราะสั่งด่วนราคาสูง</p></div>`,
+      foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" id="odu-go" data-act="od-urgent-send" disabled>แจ้งเจ้าของ</button>` });
+  }
   function odBar() {
     var list = odTouched();
     var orders = list.filter(function (it) { return odQty(it) > 0; }).length + odExtras().length;
@@ -9474,7 +9487,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${coming.map(function (b) {
         return html`<section class="card od-truck"><div class="row"><span class="fb-ico od">${icon('truck')}</span><div class="grow"><b>ของ ${b.store} มา${odEta(b)}</b><div class="small muted od-truck-items">${b.items.length} อย่าง: ${b.items.join(' · ')}</div></div><button class="btn sm" data-act="od-got" data-id="${b.id}">${icon('check')} ได้ของแล้ว</button></div></section>`;
       })}
-      ${odWaitCard()}${odLate()}
+      ${odWaitCard()}${odLate()}${odUrgentBtn()}
       <div class="od-nav" id="od-nav">
         <label class="od-find">${icon('search')}<input type="search" data-od="q" placeholder="ค้นหาของ เช่น ผักกาด" value="${S.odQ || ''}" autocomplete="off" enterkeyhint="search" aria-label="ค้นหาของ"></label>
         <div class="od-cats" id="od-cats" aria-label="ไปที่หมวด">${odChips(secs)}</div>
@@ -9845,7 +9858,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (store === 'Shopee' && l.checkedAt) notes.push(html`<span class="pill">Claude เทียบ ${thShort(ymdOf(new Date(l.checkedAt)))}</span>`);
     if (l.tier) notes.push(html`<span class="pill gold">ราคาซื้อหลายชิ้น</span>`);
     if (l.bulk) notes.push(html`<span class="pill gold">ซื้อเผื่อ${l.days ? ' พอใช้ ~' + Math.round(l.days) + ' วัน' : ''}</span>`);
-    if (l.sub) notes.push(html`<span class="pill">ของแทนที่คุณตอบว่าได้</span>`);
+    if (l.sub) notes.push(html`<span class="pill">ของแทนที่คุณเลือกรอบนี้</span>`);
     if (l.even) notes.push(html`<span class="pill">ราคาเท่ากันทั้งสองร้าน</span>`);
     if (l.picked) notes.push(html`<span class="pill">คุณเลือกร้านนี้</span>`);
     if ((l.meals || []).some(function (m) { return m.over; })) notes.push(html`<span class="pill warn">${icon('alert')} เยอะกว่าที่เมนูใช้</span>`);
@@ -9856,7 +9869,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${(l.meals || []).length ? html`<div class="s">${l.meals.map(function (m) { return 'ทำ' + m.menu + ' ' + (m.people || '-') + ' คน' + (m.enough != null ? ' (พอ ' + odNum(m.enough) + ' ' + l.unit + ')' : '') + ' · ' + m.by; }).join(' · ')}</div>` : ''}
         ${l.alt ? html`<div class="s">${odoAltText(l)}${l.alt.gone ? ' (หน้าสินค้าไม่มีแล้ว)' : l.alt.old ? ' (ราคาเก่า)' : ''}${l.alt.link ? html` · <a href="${l.alt.link}" target="_blank" rel="noopener">เปิดใน ${l.alt.store}</a>` : ''}</div>` : ''}
         ${l.backups && l.backups.length && !(l.alt && l.alt.store === l.backups[0].store && l.alt.pname === l.backups[0].pname) ? html`<div class="s muted">ถ้าหมด: ${odoBackupText(l.backups[0])}</div>` : ''}
-        ${notes.length ? html`<div class="od-tags">${notes}</div>` : ''}
+        ${l.subAsk ? odoSubAsk(l.itemId, l.subAsk) : ''}${notes.length ? html`<div class="od-tags">${notes}</div>` : ''}
       </div><div class="r"><div class="amt">${money(l.cost)}</div>
         <div class="od-acts"><a class="icon-btn" href="${l.link}" target="_blank" rel="noopener" aria-label="เปิดหน้าสินค้าใน ${store || (l.link.indexOf('makro') >= 0 ? 'Makro' : 'GO')}">${icon('link')}</a>
         ${l.alt ? html`<button class="icon-btn" data-act="odo-pick" data-id="${l.itemId}" data-store="${l.alt.store}" aria-label="ย้ายไป ${l.alt.store}">${icon('swap')}</button>` : ''}
@@ -9898,11 +9911,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="od-yn three"><a class="btn sm" href="${x.makro}" target="_blank" rel="noopener">${icon('search')} หาใน Makro</a><button class="btn sm ghost" data-act="odo-extra-drop" data-id="${x.id}">ไม่สั่ง</button><button class="btn sm primary" data-act="odo-extra-done" data-id="${x.id}">${icon('check')} สั่งแล้ว</button></div></div>`;
     })}<p class="small muted" style="margin:10px 0 0">แอปยังไม่รู้ราคาของพวกนี้ · สั่งเองในเว็บ หรือตอนบอก Claude บนคอมว่า "สั่งของ" Claude หาและใส่ตะกร้าให้ด้วย · ของที่ขอบ่อย บอก Claude ให้เพิ่มเข้ารายการได้</p></section>`;
   }
+  /** 2.13.7 ของแทนที่เคยตอบใช้แทนได้ แอปถามทุกครั้ง ไม่เปลี่ยนเอง: กดใช้รอบนี้ รอบหน้าถามใหม่ */
+  function odoSubAsk(itemId, a) {
+    return html`<div class="od-sub-row"><div class="grow"><div class="t">ของแทน ${a.store}: ${a.pname}</div><div class="s">${a.q} ชิ้น ${money(a.cost)} บาท · ต่อหน่วย ${money(a.perUnit, true)} · ถามคุณทุกครั้ง</div></div>
+      <div class="od-yn"><button class="btn sm" data-act="odo-subuse" data-id="${itemId}" data-pid="${a.productId}">ใช้ของแทนรอบนี้</button></div></div>`;
+  }
   function odoCannot(list) {
     return html`<section class="card od-q"><div class="card-h"><span class="eyebrow">ยังซื้อไม่ได้</span></div>${list.map(function (c) {
       return html`<div class="od-q-row"><b>${c.name} · ${odNum(c.need)} ${c.unit}</b><p class="small" style="margin:4px 0 8px">${c.soldOut.length ? 'ของหมด: ' + c.soldOut.join(', ') : 'ยังไม่มีราคา'} · ${c.who.join(', ')}</p>
         ${c.subs.map(function (p) { return odoSubRow(p, c.name); })}
-        ${c.subs.length ? '' : html`<p class="small muted" style="margin:0">ไม่มีของแทนในสองร้าน · รอของเข้า หรือซื้อที่อื่น</p>`}</div>`;
+        ${c.subAsk ? odoSubAsk(c.itemId, c.subAsk) : ''}
+        ${c.subs.length || c.subAsk ? '' : html`<p class="small muted" style="margin:0">ไม่มีของแทนในสองร้าน · รอของเข้า หรือซื้อที่อื่น</p>`}</div>`;
     })}</section>`;
   }
   var OD_REC = { yes: ['ok', 'Claude: ใช้แทนได้'], no: ['bad', 'Claude: ไม่แนะนำ'], test: ['warn', 'Claude: ควรลองก่อน'] };
@@ -10196,7 +10215,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <h3 class="h3">คำขอของฉัน</h3>
       <section class="card flush">${(L.requests || []).length ? html`<div class="list">${L.requests.map(function (l) {
         var st = LEAVE_STATUS[l.status] || [l.status, ''];
-        return html`<div class="item"><div class="grow"><div class="t">${l.type} · ${leaveWhen(l)}</div><div class="s">${l.swap ? 'ไม่หักและไม่เพิ่มเงิน' : l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}${l.decisionNote ? ' · ' + l.decisionNote : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}${leaveFreeTag(l)}</div>
+        return html`<div class="item"><div class="grow"><div class="t">${l.type} · ${leaveWhen(l)}</div><div class="s">${l.swap ? 'มาทำได้ค่าแรงเพิ่ม 1 วัน · วันหยุดแทนไม่รับค่าจ้าง' : l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}${l.decisionNote ? ' · ' + l.decisionNote : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}${leaveFreeTag(l)}</div>
           <div class="r"><span class="pill ${st[1]}">${st[0]}</span>${l.status === 'pending' ? html`<div><button class="link small" data-act="cancel-leave" data-id="${l.id}">ยกเลิก</button></div>` : ''}</div></div>`;
       })}</div>` : html`<div class="empty">ยังไม่มีคำขอลา</div>`}</section>
     </div>`;
@@ -10315,7 +10334,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var b = ((S.leaves && S.leaves.balances) || []).filter(function (x) { return x.id === emp.value; })[0];
     return (b && b.runs) || [];
   }
-  // ---- สลับวันหยุด (งาน 327): มาทำงานวันหยุดประจำแล้วหยุดวันอื่นแทน ไม่หักและไม่เพิ่มเงิน ----
+  // ---- สลับวันหยุด (งาน 327): มาทำงานวันหยุดประจำแล้วหยุดวันอื่นแทน วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง ----
   function swapType() { return (B.rules && B.rules.swapType) || 'สลับวันหยุด'; }
   /** วันของคำขอแบบสั้น: สลับวันหยุด 'หยุด พ. 14 ต.ค. แทน จ. 12 ต.ค.' · การลาเหมือนเดิม */
   function leaveWhen(l) {
@@ -10379,11 +10398,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     var work = workIn.value, off = $('#lv-from').value;
     var note = $('#lv-note');
-    if (note) note.textContent = 'มาทำงานวันหยุดประจำ แล้วหยุดวันอื่นแทน ก่อนหรือหลังก็ได้ ข้ามรอบเงินเดือนได้ · ไม่หักและไม่เพิ่มเงิน · วันหยุดประจำที่ร้านปิดสลับไม่ได้ ได้พักร้อนเพิ่ม 1 วันแทน';
+    if (note) note.textContent = 'มาทำงานวันหยุดประจำ แล้วหยุดวันอื่นแทน ก่อนหรือหลังก็ได้ ข้ามรอบเงินเดือนได้ · วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · วันหยุดประจำที่ร้านปิดสลับไม่ได้ ได้พักร้อนเพิ่ม 1 วันแทน';
     var wn = $('#lv-work-note');
     if (wn) wn.textContent = dayOff != null ? 'วันหยุดประจำ: วัน' + TH_DAYS_LONG[dayOff] : $('#lv-emp') && S.leaves ? 'ยังไม่ได้ตั้งวันหยุดประจำ — เจ้าของร้านตั้งได้ที่ พนักงาน' : '';
     var r = B.rules || {};
-    var text = 'ไม่หักและไม่เพิ่มเงิน';
+    var text = 'มาทำได้ค่าแรงเพิ่ม 1 วัน · วันหยุดแทนไม่รับค่าจ้าง';
     if (dayOff != null && work && off && dowOf(work) === dayOff && dowOf(off) !== dayOff) {
       var n = swapRun(dayOff, work, off, lvReqs());
       if (n > (r.maxRun || 6) && r.swapWarn) text = String(r.swapWarn).replace('{N}', n);
@@ -11009,7 +11028,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="row between"><div class="hello" style="font-size:24px;margin:0">คำขอลา</div><button class="btn sm" data-act="open-leave-add">${icon('plus')} บันทึกการลา</button></div>
       <section class="card flush">${L.pending.length ? html`<div class="list">${L.pending.map(function (l) {
         var mine = S.view !== 'owner' && S.home && S.home.me && l.empId === S.home.me.id;
-        return html`<div class="item stacked">${avatar(empById(l.empId) || { name: l.name })}<div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${l.swap ? leaveWhen(l) + ' · ไม่หักและไม่เพิ่มเงิน' : thRange(l.from, l.to) + ' · ' + l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}<div class="s">ขอเมื่อ ${whenAt(l.requestedAt)}${!l.swap && leaveAskedOnDay(l) && l.type !== sickType() && !l.ill ? ' · ขอในวันลา' : ''}</div>${leaveFreeTag(l)}</div>
+        return html`<div class="item stacked">${avatar(empById(l.empId) || { name: l.name })}<div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${l.swap ? leaveWhen(l) + ' · วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง' : thRange(l.from, l.to) + ' · ' + l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}<div class="s">ขอเมื่อ ${whenAt(l.requestedAt)}${!l.swap && leaveAskedOnDay(l) && l.type !== sickType() && !l.ill ? ' · ขอในวันลา' : ''}</div>${leaveFreeTag(l)}</div>
           <div class="row" style="width:100%;justify-content:flex-end">${mine
             ? html`<span class="pill">รอเจ้าของร้านอนุมัติ</span>`
             : html`${l.swap ? '' : html`<button class="btn sm ghost tap" data-act="open-leave-free" data-id="${l.id}" data-decide="1">${l.type === sickType() ? 'ใบแพทย์ / ' : ''}ไม่หัก…</button>`}<button class="btn sm tap" data-act="decide-leave" data-id="${l.id}" data-ok="false">ไม่อนุมัติ</button><button class="btn sm primary tap" data-act="decide-leave" data-id="${l.id}" data-ok="true">อนุมัติ</button>`}</div></div>`;
@@ -11562,7 +11581,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   var EMP_FIELDS = [
     ['ข้อมูลพนักงาน', [['nick', 'ชื่อเล่น'], ['display', 'ชื่อที่แสดงในแอป', 'ไม่บังคับ · ชื่อที่อยากให้แอปเรียก ถ้าว่างใช้ชื่อเล่น · ชื่อเล่นซ้ำกันไม่ต้องใส่อะไร แอปเติมแผนกให้เองเฉพาะในรายการรวม (เช่น นิดครัว)'], ['fullName', 'ชื่อ-นามสกุล (ในสลิป)'], ['citizenId', 'เลขบัตรประชาชน'], ['bank', 'บัญชีรับเงิน']]],
-    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ ไม่หักและไม่เพิ่มเงิน · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date']]],
+    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date']]],
     ['ค่าจ้าง', [['employment', 'สถานะการจ้าง', 'employment'], ['probationEnd', 'วันผ่านโปร', 'date', 'ตั้งแต่วันนี้ได้เงินเดือน + Incentive + ประกันสังคม'], ['probationRate', 'ค่าแรงช่วงทดลองงาน (บาท/วัน)', 'num'], ['probationWht', 'ภาษีหัก ณ ที่จ่ายช่วงทดลองงาน (%)', 'num'], ['payType', 'ประเภทค่าจ้าง', 'payTypes'], ['rate', 'เงินเดือน/ค่าแรง (บาท)', 'num'], ['otRate', 'ค่า OT (บาท/ชม.)', 'num', 'เว้นว่าง = 1.5 เท่าตามกฎหมาย'], ['sso', 'หักประกันสังคม', 'yesno']]],
     ['Incentive', [['diligence', 'เบี้ยขยัน (บาท)', 'num'], ['headAllowance', 'ค่าหัวหน้า (บาท)', 'num'], ['tenureAllowance', 'ค่าอยู่นาน (บาท)', 'num']]],
     ['อื่น ๆ', [['note', 'หมายเหตุ']]],
@@ -16085,6 +16104,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="hint">${icon('phone')}<span><b>${teamSeen(x.last)}</b> · เข้าแอป ${x.opens} ครั้ง · ใช้ ${x.min} นาที · เล่นเกม ${x.game} นาที</span></div>` : html`<p class="small muted mt0">ตัวเลขการใช้แอปมาหลังสรุปคืนนี้</p>`}
       <div class="hint">${icon('bell')}<span>${x.push ? 'แจ้งเตือนเปิดแล้ว' : 'ยังไม่เปิดแจ้งเตือน: ชวนกด "เปิดแจ้งเตือน" บนหน้าแรก (iPhone เพิ่มแอปลงหน้าจอโฮมก่อน)'}</span></div>
       <div class="hint">${icon('spark')}<span><b>${x.lv ? 'ระดับ' + LV_NAMES[x.lv] : 'ยังไม่มีระดับ'}${x.crown ? ' · ใส่มงกุฎเดือนนี้' : ''}</b> · แต้มเดือนนี้ ${x.month} · สะสมทั้งหมด ${x.all} แต้ม</span></div>
+      ${fresh ? html`<div class="hint">${icon('spark')}<span><b>ของสะสม</b> · ฟิกเกอร์ ${x.figs || 0}/${x.figAll || 0} ตัว · ของแต่งตัว ${x.looks || 0} ชิ้น</span></div>` : ''}
       <p class="small muted mt0">หน้าที่เปิด ปุ่มที่กด และความเร็วของแอปรายคน ดูได้ที่ การใช้แอป</p></div>`,
       foot: html`<button class="btn" data-act="use-open">การใช้แอป</button><button class="btn primary" data-act="sheet-close">ปิด</button>` });
   }
@@ -16902,6 +16922,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'od-clear': function () {
       confirmSheet({ title: 'ล้างที่นับไว้', text: 'จำนวนที่ยังไม่ได้ส่งบนมือถือนี้จะหายไป', yes: 'ล้าง', danger: true }).then(function (ok) { if (ok) { odForget(); closeSheet(); render(); } });
     },
+    'od-urgent': function () { odUrgentSheet(); },
+    'od-urgent-send': function (el) {
+      var it = $('#odu-item'), a = $('#odu-a'), b = $('#odu-b');
+      if (!it || !it.value || !a.checked || !b.checked) { toast('เลือกของและติ๊กให้ครบ 2 ข้อก่อน'); return; }
+      run(el, call('orderUrgent', { itemId: it.value, short: true, noTruck: true }, staffAuth())).then(function (d) { closeSheet(); toast((d && d.notice) || 'แจ้งเจ้าของร้านแล้ว'); }, function () {});
+    },
     'od-send': function () {
       var miss = odMealMissing();
       if (miss) {
@@ -17048,6 +17074,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }, function () {});
     },
     'odo-pick': function (el) { run(el, call('orderPick', { itemId: el.dataset.id, store: el.dataset.store }, ownerAuth())).then(odoSet, function () {}); },
+    'odo-subuse': function (el) { run(el, call('orderPick', { itemId: el.dataset.id, store: '', sub: el.dataset.pid }, ownerAuth())).then(odoSet, function () {}); },
     'odo-add': function (el) { run(el, call('orderOwnerAdd', { itemId: el.dataset.id, qty: +el.dataset.qty }, ownerAuth()), 'เพิ่มในรายการแล้ว').then(odoSet, function () {}); },
     'odo-add-fill': function (el) {
       var st = odo.v && odo.v.plan.stores[el.dataset.store];
@@ -18121,6 +18148,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var el = ev.target;
     if (el.id === 'cam-env' || el.id === 'cam-user') { onCameraFile(el); return; }
     if (el.dataset.change === 'lv-type' || el.dataset.change === 'lv-cost') leaveFormSync();
+    if (el.dataset.change === 'odu' && $('#odu-go')) $('#odu-go').disabled = !($('#odu-item').value && $('#odu-a').checked && $('#odu-b').checked);
     if (el.dataset.change === 'lf-cert' && $('#lf-days')) $('#lf-days').hidden = !el.checked;
     if (el.dataset.change === 'restore-when' && $('#rs-say')) $('#rs-say').textContent = restoreSay(restoreAt()).text;
     if (el.dataset.change === 'odo-keep') {
