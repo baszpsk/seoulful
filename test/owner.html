@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.10","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"688bb30d676d"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.11","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"b44536da42fd"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -293,8 +293,17 @@ button.card:active { transform: scale(.975); transition-duration: .12s; }
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; } /* 2.13.8: ช่องตัวเลขห่างกันเท่าระยะการ์ด (เดิม 10 px) */
 .stat { background: var(--card); border: 0; box-shadow: var(--card-shadow); border-radius: var(--r-md); padding: 12px 8px 10px; text-align: center; }
 .stat b { display: block; font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.2; }
-.stat span { font-size: 12px; color: var(--muted); }
+.stat > span { font-size: 12px; color: var(--muted); } /* 2.13.11: เฉพาะป้ายใต้เลข (เดิมโดนตัวนับเลขใน <b> เลขเลยเล็กไม่เท่าช่องอื่น) */
 .stat.ok b { color: var(--ok); }
+/* 2.13.11 ตัวเลขเดือนนี้อยู่ในการ์ด Incentive การ์ดเดียว (เดิมการ์ดโล่งเหลือแถวเดียว กล่องเลขแยก 4 กล่องใต้การ์ด) */
+.m-stats { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: 4px 8px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
+.hero .m-stats { border-top-color: rgba(255, 255, 255, .12); }
+.m-stats .ms { display: block; min-width: 0; min-height: 44px; padding: 2px 0; border: 0; background: none; color: inherit; font: inherit; text-align: center; }
+.m-stats .ms b { display: block; font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.m-stats .ms > span { display: block; margin-top: 2px; font-size: 12px; line-height: 1.3; color: var(--muted); }
+.hero .m-stats .ms > span { color: var(--hero-muted); }
+.m-stats .ms.ok b { color: var(--ok); }
+.hero .m-stats .ms.ok b { color: #e9cc92; }
 .stat.warn b { color: var(--warn); }
 .stat.bad b { color: var(--bad); }
 
@@ -625,6 +634,11 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-nav { position: sticky; top: calc(60px + env(safe-area-inset-top)); z-index: 12; margin: 0 -16px; padding: 8px 16px 10px; background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: inset 0 -1px 0 var(--line), 0 10px 22px -18px rgba(60, 42, 20, .4); }
 .od-find { display: flex; align-items: center; gap: 8px; height: 42px; padding: 0 14px; border-radius: 14px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--btn-line); }
 .od-find svg { width: 18px; height: 18px; flex: none; color: var(--muted); }
+/* 2.13.11 ของหมดด่วน: พิมพ์ค้นชื่อของแล้วแตะเลือก (เดิมเลื่อนหาในรายการยาว) */
+.odu-list { display: flex; flex-direction: column; gap: 6px; max-height: 38vh; overflow-y: auto; }
+.odu-it { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 10px 14px; border: 0; border-radius: 12px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--btn-line); color: var(--ink); font: inherit; font-size: 15px; text-align: left; }
+.odu-it.on { box-shadow: inset 0 0 0 2px var(--gold); font-weight: 600; }
+.odu-it svg { width: 16px; height: 16px; flex: none; color: var(--gold); }
 .od-find input { flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 16px; outline: none; }
 .od-cats { position: relative; display: flex; gap: 8px; overflow-x: auto; margin: 10px -16px 0; padding: 0 16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .od-cats::-webkit-scrollbar { display: none; }
@@ -8654,6 +8668,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <li>${icon('shield')}<span>เดือนไหน Incentive ไม่พอหัก ส่วนที่เหลือหักเดือนถัดไปครั้งเดียว</span></li>
       </ul>`, foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
   }
+  /** 2.13.11 กติกาและวิธีใช้ที่ย้ายจากหน้าจอไปหลังปุ่ม ⓘ (เจ้าของร้านสั่ง 28 ต.ค. 2569 "เอาคลีนๆ") · rows: [[ไอคอน, ข้อความ]] */
+  function infoSheet(title, rows) {
+    openSheet({ title: title, body: html`<ul class="rules">${rows.map(function (r) { return html`<li>${icon(r[0])}<span>${r[1]}</span></li>`; })}</ul>`, foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
+  }
   /** The run of on-time days (leave and days off do not break it) and the points it is heading for. */
   function onTimeRun(c) {
     var o = S.home && S.home.level && S.home.level.onTime;
@@ -8661,6 +8679,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // (การ์ด Incentive เหลือแถวนี้ จึงขึ้นเสมอเมื่อมีแต้มให้ลุ้น · ยังไม่มีวันติดต่อกัน = ตรงเวลาติดต่อกันอีก N วัน · 2.13.3)
     if (!o && run < 2) return '';
     var next = o ? 'อีก ' + o.left + ' วัน +' + o.pts + ' แต้ม' : '';
+    // 2.13.11 วันติดต่อกันนับต่อข้ามรอบ ต้นรอบจึงมากกว่าช่องตรงเวลาของรอบนี้ (6 กับ 1 · เจ้าของร้านสั่ง 28 ต.ค. 2569): บอกจำนวนเมื่อไม่เกินวันตรงเวลาของรอบนี้ ไม่งั้นบอกแค่อีกกี่วันได้แต้ม
+    var mine = c.onTime != null ? c.onTime : Math.max(0, (c.workDays || 0) - (c.lateMinor || 0) - (c.lateMajor || 0));
+    if (run > mine) run = 0;
+    if (!o && !run) return '';
     return html`<span class="streak">${icon('spark')} ${run ? html`ตรงเวลาติดต่อกัน ${cnt('run', run)} วัน${next ? ' · ' + next : ''}` : 'ตรงเวลาติดต่อกัน' + next}</span>`;
   }
   /** การ์ด Incentive หน้าแรก: เหลือวันตรงเวลาติดต่อกันกับแต้มที่จะได้ และปุ่ม ⓘ กติกา · ไม่บอกยอดเงิน แถบ หรือรายการหัก (ยอดอยู่ในสลิป · 2.13.3) */
@@ -8675,19 +8697,21 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var me = S.home.me;
     var onTime = c.onTime != null ? c.onTime : Math.max(0, c.workDays - c.lateMinor - c.lateMajor);
     var vac = ((S.home.leave && S.home.leave.balance) || []).filter(function (b) { return b.vacation && (b.eligible || b.remaining > 0); })[0];
-    return html`<section class="card ${inc ? 'hero' : ''} pad-lg">
+    // 2.13.11 ตัวเลขเดือนนี้อยู่ในการ์ดเดียวกับ Incentive (เจ้าของร้านสั่ง 28 ต.ค. 2569 "พอตัดแล้วไม่รู้จะแสดงอะไร") เลขทุกช่องขนาดเท่ากัน
+    return html`<section class="card ${inc ? 'hero' : ''} pad-lg month-card">
       <div class="card-h"><span class="eyebrow">${m.period.month}</span><span class="small muted">${payDueText(m.period.payDue) || m.period.label}</span></div>
       ${inc
         ? monthIncentive(inc, c)
         : html`<div class="hello" style="font-size:20px;margin:0 0 4px">ช่วงทดลองงาน</div><p class="muted small mt0">ค่าจ้างรายวันตามวันทำงานจริง${me.probationEnd ? ' · ผ่านโปร ' + thShort(me.probationEnd) : ''} · Incentive เริ่มหลังผ่านโปร</p>`}
-    </section>
-    <div class="stats">
-      <div class="stat"><b>${cnt('wd', c.workDays)}</b><span>วันทำงาน</span></div>
-      <div class="stat"><b>${cnt('ot', m.ot ? m.ot.hours : 0, 'h')}</b><span>OT (ชม.)</span></div>
-      <div class="stat ${onTime ? 'ok' : ''}"><b>${cnt('ontime', onTime)}</b><span>ตรงเวลา (วัน)</span></div>
-      ${vac ? html`<button class="stat" data-act="vacation-info"><b>${vac.remaining}</b><span>พักร้อนเหลือ (วัน)</span></button>` : html`<div class="stat"><b>${c.leaveDays}</b><span>ลา (วัน)</span></div>`}
-    </div>`;
+      <div class="m-stats">
+      <div class="ms"><b>${cnt('wd', c.workDays)}</b><span>วันทำงาน</span></div>
+      <div class="ms"><b>${cnt('ot', m.ot ? m.ot.hours : 0, 'h')}</b><span>OT (ชม.)</span></div>
+      <div class="ms ${onTime ? 'ok' : ''}"><b>${cnt('ontime', onTime)}</b><span>ตรงเวลา (วัน)</span></div>
+      ${vac ? html`<button class="ms" data-act="vacation-info"><b>${vac.remaining}</b><span>พักร้อนเหลือ (วัน)</span></button>` : html`<div class="ms"><b>${c.leaveDays}</b><span>ลา (วัน)</span></div>`}
+      </div>
+    </section>`;
   }
+  // 2.13.11 หน้าแรกไม่มีการ์ด ไอเดียของคุณใช้ได้แล้ว (ซ้ำกับแท็บไอเดีย ซึ่งมีตัวเลขบนแท็บบอกอยู่แล้ว)
   function homeView() {
     var h = S.home;
     var me = h.me;
@@ -8702,7 +8726,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${dailyDue(h.daily)}
       ${checkDue(h.check)}
       ${approver && h.approver && h.approver.pendingLeaves ? html`<button class="card row" style="width:100%;text-align:left" data-act="tab" data-tab="team">${icon('approve')}<span class="grow"><b>มีคำขอลารออนุมัติ ${h.approver.pendingLeaves} รายการ</b></span>${icon('right')}</button>` : ''}
-      ${fbCheer(h.feedback)}
       ${pushCard()}
       ${orderCard(h.order)}
       ${h.order && h.order.keeper ? mealCard(h.order.staffMeal, false) : ''}
@@ -9225,7 +9248,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var last = it.last ? (it.last.empId === staffId() ? 'คุณ' : it.last.by) + 'นับได้ ' + odNum(it.last.have) + ' ' + it.unit + ' · ' + odAgo(it.last.at) : '';
     var lot = it.lot && it.lot.left <= 2 ? it.lot : null;
     return html`<div class="od-item ${odEntry(it) ? 'on' : ''}" id="od-${it.id}">
-      <div class="od-top"><div class="grow"><b>${it.name}</b><span class="s">${it.par != null ? 'PAR ' + odNum(it.par) + ' ' + it.unit : 'ยังไม่มี PAR นับแล้วใส่จำนวนสั่งเอง'}${it.max ? ' · สั่งครั้งละไม่เกิน ' + odNum(it.max) : ''}${odLife(it) ? ' · ' + odLife(it) : ''}${last ? ' · ' + last : ''}</span></div>
+      <div class="od-top"><div class="grow"><b>${it.name}</b><span class="s">${it.par != null ? 'PAR ' + odNum(it.par) + ' ' + it.unit : 'ยังไม่มี PAR'}${it.max ? ' · สั่งครั้งละไม่เกิน ' + odNum(it.max) : ''}${odLife(it) ? ' · ' + odLife(it) : ''}${last ? ' · ' + last : ''}</span></div>
         <div class="od-have"><span class="lbl">มี</span>${odStepper('have', it, d.have)}</div></div>
       ${lot ? html`<div class="od-lot ${lot.left <= 0 ? 'due' : ''}">${icon('clock')}<span>${odLot(lot, it.unit)}</span></div>` : ''}
       ${tags.length ? html`<div class="od-tags">${tags}</div>` : ''}
@@ -9363,18 +9386,38 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="card flush od-list">${x.items.map(odRow)}</div>${x.staff ? odExtrasBox() : ''}</section>`;
     });
   }
-  /** 2.13.7 ปุ่มของหมดด่วน: เลือกของ ติ๊กครบ 2 ข้อถึงส่งได้ เจ้าของได้แจ้งเตือนทันที */
+  /** 2.13.7 ปุ่มของหมดด่วน: เลือกของ ติ๊กครบ 2 ข้อถึงส่งได้ เจ้าของได้แจ้งเตือนทันที · 2.13.11 ปุ่มอยู่บนสุดของหน้า และพิมพ์ค้นชื่อของแทนเลื่อนหาในรายการยาว (เจ้าของร้านสั่ง 28 ต.ค. 2569) */
   function odUrgentBtn() {
     return html`<button class="btn block od-urgent" data-act="od-urgent">${icon('alert')} ของหมดด่วน</button>`;
   }
   function odUrgentSheet() {
-    var items = (S.od.items || []).slice().sort(function (a, b) { return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
+    S.oduQ = '';
+    S.oduPick = '';
     openSheet({ title: 'ของหมดด่วน', body: html`<div class="stack">
-      <label class="field"><span>ของที่หมด</span><select id="odu-item" data-change="odu"><option value="">เลือกของ</option>${items.map(function (it) { return html`<option value="${it.id}">${it.name}</option>`; })}</select></label>
+      <label class="od-find">${icon('search')}<input type="search" id="odu-q" data-odu="q" placeholder="พิมพ์ชื่อของที่หมด เช่น ผักกาด" autocomplete="off" enterkeyhint="search" aria-label="ค้นหาของที่หมด"></label>
+      <input type="hidden" id="odu-item" value="">
+      <div class="odu-list" id="odu-list">${oduList()}</div>
       <label class="check"><input type="checkbox" id="odu-a" data-change="odu"><span>ไม่พอใช้ถึงปิดร้านวันนี้</span></label>
       <label class="check"><input type="checkbox" id="odu-b" data-change="odu"><span>ไม่มีของมาส่งวันนี้</span></label>
       <p class="small muted" style="margin:0">กดเมื่อจำเป็นจริงเท่านั้น เพราะสั่งด่วนราคาสูง</p></div>`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" id="odu-go" data-act="od-urgent-send" disabled>แจ้งเจ้าของ</button>` });
+  }
+  /** 2.13.11 ของที่ชื่อมีคำที่พิมพ์ เรียงตามชื่อ · ตัวที่แตะเลือกแล้วอยู่บนสุดเสมอ */
+  function oduList() {
+    var q = String(S.oduQ || '').trim().toLowerCase();
+    var pick = S.oduPick;
+    var items = ((S.od && S.od.items) || []).filter(function (it) { return it.id === pick || !q || it.name.toLowerCase().indexOf(q) >= 0; });
+    items.sort(function (a, b) { return (b.id === pick) - (a.id === pick) || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0); });
+    if (!items.length) return html`<p class="small muted" style="margin:4px 2px">ไม่พบของชื่อนี้ ลองพิมพ์สั้นลง</p>`;
+    return items.map(function (it) {
+      var on = it.id === pick;
+      return html`<button class="odu-it ${on ? 'on' : ''}" data-act="odu-pick" data-id="${it.id}" aria-pressed="${on}">${on ? icon('check') : ''}<span>${it.name}</span></button>`;
+    });
+  }
+  /** ส่งได้เมื่อเลือกของแล้วและติ๊กครบ 2 ข้อ */
+  function oduReady() {
+    var go = $('#odu-go');
+    if (go) go.disabled = !(S.oduPick && $('#odu-a') && $('#odu-a').checked && $('#odu-b') && $('#odu-b').checked);
   }
   function odBar() {
     var list = odTouched();
@@ -9491,11 +9534,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var coming = odComing();
     var secs = odSections();
     return html`<div class="stack od-page">${back}
-      <div class="od-head"><h2>เช็กของ · สั่งของ</h2><p class="small muted">นับทีละหมวด ใส่จำนวนที่มีอยู่จริง แอปคิดจำนวนสั่งให้ถึง PAR แก้จำนวนสั่งเองได้ นับเสร็จกดส่งทีเดียว</p></div>
+      <div class="od-head"><h2>เช็กของ · สั่งของ<button class="info-btn" data-act="od-how" aria-label="วิธีเช็กของ">${icon('info')}</button></h2></div>
+      ${odUrgentBtn()}
       ${coming.map(function (b) {
         return html`<section class="card od-truck"><div class="row"><span class="fb-ico od">${icon('truck')}</span><div class="grow"><b>ของ ${b.store} มา${odEta(b)}</b><div class="small muted od-truck-items">${b.items.length} อย่าง: ${b.items.join(' · ')}</div></div><button class="btn sm" data-act="od-got" data-id="${b.id}">${icon('check')} ได้ของแล้ว</button></div></section>`;
       })}
-      ${odWaitCard()}${odLate()}${odUrgentBtn()}
+      ${odWaitCard()}${odLate()}
       <div class="od-nav" id="od-nav">
         <label class="od-find">${icon('search')}<input type="search" data-od="q" placeholder="ค้นหาของ เช่น ผักกาด" value="${S.odQ || ''}" autocomplete="off" enterkeyhint="search" aria-label="ค้นหาของ"></label>
         <div class="od-cats" id="od-cats" aria-label="ไปที่หมวด">${odChips(secs)}</div>
@@ -9634,6 +9678,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   document.addEventListener('input', function (ev) {
     var el = ev.target;
+    if (el.dataset && el.dataset.odu === 'q') {
+      S.oduQ = el.value;
+      var ul = $('#odu-list');
+      if (ul) ul.innerHTML = String(html`${oduList()}`);
+      return;
+    }
     if (el.dataset && el.dataset.odx && S.odX) {
       S.odX[el.dataset.odx] = el.value;
       var xh = $('#odx-hint');
@@ -10858,8 +10908,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!list.length) return '';
     // The approver's own items are the owner's, unless the owner lets the approver handle them (then the owner sees each one).
     var me = S.view !== 'owner' && S.home && S.home.me && S.team && !S.team.selfOk ? S.home.me.id : '';
-    return html`<section class="card"><div class="card-h"><span class="eyebrow">รอตรวจ (${list.length})</span></div>
-      <p class="small muted mt0">ดู <b>รูปจากจอ</b> ว่าเป็นคนนั้นจริงและยืนสแกนอยู่ในร้าน · ถูกต้อง กด <b>ผ่าน</b> · ไม่ถูก กด <b>แก้เวลา</b> ใส่เวลาหรือกะที่ถูก · ต้องตรวจครบก่อนอนุมัติเงินเดือน</p>
+    return html`<section class="card"><div class="card-h"><span class="eyebrow">รอตรวจ (${list.length})<button class="info-btn" data-act="chk-how" aria-label="วิธีตรวจ">${icon('info')}</button></span></div>
       <div class="list">${list.map(function (x) {
         var mine = x.empId === me;
         return html`<div class="item stacked" style="padding-left:0;padding-right:0">${avatar(empById(x.empId) || { name: x.name })}<div class="grow"><div class="t">${x.name}</div><div class="s">${thShort(x.date)} · ${x.in} น.${x.dist != null ? ' · ห่าง ' + distText(x.dist) : x.away ? ' · นอกร้าน' : ''}</div>${x.why ? html`<div class="review-why">${x.why}</div>` : ''}</div>
@@ -11971,7 +12020,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var justNow = day.stamp && key && LS.get(key) !== day.date;
     if (justNow) LS.set(key, day.date);
     return html`<section class="card dm-card ${day.stamp ? 'stamped' : ''}">
-      <div class="dm-h"><span class="eyebrow">ภารกิจวันนี้</span><span class="small muted">ทำ ${day.need} ใน ${day.missions.length} ได้แสตมป์</span></div>
+      <div class="dm-h"><span class="eyebrow">ภารกิจวันนี้<button class="info-btn" data-act="dm-rules" aria-label="กติกาภารกิจ">${icon('info')}</button></span><span class="small muted">ทำ ${day.need} ใน ${day.missions.length} ได้แสตมป์</span></div>
       <div class="dm-list">${day.missions.map(function (m) {
         return html`<button class="dm ${m.done ? 'done' : ''}" data-act="dm-go" data-kind="${m.kind}"><i class="dm-ck">${icon(m.done ? 'check' : MISSION_ICON[m.kind] || 'star')}</i><span>${m.name}</span></button>`;
       })}</div>
@@ -11979,7 +12028,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="dm-stamps">${day.week.days.map(function (on, i) {
         return html`<i class="st ${on ? 'on' : ''} ${i === ti ? 'today' : ''} ${on && i === ti && justNow ? 'pop' : ''}"><b>${TH_DAYS[(i + 1) % 7]}</b>${on ? html`<span class="st-ink">${icon('star')}</span>` : ''}</i>`;
       })}<span class="st-box ${day.week.box ? 'got' : ''}" aria-label="กล่องฟรี">${icon('gift')}</span></div>
-      <p class="small muted" style="margin:8px 0 0">${day.week.box ? 'สัปดาห์นี้ได้กล่องฟรีแล้ว เปิดได้ที่ห้องของฉัน › สะสม' : 'แสตมป์สัปดาห์นี้ ' + day.week.n + '/' + day.week.of + ' ดวง · ครบได้กล่องฟรี · ภารกิจเปลี่ยนทุกวัน วันหยุดไม่เสียอะไร'}</p>
+      <p class="small muted" style="margin:8px 0 0">${day.week.box ? 'สัปดาห์นี้ได้กล่องฟรีแล้ว เปิดได้ที่ห้องของฉัน › สะสม' : 'แสตมป์สัปดาห์นี้ ' + day.week.n + '/' + day.week.of + ' ดวง · ครบได้กล่องฟรี'}</p>
     </section>`;
   }
   /** A mission tapped: where it is done. */
@@ -14922,12 +14971,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var news = dlNews(d);
     return html`<section class="card dl-card">
       <div class="fb-invite-h"><span class="fb-ico">${icon('note')}</span><div class="grow"><span class="eyebrow">บันทึกหน้างาน</span><b>วันนี้ที่ร้านเป็นยังไงบ้าง</b></div></div>
-      <p class="small muted" style="margin:0">ลูกค้าพูดอะไร ของหมด หรือจานไหนเหลือ แตะหัวข้อแล้วพิมพ์สั้น ๆ เรื่องเล็กแค่ไหนก็ช่วยให้ร้านดีขึ้น</p>
+      <p class="small muted" style="margin:0">แตะหัวข้อแล้วพิมพ์สั้น ๆ เรื่องเล็กแค่ไหนก็ช่วยให้ร้านดีขึ้น</p>
       ${d.lead ? (d.sentToday ? html`<div class="dl-done"><span class="pill ok">${icon('check')} ส่งสรุปวันนี้แล้ว</span>${d.streak >= 2 ? html`<span class="pill gold">${icon('spark')} ส่งครบ ${d.streak} วันติด</span>` : ''}</div>` : html`<button class="btn primary block" style="margin-top:12px" data-act="dl-form" data-date="${d.today}">${icon('note')} ส่งสรุปวันนี้</button>`) : ''}
       <div class="dl-tiles">${dlTopics().map(function (t) { return html`<button class="dl-tile ${t[0]}" data-act="dl-quick" data-topic="${t[0]}">${icon(DL_ICON[t[0]] || 'chat')}<span>${DL_SHORT[t[0]] || t[1]}</span></button>`; })}</div>
       ${dlFixingList(d)}
       ${news.length ? html`<button class="dl-news" data-act="dl-mine">${icon('check')}<span>เจ้าของร้านดูเรื่องที่คุณบันทึกแล้ว ${news.length} เรื่อง · ขอบคุณที่บอกนะ</span>${icon('right')}</button>` : ''}
-      <div class="fb-foot"><span>${icon('team')}<span>${team.today ? 'วันนี้ทีมบันทึก ' + team.today + ' เรื่อง' : 'วันนี้ยังไม่มีใครบันทึก'}${team.fixed ? html`<br>เดือนนี้ร้านแก้แล้ว ${team.fixed} เรื่อง` : ''}</span></span>${(d.mine || []).length ? html`<button class="fb-mine-btn" data-act="dl-mine">บันทึกของฉัน${mineToday ? ' ' + mineToday : ''}${news.length ? html`<i class="dot" aria-label="เจ้าของร้านดูแล้ว"></i>` : ''}${icon('right')}</button>` : ''}</div>
+      <div class="fb-foot"><span>${icon('team')}<span>${team.today ? 'วันนี้ทีมบันทึก ' + team.today + ' เรื่อง' : 'วันนี้ยังไม่มีใครบันทึก'}${team.fixed && !(S.home && S.home.level) ? html`<br>เดือนนี้ร้านแก้แล้ว ${team.fixed} เรื่อง` : ''}</span></span>${(d.mine || []).length ? html`<button class="fb-mine-btn" data-act="dl-mine">บันทึกของฉัน${mineToday ? ' ' + mineToday : ''}${news.length ? html`<i class="dot" aria-label="เจ้าของร้านดูแล้ว"></i>` : ''}${icon('right')}</button>` : ''}</div>
     </section>`;
   }
   /** What a note is about (a name tapped, or typed) and a few words. */
@@ -16085,6 +16134,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return d <= 0 ? 'เปิดแอปวันนี้' : d === 1 ? 'เปิดแอปเมื่อวาน' : 'เปิดแอป ' + d + ' วันก่อน';
   }
   /** รายคน: บอกกี่เรื่อง (คนที่ยังไม่บอกขึ้นก่อน) เปิดแอปล่าสุด แจ้งเตือน · ระดับและแต้มบรรทัดเล็ก · แตะดูรายละเอียด */
+  // 2.13.11 รายการรายคนตัดบรรทัดระดับและแต้ม (อยู่ในหน้ารายคนแล้ว) การ์ดสั้นลงราวหนึ่งในสาม
   function teamUseCard(t) {
     var list = (t && t.list) || [];
     if (!list.length) return '';
@@ -16097,9 +16147,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="list">${list.map(function (x) {
         return html`<button class="item team-row ${fresh && !x.told ? 'zero' : ''}" data-act="team-one" data-id="${x.id}"><div class="grow"><div class="t">${x.name}${fresh ? html` · <b>${x.told ? 'บอก ' + x.told + ' เรื่อง' : 'ยังไม่ได้บอก'}</b>` : ''}</div>
           <div class="s">${fresh ? teamSeen(x.last) + ' · ' : ''}${x.push ? 'แจ้งเตือนเปิดแล้ว' : html`<span class="team-off">ยังไม่เปิดแจ้งเตือน</span>`}</div>
-          <div class="s small muted">${x.lv ? 'ระดับ' + LV_NAMES[x.lv] : 'ยังไม่มีระดับ'} · ${x.month} แต้มเดือนนี้${x.crown ? ' · ใส่มงกุฎ' : ''}</div></div>${icon('right')}</button>`;
+          </div>${icon('right')}</button>`;
       })}</div>
-      ${on < list.length ? html`<p class="small muted" style="margin:0 16px 14px">ชวนคนที่ยังไม่เปิดให้กด "เปิดแจ้งเตือน" บนหน้าแรกของแอป · iPhone ต้องเพิ่มแอปลงหน้าจอโฮมก่อน (มีวิธีในการ์ด)</p>` : ''}</section>`;
+      ${on < list.length ? html`<p class="small muted" style="margin:0 16px 14px">ชวนคนที่ยังไม่เปิดให้กด "เปิดแจ้งเตือน" บนหน้าแรก</p>` : ''}</section>`;
   }
   /** หน้ารายละเอียดของคนหนึ่ง: ที่บอก การใช้แอป เกม แต้มสะสม (ของละเอียดทั้งหมดอยู่ที่ การใช้แอป) */
   function openTeamOne(id) {
@@ -16343,7 +16393,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var news = fbNews(f).length;
     return html`<section class="card fb-invite">
       <div class="fb-invite-h"><span class="fb-ico">${icon('spark')}</span><div class="grow"><span class="eyebrow">ส่งความคิดเห็น</span><b>ช่วยกันทำร้านและแอปให้ดีขึ้น</b></div></div>
-      <p class="small muted">ไอเดียทำร้านหรือแอปให้ดีขึ้น และเรื่องแอป เล็กแค่ไหนก็ส่งได้ · เจ้าของร้านเห็นคนเดียว และตอบทุกเรื่อง</p>
+      <p class="small muted">เล็กแค่ไหนก็ส่งได้ · เจ้าของร้านเห็นคนเดียว และตอบทุกเรื่อง</p>
       <div class="fb-go three"><button class="fb-big idea" data-act="fb-new" data-kind="idea">${icon('bulb')}<b>มีไอเดีย</b><span>ทำร้านหรือแอปให้ดีขึ้น</span></button><button class="fb-big" data-act="fb-new" data-kind="bug">${icon('tool')}<b>แอปมีปัญหา</b><span>ค้าง กดไม่ไป ตัวเลขไม่ตรง</span></button><button class="fb-big ask" data-act="fb-new" data-kind="ask">${icon('chat')}<b>ถามเรื่องแอป</b><span>ใช้ยังไง ทำได้ไหม</span></button></div>
       <button class="fb-tolog" data-act="dl-goto">${icon('note')}<span><b>เรื่องในร้าน บันทึกหน้างาน</b><br>ของหมด ของเสีย ลูกค้าบ่น ความสะอาด</span>${icon('right')}</button>
       <div class="fb-foot"><span>${icon('team')}${team.sent ? 'ทีมเราเสนอ ' + team.sent + ' เรื่อง' + (team.done ? ' · ใช้ได้แล้ว ' + team.done : '') : 'ยังไม่มีใครเสนอ เป็นคนแรกเลย'}</span>${f.count ? html`<button class="fb-mine-btn" data-act="fb-mine">ที่ฉันเสนอ ${f.count}${news ? html`<i class="dot" aria-label="มีความคืบหน้า"></i>` : ''}${icon('right')}</button>` : ''}</div>
@@ -16931,6 +16981,24 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       confirmSheet({ title: 'ล้างที่นับไว้', text: 'จำนวนที่ยังไม่ได้ส่งบนมือถือนี้จะหายไป', yes: 'ล้าง', danger: true }).then(function (ok) { if (ok) { odForget(); closeSheet(); render(); } });
     },
     'od-urgent': function () { odUrgentSheet(); },
+    'odu-pick': function (el) {
+      S.oduPick = S.oduPick === el.dataset.id ? '' : el.dataset.id;
+      var hid = $('#odu-item');
+      if (hid) hid.value = S.oduPick;
+      var ul = $('#odu-list');
+      if (ul) ul.innerHTML = String(html`${oduList()}`);
+      oduReady();
+    },
+    'od-how': function () {
+      infoSheet('วิธีเช็กของ', [['search', 'นับทีละหมวด ใส่จำนวนที่มีอยู่จริง'], ['check', 'แอปคิดจำนวนสั่งให้ถึง PAR แก้จำนวนสั่งเองได้'], ['note', 'ของที่ยังไม่มี PAR นับแล้วใส่จำนวนสั่งเอง'], ['truck', 'นับเสร็จกดส่งทีเดียว']]);
+    },
+    'dm-rules': function () {
+      var d = S.home && S.home.level && S.home.level.day;
+      infoSheet('กติกาภารกิจ', [['check', 'ทำ ' + (d ? d.need : 2) + ' ใน ' + (d ? d.missions.length : 3) + ' ได้แสตมป์ของวันนั้น'], ['note', 'วันที่ได้แสตมป์ต้องมาตรงเวลาหรือบันทึกหน้างาน 1 เรื่องด้วย'], ['gift', 'แสตมป์ครบ ' + (d ? d.week.of : 4) + ' ดวงในสัปดาห์ ได้กล่องฟรี'], ['cal', 'ภารกิจเปลี่ยนทุกวัน วันหยุดไม่เสียอะไร']]);
+    },
+    'chk-how': function () {
+      infoSheet('วิธีตรวจ', [['camera', 'ดูรูปจากจอ ว่าเป็นคนนั้นจริงและยืนสแกนอยู่ในร้าน'], ['check', 'ถูกต้อง กด ผ่าน'], ['clock', 'ไม่ถูก กด แก้เวลา ใส่เวลาหรือกะที่ถูก'], ['money', 'ต้องตรวจครบก่อนอนุมัติเงินเดือน']]);
+    },
     'od-urgent-send': function (el) {
       var it = $('#odu-item'), a = $('#odu-a'), b = $('#odu-b');
       if (!it || !it.value || !a.checked || !b.checked) { toast('เลือกของและติ๊กให้ครบ 2 ข้อก่อน'); return; }
@@ -18156,7 +18224,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var el = ev.target;
     if (el.id === 'cam-env' || el.id === 'cam-user') { onCameraFile(el); return; }
     if (el.dataset.change === 'lv-type' || el.dataset.change === 'lv-cost') leaveFormSync();
-    if (el.dataset.change === 'odu' && $('#odu-go')) $('#odu-go').disabled = !($('#odu-item').value && $('#odu-a').checked && $('#odu-b').checked);
+    if (el.dataset.change === 'odu') oduReady();
     if (el.dataset.change === 'lf-cert' && $('#lf-days')) $('#lf-days').hidden = !el.checked;
     if (el.dataset.change === 'restore-when' && $('#rs-say')) $('#rs-say').textContent = restoreSay(restoreAt()).text;
     if (el.dataset.change === 'odo-keep') {
