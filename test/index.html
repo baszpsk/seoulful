@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.17","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"36f946e79441"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.18","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"8220df8f40e4"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -2562,6 +2562,11 @@ html.i3-box-s1-body.i3-box-s1-lid .bx-svg.s1 .bx-body, html.i3-box-s2-body.i3-bo
 .fb-starters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .fb-starter { border: 0; padding: 7px 13px; border-radius: 99px; background: var(--inset); color: var(--ink-2); font-size: 13.5px; font-weight: 500; transition: transform .45s var(--spring), background-color .2s; }
 .fb-starter:active { transform: scale(.93); transition-duration: .1s; background: var(--gold-soft); }
+/* แถวปุ่มประโยคเริ่มใต้กล่องบันทึกหน้างาน เว้น 12px เท่าส่วนอื่นในแผ่น (2.13.18) */
+.fb-tolog + .fb-starters { margin-top: 12px; }
+/* ชื่อที่ตัวเองพิมพ์บ่อยใต้ช่องชื่อ ระยะเดียวกับแถวปุ่มประโยคเริ่ม (2.13.18) */
+.dl-picks { margin-top: 12px; }
+.dl-picks .fb-starter { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .fb-tolog { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; margin: 10px 0 0; padding: 10px 12px; border: 0; border-radius: 14px; background: var(--inset); color: var(--ink-2); font: inherit; font-size: 13.5px; line-height: 1.35; text-align: left; cursor: pointer; }
 .fb-tolog > span { flex: 1; }
 .fb-tolog svg { width: 18px; height: 18px; flex: none; }
@@ -2575,7 +2580,7 @@ html.i3-box-s1-body.i3-box-s1-lid .bx-svg.s1 .bx-body, html.i3-box-s2-body.i3-bo
 .dl-photos { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .dl-photo-btn { min-height: 44px; }
 .dl-photo-big { display: block; max-width: 100%; max-height: 70vh; margin-top: 8px; border-radius: 12px; }
-#fb-text { min-height: 104px; }
+#fb-text { display: block; min-height: 104px; }
 .fb-tips { display: grid; gap: 7px; margin: 14px 2px 0; }
 .fb-tip { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: var(--muted); line-height: 1.45; }
 .fb-tip svg { width: 15px; height: 15px; flex: none; margin-top: 1px; color: var(--gold); }
@@ -10944,8 +10949,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     openSheet({ use: 'สิทธิ์ลา', title: b.type + ' ' + (+today.slice(0, 4) + 543), body: html`<div class="stack">
       <div class="stats" style="grid-template-columns:repeat(3,1fr)"><div class="stat"><b>${b.quota}</b><span>สิทธิ์ปีนี้</span></div><div class="stat"><b>${b.used}</b><span>ใช้แล้ว</span></div><div class="stat"><b>${b.remaining}</b><span>เหลือ</span></div></div>
       <section class="card flush"><div class="list">
-        <div class="item"><div class="grow"><div class="t">พักร้อนตามกฎหมาย</div><div class="s">${b.annual ? (b.annualOn ? 'ทำงานครบ ' + b.annualYears + ' ปี วันที่ ' + thShort(b.annualOn) + ' ใช้ได้ตั้งแต่วันนั้น' : 'ทำงานครบ ' + b.annualYears + ' ปีแล้ว') : b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ได้เมื่อทำงานครบ ' + b.annualYears + ' ปี'}</div></div><div class="r amt">${b.annual} วัน</div></div>
-        <div class="item"><div class="grow"><div class="t">วันหยุดตามประเพณี เลือกวันหยุดเอง</div><div class="s">${b.setMissing ? 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน' : 'ได้ 1 วันต่อวันหยุดตามประเพณี 1 วันที่ร้านเปิดทำการ'}</div></div><div class="r amt">${b.credits.length} วัน</div></div>${(b.offCredits || []).length ? html`<div class="item"><div class="grow"><div class="t">ร้านปิดตรงวันหยุดประจำ</div><div class="s">ใช้วันหยุดแล้ว ได้พักร้อนเพิ่มวันละ 1 วัน</div></div><div class="r amt">${b.offCredits.length} วัน</div></div>` : ''}
+        <div class="item"><div class="grow"><div class="t">พักร้อนประจำปี</div><div class="s">${b.annual ? (b.annualOn ? 'ทำงานครบ ' + b.annualYears + ' ปี วันที่ ' + thShort(b.annualOn) + ' ใช้ได้ตั้งแต่วันนั้น' : 'ทำงานครบ ' + b.annualYears + ' ปีแล้ว') : b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ได้เมื่อทำงานครบ ' + b.annualYears + ' ปี'}</div></div><div class="r amt">${b.annual} วัน</div></div>
+        <div class="item"><div class="grow"><div class="t">วันหยุดตามประเพณี เลือกวันหยุดเอง</div><div class="s">${b.setMissing ? 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน' : 'ได้ 1 วันต่อวันหยุดตามประเพณี 1 วันที่ร้านเปิดทำการ'}</div><div class="s">ลาพักร้อนแต่ละวัน นับเป็นวันหยุดตามประเพณีที่เหลือก่อน หมดแล้วค่อยนับเป็นพักร้อนประจำปี</div></div><div class="r amt">${b.credits.length} วัน</div></div>${(b.offCredits || []).length ? html`<div class="item"><div class="grow"><div class="t">ร้านปิดตรงวันหยุดประจำ</div><div class="s">ใช้วันหยุดแล้ว ได้พักร้อนเพิ่มวันละ 1 วัน</div></div><div class="r amt">${b.offCredits.length} วัน</div></div>` : ''}
       </div></section>
       ${b.credits.concat(b.offCredits || []).length ? html`<section class="card flush"><div class="list">${b.credits.concat(b.offCredits || []).sort().map(function (d) {
         return html`<div class="item"><div class="grow"><div class="t">${thDate(d)}</div><div class="s">${(b.creditNames || {})[d] || (b.offCreditNames || {})[d] || 'วันหยุดตามประเพณี'}</div></div>${d <= today ? html`<span class="pill ok">${icon('check')} ได้แล้ว</span>` : html`<span class="pill">จะได้</span>`}</div>`;
@@ -11644,7 +11649,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return ['ยังไม่อนุมัติ', 'ตัวเลขคำนวณจากข้อมูลล่าสุด'];
   }
   /**
-   * คนออกในรอบนี้: ค่าวันพักร้อนที่เหลือ ป้าย กฎหมายบังคับ / จ่ายเพิ่มได้ กดใส่เป็นรายการ (2.13.13 ข้อ 16 ก · เจ้าของร้านเท่านั้น)
+   * คนออกในรอบนี้: ค่าวันพักร้อนที่เหลือ ป้ายยอดบังคับ / จ่ายเพิ่มได้ (คำบนป้ายส่งจากหลังบ้าน payWords 2.13.18) กดใส่เป็นรายการ (2.13.13 ข้อ 16 ก · เจ้าของร้านเท่านั้น)
    * · วันประเพณีที่ได้หยุดแทนแต่ยังไม่ได้หยุด เป็นยอดบังคับอีกบรรทัด ใส่เป็นรายการแยก (2.13.15)
    */
   function leaversCard(d) {
@@ -11653,7 +11658,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var open = !d.period.status;
     var r2 = function (n) { return Math.round(n * 100) / 100; };
     var line = function (pill, text) { return html`<div class="row" style="gap:8px;margin-top:6px">${pill}<span style="flex:1;min-width:0">${text}</span></div>`; };
-    var must = html`<span class="pill warn">กฎหมายบังคับ</span>`;
+    var w = d.payWords || {};
+    var must = html`<span class="pill warn">${w.must || ''}</span>`;
     return html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">คนออกในรอบนี้ · ค่าวันพักร้อนและวันประเพณีที่เหลือ</span></div>
       <div class="list">${list.map(function (x) {
         var short = r2(x.law - x.paid);
@@ -11663,15 +11669,83 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         var owe = (holShort > 0 ? ['วันประเพณี ' + money(holShort) + ' บาท'] : []).concat(short > 0 ? ['พักร้อน ' + money(short) + ' บาท'] : []);
         return html`<div class="item" style="display:block">
           <div class="row between"><b>${x.name}</b><span class="s">วันสุดท้าย ${thShort(x.end)}${x.reason ? ' · ' + x.reason : ''}</span></div>
-          <div style="margin-top:2px">${x.law > 0 ? line(must, 'พักร้อน ' + x.lawDays + ' วัน = ' + money(x.law) + ' บาท') : html`<div class="s" style="margin-top:6px">พักร้อน กฎหมายไม่บังคับ: ${x.why}</div>`}
+          <div style="margin-top:2px">${x.law > 0 ? line(must, 'พักร้อน ' + x.lawDays + ' วัน = ' + money(x.law) + ' บาท') : html`<div class="s" style="margin-top:6px">${w.noLaw || ''}${x.why}</div>`}
           ${x.hol > 0 ? line(must, 'วันประเพณี ' + x.holDays + ' วัน = ' + money(x.hol) + ' บาท') : ''}
           ${x.extra > 0 ? line(html`<span class="pill">จ่ายเพิ่มได้</span>`, 'พักร้อน ' + x.extraDays + ' วัน = ' + money(x.extra) + ' บาท') : ''}</div>
           <div class="s" style="margin-top:6px">${x.detail}</div>
           ${x.paid ? html`<div class="s" style="margin-top:6px">${icon('check')} ใส่ค่าพักร้อนแล้ว ${money(x.paid)} บาท</div>` : ''}
           ${x.holPaid ? html`<div class="s" style="margin-top:6px">${icon('check')} ใส่ค่าวันประเพณีแล้ว ${money(x.holPaid)} บาท</div>` : ''}
-          ${owe.length ? html`<div class="hint warn" style="margin-top:8px">${icon('alert')}<span>ยังไม่ได้ใส่ยอดที่กฎหมายบังคับ: ${owe.join(' · ')}</span></div>` : ''}
+          ${owe.length ? html`<div class="hint warn" style="margin-top:8px">${icon('alert')}<span>${w.owe || ''}${owe.join(' · ')}</span></div>` : ''}
           ${open && (rest > 0 || holShort > 0) ? html`<div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${holShort > 0 ? html`<button class="btn sm primary" data-act="hol-pay" data-id="${x.id}">ใส่วันประเพณี ${money(holShort)} บาท</button>` : ''}${short > 0 ? html`<button class="btn sm primary" data-act="leave-pay" data-id="${x.id}">ใส่พักร้อน ${money(short)} บาท</button>` : ''}${rest > short ? html`<button class="btn sm" data-act="leave-pay" data-id="${x.id}" data-all="1">ใส่พักร้อนทั้งหมด ${money(rest)} บาท</button>` : ''}</div>` : ''}
         </div>`;
+      })}</div></section>`;
+  }
+  /** วันหยุดที่เหลือสิ้นปีที่ยังไม่ได้ใส่ เป็นรายการเงิน คนละไม่เกิน 2 รายการ (2.13.18) */
+  function yearEndOwe(list) {
+    var r2 = function (n) { return Math.round(n * 100) / 100; };
+    var out = [];
+    list.forEach(function (x) {
+      var hol = r2(x.hol - (x.holPaid || 0));
+      var rest = r2(x.rest - (x.paid || 0));
+      if (hol > 0) out.push({ kind: 'hol', x: x, type: 'ค่าวันหยุดประเพณีที่เหลือ', empId: x.id, date: x.date, qty: hol, reason: 'วันหยุดตามประเพณีที่ยังไม่ได้หยุด สิ้นปี ' + x.holDays + ' วัน × ' + money(x.rate) + ' บาท' });
+      if (rest > 0) out.push({ kind: 'rest', x: x, type: 'ค่าวันลาที่เหลือ', empId: x.id, date: x.date, qty: rest, reason: 'วันพักร้อนที่เหลือ สิ้นปี ' + x.restDays + ' วัน × ' + money(x.rate) + ' บาท' });
+    });
+    return out;
+  }
+  /** งวดสุดท้ายของปี: วันหยุดที่น้องยังเหลือ จ่ายเป็นเงินในงวดนี้ ไม่ยกข้ามปี (2.13.18 เจ้าของร้านเท่านั้น) */
+  function yearEndCard(d) {
+    var list = d.yearEnd;
+    if (!list) return '';
+    var open = !d.period.status;
+    var owe = yearEndOwe(list);
+    var sum = owe.reduce(function (a, e) { return a + e.qty; }, 0);
+    return html`<section class="card flush ye-card"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">วันหยุดที่เหลือสิ้นปี · จ่ายเป็นเงินในงวดนี้</span></div>
+      <p class="small muted" style="margin:6px 16px 0">ไม่ยกข้ามปี วันที่ยังไม่ได้หยุดคิดวันละค่าแรง 1 วัน</p>
+      ${list.length ? html`<div class="list">${list.map(function (x) {
+        var mine = owe.filter(function (e) { return e.x === x; });
+        var hol = mine.filter(function (e) { return e.kind === 'hol'; })[0];
+        var rest = mine.filter(function (e) { return e.kind === 'rest'; })[0];
+        return html`<div class="item" style="display:block">
+          <div class="row between"><b>${x.name}</b>${mine.length ? '' : html`<span class="pill ok">${icon('check')} ใส่ครบแล้ว</span>`}</div>
+          ${x.holDays ? html`<div class="s" style="margin-top:4px">วันหยุดตามประเพณี ${x.holDays} วัน = ${money(x.hol)} บาท${x.holPaid ? ' · ใส่แล้ว ' + money(x.holPaid) + ' บาท' : ''}</div>` : ''}
+          ${x.restDays ? html`<div class="s" style="margin-top:4px">พักร้อน ${x.restDays} วัน = ${money(x.rest)} บาท${x.paid ? ' · ใส่แล้ว ' + money(x.paid) + ' บาท' : ''}</div>` : ''}
+          <div class="s" style="margin-top:4px">${x.detail}</div>
+          ${open && mine.length ? html`<div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${hol ? html`<button class="btn sm primary" data-act="ye-pay" data-id="${x.id}" data-kind="hol">ใส่วันประเพณี ${money(hol.qty)} บาท</button>` : ''}${rest ? html`<button class="btn sm primary" data-act="ye-pay" data-id="${x.id}" data-kind="rest">ใส่พักร้อน ${money(rest.qty)} บาท</button>` : ''}</div>` : ''}
+        </div>`;
+      })}</div>` : html`<p class="small muted" style="margin:8px 16px 16px">ทุกคนใช้วันหยุดปีนี้ครบแล้ว</p>`}
+      ${open && owe.length > 1 ? html`<div style="padding:4px 16px 16px"><button class="btn primary" style="width:100%" data-act="ye-pay-all">ใส่ทุกคน ${owe.length} รายการ รวม ${money(sum)} บาท</button></div>` : ''}
+    </section>`;
+  }
+  function yearEndPayAsk() {
+    var owe = yearEndOwe((S.pay || {}).yearEnd || []);
+    if (!owe.length) return;
+    var sum = owe.reduce(function (a, e) { return a + e.qty; }, 0);
+    openSheet({ title: 'ใส่วันหยุดที่เหลือสิ้นปี', body: html`<p class="small muted" style="margin:0 2px 12px">ใส่เป็นรายการในเงินเดือนงวดนี้ ${owe.length} รายการ รวม ${money(sum)} บาท</p>
+      <section class="card flush"><div class="list">${owe.map(function (e) {
+        return html`<div class="item"><div class="grow"><div class="t">${e.x.name}</div><div class="s">${e.reason}</div></div><div class="r amt">${money(e.qty)}</div></div>`;
+      })}</div></section>`,
+      foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="ye-pay-go">ใส่ทุกคน</button>` });
+  }
+  /** ใส่ทีละรายการตามลำดับ ใส่แล้วจำไว้ในหน้า กดซ้ำหลังพลาดกลางทางไม่ใส่ซ้ำ (2.13.18) */
+  function yearEndPayGo(btn) {
+    var owe = yearEndOwe((S.pay || {}).yearEnd || []);
+    var done = owe.reduce(function (p, e) {
+      return p.then(function () {
+        return call('entrySave', { type: e.type, empId: e.empId, date: e.date, reason: e.reason, qty: e.qty }, actorAuth()).then(function () {
+          if (e.kind === 'hol') e.x.holPaid = (e.x.holPaid || 0) + e.qty;
+          else e.x.paid = (e.x.paid || 0) + e.qty;
+        });
+      });
+    }, Promise.resolve());
+    run(btn, done).then(function () { closeSheet(); toast('ใส่วันหยุดที่เหลือสิ้นปีแล้ว ' + owe.length + ' รายการ'); loadPay(); });
+  }
+  /** หน้าแรกเจ้าของร้าน 1 ธ.ค. ถึงวันปิดงวดสุดท้ายของปี: ใครยังเหลือวันหยุดกี่วัน ให้จัดวันหยุดก่อนสิ้นปี (2.13.18) */
+  function yearEndWarnCard(w) {
+    if (!w || !w.people.length) return '';
+    return html`<section class="card ye-warn"><span class="eyebrow">วันหยุดที่น้องยังเหลือปีนี้</span>
+      <p class="small" style="margin:6px 0 4px">จัดให้หยุดก่อนสิ้นปี ที่ยังเหลือแอปคิดเป็นเงินในงวดที่ปิด ${thShort(w.end)} ไม่ยกข้ามปี</p>
+      <div class="list">${w.people.map(function (x) {
+        return html`<div class="item"><div class="grow"><div class="t">${x.name}</div><div class="s">${[x.hol ? 'วันหยุดตามประเพณี ' + x.hol + ' วัน' : '', x.rest ? 'พักร้อน ' + x.rest + ' วัน' : ''].filter(Boolean).join(' · ')}</div></div></div>`;
       })}</div></section>`;
   }
   function payView() {
@@ -11701,7 +11775,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${seesPay ? html`<section class="card hero pad-lg"><span class="eyebrow">รวมจ่ายสุทธิ · ${t.headcount} คน</span><div class="big" style="margin-top:6px">${money(t.net)}<small>บาท</small></div>
         <div class="row wrapx small" style="margin-top:12px;gap:14px;opacity:.85"><span>ค่าจ้าง ${money(t.base)}</span><span>OT ${money(t.otPay)} (${hrs(t.otHours)} ชม.)</span><span>Incentive ${money(t.incentive)}</span>${t.sso ? html`<span>ประกันสังคม −${money(t.sso)}</span>` : ''}${t.wht ? html`<span>ภาษี −${money(t.wht)}</span>` : ''}${t.advance ? html`<span>เบิก −${money(t.advance)}</span>` : ''}</div></section>` : html`<section class="card hero pad-lg"><span class="eyebrow">ลงเวลา · ${t.headcount} คน</span><div class="big" style="margin-top:6px">${t.workDays}<small>วันทำงาน</small></div>
         <div class="row wrapx small" style="margin-top:12px;gap:14px;opacity:.85"><span>OT ${hrs(t.otHours)} ชม.</span><span>สาย ${t.lateMinor + t.lateMajor} ครั้ง</span><span>ลา ${t.leaveDays} วัน</span>${t.absentDays ? html`<span>ขาด ${t.absentDays} วัน</span>` : ''}</div></section>`}
-      ${owner ? leaversCard(d) : ''}
+      ${owner ? leaversCard(d) : ''}${owner ? yearEndCard(d) : ''}
       ${actions}
       <div>${res.employees.map(empCard)}</div>
       ${seesPay ? html`<button class="btn block" data-act="excel">${icon('download')} ดาวน์โหลด Excel</button>` : ''}
@@ -12021,7 +12095,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}</div>
       ${teamUseCard(o.team)}
       ${pinLocksCard(o.pinLocks)}
-      ${turnoverCard(o.turnover)}
+      ${turnoverCard(o.turnover)}${yearEndWarnCard(o.yearEnd)}
       ${dailyOwnerCard(o.daily)}
       ${feedbackCard(o.feedback)}
       ${o.update ? updateCard(o.update) : ''}
@@ -12104,11 +12178,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   var EMP_FIELDS = [
     ['ข้อมูลพนักงาน', [['nick', 'ชื่อเล่น'], ['display', 'ชื่อที่แสดงในแอป', 'ไม่บังคับ · ชื่อที่อยากให้แอปเรียก ถ้าว่างใช้ชื่อเล่น · ชื่อเล่นซ้ำกันไม่ต้องใส่อะไร แอปเติมแผนกให้เองเฉพาะในรายการรวม (เช่น นิดครัว)'], ['fullName', 'ชื่อ-นามสกุล (ในสลิป)'], ['citizenId', 'เลขบัตรประชาชน'], ['bank', 'บัญชีรับเงิน']]],
-    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses', 'ให้ออก: ใส่วันทำงานวันสุดท้ายและเหตุที่ออก สถานะเปลี่ยนเป็น ลาออก เอง · ลบวันสุดท้ายกลับเป็น ทำงาน'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date', 'เป็นพนักงานถึงวันนี้ · เข้าแอปและลงเวลาได้ถึงวันนี้ หลังจากนั้นดูได้เฉพาะสลิปเงินเดือน'], ['endReason', 'เหตุที่ออก', 'endReasons', 'เลิกจ้าง: ได้ค่าพักร้อนปีนี้ตามส่วน และทำงานครบ 120 วันขึ้นไปต้องจ่ายค่าชดเชยตาม ม.118 (แอปไม่ได้คิดให้) · เลิกจ้างตาม ม.119 ใช้เมื่อเข้ากรณีในกฎหมาย เช่น ทุจริตต่อหน้าที่ จงใจทำให้ร้านเสียหาย ฝ่าฝืนระเบียบหลังเตือนเป็นหนังสือแล้ว ละทิ้งหน้าที่ 3 วันทำงานติดกันโดยไม่มีเหตุอันสมควร ต้องบอกเหตุในหนังสือเลิกจ้างหรือแจ้งตอนเลิกจ้าง ไม่งั้นอ้างทีหลังไม่ได้']]],
-    ['ค่าจ้าง', [['employment', 'สถานะการจ้าง', 'employment'], ['probationEnd', 'วันผ่านโปร', 'date', 'ตั้งแต่วันนี้ได้เงินเดือน + Incentive + ประกันสังคม'], ['probationRate', 'ค่าแรงช่วงทดลองงาน (บาท/วัน)', 'num'], ['probationWht', 'ภาษีหัก ณ ที่จ่ายช่วงทดลองงาน (%)', 'num'], ['payType', 'ประเภทค่าจ้าง', 'payTypes'], ['rate', 'เงินเดือน/ค่าแรง (บาท)', 'num'], ['otRate', 'ค่า OT (บาท/ชม.)', 'num', 'เว้นว่าง = 1.5 เท่าตามกฎหมาย'], ['sso', 'หักประกันสังคม', 'yesno']]],
+    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses', 'ให้ออก: ใส่วันทำงานวันสุดท้ายและเหตุที่ออก สถานะเปลี่ยนเป็น ลาออก เอง · ลบวันสุดท้ายกลับเป็น ทำงาน'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date', 'เป็นพนักงานถึงวันนี้ · เข้าแอปและลงเวลาได้ถึงวันนี้ หลังจากนั้นดูได้เฉพาะสลิปเงินเดือน'], ['endReason', 'เหตุที่ออก', 'endReasons']]],
+    ['ค่าจ้าง', [['employment', 'สถานะการจ้าง', 'employment'], ['probationEnd', 'วันผ่านโปร', 'date', 'ตั้งแต่วันนี้ได้เงินเดือน + Incentive + ประกันสังคม'], ['probationRate', 'ค่าแรงช่วงทดลองงาน (บาท/วัน)', 'num'], ['probationWht', 'ภาษีหัก ณ ที่จ่ายช่วงทดลองงาน (%)', 'num'], ['payType', 'ประเภทค่าจ้าง', 'payTypes'], ['rate', 'เงินเดือน/ค่าแรง (บาท)', 'num'], ['otRate', 'ค่า OT (บาท/ชม.)', 'num'], ['sso', 'หักประกันสังคม', 'yesno']]],
     ['Incentive', [['diligence', 'เบี้ยขยัน (บาท)', 'num'], ['headAllowance', 'ค่าหัวหน้า (บาท)', 'num'], ['tenureAllowance', 'ค่าอยู่นาน (บาท)', 'num']]],
     ['อื่น ๆ', [['note', 'หมายเหตุ']]],
   ];
+  /** คำอธิบายใต้ช่อง: ที่มากับรายชื่อพนักงาน (เจ้าของร้านเท่านั้น 2.13.18) ก่อน ไม่งั้นของในรายการช่อง */
+  function empHint(f) {
+    return ((S.employees && S.employees.options && S.employees.options.help) || {})[f[0]] || f[3] || '';
+  }
   function empEditForm(id, preset) {
     var d = S.employees;
     var e = d.employees.filter(function (x) { return x.id === id; })[0] || { dept: 'หน้าร้าน', role: 'พนักงาน', status: 'ทำงาน', payType: 'รายเดือน', sso: 'ใช่', diligence: 500, probationWht: 3 };
@@ -12124,7 +12202,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var ctl = list
         ? html`<select class="input" data-f="${key}" data-change="${end}">${list.map(function (x) { var o = Array.isArray(x) ? x : [x, x]; return html`<option value="${o[0]}" ${String(v) === o[0] ? 'selected' : ''}>${o[1]}</option>`; })}</select>`
         : html`<input class="input" data-f="${key}" data-change="${end}" type="${type === 'date' ? 'date' : type === 'num' ? 'number' : 'text'}" ${type === 'num' ? 'inputmode="decimal" step="any"' : ''} value="${v}">`;
-      return html`<label class="field"><span>${f[1]}</span>${ctl}${f[3] ? html`<small>${f[3]}</small>` : ''}</label>`;
+      return html`<label class="field"><span>${f[1]}</span>${ctl}${empHint(f) ? html`<small>${empHint(f)}</small>` : ''}</label>`;
     };
     var face = id ? faceOf({ id: id }) : '';
     openSheet({ use: 'แก้ไข/เพิ่มพนักงาน', title: id ? 'แก้ไข ' + (e.display || e.nick) : 'เพิ่มพนักงาน', body: html`${face ? html`<div class="form-group"><div class="row" style="gap:14px">${avatar({ id: id }, 'lg')}<div class="grow small muted">รูปที่${e.display || e.nick}ถ่ายเองในแอป เห็นเฉพาะคนที่เข้าระบบแล้ว</div><button class="btn sm" data-act="face-remove-emp" data-id="${id}">เอารูปออก</button></div></div>` : ''}${EMP_FIELDS.map(function (g) { return html`<div class="form-group"><div class="eyebrow" style="margin-bottom:8px">${g[0]}</div>${g[1].map(input)}</div>`; })}
@@ -15533,15 +15611,30 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var btn = $('.dl-more');
     if (btn) btn.focus({ preventScroll: true });
   }
-  /** What a note is about (typed: no names to tap, 2.13.16) and a few words. */
+  /** เรื่องที่บันทึก: ชื่อ (พิมพ์เอง หรือแตะชื่อที่ตัวเองพิมพ์บ่อย 2.13.18) กับคำสั้น ๆ */
   function dlFields(key, quick) {
     var t = dlTopic(key);
     var v = (dl && dl.items[key]) || { menu: '', detail: '' };
     return html`<div class="dl-fields" ${quick ? raw('style="padding-left:0"') : ''}>
-      <div class="dl-name"><input class="input" id="dl-menu-${key}" data-dl="${key}" data-f="menu" maxlength="60" autocomplete="off" placeholder="${t[4]}" value="${v.menu}"><button type="button" class="dl-clear" data-act="dl-clear" data-topic="${key}" aria-label="ล้างชื่อ">${icon('x')}</button></div>
+      <div class="dl-name"><input class="input" id="dl-menu-${key}" data-dl="${key}" data-f="menu" maxlength="60" autocomplete="off" placeholder="${t[4]}" value="${v.menu}"><button type="button" class="dl-clear" data-act="dl-clear" data-topic="${key}" aria-label="ล้างชื่อ">${icon('x')}</button></div>${dlPicks(key)}
       <textarea class="input" id="dl-detail-${key}" data-dl="${key}" data-f="detail" maxlength="500" rows="${quick ? 3 : 2}" placeholder="${t[3]}">${v.detail}</textarea></div>`;
   }
-  /** ปุ่ม × ล้างชื่อในช่อง แล้วพิมพ์ใหม่ (2.13.16 ไม่มีชื่อให้แตะเลือก น้องพิมพ์เอง) */
+  /** ชื่อที่ตัวเองพิมพ์บ่อยในหัวข้อนี้ 5 ชื่อ แตะแล้วเติมในช่องชื่อ (2.13.18 หลังบ้านส่งให้เจ้าตัวเท่านั้น คนอื่นไม่เห็น) */
+  function dlPicks(key) {
+    var names = (((dlHome() || {}).names || {})[key]) || [];
+    if (!names.length) return '';
+    return html`<div class="fb-starters dl-picks" role="group" aria-label="ชื่อที่คุณพิมพ์บ่อย">${names.map(function (n) { return html`<button type="button" class="fb-starter" data-act="dl-pick" data-topic="${key}" data-name="${n}">${n}</button>`; })}</div>`;
+  }
+  function dlPickName(key, name) {
+    if (!dl || !name) return;
+    dl.items[key] = dl.items[key] || { menu: '', detail: '' };
+    dl.items[key].menu = name;
+    dlSave();
+    var box = $('#dl-menu-' + key);
+    if (box) box.value = name;
+    if (!dl.quick && !dl.again) setSheetFoot(dailyFormFoot());
+  }
+  /** ปุ่ม × ล้างชื่อในช่อง แล้วพิมพ์ใหม่ (2.13.16) */
   function dlClearName(key) {
     if (!dl) return;
     dl.items[key] = dl.items[key] || { menu: '', detail: '' };
@@ -18304,6 +18397,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'dl-toggle': function (el) { dlToggle(el.dataset.topic); },
     'dl-more': function (el) { dlMoreToggle(el); },
     'dl-clear': function (el) { dlClearName(el.dataset.topic); },
+    'dl-pick': function (el) { dlPickName(el.dataset.topic, el.dataset.name); },
     'dl-send': function (el) { sendDaily(el, false); },
     'dl-goto': function () { goDailyLog(); },
     'dl-photo-x': function () { if (dl) { dl.photo = ''; dlPhotoRedraw(); } },
@@ -18391,6 +18485,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var qty = Math.round((x.hol - (x.holPaid || 0)) * 100) / 100;
       openEntryForm({ type: 'ค่าวันหยุดประเพณีที่เหลือ', emp: x.id, date: x.date, qty: qty, reason: 'วันหยุดตามประเพณีที่ยังไม่ได้หยุด ' + x.holDays + ' วัน × ' + money(x.rate) + ' บาท', more: [{ id: x.id, name: x.name }] });
     },
+    // วันหยุดที่เหลือสิ้นปี ใส่ทีละคน หรือใส่ทุกคน (2.13.18)
+    'ye-pay': function (el) {
+      var e = yearEndOwe((S.pay || {}).yearEnd || []).filter(function (y) { return y.empId === el.dataset.id && y.kind === el.dataset.kind; })[0];
+      if (e) openEntryForm({ type: e.type, emp: e.empId, date: e.date, qty: e.qty, reason: e.reason, more: [{ id: e.empId, name: e.x.name }] });
+    },
+    'ye-pay-all': function () { yearEndPayAsk(); },
+    'ye-pay-go': function (el) { yearEndPayGo(el); },
     'submit-entry': function (el) {
       run(el, call('entrySave', entryValues(), actorAuth())).then(function (d) { closeSheet(); toast('บันทึก ' + d.entry.type + ' ของ ' + d.entry.name + ' แล้ว' + (d.told ? ' · ' + d.told : ''), 'ok'); loadTeam(); if (S.pay) loadPay(); }, function () {});
     },
