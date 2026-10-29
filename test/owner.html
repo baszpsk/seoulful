@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.13","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"0e0243d9a288"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.14","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"92c2b132e418"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -825,6 +825,13 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .dl-tile svg { width: 22px; height: 22px; color: var(--gold); }
 .dl-tile.praise svg { color: #c2596b; }
 .dl-tile span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* 2.13.14 "เรื่องอื่น ๆ": หัวข้อนอกงานแผนกตัวเอง กางในที่เดิม ใต้ปุ่มนี้ */
+.dl-more { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; padding: 9px 12px; border: 0; border-radius: var(--r-md); background: transparent; box-shadow: inset 0 0 0 1px var(--btn-line); color: var(--ink); font-size: 13px; font-weight: 600; line-height: 1.25; transition: transform .45s var(--spring); }
+.dl-more:active { transform: scale(.97); transition-duration: .1s; }
+.dl-more svg { width: 18px; height: 18px; flex: none; color: var(--gold); }
+.dl-more .dl-more-n { color: var(--muted); font-weight: 400; }
+.dl-more svg:last-child { color: var(--muted); transform: rotate(90deg); transition: transform .3s var(--spring); }
+.dl-more[aria-expanded="true"] svg:last-child { transform: rotate(-90deg); }
 .dl-due { display: flex; gap: 12px; align-items: center; width: 100%; text-align: left; border: 0; background: linear-gradient(135deg, var(--gold-soft), transparent 80%), var(--card); }
 .dl-due > svg:first-child { width: 26px; height: 26px; flex: none; color: var(--gold); }
 .dl-due b { display: block; font-size: 15px; }
@@ -1153,6 +1160,13 @@ html.i3-ui-coin .coin::before { content: none; }
 .me-char .char-svg { transform-origin: 50% 92%; animation: char-idle 4.2s ease-in-out infinite; }
 .me-char:active .char-svg { transform: scale(.94); }
 @keyframes char-idle { 0%, 100% { transform: none; } 45% { transform: translateY(-2px) rotate(-1.5deg); } 70% { transform: translateY(-1px) rotate(1deg); } }
+/* 2.13.14 (เจ้าของ 29 ต.ค. 2569 "ตัวละครขยับ"): ทุกตัวที่ยืนนิ่งหายใจเบา ๆ ท่าเดียวกับตัวละครหน้าแรก ขยับแค่ transform
+   (การ์ดจอเลื่อนภาพเดิม ไม่วาดใหม่ ไม่หนักเครื่อง · will-change: ชั้นภาพคงอยู่ #280) · เฟสเหลื่อมกันตามลำดับ ไม่ขยับพร้อมกันเป็นแถว
+   · ตัวที่เวทีสามมิติถืออยู่หยุดตามเดิม (.c3-held) · ภาพตัวอย่างของในร้าน (.shop-item) ตัววิ่ง และตัวจิ๋วในกล่องสัตว์ไม่ขยับ */
+.fr-char .char-svg, .me-top-char .char-svg, .res-char .char-svg, .kw-char .char-svg, .shop-char .char-svg, .rp-char .char-svg, .pz-char .char-svg { transform-origin: 50% 92%; animation: char-idle 4.2s ease-in-out infinite; will-change: transform; }
+.fr-card:nth-child(3n+2) .fr-char .char-svg, .pz-p:nth-child(3n+2) .pz-char .char-svg { animation-delay: -1.4s; }
+.fr-card:nth-child(3n) .fr-char .char-svg, .pz-p:nth-child(3n) .pz-char .char-svg { animation-delay: -2.8s; }
+@media (prefers-reduced-motion: reduce) { .me-char .char-svg, .rm-char .char-svg, .fr-char .char-svg, .me-top-char .char-svg, .res-char .char-svg, .kw-char .char-svg, .shop-char .char-svg, .rp-char .char-svg, .pz-char .char-svg { animation: none !important; } }
 .sh-char { flex: none; width: 46px; height: 86px; margin: -24px -2px -6px 0; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .sh-char:active .char-svg { transform: scale(.94); }
 /* The team's goal of the week: under the chips on the home screen, and up close. */
@@ -2035,6 +2049,18 @@ html.c3 .shop-char, html.c3 .rm-char { touch-action: pan-y; }
 .pz-p.walking .pz-char .char-svg { animation: pz-step .36s ease-in-out infinite alternate; }
 .pz-p.walking .pz-pet .pet-svg { animation: pz-step .3s ease-in-out infinite alternate; }
 @keyframes pz-step { 0% { transform: translateY(0) rotate(-2deg); } 100% { transform: translateY(-3px) rotate(2deg); } }
+/* 2.13.14 (เจ้าของ 29 ต.ค. 2569 "ในลานเวลาเดินมี animation ในการเดินดีไหม"): ในสามมิติ คนที่เดินก้าวขา ด้วยท่าวิ่งเดิมของ
+   วิ่งฝ่าด่าน 4 จังหวะ หันข้างไปทางที่เดิน สลับแบบการ์ดวิ่ง (rn-leg) ภาพยืนซ่อนระหว่างเดิน ไม่โยกตัวซ้ำ · ภาพก้าวยังไม่มา
+   หรือภาพวาด: โยกแบบเดิม · ยืนอยู่ภาพก้าวซ่อนไว้ (เปิดแล้วในเครื่อง เริ่มเดินขึ้นทันที) · เวทีสดทับอยู่ (c3-under) ไม่โผล่
+   · ลดภาพเคลื่อนไหว: ไม่ก้าว ไม่โยก ตัวเลื่อนไปเฉย ๆ */
+.pz-leg { visibility: hidden; pointer-events: none; }
+.pz-p.walking .pz-char .char-svg.pz-legs { animation: none; }
+.pz-p.walking .pz-legs .c3-img { visibility: hidden; }
+.pz-p.walking .pz-legs:not(.c3-under) .pz-leg { visibility: visible; opacity: .001; animation: rn-leg .56s step-end infinite; }
+.pz-p.walking .pz-legs .pz-leg.l1 { animation-delay: -.42s; }
+.pz-p.walking .pz-legs .pz-leg.l2 { animation-delay: -.28s; }
+.pz-p.walking .pz-legs .pz-leg.l3 { animation-delay: -.14s; }
+@media (prefers-reduced-motion: reduce) { .pz-p.walking .pz-char .char-svg, .pz-p.walking .pz-pet .pet-svg { animation: none !important; } .pz-p.walking .pz-legs .c3-img { visibility: visible; } .pz-leg { display: none; } }
 .pz-p.dozy .pz-char { filter: saturate(.8); }
 .pz-zz { position: absolute; left: 40px; bottom: calc(var(--hd, 112px) - 16px); color: #fff; font: 700 12px/1 var(--sans); font-style: normal; text-shadow: 0 1px 2px rgba(0, 0, 0, .4); animation: pz-zz 2.4s ease-in-out infinite; }
 @keyframes pz-zz { 0%, 100% { transform: translateY(0); opacity: .6; } 50% { transform: translateY(-5px); opacity: 1; } }
@@ -3804,6 +3830,56 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     svg.classList.add('go');
     if (loop) { svg.classList.add('loop'); return; }
     svg._go = setTimeout(function () { svg.classList.remove('go'); }, (+svg.getAttribute('data-ms') || 2000) + 80);
+  }
+  // 2.13.14 (เจ้าของ 29 ต.ค. 2569 "ซื้อท่าเคลื่อนไหวที่เปิด auto ไว้"): การ์ดของตัวเองในหน้าเพื่อนเล่นท่าที่ใส่อยู่วนเอง
+  // เมื่อเป็นท่าที่ได้มา (ซื้อ กล่องสุ่ม ชุด) · โบกมือกับไหว้เป็นของทุกคน (Levels.gs ราคา 0) ไม่วน · วนเฉพาะตอนเห็นการ์ด:
+  // เลื่อนพ้นจอ มีแผ่นเปิดทับ (ห้องเพื่อนและลานใช้เวทีสามมิติสดทีละ 1) หรือแอปอยู่เบื้องหลัง หยุด แล้วกลับมาวนเอง
+  // · สามมิติ: ภาพของทุกคนบนจอมาก่อน (เวทีวาดทุกเฟรม ภาพเพื่อนมาช้าลงบนมือถือ) ระหว่างนั้นภาพวาดวน แล้วย้ายไปเวทีสด
+  //   เลื่อนจอแล้วมีภาพเพื่อนใหม่ต้องมา เวทีปิดก่อน (การ์ดเป็นภาพนิ่งที่หายใจ) ภาพมาครบแล้วกลับมาเล่นต่อเอง
+  // · เวทีเปิดไม่ขึ้นซ้ำ ๆ เลิกลองหลัง 4 ครั้ง · ลดภาพเคลื่อนไหวไม่วน (charGo)
+  var MOVE_FREE = { 'm-wave': 1, 'm-wai': 1 };
+  var frMeT = 0;
+  function frMeLoop() {
+    clearInterval(frMeT);
+    frMeT = 0;
+    var svg = $('main .fr-card.me .fr-char .char-svg');
+    var m = svg && /(?:^|\s)mv-(m-[\w-]+)/.exec(svg.getAttribute('class') || '');
+    if (!m || MOVE_FREE[m[1]] || !MOTION) return;
+    var tries = 0;
+    var tick = function () {
+      if (!svg.isConnected) { clearInterval(frMeT); frMeT = 0; return; }
+      var r = svg.getBoundingClientRect();
+      var on = svg.classList.contains('loop');
+      if (!(r.width && r.bottom > 0 && r.top < innerHeight) || document.hidden || $('#sheet-root.open')) {
+        tries = 0;
+        if (on) frMeStop(svg);
+        return;
+      }
+      var three = C3.state === 2 && !C3.lost && svg.hasAttribute('data-c3');
+      if (three && c3Waiting()) {
+        tries = 0;
+        if (C3.live && C3.live.temp && C3.live.over && C3.live.over() === svg) frMeStop(svg);
+        else if (!on && !svg.classList.contains('c3-on')) svg.classList.add('go', 'loop');
+        return;
+      }
+      var to3 = on && three && svg.classList.contains('c3-on') && !svg.classList.contains('c3-held');
+      if ((!on || to3) && tries++ < 4) charGo(svg, true);
+    };
+    tick();
+    frMeT = setInterval(tick, 1500);
+  }
+  /** A 3D picture near the screen still to come (none shown yet, no live stage over it, not given up on). */
+  function c3Waiting() {
+    return Array.prototype.some.call(document.querySelectorAll('main svg.char-svg[data-c3]'), function (x) {
+      if (x.classList.contains('c3-on') || x.classList.contains('c3-late') || x.classList.contains('c3-under')) return false;
+      var r = x.getBoundingClientRect();
+      return r.width && r.bottom > -200 && r.top < innerHeight + 200;
+    });
+  }
+  function frMeStop(svg) {
+    if (C3.live && C3.live.temp && C3.live.over && C3.live.over() === svg) C3.live.end();
+    clearTimeout(svg._go);
+    svg.classList.remove('go', 'loop');
   }
   // ---- characters in 3D (#145) ------------------------------------------------
   // Where the phone can draw in 3D (WebGL 2; on the shop's site and the demo), each character above
@@ -7460,6 +7536,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (S.sub === 'order' && $('#od-cats')) { odSpySet(S.odAt || 0, true); odSpy(); }
     glideLenses();
     runCardPics();
+    frMeLoop();
     if (S.view === 'kiosk' && S.k.step === 'confirm') attachKioskCamera();
     if (S.view === 'kiosk' && S.k.step === 'names') drawLiveQr();
     if (camWanted()) { startScreenCam(); attachMirror(); } else if (S.k.cam.stream || S.k.cam.state !== 'off') { stopScreenCam(); S.k.cam.state = 'off'; }
@@ -13638,9 +13715,47 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var c = el.querySelector('.pz-char');
     if (c) c.style.setProperty('--face', p.face);
     el.classList.add('walking');
+    pzLegs(el);
     clearTimeout(el._walk);
     el._walk = setTimeout(function () { el.classList.remove('walking'); if (then) then(); }, ms);
     if (id === plaza.data.me) pzFollow(x);
+  }
+  // 2.13.14 (เจ้าของ 29 ต.ค. 2569 "ในลานเวลาเดินมี animation ในการเดินดีไหม"): ในสามมิติ คนที่เดินก้าวขาจริง ด้วยท่าวิ่งของ
+  // วิ่งฝ่าด่าน (moves.mjs m-run) 4 จังหวะ หันข้างแบบนักวิ่ง (turn 55) ในกรอบเดียวกับภาพยืน (c3Put) · ขอครั้งแรกที่คนนั้นเดิน
+  // ของตัวเองต่อจากภาพที่หน้ารออยู่ ของเพื่อน (เดินเอง) เมื่อไม่มีภาพอื่นรอ (low: ไม่แย่งภาพที่ต้องเห็นตอนนี้) ระหว่างนั้น
+  // โยกแบบเดิม · engine เก็บภาพไว้ในเครื่อง (เปิดแอปครั้งหน้ามีเลย) · ขึ้นเมื่อเปิดครบ 4 ภาพ
+  // ภาพไหนไม่มาหรือเปิดไม่ได้: โยกแบบเดิม ไม่ขอซ้ำ · ภาพวาด (ไม่มีสามมิติ) ท่าที่เล่นอยู่ (pzMove) เวทีสดทับ
+  // หรือลดภาพเคลื่อนไหว: ไม่ทำ
+  var PZ_LEG_AT = [125, 375, 625, 875];
+  var pzLegPics = {};
+  function pzLegs(el) {
+    var svg = el.querySelector('.pz-char svg.char-svg[data-c3]');
+    if (!svg || !MOTION || C3.state !== 2 || C3.lost || !C3.mod || svg.querySelector('.pz-leg')) return;
+    if (!svg.classList.contains('c3-on') || svg.classList.contains('c3-under') || svg.classList.contains('pose')) return;
+    var h = c3Size(svg);
+    var key = svg.getAttribute('data-c3') + '|' + h;
+    if (!pzLegPics[key]) {
+      var look = c3Look(svg);
+      pzLegPics[key] = Promise.all(PZ_LEG_AT.map(function (at) {
+        return C3.mod.still(look, { w: Math.round((h * 120) / 224), h: h, move: 'm-run', at: at, turn: 55, bleed: true, low: !el.classList.contains('me') });
+      }));
+    }
+    pzLegPics[key].then(function (urls) {
+      if (!svg.isConnected || svg.querySelector('.pz-leg') || !svg.classList.contains('c3-on')) return;
+      var b = c3Bleed();
+      var left = urls.length;
+      urls.forEach(function (u, i) {
+        var im = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+        im.setAttribute('class', 'pz-leg l' + i);
+        im.setAttribute('x', String(-120 * b.side));
+        im.setAttribute('y', String(-24 - 224 * b.top));
+        im.setAttribute('width', String(120 * (1 + 2 * b.side)));
+        im.setAttribute('height', String(224 * (1 + b.top)));
+        im.onload = function () { if (!--left) svg.classList.add('pz-legs'); };
+        im.setAttribute('href', u);
+        svg.appendChild(im);
+      });
+    }, function () { /* โยกแบบเดิม */ });
   }
   /** With a mouse, the street is dragged sideways (a drag is not a tap on the ground). */
   function pzDrag() {
@@ -15117,7 +15232,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // ---- the day's notes (Daily.gs) ---------------------------------------------
   // Each topic's picture, and its name on a tile.
   var DL_ICON = { stock: 'box', waste: 'trash', quality: 'alert', mistake: 'xmark', recipe: 'scale', leftover: 'bowl', ask: 'ask', want: 'star', swap: 'swap', nomeat: 'leaf', topping: 'layers', praise: 'heart', complaint: 'frown', fix: 'tool', clean: 'shield', other: 'chat' };
-  var DL_SHORT = { stock: 'ของหมด', waste: 'ของต้องทิ้ง', quality: 'วัตถุดิบไม่ดี', mistake: 'ทำเมนูผิด', recipe: 'ชั่งตวงไม่ได้', leftover: 'กินไม่หมด', ask: 'ถามหาเมนู', want: 'อยากให้มี', swap: 'เปลี่ยนวัตถุดิบ', nomeat: 'ไม่ทานเนื้อสัตว์', topping: 'ย้ายท็อปปิ้ง', praise: 'ลูกค้าชม', complaint: 'ไม่พอใจ', fix: 'ของเสีย', clean: 'สะอาด ปลอดภัย', other: 'เรื่องอื่น' };
+  var DL_SHORT = { stock: 'ของหมด', waste: 'ของต้องทิ้ง', quality: 'วัตถุดิบไม่ดี', mistake: 'ทำเมนูผิด', recipe: 'ชั่งตวงไม่ได้', leftover: 'กินไม่หมด', ask: 'ถามหาเมนู', want: 'อยากให้มี', swap: 'เปลี่ยนวัตถุดิบ', nomeat: 'ไม่ทานเนื้อสัตว์', topping: 'ย้ายท็อปปิ้ง', praise: 'ลูกค้าชม', complaint: 'ไม่พอใจ', fix: 'อุปกรณ์เสีย', clean: 'สะอาด ปลอดภัย', other: 'เรื่องอื่น' };
   // Where a person could be named: what happened is what the shop needs, never who (the shop fixes the cause).
   var DL_NO_NAMES = { mistake: 1, recipe: 1, clean: 1, complaint: 1, waste: 1 };
   // Where the name box is not one of the shop's dishes (a dish it has not got, a thing, a place, anything):
@@ -15125,6 +15240,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var DL_NOT_MENU = { ask: 1, want: 1, fix: 1, clean: 1, other: 1 };
   // The menu's group open from the start on a topic (by its name on the owner's menu).
   var DL_CAT_FIRST = { topping: 'ท็อปปิ้ง' };
+  // 2.13.14 (เจ้าของมอบห้องตัดสิน 29 ต.ค. 2569 "ปุ่มเยอะไปไหม"): แต่ละคนเห็นก่อน 8 หัวข้อที่ตรงงานแผนกตัวเอง
+  // (Config.gs DEPTS) ที่เหลืออยู่ใต้ "เรื่องอื่น ๆ" กางในที่เดิม · เลือกจากเรื่องที่แผนกนั้นเจอเองในงาน ครัว: ของ
+  // วัตถุดิบ การทำ อุปกรณ์ ความสะอาด · หน้าร้าน: ลูกค้า · เท่ากันเลือกหัวข้อที่เจ้าของตั้งเอง (29 ก.ย.) แล้วตามลำดับเดิม
+  // · คนไม่มีแผนก (และเจ้าของที่บันทึกแทน) เห็นครบ · แต้มทุกหัวข้อเท่าเดิม ไม่มีหัวข้อไหนได้เปรียบ
+  // · หัวข้อใหม่ใน Daily.gs ที่ไม่ได้ใส่ตรงนี้ไปอยู่ใต้ "เรื่องอื่น ๆ" ของทุกแผนก
+  var DL_DEPT = {
+    'ครัว': { stock: 1, waste: 1, quality: 1, mistake: 1, recipe: 1, leftover: 1, fix: 1, clean: 1 },
+    'หน้าร้าน': { leftover: 1, ask: 1, want: 1, swap: 1, nomeat: 1, topping: 1, praise: 1, complaint: 1 },
+  };
+  var dlMore = false; // "เรื่องอื่น ๆ" กางอยู่ (จนปิดแอป: เปิดแอปใหม่เห็น 8 หัวข้อของแผนกก่อนเสมอ)
   var dl = null; // what is being noted: {date, open, quick, items: {topic: {menu, detail}}, draft}
   var dlList = null; // the owner's page of notes
   function dlHome() { return (S.home && S.home.daily) || null; }
@@ -15151,11 +15276,30 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="fb-invite-h"><span class="fb-ico">${icon('note')}</span><div class="grow"><span class="eyebrow">บันทึกหน้างาน</span><b>วันนี้ที่ร้านเป็นยังไงบ้าง</b></div></div>
       <p class="small muted" style="margin:0">แตะหัวข้อแล้วพิมพ์สั้น ๆ เรื่องเล็กแค่ไหนก็ช่วยให้ร้านดีขึ้น</p>
       ${d.lead ? (d.sentToday ? html`<div class="dl-done"><span class="pill ok">${icon('check')} ส่งสรุปวันนี้แล้ว</span>${d.streak >= 2 ? html`<span class="pill gold">${icon('spark')} ส่งครบ ${d.streak} วันติด</span>` : ''}</div>` : html`<button class="btn primary block" style="margin-top:12px" data-act="dl-form" data-date="${d.today}">${icon('note')} ส่งสรุปวันนี้</button>`) : ''}
-      <div class="dl-tiles">${dlTopics().map(function (t) { return html`<button class="dl-tile ${t[0]}" data-act="dl-quick" data-topic="${t[0]}">${icon(DL_ICON[t[0]] || 'chat')}<span>${DL_SHORT[t[0]] || t[1]}</span></button>`; })}</div>
+      ${dlTiles()}
       ${dlFixingList(d)}
       ${news.length ? html`<button class="dl-news" data-act="dl-mine">${icon('check')}<span>เจ้าของร้านดูเรื่องที่คุณบันทึกแล้ว ${news.length} เรื่อง · ขอบคุณที่บอกนะ</span>${icon('right')}</button>` : ''}
       <div class="fb-foot"><span>${icon('team')}<span>${team.today ? 'วันนี้ทีมบันทึก ' + team.today + ' เรื่อง' : 'วันนี้ยังไม่มีใครบันทึก'}${team.fixed && !(S.home && S.home.level) ? html`<br>เดือนนี้ร้านแก้แล้ว ${team.fixed} เรื่อง` : ''}</span></span>${(d.mine || []).length ? html`<button class="fb-mine-btn" data-act="dl-mine">บันทึกของฉัน${mineToday ? ' ' + mineToday : ''}${news.length ? html`<i class="dot" aria-label="เจ้าของร้านดูแล้ว"></i>` : ''}${icon('right')}</button>` : ''}</div>
     </section>`;
+  }
+  /** ปุ่มหัวข้อ: ของแผนกตัวเองก่อน ที่เหลือใต้ "เรื่องอื่น ๆ" กางในที่เดิม (2.13.14 · DL_DEPT) */
+  function dlTiles() {
+    var all = dlTopics();
+    var me = S.view !== 'owner' && S.home && S.home.me;
+    var dept = me && DL_DEPT[me.dept];
+    var first = dept ? all.filter(function (t) { return dept[t[0]]; }) : all;
+    var rest = dept ? all.filter(function (t) { return !dept[t[0]]; }) : [];
+    var tile = function (t) { return html`<button class="dl-tile ${t[0]}" data-act="dl-quick" data-topic="${t[0]}">${icon(DL_ICON[t[0]] || 'chat')}<span>${DL_SHORT[t[0]] || t[1]}</span></button>`; };
+    return html`<div class="dl-tiles">${first.map(tile)}${rest.length ? html`<button class="dl-more" data-act="dl-more" aria-expanded="${dlMore ? 'true' : 'false'}">${icon('more')}<span>เรื่องอื่น ๆ${dlMore ? '' : html` <span class="dl-more-n">อีก ${rest.length} หัวข้อ</span>`}</span>${icon('right')}</button>${dlMore ? rest.map(tile) : ''}` : ''}</div>`;
+  }
+  /** "เรื่องอื่น ๆ" กางหรือย่อ ในที่เดิม: วาดใหม่เฉพาะปุ่มหัวข้อ หน้าไม่เลื่อน */
+  function dlMoreToggle(el) {
+    dlMore = !dlMore;
+    var box = el && el.closest('.dl-tiles');
+    if (!box) { render(); return; }
+    box.outerHTML = String(dlTiles());
+    var btn = $('.dl-more');
+    if (btn) btn.focus({ preventScroll: true });
   }
   /** What a note is about (a name tapped, or typed) and a few words. */
   function dlFields(key, quick) {
@@ -16573,7 +16717,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="fb-invite-h"><span class="fb-ico">${icon('spark')}</span><div class="grow"><span class="eyebrow">ส่งความคิดเห็น</span><b>ช่วยกันทำร้านและแอปให้ดีขึ้น</b></div></div>
       <p class="small muted">เล็กแค่ไหนก็ส่งได้ · เจ้าของร้านเห็นคนเดียว และตอบทุกเรื่อง</p>
       <div class="fb-go three"><button class="fb-big idea" data-act="fb-new" data-kind="idea">${icon('bulb')}<b>มีไอเดีย</b><span>ทำร้านหรือแอปให้ดีขึ้น</span></button><button class="fb-big" data-act="fb-new" data-kind="bug">${icon('tool')}<b>แอปมีปัญหา</b><span>ค้าง กดไม่ไป ตัวเลขไม่ตรง</span></button><button class="fb-big ask" data-act="fb-new" data-kind="ask">${icon('chat')}<b>ถามเรื่องแอป</b><span>ใช้ยังไง ทำได้ไหม</span></button></div>
-      <button class="fb-tolog" data-act="dl-goto">${icon('note')}<span><b>เรื่องในร้าน บันทึกหน้างาน</b><br>ของหมด ของเสีย ลูกค้าบ่น ความสะอาด</span>${icon('right')}</button>
+      <button class="fb-tolog" data-act="dl-goto">${icon('note')}<span><b>เรื่องในร้าน บันทึกหน้างาน</b><br>ของหมด อุปกรณ์เสีย ลูกค้าบ่น ความสะอาด</span>${icon('right')}</button>
       <div class="fb-foot"><span>${icon('team')}${team.sent ? 'ทีมเราเสนอ ' + team.sent + ' เรื่อง' + (team.done ? ' · ใช้ได้แล้ว ' + team.done : '') : 'ยังไม่มีใครเสนอ เป็นคนแรกเลย'}</span>${f.count ? html`<button class="fb-mine-btn" data-act="fb-mine">ที่ฉันเสนอ ${f.count}${news ? html`<i class="dot" aria-label="มีความคืบหน้า"></i>` : ''}${icon('right')}</button>` : ''}</div>
     </section>`;
   }
@@ -16622,7 +16766,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <button aria-pressed="${bug}" data-act="fb-kind" data-kind="bug">${icon('tool')}แอปมีปัญหา</button>
         <button aria-pressed="${ask}" data-act="fb-kind" data-kind="ask">${icon('chat')}ถามเรื่องแอป</button></div>
       <div class="fb-prompt"><h3>${ask ? 'สงสัยเรื่องแอป? ถามได้เลย' : bug ? 'แอปมีปัญหาตรงไหน เล่าให้ฟังหน่อย' : 'มีอะไรที่ทำให้ร้านหรือแอปดีขึ้นได้อีก?'}</h3><p>${ask ? 'เล่าสิ่งที่เห็นหรือสงสัย เจ้าของร้านดูให้เองว่าควรทำอะไร' : bug ? 'แคปหน้าจอหรืออัดวิดีโอแนบได้ ไม่ต้องพิมพ์เยอะ' : 'เรื่องเล็กแค่ไหนก็ส่งได้ เรื่องเล็กมักช่วยร้านได้มากที่สุด เขียนสั้น ๆ ก็พอ'}</p></div>
-      <button class="fb-tolog" data-act="dl-goto">${icon('note')}<span><b>เรื่องในร้าน บันทึกหน้างานแทน</b><br>ของหมด ของเสีย ลูกค้าบ่น ความสะอาด</span>${icon('right')}</button>
+      <button class="fb-tolog" data-act="dl-goto">${icon('note')}<span><b>เรื่องในร้าน บันทึกหน้างานแทน</b><br>ของหมด อุปกรณ์เสีย ลูกค้าบ่น ความสะอาด</span>${icon('right')}</button>
       <div class="fb-starters">${FB_STARTERS[fb.kind].map(function (x, i) { return html`<button class="fb-starter" data-act="fb-start" data-i="${i}">${x[0]}</button>`; })}</div>
       <textarea class="input" id="fb-text" maxlength="2000" aria-label="${ask ? 'สิ่งที่สงสัย' : bug ? 'ปัญหาที่เจอ' : 'ไอเดียของคุณ'}" placeholder="${ask ? 'เช่น ขอลาครึ่งวันกดตรงไหน' : bug ? 'เช่น กดแท็บสลิปแล้วหน้าค้าง' : 'เช่น ย้ายแก้วน้ำไว้ใกล้ประตูครัว เสิร์ฟได้เร็วขึ้น'}">${fb.text}</textarea>
       <div class="fb-files">${fb.files.map(function (x, i) {
@@ -17946,6 +18090,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'dl-quick': function (el) { openDailyQuick(el.dataset.topic); },
     'dl-form': function (el) { openDailyForm(el.dataset.date); },
     'dl-toggle': function (el) { dlToggle(el.dataset.topic); },
+    'dl-more': function (el) { dlMoreToggle(el); },
     'dl-name': function (el) { dlPickName(el.dataset.topic, el.dataset.name); },
     'dl-clear': function (el) { dlPickName(el.dataset.topic, ''); },
     'dl-cat': function (el) { dlCat(el.dataset.topic, +el.dataset.i); },
