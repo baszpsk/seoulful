@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.14","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"92c2b132e418"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.15","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"52ebc8076429"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -11440,23 +11440,34 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (p.status === 'approved') return ['อนุมัติแล้ว · รอจ่าย', 'โดย ' + p.approvedBy + ' ' + isoDate(p.approvedAt) + ' ' + isoTime(p.approvedAt)];
     return ['ยังไม่อนุมัติ', 'ตัวเลขคำนวณจากข้อมูลล่าสุด'];
   }
-  /** คนออกในรอบนี้: ค่าวันพักร้อนที่เหลือ ป้าย กฎหมายบังคับ / จ่ายเพิ่มได้ กดใส่เป็นรายการ (2.13.13 ข้อ 16 ก · เจ้าของร้านเท่านั้น) */
+  /**
+   * คนออกในรอบนี้: ค่าวันพักร้อนที่เหลือ ป้าย กฎหมายบังคับ / จ่ายเพิ่มได้ กดใส่เป็นรายการ (2.13.13 ข้อ 16 ก · เจ้าของร้านเท่านั้น)
+   * · วันประเพณีที่ได้หยุดแทนแต่ยังไม่ได้หยุด เป็นยอดบังคับอีกบรรทัด ใส่เป็นรายการแยก (2.13.15)
+   */
   function leaversCard(d) {
     var list = d.leavers || [];
     if (!list.length) return '';
     var open = !d.period.status;
-    return html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">คนออกในรอบนี้ · ค่าวันพักร้อนที่เหลือ</span></div>
+    var r2 = function (n) { return Math.round(n * 100) / 100; };
+    var line = function (pill, text) { return html`<div class="row" style="gap:8px;margin-top:6px">${pill}<span style="flex:1;min-width:0">${text}</span></div>`; };
+    var must = html`<span class="pill warn">กฎหมายบังคับ</span>`;
+    return html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">คนออกในรอบนี้ · ค่าวันพักร้อนและวันประเพณีที่เหลือ</span></div>
       <div class="list">${list.map(function (x) {
-        var short = Math.round((x.law - x.paid) * 100) / 100;
-        var rest = Math.round((x.law + x.extra - x.paid) * 100) / 100;
+        var short = r2(x.law - x.paid);
+        var rest = r2(x.law + x.extra - x.paid);
+        var holShort = r2((x.hol || 0) - (x.holPaid || 0));
+        // ยอดบังคับที่ยังไม่ได้ใส่ รวมเตือนกล่องเดียว (2.13.15)
+        var owe = (holShort > 0 ? ['วันประเพณี ' + money(holShort) + ' บาท'] : []).concat(short > 0 ? ['พักร้อน ' + money(short) + ' บาท'] : []);
         return html`<div class="item" style="display:block">
           <div class="row between"><b>${x.name}</b><span class="s">วันสุดท้าย ${thShort(x.end)}${x.reason ? ' · ' + x.reason : ''}</span></div>
-          <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap">${x.law > 0 ? html`<span class="pill warn">กฎหมายบังคับ</span><span>${x.lawDays} วัน = ${money(x.law)} บาท</span>` : html`<span class="s">กฎหมายไม่บังคับ: ${x.why}</span>`}</div>
-          ${x.extra > 0 ? html`<div class="row" style="gap:8px;margin-top:6px;flex-wrap:wrap"><span class="pill">จ่ายเพิ่มได้</span><span>${x.extraDays} วัน = ${money(x.extra)} บาท</span></div>` : ''}
+          <div style="margin-top:2px">${x.law > 0 ? line(must, 'พักร้อน ' + x.lawDays + ' วัน = ' + money(x.law) + ' บาท') : html`<div class="s" style="margin-top:6px">พักร้อน กฎหมายไม่บังคับ: ${x.why}</div>`}
+          ${x.hol > 0 ? line(must, 'วันประเพณี ' + x.holDays + ' วัน = ' + money(x.hol) + ' บาท') : ''}
+          ${x.extra > 0 ? line(html`<span class="pill">จ่ายเพิ่มได้</span>`, 'พักร้อน ' + x.extraDays + ' วัน = ' + money(x.extra) + ' บาท') : ''}</div>
           <div class="s" style="margin-top:6px">${x.detail}</div>
-          ${x.paid ? html`<div class="s" style="margin-top:6px">${icon('check')} ใส่แล้ว ${money(x.paid)} บาท</div>` : ''}
-          ${short > 0 ? html`<div class="hint warn" style="margin-top:8px">${icon('alert')}<span>ยังไม่ได้ใส่ค่าวันพักร้อนที่กฎหมายบังคับ ${money(short)} บาท</span></div>` : ''}
-          ${open && rest > 0 ? html`<div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${short > 0 ? html`<button class="btn sm primary" data-act="leave-pay" data-id="${x.id}">ใส่ตามกฎหมาย</button>` : ''}${rest > short ? html`<button class="btn sm" data-act="leave-pay" data-id="${x.id}" data-all="1">ใส่ทั้งหมด ${money(rest)} บาท</button>` : ''}</div>` : ''}
+          ${x.paid ? html`<div class="s" style="margin-top:6px">${icon('check')} ใส่ค่าพักร้อนแล้ว ${money(x.paid)} บาท</div>` : ''}
+          ${x.holPaid ? html`<div class="s" style="margin-top:6px">${icon('check')} ใส่ค่าวันประเพณีแล้ว ${money(x.holPaid)} บาท</div>` : ''}
+          ${owe.length ? html`<div class="hint warn" style="margin-top:8px">${icon('alert')}<span>ยังไม่ได้ใส่ยอดที่กฎหมายบังคับ: ${owe.join(' · ')}</span></div>` : ''}
+          ${open && (rest > 0 || holShort > 0) ? html`<div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${holShort > 0 ? html`<button class="btn sm primary" data-act="hol-pay" data-id="${x.id}">ใส่วันประเพณี ${money(holShort)} บาท</button>` : ''}${short > 0 ? html`<button class="btn sm primary" data-act="leave-pay" data-id="${x.id}">ใส่พักร้อน ${money(short)} บาท</button>` : ''}${rest > short ? html`<button class="btn sm" data-act="leave-pay" data-id="${x.id}" data-all="1">ใส่พักร้อนทั้งหมด ${money(rest)} บาท</button>` : ''}</div>` : ''}
         </div>`;
       })}</div></section>`;
   }
@@ -11890,7 +11901,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   var EMP_FIELDS = [
     ['ข้อมูลพนักงาน', [['nick', 'ชื่อเล่น'], ['display', 'ชื่อที่แสดงในแอป', 'ไม่บังคับ · ชื่อที่อยากให้แอปเรียก ถ้าว่างใช้ชื่อเล่น · ชื่อเล่นซ้ำกันไม่ต้องใส่อะไร แอปเติมแผนกให้เองเฉพาะในรายการรวม (เช่น นิดครัว)'], ['fullName', 'ชื่อ-นามสกุล (ในสลิป)'], ['citizenId', 'เลขบัตรประชาชน'], ['bank', 'บัญชีรับเงิน']]],
-    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses', 'ให้ออก: เลือก ลาออก แล้วใส่วันทำงานวันสุดท้ายและเหตุที่ออก'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date', 'เป็นพนักงานถึงวันนี้ · เข้าแอปและลงเวลาได้ถึงวันนี้ หลังจากนั้นดูได้เฉพาะสลิปเงินเดือน'], ['endReason', 'เหตุที่ออก', 'endReasons', 'เลิกจ้าง: ได้ค่าพักร้อนปีนี้ตามส่วน และทำงานครบ 120 วันขึ้นไปต้องจ่ายค่าชดเชยตาม ม.118 (แอปไม่ได้คิดให้) · เลิกจ้างตาม ม.119 ใช้เมื่อเข้ากรณีในกฎหมาย เช่น ทุจริตต่อหน้าที่ จงใจทำให้ร้านเสียหาย ฝ่าฝืนระเบียบหลังเตือนเป็นหนังสือแล้ว ละทิ้งหน้าที่ 3 วันทำงานติดกันโดยไม่มีเหตุอันสมควร ต้องบอกเหตุในหนังสือเลิกจ้างหรือแจ้งตอนเลิกจ้าง ไม่งั้นอ้างทีหลังไม่ได้']]],
+    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses', 'ให้ออก: ใส่วันทำงานวันสุดท้ายและเหตุที่ออก สถานะเปลี่ยนเป็น ลาออก เอง · ลบวันสุดท้ายกลับเป็น ทำงาน'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date', 'เป็นพนักงานถึงวันนี้ · เข้าแอปและลงเวลาได้ถึงวันนี้ หลังจากนั้นดูได้เฉพาะสลิปเงินเดือน'], ['endReason', 'เหตุที่ออก', 'endReasons', 'เลิกจ้าง: ได้ค่าพักร้อนปีนี้ตามส่วน และทำงานครบ 120 วันขึ้นไปต้องจ่ายค่าชดเชยตาม ม.118 (แอปไม่ได้คิดให้) · เลิกจ้างตาม ม.119 ใช้เมื่อเข้ากรณีในกฎหมาย เช่น ทุจริตต่อหน้าที่ จงใจทำให้ร้านเสียหาย ฝ่าฝืนระเบียบหลังเตือนเป็นหนังสือแล้ว ละทิ้งหน้าที่ 3 วันทำงานติดกันโดยไม่มีเหตุอันสมควร ต้องบอกเหตุในหนังสือเลิกจ้างหรือแจ้งตอนเลิกจ้าง ไม่งั้นอ้างทีหลังไม่ได้']]],
     ['ค่าจ้าง', [['employment', 'สถานะการจ้าง', 'employment'], ['probationEnd', 'วันผ่านโปร', 'date', 'ตั้งแต่วันนี้ได้เงินเดือน + Incentive + ประกันสังคม'], ['probationRate', 'ค่าแรงช่วงทดลองงาน (บาท/วัน)', 'num'], ['probationWht', 'ภาษีหัก ณ ที่จ่ายช่วงทดลองงาน (%)', 'num'], ['payType', 'ประเภทค่าจ้าง', 'payTypes'], ['rate', 'เงินเดือน/ค่าแรง (บาท)', 'num'], ['otRate', 'ค่า OT (บาท/ชม.)', 'num', 'เว้นว่าง = 1.5 เท่าตามกฎหมาย'], ['sso', 'หักประกันสังคม', 'yesno']]],
     ['Incentive', [['diligence', 'เบี้ยขยัน (บาท)', 'num'], ['headAllowance', 'ค่าหัวหน้า (บาท)', 'num'], ['tenureAllowance', 'ค่าอยู่นาน (บาท)', 'num']]],
     ['อื่น ๆ', [['note', 'หมายเหตุ']]],
@@ -11905,15 +11916,29 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var key = f[0], type = f[2], v = e[key] == null ? '' : e[key];
       if (e.idHidden && (key === 'citizenId' || key === 'bank')) return html`<label class="field"><span>${f[1]}</span><small>ซ่อนหลังจ่ายงวดสุดท้าย · ข้อมูลยังเก็บไว้ ไม่ได้ลบ</small></label>`;
       var list = { depts: opts.depts, roles: opts.roles, statuses: opts.statuses, endReasons: [['', 'ยังไม่ออก']].concat(opts.endReasons || []), employment: v === '' ? [['', 'เลือก…']].concat(opts.employment) : opts.employment, payTypes: opts.payTypes, yesno: ['ใช่', 'ไม่'], days: [['', 'ยังไม่ตั้ง']].concat(TH_DAYS_LONG.map(function (x) { return [x, 'วัน' + x]; })) }[type];
+      // (วันสุดท้ายและเหตุที่ออกเปลี่ยนสถานะให้เอง empEndSync · 2.13.15)
+      var end = key === 'endDate' || key === 'endReason' ? 'emp-end' : '';
       var ctl = list
-        ? html`<select class="input" data-f="${key}">${list.map(function (x) { var o = Array.isArray(x) ? x : [x, x]; return html`<option value="${o[0]}" ${String(v) === o[0] ? 'selected' : ''}>${o[1]}</option>`; })}</select>`
-        : html`<input class="input" data-f="${key}" type="${type === 'date' ? 'date' : type === 'num' ? 'number' : 'text'}" ${type === 'num' ? 'inputmode="decimal" step="any"' : ''} value="${v}">`;
+        ? html`<select class="input" data-f="${key}" data-change="${end}">${list.map(function (x) { var o = Array.isArray(x) ? x : [x, x]; return html`<option value="${o[0]}" ${String(v) === o[0] ? 'selected' : ''}>${o[1]}</option>`; })}</select>`
+        : html`<input class="input" data-f="${key}" data-change="${end}" type="${type === 'date' ? 'date' : type === 'num' ? 'number' : 'text'}" ${type === 'num' ? 'inputmode="decimal" step="any"' : ''} value="${v}">`;
       return html`<label class="field"><span>${f[1]}</span>${ctl}${f[3] ? html`<small>${f[3]}</small>` : ''}</label>`;
     };
     var face = id ? faceOf({ id: id }) : '';
     openSheet({ use: 'แก้ไข/เพิ่มพนักงาน', title: id ? 'แก้ไข ' + (e.display || e.nick) : 'เพิ่มพนักงาน', body: html`${face ? html`<div class="form-group"><div class="row" style="gap:14px">${avatar({ id: id }, 'lg')}<div class="grow small muted">รูปที่${e.display || e.nick}ถ่ายเองในแอป เห็นเฉพาะคนที่เข้าระบบแล้ว</div><button class="btn sm" data-act="face-remove-emp" data-id="${id}">เอารูปออก</button></div></div>` : ''}${EMP_FIELDS.map(function (g) { return html`<div class="form-group"><div class="eyebrow" style="margin-bottom:8px">${g[0]}</div>${g[1].map(input)}</div>`; })}
       ${id ? html`<div class="form-group"><div class="row between"><span>PIN <b>${e.pin}</b></span><button class="btn sm" data-act="reset-pin" data-id="${id}">สุ่ม PIN ใหม่</button></div></div>` : ''}`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="save-emp" data-id="${id || ''}">บันทึก</button>` });
+  }
+  /**
+   * ฟอร์มพนักงาน (2.13.15 เจ้าของร้านสะดุด 29 ต.ค. 2569): ใส่วันสุดท้ายหรือเลือกเหตุที่ออก สถานะเป็น ลาออก เอง ·
+   * ลบวันสุดท้าย = ยังทำงานต่อ สถานะกลับเป็น ทำงาน และล้างเหตุที่ออก · เลือก ยังไม่ออก ตอนไม่มีวันสุดท้ายก็กลับเป็น ทำงาน
+   * (กรอกไม่ครบ หลังบ้านยังเตือนแบบเดิมตอนบันทึก checkEmployee_)
+   */
+  function empEndSync(el) {
+    var f = function (k) { return $('#sheet-body [data-f="' + k + '"]'); };
+    var st = f('status'), end = f('endDate'), why = f('endReason');
+    if (!st || !end || !why) return;
+    if (el === end && !end.value) why.value = '';
+    st.value = end.value || why.value ? 'ลาออก' : 'ทำงาน';
   }
 
   // ---- settings -----------------------------------------------------------
@@ -18174,6 +18199,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var days = all ? Math.round((x.lawDays + x.extraDays) * 100) / 100 : x.lawDays;
       openEntryForm({ type: 'ค่าวันลาที่เหลือ', emp: x.id, date: x.date, qty: qty, reason: 'วันพักร้อนที่เหลือ ' + days + ' วัน × ' + money(x.rate) + ' บาท', more: [{ id: x.id, name: x.name }] });
     },
+    // วันประเพณีที่ได้หยุดแทนแต่ยังไม่ได้หยุด ใส่เป็นรายการแยก (2.13.15)
+    'hol-pay': function (el) {
+      var x = ((S.pay || {}).leavers || []).filter(function (l) { return l.id === el.dataset.id; })[0];
+      if (!x) return;
+      var qty = Math.round((x.hol - (x.holPaid || 0)) * 100) / 100;
+      openEntryForm({ type: 'ค่าวันหยุดประเพณีที่เหลือ', emp: x.id, date: x.date, qty: qty, reason: 'วันหยุดตามประเพณีที่ยังไม่ได้หยุด ' + x.holDays + ' วัน × ' + money(x.rate) + ' บาท', more: [{ id: x.id, name: x.name }] });
+    },
     'submit-entry': function (el) {
       run(el, call('entrySave', entryValues(), actorAuth())).then(function (d) { closeSheet(); toast('บันทึก ' + d.entry.type + ' ของ ' + d.entry.name + ' แล้ว' + (d.told ? ' · ' + d.told : ''), 'ok'); loadTeam(); if (S.pay) loadPay(); }, function () {});
     },
@@ -18584,6 +18616,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var el = ev.target;
     if (el.id === 'cam-env' || el.id === 'cam-user') { onCameraFile(el); return; }
     if (el.dataset.change === 'lv-type' || el.dataset.change === 'lv-cost') leaveFormSync();
+    if (el.dataset.change === 'emp-end') empEndSync(el);
     if (el.dataset.change === 'odu') oduReady();
     if (el.dataset.change === 'lf-cert' && $('#lf-days')) $('#lf-days').hidden = !el.checked;
     if (el.dataset.change === 'restore-when' && $('#rs-say')) $('#rs-say').textContent = restoreSay(restoreAt()).text;
