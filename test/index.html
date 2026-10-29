@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.12","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"37ce9efe49ae"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.13","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"6c443d96714b"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -3232,7 +3232,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return h ? h + ' ชม.' + (m ? ' ' + m + ' นาที' : '') : m + ' นาที';
   }
   function initial(name) { return String(name || '?').replace(/^(นาย|นางสาว|นาง)/, '').replace(/^[\u0E40-\u0E44]/, '').trim().charAt(0) || '?'; }
-  function empById(id) { return (B.employees || []).filter(function (e) { return e.id === id; })[0] || null; }
+  function empById(id) { return (B.employees || []).concat(B.slipNames || []).filter(function (e) { return e.id === id; })[0] || null; }
   function isKitchen(dept) { return /ครัว/.test(dept || ''); }
   // Each person's own tone: E01, E02, … take the tones in turn (nine before one repeats).
   var AV_TONES = 9;
@@ -7540,6 +7540,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="hello center" style="font-size:22px;margin-top:14px">เลือกชื่อของคุณ</div>
       <p class="muted center small mt0">เข้าครั้งแรกใส่ PIN ครั้งเดียว เครื่องนี้จะจำไว้</p>
       ${B.employees ? nameTiles('pick') : html`<div class="eyebrow group-h">&nbsp;</div><div class="names" aria-busy="true">${[0, 1, 2, 3, 4, 5].map(function () { return html`<div class="skel tile"></div>`; })}</div>`}
+      ${(B.slipNames || []).length ? html`<div class="eyebrow group-h">ออกแล้ว · ดูสลิปเงินเดือน</div><div class="names">${B.slipNames.map(function (e) {
+        return html`<button class="name-tile" data-act="pick" data-id="${e.id}">${avatar(e)}<div class="grow"><b>${nameTag(e, ownName(e))}</b>${e.pin ? html`<span>PIN ${e.pin}</span>` : ''}</div></button>`;
+      })}</div>` : ''}
       <div class="foot-links"><button class="link" data-act="go-owner">เจ้าของร้าน</button></div>
     </div>`;
   };
@@ -8255,6 +8258,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.homeAt = Date.now();
     appIn(data.app);
     if (S.staff) useKeep(S.staff.empId, data.useKey);
+    // 2.13.13 (ข้อ 17 ก): คนออกแล้วดูได้เฉพาะสลิป
+    if (data.slipOnly) { if (data.bell) badgeSet(data.bell.unread || 0); return; }
     if (data.levels) S.levels = data.levels;
     syncFaces(data.avatarTag);
     lvCheck(data.level);
@@ -8410,13 +8415,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function staffOutline() {
     var e = empById(staffId()) || { name: (S.staff && S.staff.name) || '' };
     var err = !S.login && (S.homeErr || S.bootErr);
+    // 2.13.13: คนที่ออกแล้วดูได้แค่สลิป ระหว่างโหลดจึงไม่ขึ้นคำทักและแถบล่างของคนทำงาน (หน้าตาเดียวกับ slipOnlyView)
+    var gone = (B.slipNames || []).some(function (x) { return x.id === staffId(); });
     return html`<div class="outline">${topbar({ name: ownName(e), sub: '', av: avatar(e) }, '')}
       <main class="wrap page"><div class="stack" aria-busy="${err ? 'false' : 'true'}">
-        <div class="hello-row"><div class="hello">${greeting()}<br>${ownName(e)}</div>${B.levels ? html`<div class="me-duo" aria-hidden="true"><span class="me-char"></span></div>` : ''}</div>
+        ${gone ? '' : html`<div class="hello-row"><div class="hello">${greeting()}<br>${ownName(e)}</div>${B.levels ? html`<div class="me-duo" aria-hidden="true"><span class="me-char"></span></div>` : ''}</div>`}
         ${err
           ? html`<section class="card pad-lg center"><p class="muted mt0">${err}</p><button class="btn" data-act="retry-load">${icon('refresh')} ลองอีกครั้ง</button></section>`
+          : gone ? html`<div class="skel" style="height:120px"></div><div class="skel" style="height:96px"></div>`
           : html`<div class="skel" style="height:400px"></div><div class="skel" style="height:250px"></div><div class="stats">${[0, 1, 2, 3].map(function () { return html`<div class="skel stat"></div>`; })}</div>`}
-      </div></main>${tabBar(staffTabs(), S.tab, 'tab', true)}</div>`;
+      </div></main>${gone ? '' : tabBar(staffTabs(), S.tab, 'tab', true)}</div>`;
   }
   /** What is shown is from earlier (this phone's memory) and today's could not be fetched yet. */
   function staleNote(at) {
@@ -8473,9 +8481,20 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     month: function () { return loadMonth(S.monthWant); },
     od: function () { return loadOrderList(true); },
   };
+  /** คนออกแล้ว: ดูได้เฉพาะสลิปเงินเดือน ถึง 30 วันหลังจ่ายงวดสุดท้าย (2.13.13 ข้อ 17 ก) */
+  function slipOnlyView(h) {
+    var me = h.me || {};
+    return html`${topbar({ name: nameTag(me, ownName(me)), sub: '', av: avatar(me) }, '', h.bell)}
+      <main class="wrap page"><div class="stack">
+        <section class="card pad-lg"><b>ขอบคุณที่ทำงานกับร้านนะ</b><p class="muted small" style="margin:6px 0 0">${h.slipUntil ? 'ดูและบันทึกสลิปเงินเดือนได้ถึง ' + thDateLong(h.slipUntil) : 'สลิปงวดสุดท้ายออกหลังร้านโอนเงิน แอปแจ้งเตือนเมื่อโอนแล้ว'}</p></section>
+        ${slipsView()}
+        <button class="btn block" data-act="logout-staff">ออกจากระบบ</button>
+      </div></main>`;
+  }
   VIEWS.staff = function () {
     var h = S.home;
     if (!h || !B.clock) return staffOutline();
+    if (h.slipOnly) return slipOnlyView(h);
     var me = h.me;
     var tab = S.sub || S.tab;
     var body = tab === 'history' ? historyView() : tab === 'order' ? orderView() : tab === 'leave' ? leaveView() : tab === 'slips' ? slipsView() : tab === 'team' ? (isApprover() ? teamApproveView() : teamView()) : tab === 'approve' ? approveView() : tab === 'friends' ? friendsView() : tab === 'ideas' ? ideasView() : tab === 'me' ? meView() : homeView();
@@ -11055,6 +11074,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${d ? html`<button class="menu-item danger" data-act="delete-clock" data-id="${d.id}" data-emp="${id}">${icon('trash')} ลบเวลาวันนี้</button>` : ''}
     </div>` });
   }
+  // (คนออกแล้วที่ไม่อยู่ในรายชื่อวันนี้ เลือกได้เมื่อเปิดจากการ์ดคนออก · 2.13.13 ข้อ 16 ก)
+  var entryMore = [];
+  function entryPeople() {
+    var list = (B.employees || []).slice();
+    entryMore.forEach(function (x) { if (!list.some(function (e) { return e.id === x.id; })) list.push(x); });
+    return list;
+  }
   function entryForm(o) {
     o = o || {};
     // (รายการที่เป็นเงิน เจ้าของร้านบันทึกเอง 25 ต.ค. 2569)
@@ -11063,19 +11089,33 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var def = types.filter(function (t) { return t.type === type; })[0] || types[0];
     var kind = def.kind;
     return html`<label class="field"><span>ประเภท</span><select class="input" id="en-type" data-change="en-type">${types.map(function (t) { return html`<option value="${t.type}" ${t.type === def.type ? 'selected' : ''}>${t.type}</option>`; })}</select><small>${def.help}</small></label>
-      <label class="field"><span>พนักงาน</span><select class="input" id="en-emp" data-change="en-emp">${(B.employees || []).map(function (e) { return html`<option value="${e.id}" ${o.emp === e.id ? 'selected' : ''}>${e.name}</option>`; })}</select></label>
-      <label class="field"><span>วันที่</span><input class="input" type="date" id="en-date" value="${o.date || workDate()}"></label>
+      <label class="field"><span>พนักงาน</span><select class="input" id="en-emp" data-change="en-emp">${entryPeople().map(function (e) { return html`<option value="${e.id}" ${o.emp === e.id ? 'selected' : ''}>${e.name}</option>`; })}</select></label>
+      <label class="field"><span>วันที่</span><input class="input" type="date" id="en-date" data-change="en-room" value="${o.date || workDate()}"></label>
       ${kind === 'permit'
         ? html`<label class="field"><span>เวลาที่อนุญาตให้เข้างาน</span><input class="input" type="time" id="en-time" value="${o.time || ''}"></label><label class="check"><input type="checkbox" id="en-noot" ${o.noOt ? 'checked' : ''}><span>วันนี้ไม่ได้ OT ในกะ</span></label>
           <p class="muted small" style="margin:-4px 0 10px">มาตามเวลาที่อนุญาต ไม่นับสาย ไม่หัก Incentive ได้ค่าจ้างและ OT เต็ม · มาช้ากว่านั้นนับสายจากเวลาที่อนุญาต</p>`
-        : html`<label class="field"><span>จำนวน (${def.unit})</span><input class="input" type="number" inputmode="decimal" step="${kind === 'ot' ? '0.5' : '1'}" id="en-qty" value="${o.qty || (kind === 'absent' ? 1 : kind === 'incentiveCut' ? (B.rules || {}).lateCut || '' : '')}"></label>
+        : html`<label class="field"><span>จำนวน (${def.unit})</span><input class="input" type="number" inputmode="decimal" step="${kind === 'ot' ? '0.5' : def.unit === 'บาท' ? '0.01' : '1'}" id="en-qty" value="${o.qty || (kind === 'absent' ? 1 : kind === 'incentiveCut' ? (B.rules || {}).lateCut || '' : '')}"></label>
+          ${kind === 'advance' ? html`<p class="muted small" id="en-room" style="margin:-4px 0 10px">กำลังดูยอดที่เบิกได้…</p>` : ''}
           ${kind === 'incentiveCut' ? html`<p class="muted small" style="margin:-4px 0 10px">หักจาก Incentive ไม่หักเงินเดือน · ถ้า Incentive ไม่พอ ส่วนที่เหลือยกไปหักรอบหน้าครั้งเดียว</p>` : ''}
           ${kind === 'ot' ? html`<div class="chips qty-chips" role="group" aria-label="เลือกชั่วโมง OT">${[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4].map(function (h) { return html`<button type="button" class="chip" data-act="ot-qty" data-h="${h}" aria-pressed="${String(o.qty) === String(h)}">${h === 0.5 ? '30 นาที' : hrs(h) + ' ชม.'}</button>`; })}</div>` : ''}`}
       <label class="field"><span>เหตุผล${kind === 'bonus' || kind === 'deduct' || kind === 'incentiveCut' || kind === 'permit' ? '' : ' (ถ้ามี)'}</span><input class="input" id="en-reason" maxlength="300" value="${o.reason || ''}"></label>
       ${kind === 'permit' ? html`<p class="muted small clock-tell" style="margin:-4px 0 0">${clockTellText(o.emp || ((B.employees || [])[0] || {}).id, 'permit')}</p>` : ''}`;
   }
   function openEntryForm(o) {
+    entryMore = (o && o.more) || [];
     openSheet({ title: 'บันทึกรายการ', body: entryForm(o), foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="submit-entry">บันทึก</button>` });
+    advRoomFill();
+  }
+  /** ฟอร์มเบิกเงินล่วงหน้า: ยอดที่เบิกได้อีก จากค่าแรงที่ทำแล้วรอบนั้น (2.13.13 ข้อ 15 B8) */
+  function advRoomFill() {
+    var box = $('#en-room');
+    if (!box || S.view !== 'owner') return;
+    var ask = { empId: $('#en-emp').value, date: $('#en-date').value };
+    box.dataset.ask = ask.empId + '|' + ask.date;
+    call('advanceRoom', ask, ownerAuth()).then(function (d) {
+      if (!$('#en-room') || $('#en-room').dataset.ask !== ask.empId + '|' + ask.date) return;
+      $('#en-room').textContent = 'เบิกได้อีกไม่เกิน ' + money(d.room) + ' บาท (ค่าแรงที่ทำแล้วรอบ' + d.month + ' ' + money(d.earned) + ' · เบิกไปแล้ว ' + money(d.taken) + ')';
+    }, function (e) { if ($('#en-room')) $('#en-room').textContent = e.message; });
   }
   function entryValues() {
     var v = { type: $('#en-type').value, empId: $('#en-emp').value, date: $('#en-date').value, reason: $('#en-reason').value };
@@ -11323,6 +11363,26 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (p.status === 'approved') return ['อนุมัติแล้ว · รอจ่าย', 'โดย ' + p.approvedBy + ' ' + isoDate(p.approvedAt) + ' ' + isoTime(p.approvedAt)];
     return ['ยังไม่อนุมัติ', 'ตัวเลขคำนวณจากข้อมูลล่าสุด'];
   }
+  /** คนออกในรอบนี้: ค่าวันพักร้อนที่เหลือ ป้าย กฎหมายบังคับ / จ่ายเพิ่มได้ กดใส่เป็นรายการ (2.13.13 ข้อ 16 ก · เจ้าของร้านเท่านั้น) */
+  function leaversCard(d) {
+    var list = d.leavers || [];
+    if (!list.length) return '';
+    var open = !d.period.status;
+    return html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">คนออกในรอบนี้ · ค่าวันพักร้อนที่เหลือ</span></div>
+      <div class="list">${list.map(function (x) {
+        var short = Math.round((x.law - x.paid) * 100) / 100;
+        var rest = Math.round((x.law + x.extra - x.paid) * 100) / 100;
+        return html`<div class="item" style="display:block">
+          <div class="row between"><b>${x.name}</b><span class="s">วันสุดท้าย ${thShort(x.end)}${x.reason ? ' · ' + x.reason : ''}</span></div>
+          <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap">${x.law > 0 ? html`<span class="pill warn">กฎหมายบังคับ</span><span>${x.lawDays} วัน = ${money(x.law)} บาท</span>` : html`<span class="s">กฎหมายไม่บังคับ: ${x.why}</span>`}</div>
+          ${x.extra > 0 ? html`<div class="row" style="gap:8px;margin-top:6px;flex-wrap:wrap"><span class="pill">จ่ายเพิ่มได้</span><span>${x.extraDays} วัน = ${money(x.extra)} บาท</span></div>` : ''}
+          <div class="s" style="margin-top:6px">${x.detail}</div>
+          ${x.paid ? html`<div class="s" style="margin-top:6px">${icon('check')} ใส่แล้ว ${money(x.paid)} บาท</div>` : ''}
+          ${short > 0 ? html`<div class="hint warn" style="margin-top:8px">${icon('alert')}<span>ยังไม่ได้ใส่ค่าวันพักร้อนที่กฎหมายบังคับ ${money(short)} บาท</span></div>` : ''}
+          ${open && rest > 0 ? html`<div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${short > 0 ? html`<button class="btn sm primary" data-act="leave-pay" data-id="${x.id}">ใส่ตามกฎหมาย</button>` : ''}${rest > short ? html`<button class="btn sm" data-act="leave-pay" data-id="${x.id}" data-all="1">ใส่ทั้งหมด ${money(rest)} บาท</button>` : ''}</div>` : ''}
+        </div>`;
+      })}</div></section>`;
+  }
   function payView() {
     var d = S.pay;
     if (!d) return waiting('pay', html`<div class="stack" aria-busy="true"><div class="skel" style="height:58px"></div><div class="skel" style="height:62px"></div><div class="skel" style="height:150px"></div><div class="skel" style="height:52px"></div>${[0, 1, 2, 3].map(function () { return html`<div class="skel" style="height:104px"></div>`; })}</div>`);
@@ -11350,6 +11410,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${seesPay ? html`<section class="card hero pad-lg"><span class="eyebrow">รวมจ่ายสุทธิ · ${t.headcount} คน</span><div class="big" style="margin-top:6px">${money(t.net)}<small>บาท</small></div>
         <div class="row wrapx small" style="margin-top:12px;gap:14px;opacity:.85"><span>ค่าจ้าง ${money(t.base)}</span><span>OT ${money(t.otPay)} (${hrs(t.otHours)} ชม.)</span><span>Incentive ${money(t.incentive)}</span>${t.sso ? html`<span>ประกันสังคม −${money(t.sso)}</span>` : ''}${t.wht ? html`<span>ภาษี −${money(t.wht)}</span>` : ''}${t.advance ? html`<span>เบิก −${money(t.advance)}</span>` : ''}</div></section>` : html`<section class="card hero pad-lg"><span class="eyebrow">ลงเวลา · ${t.headcount} คน</span><div class="big" style="margin-top:6px">${t.workDays}<small>วันทำงาน</small></div>
         <div class="row wrapx small" style="margin-top:12px;gap:14px;opacity:.85"><span>OT ${hrs(t.otHours)} ชม.</span><span>สาย ${t.lateMinor + t.lateMajor} ครั้ง</span><span>ลา ${t.leaveDays} วัน</span>${t.absentDays ? html`<span>ขาด ${t.absentDays} วัน</span>` : ''}</div></section>`}
+      ${owner ? leaversCard(d) : ''}
       ${actions}
       <div>${res.employees.map(empCard)}</div>
       ${seesPay ? html`<button class="btn block" data-act="excel">${icon('download')} ดาวน์โหลด Excel</button>` : ''}
@@ -11602,6 +11663,23 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return html`<div class="item">${icon('lock')}<span class="grow">${x.name}<span class="s" style="display:block">${sub}</span></span><button class="btn sm" data-act="pin-unlock" data-key="${x.key}">ปลดล็อก</button></div>`;
       })}</div></section>`;
   }
+  // 2.13.13 การ์ดคนเข้า–ออก (ข้อ 15 B3 B14): ข้อที่แอปรู้เองขึ้นเอง ข้อที่ทำนอกแอปกด ทำแล้ว
+  function turnoverCard(list) {
+    if (!list || !list.length) return '';
+    return html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">คนเข้า–ออก</span></div>
+      <div class="list">${list.map(function (p) {
+        var sub = p.kind === 'out' ? 'ออก · วันสุดท้าย ' + thShort(p.end) + (p.reason ? ' · ' + p.reason : '') : p.kind === 'in' ? 'คนใหม่ · เริ่มงาน ' + thShort(p.start) : '';
+        return html`<div class="item" style="display:block">
+          <div class="row between"><b>${p.name}</b><button class="btn sm" data-act="edit-emp" data-id="${p.id}">แก้ไข</button></div>
+          ${sub ? html`<div class="s">${sub}</div>` : ''}
+          ${p.prob ? html`<div class="s" style="margin-top:8px">ครบทดลองงาน ${thShort(p.prob)} — ผลเป็นอย่างไร</div>
+            <div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><button class="btn sm primary" data-act="emp-check" data-id="${p.id}" data-k="probOk">ผ่าน</button><button class="btn sm" data-act="edit-emp" data-id="${p.id}" data-preset="extend">ขยาย</button><button class="btn sm" data-act="edit-emp" data-id="${p.id}" data-preset="fail">ไม่ผ่าน</button></div>` : ''}
+          ${(p.items || []).map(function (c) {
+            return html`<div class="row" style="gap:8px;margin-top:8px"><span style="width:18px;text-align:center">${c.done ? icon('check') : '○'}</span><span class="grow ${c.done ? 'muted' : ''}">${c.label}${c.auto ? html` <span class="s">(แอปเช็กให้)</span>` : ''}</span>${c.auto ? '' : c.done ? html`<button class="btn sm" data-act="emp-check" data-id="${p.id}" data-k="${c.k}" data-off="1">ยกเลิก</button>` : html`<button class="btn sm" data-act="emp-check" data-id="${p.id}" data-k="${c.k}">ทำแล้ว</button>`}</div>`;
+          })}
+        </div>`;
+      })}</div></section>`;
+  }
   /** The owner's screen before its data. */
   function ownerOutline() {
     var err = !S.login && (S.ownerErr || S.bootErr);
@@ -11644,10 +11722,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     (rem.setMissing || []).forEach(function (y) { todo.unshift(['cal', 'ใส่วันหยุดตามประเพณีปี ' + (+y + 543) + ' (ตามประกาศวันหยุดสถาบันการเงิน)', 'settings']); });
     if ((rem.dayOffMissing || []).length) todo.push(['cal', 'ตั้งวันหยุดประจำ ' + rem.dayOffMissing.length + ' คน (' + rem.dayOffMissing.join(', ') + ') — ระหว่างนี้หยุดได้ตามวันหยุดต่อรอบแบบเดิม', 'staff']);
     if ((rem.startMissing || []).length) todo.unshift(['team', 'ใส่วันเริ่มงาน ' + rem.startMissing.length + ' คน (' + rem.startMissing.join(', ') + ') — ระหว่างนี้ยังไม่ได้พักร้อนตามอายุงาน', 'staff']);
+    if ((rem.probEndMissing || []).length) todo.unshift(['team', 'ใส่วันผ่านโปร ' + rem.probEndMissing.length + ' คน (' + rem.probEndMissing.join(', ') + ') — ไม่ใส่ = ทดลองงานไปตลอด', 'staff']);
+    if ((rem.rateMissing || []).length) todo.unshift(['money', 'ใส่เงินเดือนหลังผ่านโปร ' + rem.rateMissing.length + ' คน (' + rem.rateMissing.join(', ') + ')', 'staff']);
+    if (rem.leadsGone) todo.unshift(['team', 'ตั้งคนส่งบันทึกหน้างานใหม่ — คนที่ตั้งไว้ออกแล้ว ระหว่างนี้ผู้อนุมัติและหัวหน้าส่งแทน', 'settings']);
+    if (rem.keepersGone) todo.unshift(['team', 'ตั้งคนดูแล PAR ใหม่ — คนที่ตั้งไว้ออกแล้ว ระหว่างนี้หัวหน้าครัวดูแทน', 'settings']);
     return html`<div class="stack">
       <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}</div>
       ${teamUseCard(o.team)}
       ${pinLocksCard(o.pinLocks)}
+      ${turnoverCard(o.turnover)}
       ${dailyOwnerCard(o.daily)}
       ${feedbackCard(o.feedback)}
       ${o.update ? updateCard(o.update) : ''}
@@ -11724,24 +11807,27 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!d) return waiting('employees', html`<div class="stack" aria-busy="true"><div class="skel" style="height:44px"></div><div class="skel" style="height:420px"></div></div>`);
     return html`<div class="stack"><div class="row between"><div class="hello" style="font-size:24px;margin:0">พนักงาน</div><button class="btn primary sm" data-act="edit-emp">${icon('plus')} เพิ่ม</button></div>
       <section class="card flush"><div class="list">${d.employees.map(function (e) {
-        var off = e.status === 'ลาออก';
+        var off = e.status === 'ลาออก' && (!e.endDate || String(e.endDate).slice(0, 10) < workDate());
         return html`<button class="item" data-act="edit-emp" data-id="${e.id}" style="${off ? 'opacity:.5' : ''}">${avatar({ id: e.id, name: e.display || e.nick, nick: e.display || e.nick, dept: e.dept })}<div class="grow"><div class="t">${e.display || e.nick} <span class="muted small">${e.id}</span></div><div class="s">${e.dept || '-'}${e.role === 'ผู้อนุมัติ' ? ' · ผู้อนุมัติ' : ''}${e.employment === 'ทดลองงาน' ? ' · ทดลองงาน' + (e.probationEnd ? ' ถึง ' + thShort(e.probationEnd) : ' (ยังไม่ใส่วันผ่านโปร)') : ''}${e.dayOff ? ' · หยุดวัน' + e.dayOff : ''}${off ? ' · ลาออก' : ''}</div></div><div class="r small"><div class="amt">${money(e.rate)}</div><div class="muted">PIN ${e.pin}</div></div></button>`;
       })}</div></section></div>`;
   }
   var EMP_FIELDS = [
     ['ข้อมูลพนักงาน', [['nick', 'ชื่อเล่น'], ['display', 'ชื่อที่แสดงในแอป', 'ไม่บังคับ · ชื่อที่อยากให้แอปเรียก ถ้าว่างใช้ชื่อเล่น · ชื่อเล่นซ้ำกันไม่ต้องใส่อะไร แอปเติมแผนกให้เองเฉพาะในรายการรวม (เช่น นิดครัว)'], ['fullName', 'ชื่อ-นามสกุล (ในสลิป)'], ['citizenId', 'เลขบัตรประชาชน'], ['bank', 'บัญชีรับเงิน']]],
-    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date']]],
+    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses', 'ให้ออก: เลือก ลาออก แล้วใส่วันทำงานวันสุดท้ายและเหตุที่ออก'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date', 'เป็นพนักงานถึงวันนี้ · เข้าแอปและลงเวลาได้ถึงวันนี้ หลังจากนั้นดูได้เฉพาะสลิปเงินเดือน'], ['endReason', 'เหตุที่ออก', 'endReasons', 'เลิกจ้าง: ได้ค่าพักร้อนปีนี้ตามส่วน และทำงานครบ 120 วันขึ้นไปต้องจ่ายค่าชดเชยตาม ม.118 (แอปไม่ได้คิดให้) · เลิกจ้างตาม ม.119 ใช้เมื่อเข้ากรณีในกฎหมาย เช่น ทุจริตต่อหน้าที่ จงใจทำให้ร้านเสียหาย ฝ่าฝืนระเบียบหลังเตือนเป็นหนังสือแล้ว ละทิ้งหน้าที่ 3 วันทำงานติดกันโดยไม่มีเหตุอันสมควร ต้องบอกเหตุในหนังสือเลิกจ้างหรือแจ้งตอนเลิกจ้าง ไม่งั้นอ้างทีหลังไม่ได้']]],
     ['ค่าจ้าง', [['employment', 'สถานะการจ้าง', 'employment'], ['probationEnd', 'วันผ่านโปร', 'date', 'ตั้งแต่วันนี้ได้เงินเดือน + Incentive + ประกันสังคม'], ['probationRate', 'ค่าแรงช่วงทดลองงาน (บาท/วัน)', 'num'], ['probationWht', 'ภาษีหัก ณ ที่จ่ายช่วงทดลองงาน (%)', 'num'], ['payType', 'ประเภทค่าจ้าง', 'payTypes'], ['rate', 'เงินเดือน/ค่าแรง (บาท)', 'num'], ['otRate', 'ค่า OT (บาท/ชม.)', 'num', 'เว้นว่าง = 1.5 เท่าตามกฎหมาย'], ['sso', 'หักประกันสังคม', 'yesno']]],
     ['Incentive', [['diligence', 'เบี้ยขยัน (บาท)', 'num'], ['headAllowance', 'ค่าหัวหน้า (บาท)', 'num'], ['tenureAllowance', 'ค่าอยู่นาน (บาท)', 'num']]],
     ['อื่น ๆ', [['note', 'หมายเหตุ']]],
   ];
-  function empEditForm(id) {
+  function empEditForm(id, preset) {
     var d = S.employees;
-    var e = d.employees.filter(function (x) { return x.id === id; })[0] || { dept: 'หน้าร้าน', role: 'พนักงาน', status: 'ทำงาน', employment: 'พนักงานประจำ', payType: 'รายเดือน', sso: 'ใช่', rate: 12000, diligence: 500, probationRate: 400, probationWht: 3 };
+    var e = d.employees.filter(function (x) { return x.id === id; })[0] || { dept: 'หน้าร้าน', role: 'พนักงาน', status: 'ทำงาน', payType: 'รายเดือน', sso: 'ใช่', diligence: 500, probationWht: 3 };
+    // 2.13.13: ไม่ผ่านทดลองงาน = ให้ออก (เลิกจ้าง) ใส่ให้ก่อน แก้วันสุดท้ายได้
+    if (preset === 'fail') e = Object.assign({}, e, { status: 'ลาออก', endReason: 'เลิกจ้าง', endDate: workDate() });
     var opts = d.options;
     var input = function (f) {
       var key = f[0], type = f[2], v = e[key] == null ? '' : e[key];
-      var list = { depts: opts.depts, roles: opts.roles, statuses: opts.statuses, employment: opts.employment, payTypes: opts.payTypes, yesno: ['ใช่', 'ไม่'], days: [['', 'ยังไม่ตั้ง']].concat(TH_DAYS_LONG.map(function (x) { return [x, 'วัน' + x]; })) }[type];
+      if (e.idHidden && (key === 'citizenId' || key === 'bank')) return html`<label class="field"><span>${f[1]}</span><small>ซ่อนหลังจ่ายงวดสุดท้าย · ข้อมูลยังเก็บไว้ ไม่ได้ลบ</small></label>`;
+      var list = { depts: opts.depts, roles: opts.roles, statuses: opts.statuses, endReasons: [['', 'ยังไม่ออก']].concat(opts.endReasons || []), employment: v === '' ? [['', 'เลือก…']].concat(opts.employment) : opts.employment, payTypes: opts.payTypes, yesno: ['ใช่', 'ไม่'], days: [['', 'ยังไม่ตั้ง']].concat(TH_DAYS_LONG.map(function (x) { return [x, 'วัน' + x]; })) }[type];
       var ctl = list
         ? html`<select class="input" data-f="${key}">${list.map(function (x) { var o = Array.isArray(x) ? x : [x, x]; return html`<option value="${o[0]}" ${String(v) === o[0] ? 'selected' : ''}>${o[1]}</option>`; })}</select>`
         : html`<input class="input" data-f="${key}" type="${type === 'date' ? 'date' : type === 'num' ? 'number' : 'text'}" ${type === 'num' ? 'inputmode="decimal" step="any"' : ''} value="${v}">`;
@@ -17935,6 +18021,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'reload-team': function () { loadTeam(); },
     'row-menu': function (el) { rowMenu(el.dataset.id); },
     'open-entry': function (el) { closeSheet(); setTimeout(function () { openEntryForm({ emp: el.dataset.emp, type: el.dataset.type }); }, 230); },
+    'leave-pay': function (el) {
+      var x = ((S.pay || {}).leavers || []).filter(function (l) { return l.id === el.dataset.id; })[0];
+      if (!x) return;
+      var all = el.dataset.all === '1';
+      var qty = Math.round(((all ? x.law + x.extra : x.law) - x.paid) * 100) / 100;
+      var days = all ? Math.round((x.lawDays + x.extraDays) * 100) / 100 : x.lawDays;
+      openEntryForm({ type: 'ค่าวันลาที่เหลือ', emp: x.id, date: x.date, qty: qty, reason: 'วันพักร้อนที่เหลือ ' + days + ' วัน × ' + money(x.rate) + ' บาท', more: [{ id: x.id, name: x.name }] });
+    },
     'submit-entry': function (el) {
       run(el, call('entrySave', entryValues(), actorAuth())).then(function (d) { closeSheet(); toast('บันทึก ' + d.entry.type + ' ของ ' + d.entry.name + ' แล้ว' + (d.told ? ' · ' + d.told : ''), 'ok'); loadTeam(); if (S.pay) loadPay(); }, function () {});
     },
@@ -18174,11 +18268,22 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     'update-copy': function () { var n = S.ownerHome.update && S.ownerHome.update.news; if (n) copyText(n.text); },
     'logout-owner': function () { closeSheet(); logoutOwner(); },
-    'edit-emp': function (el) { empEditForm(el.dataset.id); },
+    'edit-emp': function (el) {
+      var id = el.dataset.id, preset = el.dataset.preset;
+      if (S.employees) { empEditForm(id, preset); if (preset === 'extend') toast('เลื่อนวันผ่านโปรในหมวด ค่าจ้าง', 'ok'); return; }
+      run(el, call('employees', {}, ownerAuth())).then(function (d) { S.employees = d; empEditForm(id, preset); }, function () {});
+    },
+    'emp-check': function (el) {
+      run(el, call('employeeCheck', { id: el.dataset.id, key: el.dataset.k, off: el.dataset.off === '1' }, ownerAuth())).then(function (d) {
+        if (S.ownerHome) S.ownerHome.turnover = d.turnover;
+        ownerChanged();
+        render(); toast(d.notice, 'ok');
+      }, function () {});
+    },
     'save-emp': function (el) {
       var fields = {};
       document.querySelectorAll('#sheet-body [data-f]').forEach(function (i) { fields[i.dataset.f] = i.value; });
-      run(el, call('employeeSave', { id: el.dataset.id || undefined, fields: fields }, ownerAuth())).then(function (d) { closeSheet(); S.employees = d; render(); toast(d.notice, 'ok'); }, function () {});
+      run(el, call('employeeSave', { id: el.dataset.id || undefined, fields: fields }, ownerAuth())).then(function (d) { closeSheet(); S.employees = d; if (S.ownerHome && d.turnover) { S.ownerHome.turnover = d.turnover; ownerChanged(); } render(); toast(d.notice, 'ok'); }, function () {});
     },
     'pin-unlock': function (el) {
       run(el, call('pinUnlock', { key: el.dataset.key }, ownerAuth())).then(function (d) {
@@ -18361,9 +18466,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (el.dataset.change === 'en-type') {
       var o = { type: el.value, emp: $('#en-emp').value, date: $('#en-date').value, reason: $('#en-reason').value };
       setSheetBody(entryForm(o));
+      advRoomFill();
     }
     // A later start allowed: who will be told follows the person picked (2.12.8).
     if (el.dataset.change === 'en-emp' && $('#en-time') && $('.clock-tell')) $('.clock-tell').textContent = clockTellText(el.value, 'permit');
+    if (el.dataset.change === 'en-emp' || el.dataset.change === 'en-room') advRoomFill();
   });
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'visible' && S.view === 'kiosk') {
