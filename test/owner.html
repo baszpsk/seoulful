@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.11","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"b44536da42fd"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.12","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"7240ed7a00fa"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -662,6 +662,24 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-item:first-child { border-top: 0; }
 .od-item.on { background: var(--gold-soft); }
 .od-top { display: flex; gap: 10px; align-items: center; }
+.od-pic { flex: none; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 10px; overflow: hidden; background: var(--inset); display: inline-block; vertical-align: middle; cursor: zoom-in; }
+.od-pic img { width: 100%; height: 100%; object-fit: contain; display: block; background: #fff; }
+.od-pic.none { cursor: default; }
+.od-pic.lg { width: 64px; height: 64px; }
+.od-pic.xs { width: 28px; height: 28px; border-radius: 7px; margin-right: 6px; }
+.od-name { all: unset; cursor: pointer; font: inherit; color: inherit; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+.od-name:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 4px; }
+.od-pick-h { margin: 10px 0 2px; font-size: 18px; }
+.od-pick-row { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-top: 1px solid var(--line); }
+.od-pick-row:first-child { border-top: 0; }
+.od-pick-row.off { opacity: .6; }
+.od-pick-row .t a { color: inherit; }
+.od-pst { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.od-warn { color: var(--warn); margin: 0 0 8px; }
+.od-big { position: fixed; inset: 0; z-index: 10000; background: rgba(0, 0, 0, .82); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.od-big figure { margin: 0; text-align: center; color: #fff; }
+.od-big img { max-width: min(92vw, 600px); max-height: 78vh; border-radius: 14px; background: #fff center / contain no-repeat; display: block; margin: 0 auto 10px; }
+.od-big .icon-btn { position: absolute; top: 14px; right: 14px; color: #fff; }
 .od-top b { display: block; font-weight: 600; font-size: 15.5px; line-height: 1.3; }
 .od-top .s { display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
 .od-have { display: flex; align-items: center; gap: 6px; flex: none; }
@@ -9238,7 +9256,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (it.staff) {
       var sq = odQty(it);
       return html`<div class="od-item ${sq > 0 ? 'on' : ''}" id="od-${it.id}">
-        <div class="od-top"><div class="grow"><b>${it.name}</b><span class="s">ไม่ต้องนับ · สั่งเมื่อต้องการ (${it.unit})</span></div>
+        <div class="od-top">${odPic(it.img, it.name)}<div class="grow"><b>${it.name}</b><span class="s">ไม่ต้องนับ · สั่งเมื่อต้องการ (${it.unit})</span></div>
           <div class="od-have"><span class="lbl">สั่ง</span>${odStepper('qty', it, d.qty)}</div></div>
         <div id="od-mw-${it.id}">${sq > 0 ? odMealBox(it.id, it.name, it.unit, d.menu, sq) : ''}</div>
         ${tags.length ? html`<div class="od-tags">${tags}</div>` : ''}
@@ -9248,7 +9266,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var last = it.last ? (it.last.empId === staffId() ? 'คุณ' : it.last.by) + 'นับได้ ' + odNum(it.last.have) + ' ' + it.unit + ' · ' + odAgo(it.last.at) : '';
     var lot = it.lot && it.lot.left <= 2 ? it.lot : null;
     return html`<div class="od-item ${odEntry(it) ? 'on' : ''}" id="od-${it.id}">
-      <div class="od-top"><div class="grow"><b>${it.name}</b><span class="s">${it.par != null ? 'PAR ' + odNum(it.par) + ' ' + it.unit : 'ยังไม่มี PAR'}${it.max ? ' · สั่งครั้งละไม่เกิน ' + odNum(it.max) : ''}${odLife(it) ? ' · ' + odLife(it) : ''}${last ? ' · ' + last : ''}</span></div>
+      <div class="od-top">${odPic(it.img, it.name)}<div class="grow"><b>${it.name}</b><span class="s">${it.par != null ? 'PAR ' + odNum(it.par) + ' ' + it.unit : 'ยังไม่มี PAR'}${it.max ? ' · สั่งครั้งละไม่เกิน ' + odNum(it.max) : ''}${odLife(it) ? ' · ' + odLife(it) : ''}${last ? ' · ' + last : ''}</span></div>
         <div class="od-have"><span class="lbl">มี</span>${odStepper('have', it, d.have)}</div></div>
       ${lot ? html`<div class="od-lot ${lot.left <= 0 ? 'due' : ''}">${icon('clock')}<span>${odLot(lot, it.unit)}</span></div>` : ''}
       ${tags.length ? html`<div class="od-tags">${tags}</div>` : ''}
@@ -9777,7 +9795,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
 
   // ---- the owner: the list priced at both stores, split for free delivery
-  var odo = { tab: 'list', v: null, cat: null, catQ: '' };
+  var odo = { tab: 'list', v: null, cat: null, catQ: '', pick: null };
   function orderOwnerCard(o) {
     if (!o) return '';
     var st = function (s) {
@@ -9798,6 +9816,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     </button>`;
   }
   function openOrderOwner(tab) {
+    odo.pick = null;
     if (tab) odo.tab = tab;
     openSheet({ title: 'สั่งของ', wide: true, body: odo.v ? odOwnerBody() : html`<div id="odo" aria-busy="true"><div class="skel" style="height:120px"></div><div class="skel" style="height:360px;margin-top:12px"></div></div>` });
     loadOrderOwner();
@@ -9815,7 +9834,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var v = odo.v;
     var asks = v.subs.length + (v.recheck || []).length + v.plan.asks.length + (v.plan.bigs || []).length + (v.parAsks || []).length + (v.staffMeal ? 1 : 0) + (v.parLife || []).length;
     var tabs = [['list', 'รอสั่ง', 0], ['coming', 'กำลังมา', v.coming.length + odoOpenFixes(v.fixes)], ['ask', 'คำถาม', asks], ['items', 'ของ · PAR', 0]];
-    var body = odo.tab === 'coming' ? odoComing(v) : odo.tab === 'ask' ? odoAsk(v) : odo.tab === 'items' ? odoItems() : odoList(v);
+    var body = odo.pick ? odoPick() : odo.tab === 'coming' ? odoComing(v) : odo.tab === 'ask' ? odoAsk(v) : odo.tab === 'items' ? odoItems() : odoList(v);
     return html`<div id="odo" class="stack"><div class="seg od-tabs" role="tablist">${tabs.map(function (t) { return html`<button aria-pressed="${odo.tab === t[0]}" data-act="odo-tab" data-tab="${t[0]}">${t[1]}${t[2] ? html`<small>${t[2]}</small>` : ''}</button>`; })}</div>${body}</div>`;
   }
   function odoPrices(v) {
@@ -9921,7 +9940,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (l.picked) notes.push(html`<span class="pill">คุณเลือกร้านนี้</span>`);
     if ((l.meals || []).some(function (m) { return m.over; })) notes.push(html`<span class="pill warn">${icon('alert')} เยอะกว่าที่เมนูใช้</span>`);
     return html`<div class="item od-line"><div class="grow">
-        <div class="t">${l.name}</div>
+        <div class="t"><button type="button" class="od-name" data-act="odo-item" data-id="${l.itemId}">${l.name}</button></div>
         <div class="s">${l.pname}</div>
         <div class="s">${l.q} ชิ้น × ${money(l.unitPrice, true)} ${l.per !== 1 ? '(ได้ ' + odNum(l.q * l.per) + ' ' + l.unit + ')' : ''} · ต้องการ ${odNum(l.need)} ${l.unit} · ${l.who.join(', ')}</div>
         ${(l.meals || []).length ? html`<div class="s">${l.meals.map(function (m) { return 'ทำ' + m.menu + ' ' + (m.people || '-') + ' คน' + (m.enough != null ? ' (พอ ' + odNum(m.enough) + ' ' + l.unit + ')' : '') + ' · ' + m.by; }).join(' · ')}</div>` : ''}
@@ -9959,7 +9978,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <p class="small" style="margin:4px 0 4px">${a.store}: <a href="${a.link}" target="_blank" rel="noopener">${a.pname}</a>${a.q > 1 ? ' × ' + a.q : ''} · ได้ ${odNum(a.got)} ${a.unit} ${a.unit}ละ ${money(a.perUnit, true)} บาท${a.perNow ? ' (ที่ซื้ออยู่ ' + a.unit + 'ละ ' + money(a.perNow, true) + ')' : ''}${a.tier ? ' · ราคาเมื่อซื้อหลายชิ้น' : ''}${a.saving ? ' · ถูกลงราว ' + money(a.saving) + ' บาทต่อรอบ' : ''}</p>
         <p class="small muted" style="margin:0 0 8px">ตั้งไว้สั่งครั้งละไม่เกิน ${odNum(a.max)} ${a.unit} · ถ้าเปลี่ยน ต้องมีที่เก็บ ${odNum(a.got)} ${a.unit}${a.until ? ' · ใช้หมดราว ' + odDay(a.until) : ''}${a.life ? ' · ' + (a.keep ? a.keep + ' ' : '') + 'เก็บได้ ' + (a.life >= 60 ? Math.round(a.life / 30) + ' เดือน' : a.life + ' วัน') : ''}</p>
         <div class="od-yn two"><button class="btn sm" data-act="odo-big" data-id="${a.itemId}" data-p="${a.productId}" data-q="${a.q}" data-ok="0">ไม่เปลี่ยน</button><button class="btn sm primary" data-act="odo-big" data-id="${a.itemId}" data-p="${a.productId}" data-q="${a.q}" data-ok="1">ที่เก็บพอ เปลี่ยนเป็น ${odNum(a.got)} ${a.unit}</button></div></div>`;
-    })}<p class="small muted" style="margin:10px 0 0">แอปเช็กทุกขนาดและเซ็ตของทั้งสองร้านทุกเช้า · ตอบ "ไม่เปลี่ยน" แล้วแอปถามอีกเมื่อถูกลงอีก 3% ขึ้นไป · แก้จำนวนต่อครั้งได้ในชีต "ของที่ต้องสั่ง"</p></section>`;
+    })}<p class="small muted" style="margin:10px 0 0">แอปเช็กทุกขนาดและเซ็ตของทั้งสองร้านทุกเช้า · ตอบ "ไม่เปลี่ยน" แล้วแอปถามอีกเมื่อถูกลงอีก 3% ขึ้นไป · แก้จำนวนต่อครั้ง บอก Claude</p></section>`;
   }
   /** The staff's food not on the list: what, how much, the dish and the people; to find at a store, then bought or not. */
   function odoExtras(list) {
@@ -9986,7 +10005,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function odoSubRow(p) {
     var rec = OD_REC[p.rec] || null;
     // (ขนาดที่แอปเจอเองในเว็บ: ยังไม่มีใครดู ไม่ใช่คำแนะนำของ Claude)
-    return html`<div class="od-sub-row"><div class="grow"><div class="t">${p.store}: ${p.pname || p.name}</div><div class="s">${money(p.price, true)} บาท${p.per !== 1 ? ' (= ' + odNum(p.per) + ' ' + (p.unit || 'หน่วย') + ')' : ''} · ${p.note}</div>${rec ? html`<span class="pill ${rec[0]}">${rec[1]}</span>` : p.found ? html`<span class="pill gold">${icon('spark')} แอปเจอเองในเว็บ · ยังไม่มีใครดู</span>` : ''}</div>
+    return html`<div class="od-sub-row">${odPic(p.img, p.pname || p.name)}<div class="grow"><div class="t">${p.store}: ${p.pname || p.name}</div><div class="s">${money(p.price, true)} บาท${p.per !== 1 ? ' (= ' + odNum(p.per) + ' ' + (p.unit || 'หน่วย') + ')' : ''} · ${p.note}</div>${rec ? html`<span class="pill ${rec[0]}">${rec[1]}</span>` : p.found ? html`<span class="pill gold">${icon('spark')} แอปเจอเองในเว็บ · ยังไม่มีใครดู</span>` : ''}</div>
       <div class="od-yn"><button class="btn sm" data-act="odo-sub" data-id="${p.productId}" data-ok="1">ใช้แทนได้</button><button class="btn sm ghost" data-act="odo-sub" data-id="${p.productId}" data-ok="0">ไม่ใช้</button></div></div>`;
   }
   function odoAsk(v) {
@@ -10012,8 +10031,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <p class="small" style="margin:0 0 10px">ใช้แทนได้ = แอปเลือกได้เมื่อของเดิมหมดหรือของแทนถูกกว่า · ไม่ใช้ = ไม่ซื้อเลย · ตอบครั้งเดียว ต่อไปแอปทำเอง</p>
         ${n.yes + n.no ? html`<button class="btn block" data-act="odo-sub-all">${icon('check')} ตอบตามที่ Claude แนะนำ ${n.yes + n.no} คู่</button><p class="small muted od-sub-all-s" style="margin:6px 4px 0">ใช้แทนได้ ${n.yes} · ไม่ใช้ ${n.no} · ที่ควรลองก่อน ${n.test} คู่${nf ? ' และที่แอปเจอเอง ' + nf + ' คู่' : ''} ตอบเองทีหลัง</p>` : v.subs.length ? html`<p class="small muted" style="margin:0">ไม่มีคู่ที่ Claude แนะนำแล้ว · ตอบเองทีละคู่</p>` : html`<p class="small muted" style="margin:0">ตอบครบทุกคู่แล้ว</p>`}
         ${v.subs.map(function (s) {
-          return html`<div class="od-q-row"><b>${s.name}</b>${s.inList ? html` <span class="pill warn">อยู่ในรายการสั่ง</span>` : ''}
-            <p class="small" style="margin:4px 0 6px">ของเดิม: ${s.main ? s.main.store + ' ' + s.main.pname + ' ' + money(s.main.price, true) + ' บาท' + (s.main.stock === false ? ' (หมด)' : '') : '-'}${s.max && s.per > s.max ? ' · ขนาดนี้เกินที่ตั้งไว้ครั้งละ ' + odNum(s.max) + ' ' + s.unit + ': ตอบใช้แทนได้ = ที่เก็บพอ ' + odNum(s.per) + ' ' + s.unit : ''}</p>
+          return html`<div class="od-q-row"><b><button type="button" class="od-name" data-act="odo-item" data-id="${s.itemId}">${s.name}</button></b>${s.inList ? html` <span class="pill warn">อยู่ในรายการสั่ง</span>` : ''}
+            <p class="small" style="margin:4px 0 6px">ของเดิม: ${s.main ? odPic(s.main.img, s.main.pname, 'xs') : ''}${s.main ? s.main.store + ' ' + s.main.pname + ' ' + money(s.main.price, true) + ' บาท' + (s.main.stock === false ? ' (หมด)' : '') : '-'}${s.max && s.per > s.max ? ' · ขนาดนี้เกินที่ตั้งไว้ครั้งละ ' + odNum(s.max) + ' ' + s.unit + ': ตอบใช้แทนได้ = ที่เก็บพอ ' + odNum(s.per) + ' ' + s.unit : ''}</p>
             ${odoSubRow(s)}</div>`;
         })}</section>`;
   }
@@ -10076,10 +10095,83 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var ask = [kinds.short ? 'ส่งของที่ขาด' : '', kinds.wrong ? 'เปลี่ยนของที่ส่งผิด' : '', kinds.bad ? 'เปลี่ยนของที่เสีย' : ''].filter(Boolean);
     return 'แจ้งปัญหาคำสั่งซื้อ ' + b.store + (b.orderNo ? ' เลขที่ ' + b.orderNo : '') + ' ได้รับของ ' + thDate(ymdOf(new Date(b.gotAt))) + '\n' + lines.join('\n') + '\nรบกวน' + ask.join(' และ') + 'ให้ด้วย ขอบคุณมาก';
   }
+  // ---- รูปสินค้า (2.13.12): WebP ในหลังบ้านคลาวด์แฟลร์ /i/ ชื่อสุ่ม (s เล็ก · l ใหญ่ โหลดเมื่อแตะ) · ไม่มีรูป: ช่องเรียบ
+  function odImg(name, big) {
+    if (!name || !EDGE || !SITE || !SITE.api) return '';
+    try { return new URL(SITE.api).origin + '/i/' + name + (big ? 'l' : 's') + '.webp'; } catch (e) { return ''; }
+  }
+  /** รูปเล็กของของหรือสินค้า แตะดูรูปใหญ่ · ไม่มีรูป: ช่องเรียบขนาดเท่ากัน */
+  function odPic(img, name, cls) {
+    var src = odImg(img);
+    return src ? html`<button type="button" class="od-pic ${cls || ''}" data-act="od-pic" data-img="${img}" data-name="${name}" aria-label="ดูรูป ${name}"><img src="${src}" alt="" loading="lazy" decoding="async"></button>` : html`<span class="od-pic none ${cls || ''}" aria-hidden="true"></span>`;
+  }
+  /** รูปใหญ่เต็มจอ (รูปเล็กขึ้นก่อนระหว่างโหลด) แตะที่ไหนก็ปิด */
+  function openPic(img, name) {
+    var big = odImg(img, true);
+    if (!big) return;
+    var d = document.createElement('div');
+    d.className = 'od-big';
+    d.setAttribute('role', 'dialog');
+    d.setAttribute('aria-label', 'รูป ' + name);
+    d.innerHTML = String(html`<figure><img src="${big}" alt="${name}" style="background-image:url('${odImg(img)}')"><figcaption>${name}</figcaption></figure><button type="button" class="icon-btn" aria-label="ปิดรูป">${icon('x')}</button>`);
+    function key(e) { if (e.key === 'Escape') close(); }
+    function close() { d.remove(); document.removeEventListener('keydown', key); }
+    d.addEventListener('click', close);
+    document.addEventListener('keydown', key);
+    document.body.appendChild(d);
+  }
+  /** รูปของของในแท็บ ของ: สินค้าหลัก ไม่มีรูปใช้ของเดียวกัน */
+  function odoImgOf(it) {
+    var p = it.products.filter(function (x) { return x.status === 'main' && x.img; })[0] || it.products.filter(function (x) { return x.status === 'same' && x.img; })[0];
+    return p ? p.img : '';
+  }
+  /** รายการของพร้อมสินค้าทุกร้าน (แท็บ ของ · PAR และแผ่นสินค้า): โหลดทีละครั้ง ได้แล้ววาดใหม่ */
+  function loadOdoCat() {
+    if (odo.catLoad) return;
+    odo.catLoad = true;
+    call('orderCatalog', {}, ownerAuth()).then(function (d) {
+      odo.catLoad = false;
+      odo.cat = d;
+      if ($('#odo') && (odo.tab === 'items' || odo.pick)) setSheetBody(odOwnerBody());
+    }, function (e) { odo.catLoad = false; toast(e.message, 'bad'); });
+  }
+  // ---- แผ่นสินค้าของหนึ่งอย่าง (2.13.12): ทุกร้านทุกสถานะ รูป ราคาต่อหน่วย ลิงก์ หมายเหตุ · แตะปุ่มเปลี่ยนสถานะ บันทึกเสร็จจึงขึ้นผล
+  var OD_PST = [['main', 'หลัก'], ['same', 'ของเดียวกัน'], ['ok', 'ใช้แทนได้'], ['no', 'ไม่ใช้']];
+  var OD_PST_AT = { main: 0, same: 1, ok: 2, ask: 3, no: 4 };
+  function odoPick() {
+    var back = html`<button type="button" class="btn ghost sm" data-act="odo-item-back">${icon('left')} กลับ</button>`;
+    if (!odo.cat) { loadOdoCat(); return html`<div class="od-pick">${back}<div class="skel" style="height:240px;margin-top:10px"></div></div>`; }
+    var it = odo.cat.items.filter(function (x) { return x.id === odo.pick; })[0];
+    if (!it) return html`<div class="od-pick">${back}<p class="small muted">ไม่พบของนี้แล้ว</p></div>`;
+    var ps = it.products.slice().sort(function (a, b) { return OD_PST_AT[a.status] - OD_PST_AT[b.status]; });
+    var usable = ps.some(function (p) { return p.status === 'main' || p.status === 'same' || p.status === 'ok'; });
+    var info = [it.cat, it.par != null ? 'PAR ' + odNum(it.par) + ' ' + it.unit : 'ยังไม่มี PAR'];
+    if (it.max) info.push('สั่งครั้งละไม่เกิน ' + odNum(it.max) + ' ' + it.unit);
+    return html`<div class="od-pick">${back}
+      <h3 class="od-pick-h">${it.name}</h3>
+      <p class="small muted" style="margin:0 0 10px">${info.join(' · ')}</p>
+      ${usable ? '' : html`<p class="od-warn small">${icon('alert')} ยังไม่มีสินค้าที่แอปซื้อได้ ตั้งตัวหนึ่งเป็นหลัก ของเดียวกัน หรือใช้แทนได้</p>`}
+      <section class="card flush">${ps.length ? ps.map(function (p) { return odoPickRow(it, p); }) : html`<p class="small muted" style="padding:12px 14px;margin:0">ยังไม่มีสินค้า</p>`}</section>
+      <p class="small muted">หลัก ของเดียวกัน ใช้แทนได้ = แอปซื้อได้ · ไม่ใช้ = แอปไม่ซื้อ · หลักมีตัวเดียว ตั้งตัวใหม่แล้วตัวเดิมเป็นของเดียวกัน</p>
+    </div>`;
+  }
+  function odoPickRow(it, p) {
+    var rec = OD_REC[p.rec] || null;
+    var price = p.price != null ? money(p.price) + ' บาท' + (p.per !== 1 ? ' (= ' + odNum(p.per) + ' ' + it.unit + ')' : '') + (p.price > 0 ? ' · ' + it.unit + 'ละ ' + money(p.price / p.per) + ' บาท' : '') : 'ยังไม่มีราคา';
+    return html`<div class="od-pick-row ${p.status === 'no' ? 'off' : ''}">${odPic(p.img, p.name, 'lg')}<div class="grow">
+        <div class="t">${p.store}: <a href="${p.link}" target="_blank" rel="noopener">${p.name}</a></div>
+        <div class="s">${price}${p.stock === false ? ' · ของหมด' : ''}</div>
+        ${p.note ? html`<div class="s">${p.note}</div>` : ''}
+        ${rec || p.status === 'ask' ? html`<div class="od-tags">${p.status === 'ask' ? html`<span class="pill warn">รอคุณตอบ</span>` : ''}${rec ? html`<span class="pill ${rec[0]}">${rec[1]}</span>` : ''}</div>` : ''}
+        <div class="od-pst" role="group" aria-label="สถานะ ${p.name}">${OD_PST.map(function (s) {
+          var on = p.status === s[0];
+          return html`<button type="button" class="btn sm ${on ? 'primary' : 'ghost'}" data-act="odo-pst" data-id="${p.id}" data-from="${p.status}" data-to="${s[0]}" aria-pressed="${on}" ${on ? 'disabled' : ''}>${s[1]}</button>`;
+        })}</div></div></div>`;
+  }
   function odoItems() {
     var c = odo.cat;
     if (!c) {
-      call('orderCatalog', {}, ownerAuth()).then(function (d) { odo.cat = d; if ($('#odo') && odo.tab === 'items') setSheetBody(odOwnerBody()); }, function (e) { toast(e.message, 'bad'); });
+      loadOdoCat();
       return html`<div class="skel" style="height:320px"></div>`;
     }
     var q = String(odo.catQ || '').trim().toLowerCase();
@@ -10093,7 +10185,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <button class="btn block" data-act="odo-shopee-form">${icon('edit')} ใส่ผลเทียบ Shopee</button></section>
       <input class="input" type="search" data-odo="q" placeholder="ค้นหาของ" value="${odo.catQ || ''}" autocomplete="off">
       <section class="card flush" id="odo-items">${odoItemRows(items)}</section>
-      <p class="small muted">PAR ที่แก้ที่นี่ใช้ทันที · แก้ชื่อ หมวด หน่วย หรือเพิ่มของใหม่ได้ในชีต "ของที่ต้องสั่ง" และ "สินค้าในเว็บ"</p>`;
+      <p class="small muted">PAR ที่แก้ที่นี่ใช้ทันที · แตะชื่อของ ดูสินค้าทุกร้านพร้อมรูปและเปลี่ยนสถานะได้ · แก้ชื่อ หมวด หน่วย หรือเพิ่มของใหม่ บอก Claude</p>`;
   }
   /** What one of the item's units costs in this product (a pack of another size too): 49 บาท/กก. */
   /** What a usual order of this item buys at each store today (the size and count that cost least), the cheaper store first. */
@@ -10121,7 +10213,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (odLife(it)) ps.push(odLife(it));
       if (it.max) ps.push('สั่งครั้งละไม่เกิน ' + odNum(it.max) + ' ' + it.unit);
       var sp = odoShopee(it);
-      return html`<div class="item od-cat-item ${it.active ? '' : 'off'}"><div class="grow"><div class="t">${it.name}</div><div class="s">${ps.join(' · ')}</div>${odoUsualBuy(it)}
+      return html`<div class="item od-cat-item ${it.active ? '' : 'off'}">${odPic(odoImgOf(it), it.name)}<div class="grow"><div class="t"><button type="button" class="od-name" data-act="odo-item" data-id="${it.id}">${it.name}</button></div><div class="s">${ps.join(' · ')}</div>${odoUsualBuy(it)}
         ${sp ? html`<div class="s od-sp">Shopee: <a href="${sp.link}" target="_blank" rel="noopener">${sp.name}</a> · ชิ้นละ ${money(sp.price, true)} บาท จ่ายจริง${sp.per !== 1 ? ' (= ' + odNum(sp.per) + ' ' + it.unit + ')' : ''} · Claude เทียบ ${sp.checkedAt ? thShort(ymdOf(new Date(sp.checkedAt))) : '-'}${sp.expired ? html` · <span style="color:var(--warn)">เกิน ${odo.cat.shopeeDays || 35} วัน แอปไม่ใช้</span>` : ''}${it.keeps ? '' : ' · ไม่ใช่ของเก็บได้นาน แอปไม่ใช้'} <button class="od-plain" data-act="odo-shopee-off" data-id="${it.id}">เลิกใช้</button></div>` : ''}
         <div class="od-par">${it.staff ? '' : html`<span class="small muted">PAR</span><span class="stepper"><button type="button" data-act="odo-par" data-id="${it.id}" data-d="-1" aria-label="ลด PAR">−</button><b>${it.par != null ? odNum(it.par) : '–'}</b><button type="button" data-act="odo-par" data-id="${it.id}" data-d="1" aria-label="เพิ่ม PAR">+</button></span><span class="small muted">${it.unit}</span>`}
           ${count}
@@ -17132,7 +17224,25 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     // ordering: the owner
     'od-owner': function () { openOrderOwner(); },
-    'odo-tab': function (el) { odo.tab = el.dataset.tab; setSheetBody(odOwnerBody()); },
+    'odo-tab': function (el) { odo.tab = el.dataset.tab; odo.pick = null; setSheetBody(odOwnerBody()); },
+    'od-pic': function (el) { openPic(el.dataset.img, el.dataset.name); },
+    'odo-item': function (el) { odo.pick = el.dataset.id; setSheetBody(odOwnerBody()); var b = $('#odo'); if (b && b.scrollIntoView) b.scrollIntoView({ block: 'start' }); },
+    'odo-item-back': function () { odo.pick = null; setSheetBody(odOwnerBody()); },
+    'odo-pst': function (el) {
+      var d = el.dataset;
+      var it = odo.cat && odo.cat.items.filter(function (x) { return x.products.some(function (p) { return p.id === d.id; }); })[0];
+      var max = it ? it.max : null;
+      run(el, call('orderProductSet', { productId: d.id, from: d.from, to: d.to }, ownerAuth()), function (r) {
+        return 'บันทึกแล้ว' + (r.max && r.max !== max ? ' · สั่งครั้งละไม่เกิน ' + odNum(r.max) + ' ' + it.unit : '');
+      }).then(function (r) {
+        if (it && it.id === r.itemId) {
+          it.max = r.max;
+          r.products.forEach(function (x) { it.products.forEach(function (p) { if (p.id === x.id) p.status = x.status; }); });
+        }
+        setSheetBody(odOwnerBody());
+        loadOrderOwner();
+      }, function (e) { if (e && e.code !== 'AUTH') { odo.cat = null; setSheetBody(odOwnerBody()); } });
+    },
     'odo-back': function () { openOrderOwner(); },
     'odo-prices': function (el) {
       run(el, call('orderPrices', {}, ownerAuth())).then(function (v) {
