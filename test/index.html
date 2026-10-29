@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.20","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"029194d87388"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.21","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"ec14aa392ada"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -1533,6 +1533,8 @@ html.i3-ui-coin .coin::before { content: none; }
 .pr-btn:active:not([disabled]) { transform: scale(.92); }
 .pr-btn[disabled] { opacity: .45; cursor: default; }
 .pr-btn.on { opacity: 1; background: rgba(244, 114, 182, .16); box-shadow: inset 0 0 0 1.5px rgba(219, 39, 119, .45); }
+/* จอแคบ (ไม่เกิน 415): คำยาวสุด "อยากได้บ้าง" ห่างขอบปุ่ม 7 จุด (เดิม 2.8 ที่จอ 390) ปุ่มยังกว้างเท่ากัน คำเดิม (2.13.21) */
+@media (max-width: 415px) { .pr-btns { gap: 6px; } .pr-btn { font-size: 11px; } }
 .pr-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); }
 .sh-praise .card-h + .pr-row { border-top: 0; }
 .pr-row .pr-emo { flex: none; font-size: 22px; line-height: 1; }
@@ -10748,7 +10750,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="row between"><div class="hello" style="font-size:24px;margin:0">วันลา ${+workDate().slice(0, 4) + 543}</div><button class="btn primary" data-act="open-leave">${icon('plus')} ขอลา</button></div>
       <div class="stats" style="grid-template-columns:repeat(2,1fr)">${(L.balance || []).filter(function (b) { return b.paid || b.used; }).map(function (b) {
         var body = b.paid
-          ? html`<b style="font-size:24px">${b.remaining}<small class="muted" style="font-size:14px"> / ${b.quota} วัน</small></b><span>ใช้ไป ${b.used}${b.pending ? ' · รออนุมัติ ' + b.pending : ''}${b.eligible ? '' : ' · ยังไม่มีสิทธิ์'}</span>`
+          ? html`<b style="font-size:24px">${b.remaining}<small class="muted" style="font-size:14px"> / ${b.quota} วัน</small></b><span>ใช้ไป ${b.used}${b.pending ? ' · รออนุมัติ ' + b.pending : ''}${b.eligible ? '' : ' · ยังไม่มีสิทธิ์'}${b.cashed ? ' · ที่เหลือคิดเป็นเงินแล้ว' : ''}</span>`
           : html`<b style="font-size:24px">${b.used}<small class="muted" style="font-size:14px"> วัน</small></b><span>ใช้ไปปีนี้</span>`;
         return b.vacation
           ? html`<button class="stat" style="text-align:left;padding:14px" data-act="vacation-info"><span>${b.type} ${icon('info')}</span>${body}</button>`
@@ -11039,6 +11041,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var today = workDate();
     openSheet({ use: 'สิทธิ์ลา', title: b.type + ' ' + (+today.slice(0, 4) + 543), body: html`<div class="stack">
       <div class="stats" style="grid-template-columns:repeat(3,1fr)"><div class="stat"><b>${b.quota}</b><span>สิทธิ์ปีนี้</span></div><div class="stat"><b>${b.used}</b><span>ใช้แล้ว</span></div><div class="stat"><b>${b.remaining}</b><span>เหลือ</span></div></div>
+      ${b.cashed ? html`<div class="hint">${icon('money')}<span>ปีนี้ที่เหลือคิดเป็นเงินในเงินเดือนแล้ว ลาพักร้อนวันในปีนี้เพิ่มไม่ได้</span></div>` : ''}
       <section class="card flush"><div class="list">
         <div class="item"><div class="grow"><div class="t">พักร้อนประจำปี</div><div class="s">${b.annual ? (b.annualOn ? 'ทำงานครบ ' + b.annualYears + ' ปี วันที่ ' + thShort(b.annualOn) + ' ใช้ได้ตั้งแต่วันนั้น' : 'ทำงานครบ ' + b.annualYears + ' ปีแล้ว') : b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ได้เมื่อทำงานครบ ' + b.annualYears + ' ปี'}</div></div><div class="r amt">${b.annual} วัน</div></div>
         <div class="item"><div class="grow"><div class="t">วันหยุดตามประเพณี เลือกวันหยุดเอง</div><div class="s">${b.setMissing ? 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน' : 'ได้ 1 วันต่อวันหยุดตามประเพณี 1 วันที่ร้านเปิดทำการ'}</div><div class="s">ลาพักร้อนแต่ละวัน นับเป็นวันหยุดตามประเพณีที่เหลือก่อน หมดแล้วค่อยนับเป็นพักร้อนประจำปี</div></div><div class="r amt">${b.credits.length} วัน</div></div>${(b.offCredits || []).length ? html`<div class="item"><div class="grow"><div class="t">ร้านปิดตรงวันหยุดประจำ</div><div class="s">ใช้วันหยุดแล้ว ได้พักร้อนเพิ่มวันละ 1 วัน</div></div><div class="r amt">${b.offCredits.length} วัน</div></div>` : ''}
@@ -11771,11 +11774,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         </div>`;
       })}</div></section>`;
   }
-  /** วันหยุดที่เหลือสิ้นปีที่ยังไม่ได้ใส่ เป็นรายการเงิน คนละไม่เกิน 2 รายการ (2.13.18) */
-  function yearEndOwe(list) {
+  /** วันหยุดที่เหลือสิ้นปีที่ยังไม่ได้ใส่ เป็นรายการเงิน คนละไม่เกิน 2 รายการ (2.13.18) · คนที่มีคำขอลาพักร้อนรออนุมัติข้ามไว้ก่อน เว้นแต่ all (2.13.21) */
+  function yearEndOwe(list, all) {
     var r2 = function (n) { return Math.round(n * 100) / 100; };
     var out = [];
     list.forEach(function (x) {
+      if (!all && (x.pending || []).length) return;
       var hol = r2(x.hol - (x.holPaid || 0));
       var rest = r2(x.rest - (x.paid || 0));
       if (hol > 0) out.push({ kind: 'hol', x: x, type: 'ค่าวันหยุดประเพณีที่เหลือ', empId: x.id, date: x.date, qty: hol, reason: 'วันหยุดตามประเพณีที่ยังไม่ได้หยุด สิ้นปี ' + x.holDays + ' วัน × ' + money(x.rate) + ' บาท' });
@@ -11783,35 +11787,47 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     });
     return out;
   }
+  /** คนที่ยังมียอดสิ้นปีต้องใส่ แต่มีคำขอลาพักร้อนรออนุมัติ: ตัดสินคำขอก่อน ใส่ทุกคนข้ามไว้ (2.13.21) */
+  function yearEndWait(list) {
+    var owe = yearEndOwe(list, true);
+    return list.filter(function (x) { return (x.pending || []).length && owe.some(function (e) { return e.x === x; }); });
+  }
   /** งวดสุดท้ายของปี: วันหยุดที่น้องยังเหลือ จ่ายเป็นเงินในงวดนี้ ไม่ยกข้ามปี (2.13.18 เจ้าของร้านเท่านั้น) */
   function yearEndCard(d) {
     var list = d.yearEnd;
     if (!list) return '';
     var open = !d.period.status;
-    var owe = yearEndOwe(list);
-    var sum = owe.reduce(function (a, e) { return a + e.qty; }, 0);
+    var owe = yearEndOwe(list, true);
+    var ready = yearEndOwe(list);
+    var wait = yearEndWait(list);
+    var sum = ready.reduce(function (a, e) { return a + e.qty; }, 0);
     return html`<section class="card flush ye-card"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">วันหยุดที่เหลือสิ้นปี · จ่ายเป็นเงินในงวดนี้</span></div>
       <p class="small muted" style="margin:6px 16px 0">ไม่ยกข้ามปี วันที่ยังไม่ได้หยุดคิดวันละค่าแรง 1 วัน</p>
       ${list.length ? html`<div class="list">${list.map(function (x) {
         var mine = owe.filter(function (e) { return e.x === x; });
         var hol = mine.filter(function (e) { return e.kind === 'hol'; })[0];
         var rest = mine.filter(function (e) { return e.kind === 'rest'; })[0];
+        var asks = mine.length ? x.pending || [] : [];
+        var off = asks.length ? 'disabled' : '';
         return html`<div class="item" style="display:block">
           <div class="row between"><b>${x.name}</b>${mine.length ? '' : html`<span class="pill ok">${icon('check')} ใส่ครบแล้ว</span>`}</div>
           ${x.holDays ? html`<div class="s" style="margin-top:4px">วันหยุดตามประเพณี ${x.holDays} วัน = ${money(x.hol)} บาท${x.holPaid ? ' · ใส่แล้ว ' + money(x.holPaid) + ' บาท' : ''}</div>` : ''}
           ${x.restDays ? html`<div class="s" style="margin-top:4px">พักร้อน ${x.restDays} วัน = ${money(x.rest)} บาท${x.paid ? ' · ใส่แล้ว ' + money(x.paid) + ' บาท' : ''}</div>` : ''}
           <div class="s" style="margin-top:4px">${x.detail}</div>
-          ${open && mine.length ? html`<div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${hol ? html`<button class="btn sm primary" data-act="ye-pay" data-id="${x.id}" data-kind="hol">ใส่วันประเพณี ${money(hol.qty)} บาท</button>` : ''}${rest ? html`<button class="btn sm primary" data-act="ye-pay" data-id="${x.id}" data-kind="rest">ใส่พักร้อน ${money(rest.qty)} บาท</button>` : ''}</div>` : ''}
+          ${asks.length ? html`<div class="hint warn" style="margin-top:8px">${icon('alert')}<span>รออนุมัติลาพักร้อน ${asks.map(function (l) { return thRange(l.from, l.to); }).join(' · ')} · ตัดสินคำขอก่อน ปุ่มใส่ยอดของ${x.name}กดได้หลังตัดสิน</span></div>` : ''}
+          ${open && mine.length ? html`<div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${asks.length ? html`<button class="btn sm" data-act="owner-tab" data-tab="team">${icon('approve')} ไปตัดสินคำขอ</button>` : ''}${hol ? html`<button class="btn sm primary" data-act="ye-pay" data-id="${x.id}" data-kind="hol" ${off}>ใส่วันประเพณี ${money(hol.qty)} บาท</button>` : ''}${rest ? html`<button class="btn sm primary" data-act="ye-pay" data-id="${x.id}" data-kind="rest" ${off}>ใส่พักร้อน ${money(rest.qty)} บาท</button>` : ''}</div>` : ''}
         </div>`;
       })}</div>` : html`<p class="small muted" style="margin:8px 16px 16px">ทุกคนใช้วันหยุดปีนี้ครบแล้ว</p>`}
-      ${open && owe.length > 1 ? html`<div style="padding:4px 16px 16px"><button class="btn primary" style="width:100%" data-act="ye-pay-all">ใส่ทุกคน ${owe.length} รายการ รวม ${money(sum)} บาท</button></div>` : ''}
+      ${open && ready.length > 1 ? html`<div style="padding:4px 16px 16px"><button class="btn primary" style="width:100%" data-act="ye-pay-all">ใส่ทุกคน ${ready.length} รายการ รวม ${money(sum)} บาท</button>${wait.length ? html`<p class="small muted" style="margin:6px 0 0">ข้าม ${wait.map(function (x) { return x.name; }).join(' ')} ที่รอตัดสินคำขอลา</p>` : ''}</div>` : ''}
     </section>`;
   }
   function yearEndPayAsk() {
-    var owe = yearEndOwe((S.pay || {}).yearEnd || []);
+    var list = (S.pay || {}).yearEnd || [];
+    var owe = yearEndOwe(list);
     if (!owe.length) return;
+    var wait = yearEndWait(list);
     var sum = owe.reduce(function (a, e) { return a + e.qty; }, 0);
-    openSheet({ title: 'ใส่วันหยุดที่เหลือสิ้นปี', body: html`<p class="small muted" style="margin:0 2px 12px">ใส่เป็นรายการในเงินเดือนงวดนี้ ${owe.length} รายการ รวม ${money(sum)} บาท</p>
+    openSheet({ title: 'ใส่วันหยุดที่เหลือสิ้นปี', body: html`<p class="small muted" style="margin:0 2px 12px">ใส่เป็นรายการในเงินเดือนงวดนี้ ${owe.length} รายการ รวม ${money(sum)} บาท${wait.length ? ' · ข้าม ' + wait.map(function (x) { return x.name; }).join(' ') + ' ที่รอตัดสินคำขอลา' : ''}</p>
       <section class="card flush"><div class="list">${owe.map(function (e) {
         return html`<div class="item"><div class="grow"><div class="t">${e.x.name}</div><div class="s">${e.reason}</div></div><div class="r amt">${money(e.qty)}</div></div>`;
       })}</div></section>`,
