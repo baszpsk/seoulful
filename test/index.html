@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.16","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"95f4ffa0a9d2"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.17","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"36f946e79441"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -1167,6 +1167,14 @@ html.i3-ui-coin .coin::before { content: none; }
 .fr-card:nth-child(3n+2) .fr-char .char-svg, .pz-p:nth-child(3n+2) .pz-char .char-svg { animation-delay: -1.4s; }
 .fr-card:nth-child(3n) .fr-char .char-svg, .pz-p:nth-child(3n) .pz-char .char-svg { animation-delay: -2.8s; }
 @media (prefers-reduced-motion: reduce) { .me-char .char-svg, .rm-char .char-svg, .fr-char .char-svg, .me-top-char .char-svg, .res-char .char-svg, .kw-char .char-svg, .shop-char .char-svg, .rp-char .char-svg, .pz-char .char-svg { animation: none !important; } }
+/* 2.13.17 (เจ้าของ 29 ต.ค. 2569 "คนอื่นไม่มีท่าทางอัตโนมัติเลย ทำให้หน่อย"): ท่าที่การ์ดเพื่อนและคนในลานเล่นเอง (mvfPlay) ภาพเฟรม
+   ในกรอบของภาพยืน ซ่อนไว้จนเล่น · ระหว่างเล่นภาพยืนซ่อน ขึ้นทีละภาพ (.on) ภาพถัดไปวาดล่วงหน้าจางจนมองไม่เห็น (.nx: เปิดไว้ก่อน
+   ไม่มีจังหวะว่าง) · ลดภาพเคลื่อนไหว: ไม่ขึ้นเลย */
+.char-svg .mvf { visibility: hidden; pointer-events: none; }
+.char-svg.mvf-on .c3-img { visibility: hidden; }
+.char-svg .mvf.nx { visibility: visible; opacity: .001; }
+.char-svg.mvf-on .mvf.on { visibility: visible; opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .char-svg .mvf { display: none; } .char-svg.mvf-on .c3-img { visibility: visible; } }
 .sh-char { flex: none; width: 46px; height: 86px; margin: -24px -2px -6px 0; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .sh-char:active .char-svg { transform: scale(.94); }
 /* The team's goal of the week: under the chips on the home screen, and up close. */
@@ -3831,55 +3839,250 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (loop) { svg.classList.add('loop'); return; }
     svg._go = setTimeout(function () { svg.classList.remove('go'); }, (+svg.getAttribute('data-ms') || 2000) + 80);
   }
-  // 2.13.14 (เจ้าของ 29 ต.ค. 2569 "ซื้อท่าเคลื่อนไหวที่เปิด auto ไว้"): การ์ดของตัวเองในหน้าเพื่อนเล่นท่าที่ใส่อยู่วนเอง
-  // เมื่อเป็นท่าที่ได้มา (ซื้อ กล่องสุ่ม ชุด) · โบกมือกับไหว้เป็นของทุกคน (Levels.gs ราคา 0) ไม่วน · วนเฉพาะตอนเห็นการ์ด:
-  // เลื่อนพ้นจอ มีแผ่นเปิดทับ (ห้องเพื่อนและลานใช้เวทีสามมิติสดทีละ 1) หรือแอปอยู่เบื้องหลัง หยุด แล้วกลับมาวนเอง
-  // · สามมิติ: ภาพของทุกคนบนจอมาก่อน (เวทีวาดทุกเฟรม ภาพเพื่อนมาช้าลงบนมือถือ) ระหว่างนั้นภาพวาดวน แล้วย้ายไปเวทีสด
-  //   เลื่อนจอแล้วมีภาพเพื่อนใหม่ต้องมา เวทีปิดก่อน (การ์ดเป็นภาพนิ่งที่หายใจ) ภาพมาครบแล้วกลับมาเล่นต่อเอง
-  // · เวทีเปิดไม่ขึ้นซ้ำ ๆ เลิกลองหลัง 4 ครั้ง · ลดภาพเคลื่อนไหวไม่วน (charGo)
+  // 2.13.17 (เจ้าของ 29 ต.ค. 2569 "มีแค่ตัวละครของฉันเคลื่อนไหวอยู่ตัวเดียว คนอื่นไม่มีท่าทางอัตโนมัติเลย ทำให้หน่อย" · ลาน
+  // "ก็เคลื่อนไหวด้วยดีไหม น่าดึงดูดให้อยากเล่นกว่า"): ทุกการ์ดในหน้าเพื่อน รวมการ์ดตัวเอง และคนที่ยืนในลาน (ไม่ขึ้น Zz
+  // ไม่ได้เดิน) เล่นท่าเองเป็นพัก ๆ ผลัดกัน: พร้อมกันไม่เกิน 2 ตัว เริ่มห่างกันอย่างน้อย 0.9 วิ ไม่เริ่มตอนนิ้วอยู่บนจอ
+  // แต่ละตัวพัก 4–9 วิ การ์ดตัวเองในหน้าเพื่อนพัก 1.5–3 วิ (แทนการ์ดตัวเองที่วนบนเวทีสดตลอดของ 2.13.14: เวทีวาดทุกเฟรม หนักเครื่อง)
+  // · ท่า: ท่าที่ได้มาที่ใส่อยู่ ไม่ได้ใส่ใช้ท่าแรกที่มี (ซื้อ กล่องสุ่ม) ไม่มีเลยใช้ท่าฟรีที่ใส่อยู่ (โบกมือ ไหว้ · Levels.gs ราคา 0)
+  // · สามมิติ: ไม่เปิดเวทีสด ใช้ภาพเฟรมของท่าจาก engine (still ที่จังหวะต่าง ๆ ราว 10 ภาพต่อวินาที 12–24 ภาพ ความคมไม่เกิน
+  //   2 เท่า) ที่ engine เก็บไว้ในเครื่องเหมือนภาพยืน (เปิดครั้งหน้ามีเลย) ขนาดเดียวใช้ทั้งการ์ดและลาน · ทำทีละท่า ทีละภาพ
+  //   ตอนเครื่องว่าง (low) เฉพาะคนที่เห็นบนจอของหน้าเพื่อนหรือลาน ของตัวเองก่อน ไปหน้าอื่นหยุดทำ กลับมาทำต่อ · ระหว่างยังไม่ครบ
+  //   หายใจเบาแบบเดิม · เล่น: ภาพเฟรมในกรอบเดียวกับภาพยืน (c3Put) ขึ้นทีละภาพ ภาพถัดไปวาดล่วงหน้าจางจนมองไม่เห็น ไม่มีจังหวะว่าง
+  // · ภาพวาด (มือถือที่ไม่มีสามมิติ ภาพสามมิติไม่มา): ท่าแบบวาดเดิม (go)
+  // · หยุดทันที: เลื่อนจอ (ให้เลื่อนลื่นที่สุด) พ้นจอ แผ่นเปิดทับหน้าเพื่อน แอปอยู่เบื้องหลัง เริ่มเดินหรือเล่นกับเพื่อนในลาน ลดภาพเคลื่อนไหวของเครื่อง (ดูสดทุกรอบ
+  //   แอปไม่มีค่าตั้งของตัวเอง) · แตะการ์ดเปิดห้องเพื่อน ท่าเล่นบนเวทีในห้องตามเดิม
   var MOVE_FREE = { 'm-wave': 1, 'm-wai': 1 };
-  var frMeT = 0;
-  function frMeLoop() {
-    clearInterval(frMeT);
-    frMeT = 0;
-    var svg = $('main .fr-card.me .fr-char .char-svg');
-    var m = svg && /(?:^|\s)mv-(m-[\w-]+)/.exec(svg.getAttribute('class') || '');
-    if (!m || MOVE_FREE[m[1]] || !MOTION) return;
-    var tries = 0;
-    var tick = function () {
-      if (!svg.isConnected) { clearInterval(frMeT); frMeT = 0; return; }
-      var r = svg.getBoundingClientRect();
-      var on = svg.classList.contains('loop');
-      if (!(r.width && r.bottom > 0 && r.top < innerHeight) || document.hidden || $('#sheet-root.open')) {
-        tries = 0;
-        if (on) frMeStop(svg);
-        return;
-      }
-      var three = C3.state === 2 && !C3.lost && svg.hasAttribute('data-c3');
-      if (three && c3Waiting()) {
-        tries = 0;
-        if (C3.live && C3.live.temp && C3.live.over && C3.live.over() === svg) frMeStop(svg);
-        else if (!on && !svg.classList.contains('c3-on')) svg.classList.add('go', 'loop');
-        return;
-      }
-      var to3 = on && three && svg.classList.contains('c3-on') && !svg.classList.contains('c3-held');
-      if ((!on || to3) && tries++ < 4) charGo(svg, true);
+  var MVF = { sets: {}, making: null, on: [], rest: {}, t: 0, last: 0, touch: 0 };
+  var MVF_MAX = 2, MVF_H = 160;
+  var MVF_MQ = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null;
+  ['pointerdown', 'touchstart', 'touchmove', 'wheel', 'scroll'].forEach(function (t) {
+    window.addEventListener(t, function () {
+      MVF.touch = performance.now();
+      // (the page moved: those playing stand again, it scrolls as light as it can)
+      if (MVF.on.length && t !== 'pointerdown' && t !== 'touchstart') MVF.on.slice().forEach(function (p) { mvfEnd(p); });
+    }, { capture: true, passive: true });
+  });
+  /** The move someone plays by themself: theirs (worn, else the first they have), else the free one they wear. */
+  function mvfPick(look, things) {
+    var m = look && look.m;
+    if (MOVES[m] && !MOVE_FREE[m]) return m;
+    var got = (things || []).filter(function (id) { return MOVES[id] && !MOVE_FREE[id]; })[0];
+    return got || (MOVES[m] ? m : 'm-wave');
+  }
+  /** What a friend has (the friends' page's data, once come): for their move in the plaza. */
+  function mvfThings(id) {
+    var d = mineOnly(shelf) && shelf.data;
+    var p = d && (d.people || []).filter(function (x) { return x.id === id; })[0];
+    return p ? p.things : null;
+  }
+  function mvfCalm() { return !MOTION || !!(MVF_MQ && MVF_MQ.matches); }
+  /** Where they play: the friends' page with no sheet over it, or the plaza ('' elsewhere, and the app put away). */
+  function mvfWhere() {
+    if (document.hidden) return '';
+    if ($('#sheet-root.open')) return $('#plaza') ? 'pz' : '';
+    return $('main .fr-grid') ? 'fr' : '';
+  }
+  /** Each one there: the character, its move, who (for its rest), own or not, and its box. */
+  function mvfList(ctx) {
+    var out = [];
+    var add = function (c, box, key) {
+      var svg = c.querySelector('svg.char-svg');
+      if (svg && box) out.push({ svg: svg, mv: c.getAttribute('data-mv') || 'm-wave', id: key + box.getAttribute('data-id'), me: box.classList.contains('me'), box: box });
     };
-    tick();
-    frMeT = setInterval(tick, 1500);
+    if (ctx === 'fr') Array.prototype.forEach.call(document.querySelectorAll('main .fr-card .fr-char'), function (c) { add(c, c.closest('.fr-card'), 'fr'); });
+    else Array.prototype.forEach.call(document.querySelectorAll('#plaza .pz-p .pz-char'), function (c) { add(c, c.closest('.pz-p'), 'pz'); });
+    return out;
   }
-  /** A 3D picture near the screen still to come (none shown yet, no live stage over it, not given up on). */
-  function c3Waiting() {
-    return Array.prototype.some.call(document.querySelectorAll('main svg.char-svg[data-c3]'), function (x) {
-      if (x.classList.contains('c3-on') || x.classList.contains('c3-late') || x.classList.contains('c3-under')) return false;
-      var r = x.getBoundingClientRect();
-      return r.width && r.bottom > -200 && r.top < innerHeight + 200;
+  /** The part of the screen they are seen in: the screen, or the plaza's view of its street. */
+  function mvfView(ctx) {
+    var v = { top: 0, left: 0, right: innerWidth, bottom: innerHeight };
+    var pv = ctx === 'pz' && $('#plaza .pz-view');
+    if (pv) {
+      var r = pv.getBoundingClientRect();
+      v = { top: Math.max(0, r.top), left: Math.max(0, r.left), right: Math.min(innerWidth, r.right), bottom: Math.min(innerHeight, r.bottom) };
+    }
+    // (the tabs at the foot of the screen cover what is under them)
+    var tb = ctx === 'fr' && $('.tab');
+    var tr = tb && tb.parentNode.getBoundingClientRect();
+    if (tr && tr.top > innerHeight / 2) v.bottom = Math.min(v.bottom, tr.top);
+    return v;
+  }
+  /** Seen, and free to play: not under a live stage or a still of a move, nor walking or asleep (Zz) in the plaza. */
+  function mvfOk(x, v) {
+    var s = x.svg, c = s.classList, b = x.box.classList;
+    if (!s.isConnected || c.contains('c3-held') || c.contains('c3-under') || c.contains('pose')) return false;
+    if (b.contains('pz-p') && (b.contains('walking') || !(x.me || b.contains('awake')))) return false;
+    // (most of it seen: one just peeping in at an edge, or under the tabs, does not play)
+    var r = s.getBoundingClientRect();
+    var h = Math.min(r.bottom, v.bottom) - Math.max(r.top, v.top), w = Math.min(r.right, v.right) - Math.max(r.left, v.left);
+    return r.width > 0 && h >= r.height * 0.4 && w >= r.width * 0.4;
+  }
+  /** How it plays: 3 its 3D frames, 1 drawn, 0 not yet (its 3D picture still to come). */
+  function mvfKind(svg) {
+    if (!svg.hasAttribute('data-c3') || C3.state < 0) return 1;
+    if (C3.state !== 2) return 0;
+    return svg.classList.contains('c3-on') ? 3 : svg.classList.contains('c3-late') ? 1 : 0;
+  }
+  /** A look's frames of a move (st: 0 to make or go on making, 1 being made, 2 all made, -1 given up: it breathes). */
+  function mvfSetOf(svg, mv) {
+    var dpr = Math.min(2, c3Sharp());
+    var k = svg.getAttribute('data-c3') + '|' + mv + '|' + dpr;
+    if (!MVF.sets[k]) {
+      var ms = MOVES[mv] ? MOVES[mv][0] : 1800;
+      MVF.sets[k] = { k: k, mv: mv, ms: ms, n: Math.max(12, Math.min(24, Math.round(ms / 100))), dpr: dpr, look: c3Look(svg), urls: [], st: 0, fail: 0, v: 0 };
+    }
+    return MVF.sets[k];
+  }
+  /** Its frames, made one after another (each when no other picture waits: low), only while the friends' page or the plaza shows. */
+  function mvfMake(set) {
+    set.st = 1;
+    MVF.making = set;
+    var v = set.v;
+    var look = Object.assign({}, set.look, { m: set.mv });
+    var w = Math.round((MVF_H * 120) / 224);
+    var next = function () {
+      if (set.v !== v) { MVF.making = null; return; }
+      var i = set.urls.length;
+      if (i >= set.n) { set.st = 2; MVF.making = null; return; }
+      if (!mvfWhere() || mvfCalm() || C3.state !== 2 || C3.lost) { set.st = 0; MVF.making = null; return; }
+      C3.mod.still(look, { w: w, h: MVF_H, dpr: set.dpr, move: set.mv, at: Math.round(((i + 0.5) * set.ms) / set.n), bleed: true, low: true }).then(function (u) {
+        if (set.v === v) set.urls[i] = u;
+        next();
+      }, function () {
+        if (set.v === v) set.st = ++set.fail < 2 ? 0 : -1;
+        MVF.making = null;
+      });
+    };
+    next();
+  }
+  /** Its frames played once over its box, the standing picture hidden meanwhile (kept in it after, hidden, for its next turn). */
+  function mvfPlay(x, set) {
+    var s = x.svg;
+    var p = { svg: s, id: x.id, me: x.me, set: set, imgs: null, k: -1, t0: 0, timer: 0 };
+    MVF.on.push(p);
+    MVF.last = performance.now();
+    var have = s._mvf;
+    if (have && have.set === set && have.v === set.v && have.ok === set.n) { p.imgs = have.imgs; mvfGo(p); return; }
+    if (have) have.imgs.forEach(function (im) { if (im.parentNode) im.parentNode.removeChild(im); });
+    var b = c3Bleed();
+    var got = (s._mvf = { set: set, v: set.v, ok: 0, imgs: [] });
+    p.imgs = got.imgs;
+    set.urls.forEach(function (u) {
+      var im = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+      im.setAttribute('class', 'mvf');
+      im.setAttribute('x', String(-120 * b.side));
+      im.setAttribute('y', String(-24 - 224 * b.top));
+      im.setAttribute('width', String(120 * (1 + 2 * b.side)));
+      im.setAttribute('height', String(224 * (1 + b.top)));
+      im.onload = function () { if (++got.ok === set.n && MVF.on.indexOf(p) >= 0) mvfGo(p); };
+      im.onerror = function () { mvfBroken(p, u); };
+      im.setAttribute('href', u);
+      s.appendChild(im);
+      got.imgs.push(im);
     });
+    // (one that does not open in time: not this turn)
+    p.timer = setTimeout(function () { mvfEnd(p); }, 4000);
   }
-  function frMeStop(svg) {
-    if (C3.live && C3.live.temp && C3.live.over && C3.live.over() === svg) C3.live.end();
-    clearTimeout(svg._go);
-    svg.classList.remove('go', 'loop');
+  function mvfGo(p) {
+    clearTimeout(p.timer);
+    // (its first frame drawn faintly a moment before it shows: opened by then, never a gap)
+    p.imgs[0].classList.add('nx');
+    p.timer = setTimeout(function () {
+      if (!p.svg.isConnected) { mvfEnd(p); return; }
+      p.t0 = performance.now();
+      p.svg.classList.add('mvf-on');
+      mvfStep(p);
+    }, 60);
+  }
+  function mvfStep(p) {
+    if (!p.svg.isConnected) { mvfEnd(p); return; }
+    var n = p.imgs.length, dt = p.set.ms / n;
+    var k = Math.floor((performance.now() - p.t0) / dt);
+    if (k >= n) { mvfEnd(p); return; }
+    if (k !== p.k) {
+      if (p.k >= 0) p.imgs[p.k].classList.remove('on');
+      if (p.k + 1 < n) p.imgs[p.k + 1].classList.remove('nx');
+      p.imgs[k].classList.remove('nx');
+      p.imgs[k].classList.add('on');
+      if (k + 1 < n) p.imgs[k + 1].classList.add('nx');
+      p.k = k;
+    }
+    p.timer = setTimeout(function () { mvfStep(p); }, Math.max(16, p.t0 + (k + 1) * dt - performance.now()));
+  }
+  /** A play over or stopped: the standing picture again, and a rest (its own card's shorter). */
+  function mvfEnd(p) {
+    clearTimeout(p.timer);
+    var i = MVF.on.indexOf(p);
+    if (i >= 0) MVF.on.splice(i, 1);
+    var s = p.svg;
+    if (p.imgs) p.imgs.forEach(function (im) { im.classList.remove('on', 'nx'); });
+    // (a friend's frames out of the page till their next turn: a phone keeps none of them opened meanwhile ·
+    // its own card's, which plays every few seconds, kept)
+    if (p.imgs && !p.me && s._mvf) { s._mvf.imgs.forEach(function (im) { if (im.parentNode) im.parentNode.removeChild(im); }); s._mvf = null; }
+    s.classList.remove('mvf-on');
+    if (p.drawn) { clearTimeout(s._go); s.classList.remove('go'); }
+    // (its own card on the friends' page the most often; in the plaza as often as the others)
+    MVF.rest[p.id] = performance.now() + (p.me && p.id.indexOf('fr') === 0 ? 1500 + Math.random() * 1500 : 4000 + Math.random() * 5000);
+  }
+  /** A frame that does not open there (a phone that opens blob: pictures, but not in a drawing): made again, once, the way it can. */
+  function mvfBroken(p, u) {
+    if (p.dead) return;
+    p.dead = true;
+    if (C3.mod && C3.mod.broken) C3.mod.broken(u);
+    mvfEnd(p);
+    var set = p.set, s = p.svg;
+    if (s._mvf) { s._mvf.imgs.forEach(function (im) { if (im.parentNode) im.parentNode.removeChild(im); }); s._mvf = null; }
+    if (set.st === 2) { set.urls = []; set.v++; set.st = ++set.fail < 2 ? 0 : -1; }
+  }
+  /** The drawn move (a phone without 3D, a picture that did not come). */
+  function mvfDrawn(x) {
+    var s = x.svg;
+    var p = { svg: s, id: x.id, me: x.me, drawn: true, timer: 0 };
+    MVF.on.push(p);
+    MVF.last = performance.now();
+    clearTimeout(s._go);
+    s.classList.remove('go', 'loop');
+    void s.getBoundingClientRect();
+    s.classList.add('go');
+    p.timer = setTimeout(function () { mvfEnd(p); }, (+s.getAttribute('data-ms') || 2000) + 80);
+  }
+  function mvfStopSvg(svg) { MVF.on.filter(function (p) { return p.svg === svg; }).forEach(function (p) { mvfEnd(p); }); }
+  /** With the friends' page or the plaza (afterRender, plazaStart): every 0.6 s, who plays next and whose frames are made. */
+  function mvfRun() {
+    if (MVF.t || mvfCalm() || !($('main .fr-grid') || $('#plaza'))) return;
+    MVF.last = performance.now();
+    MVF.t = setInterval(mvfTick, 600);
+  }
+  function mvfTick() {
+    if (!($('main .fr-grid') || $('#plaza'))) { MVF.on.slice().forEach(function (p) { mvfEnd(p); }); clearInterval(MVF.t); MVF.t = 0; return; }
+    var ctx = mvfWhere();
+    if (!ctx || mvfCalm()) { MVF.on.slice().forEach(function (p) { mvfEnd(p); }); return; }
+    var v = mvfView(ctx);
+    var ok = mvfList(ctx).filter(function (x) { return mvfOk(x, v); });
+    MVF.on.slice().forEach(function (p) { if (!ok.some(function (x) { return x.svg === p.svg; })) mvfEnd(p); });
+    // (its own first)
+    ok.sort(function (a, b) { return (b.me ? 1 : 0) - (a.me ? 1 : 0); });
+    if (!MVF.making && C3.state === 2 && !C3.lost && C3.mod) {
+      var mk = ok.filter(function (x) { return mvfKind(x.svg) === 3 && mvfSetOf(x.svg, x.mv).st === 0; })[0];
+      if (mk) mvfMake(mvfSetOf(mk.svg, mk.mv));
+    }
+    var t = performance.now();
+    if (MVF.on.length >= MVF_MAX || t - MVF.last < 900 || t - MVF.touch < 600) return;
+    var can = ok.filter(function (x) {
+      if (x.svg.classList.contains('go') || (MVF.rest[x.id] || 0) > t || MVF.on.some(function (p) { return p.svg === x.svg; })) return false;
+      var k = mvfKind(x.svg);
+      return k === 1 || (k === 3 && mvfSetOf(x.svg, x.mv).st === 2);
+    });
+    if (!can.length) return;
+    var pick = can.filter(function (x) { return x.me; })[0];
+    if (!pick) {
+      // (the one rested longest, give or take: never the same order every time)
+      var r = {};
+      can.forEach(function (x) { r[x.id] = (MVF.rest[x.id] || 0) + Math.random() * 1500; });
+      pick = can.sort(function (a, b) { return r[a.id] - r[b.id]; })[0];
+    }
+    if (mvfKind(pick.svg) === 1) mvfDrawn(pick);
+    else mvfPlay(pick, mvfSetOf(pick.svg, pick.mv));
   }
   // ---- characters in 3D (#145) ------------------------------------------------
   // Where the phone can draw in 3D (WebGL 2; on the shop's site and the demo), each character above
@@ -7536,7 +7739,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (S.sub === 'order' && $('#od-cats')) { odSpySet(S.odAt || 0, true); odSpy(); }
     glideLenses();
     runCardPics();
-    frMeLoop();
+    mvfRun();
     if (S.view === 'kiosk' && S.k.step === 'confirm') attachKioskCamera();
     if (S.view === 'kiosk' && S.k.step === 'names') drawLiveQr();
     if (camWanted()) { startScreenCam(); attachMirror(); } else if (S.k.cam.stream || S.k.cam.state !== 'off') { stopScreenCam(); S.k.cam.state = 'off'; }
@@ -8964,7 +9167,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     roomWant(roomTheme(p), 1500);
     return html`<button class="fr-card ${me ? 'me' : ''}" data-act="fr-room" data-id="${p.id}" aria-label="ห้องของ${p.name}">
       <span class="fr-stage room th-${roomTheme(p)}"><i class="rm-wall"></i><i class="rm-floor"></i>
-        <span class="fr-char">${raw(charOf(p.look))}</span>${p.look && p.look.p ? html`<span class="fr-pet">${raw(PET_ART(p.look.p, p.look))}</span>` : ''}
+        <span class="fr-char" data-mv="${mvfPick(p.look, p.things)}">${raw(charOf(p.look))}</span>${p.look && p.look.p ? html`<span class="fr-pet">${raw(PET_ART(p.look.p, p.look))}</span>` : ''}
         ${me ? html`<span class="fr-me">ฉัน</span>` : ''}</span>
       <span class="fr-name">${nameLv(p.lv, p.name, (p.look || {}).b)}</span>
       <span class="fr-stats"><span>น้อง ${p.figs.length}/${total}</span>${top ? html`<span>+${top}</span>` : ''}<span>${icon('heart')} ${p.hearts || 0}</span>${things ? html`<span>ของ ${things}</span>` : ''}</span>
@@ -13633,7 +13836,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="pz-p ${me ? 'me' : ''} ${x.awake ? 'awake' : 'dozy'} ${plaza.sel === x.id ? 'sel' : ''}" id="pz-${x.id}" data-id="${x.id}" style="--x:${p.x}%;--y:${p.y}%;z-index:${Math.round(p.y * 10)}">
       <button class="pz-body" data-act="pz-who" data-id="${x.id}" aria-label="${me ? 'ตัวละครของฉัน' : x.name}">
         <span class="pz-tag">${x.awake && !me ? html`<i class="pz-on"></i>` : ''}${nameLv(x.lv, me ? 'ฉัน' : x.name)}</span>
-        <span class="pz-char" style="--face:${p.face}">${raw(charOf(x.look))}</span>
+        <span class="pz-char" style="--face:${p.face}" data-mv="${mvfPick(x.look, mvfThings(x.id))}">${raw(charOf(x.look))}</span>
         ${x.look && x.look.p ? html`<span class="pz-pet">${raw(PET_ART(x.look.p, x.look))}</span>` : ''}
         ${!x.awake && !me ? html`<i class="pz-zz">z z</i>` : ''}
       </button></div>`;
@@ -13722,6 +13925,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }
     }, 1400));
     plaza.timers.push(setInterval(function () { if ($('#plaza') && !document.hidden) plazaLoad(false); }, 20000));
+    mvfRun();
   }
   /** Someone walks to a place (in % of the plaza), facing the way they go. */
   function pzWalk(id, x, y, then) {
@@ -13739,6 +13943,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     el.style.zIndex = Math.round(y * 10);
     var c = el.querySelector('.pz-char');
     if (c) c.style.setProperty('--face', p.face);
+    mvfStopSvg(el.querySelector('.pz-char svg.char-svg'));
     el.classList.add('walking');
     pzLegs(el);
     clearTimeout(el._walk);
@@ -13873,6 +14078,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var x = plaza && plaza.data && plaza.data.people.filter(function (p) { return p.id === id; })[0];
     if (!c || !x || !MOVES[move]) return;
     clearTimeout(c._back);
+    mvfStopSvg(c.querySelector('svg.char-svg'));
     c.innerHTML = charOf(Object.assign({}, x.look, { m: move }));
     charGo(c);
     c._back = setTimeout(function () { if (c.isConnected) c.innerHTML = charOf(x.look); }, MOVES[move][0] + 120);
@@ -18957,6 +19163,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // (of them the rooms' things), and the things showing theirs; the engine itself, for the demo's check.
     c3: function () { return { state: C3.state, live: C3.live ? C3.live.frames : 0, pics: Object.keys(C3.pics).length, things: Object.keys(C3.pics).filter(function (k) { return k.slice(0, 2) === 'o|'; }).length, shown: document.querySelectorAll('svg.c3o-on').length }; },
     c3mod: function () { return C3.mod; },
+    // 2.13.17 ท่าที่เล่นเอง (ตัวถ่ายภาพและตัวตรวจ): ภาพเฟรมที่ทำแล้ว ใครกำลังเล่น
+    mvf: function () { return MVF; },
     state: S,
   };
   boot();
