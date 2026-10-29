@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.15","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"06c0d8d0630a"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.16","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"95f4ffa0a9d2"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -819,13 +819,22 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-fix-b .od-yn { flex: none; }
 .od-issue { margin: 0; padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; border-top: 1px dashed var(--line); font-size: 13px; }
 .od-issue .grow { min-width: 0; }
+/* 2.13.16 ปุ่มใหญ่บนสุด "บอกได้ทุกเรื่อง ไม่ต้องเลือกหัวข้อ" (หัวข้อเรื่องอื่น) และบรรทัดเล็กใต้ปุ่ม */
+.dl-all { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 12px; padding: 14px; border: 0; border-radius: var(--r-md); background: linear-gradient(160deg, var(--gold-soft), transparent 72%), var(--btn); box-shadow: inset 0 1px 0 var(--rim-hi), inset 0 0 0 1px var(--btn-line), var(--shadow-1); color: var(--ink); text-align: left; transition: transform .45s var(--spring); }
+.dl-all:active { transform: scale(.97); transition-duration: .1s; }
+.dl-all > svg:first-child { width: 26px; height: 26px; flex: none; color: var(--gold); }
+.dl-all > svg:last-child { width: 18px; height: 18px; flex: none; color: var(--muted); }
+.dl-all b { font-size: 16px; font-weight: 600; line-height: 1.3; }
+.dl-all-note { margin: 6px 2px 0; font-size: 12.5px; color: var(--muted); text-align: center; }
 .dl-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
 .dl-tile { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; padding: 10px 4px 9px; border: 0; border-radius: var(--r-md); background: var(--btn); box-shadow: inset 0 1px 0 var(--rim-hi), inset 0 0 0 1px var(--btn-line); color: var(--ink); font-size: 12px; line-height: 1.25; text-align: center; transition: transform .45s var(--spring); }
 .dl-tile:active { transform: scale(.94); transition-duration: .1s; }
 .dl-tile svg { width: 22px; height: 22px; color: var(--gold); }
 .dl-tile.praise svg { color: #c2596b; }
 .dl-tile span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-/* 2.13.14 "เรื่องอื่น ๆ": หัวข้อนอกงานแผนกตัวเอง กางในที่เดิม ใต้ปุ่มนี้ */
+/* แผ่นแก้เรื่อง: หัวข้อที่เลือกอยู่ (2.13.16) */
+.dl-tile[aria-pressed="true"] { background: linear-gradient(160deg, var(--gold-soft), transparent 80%), var(--btn); box-shadow: inset 0 0 0 2px var(--gold); font-weight: 600; }
+/* 2.13.14 "ดูหัวข้อทั้งหมด" (ชื่อเดิม "เรื่องอื่น ๆ" ถึง 2.13.15): หัวข้อนอกงานแผนกตัวเอง กางในที่เดิม ใต้ปุ่มนี้ */
 .dl-more { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 0; padding: 9px 12px; border: 0; border-radius: var(--r-md); background: transparent; box-shadow: inset 0 0 0 1px var(--btn-line); color: var(--ink); font-size: 13px; font-weight: 600; line-height: 1.25; transition: transform .45s var(--spring); }
 .dl-more:active { transform: scale(.97); transition-duration: .1s; }
 .dl-more svg { width: 18px; height: 18px; flex: none; color: var(--gold); }
@@ -845,22 +854,13 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .dl-row > button small { display: block; font-size: 12.5px; color: var(--muted); }
 .dl-row.has > button .dl-mark { color: var(--ok); }
 .dl-row .dl-fields { display: grid; gap: 8px; padding: 0 0 14px 34px; }
-/* The name box: a name tapped from under it (the team's most noted, the menu by group, or found as one types), or typed. */
+/* ช่องชื่อ: น้องพิมพ์เอง ไม่มีชื่อให้แตะเลือก (2.13.16) · × ล้างชื่อ */
 .dl-name { position: relative; }
 .dl-name .input { padding-right: 44px; }
 .dl-clear { position: absolute; top: 6px; right: 6px; width: 36px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 50%; background: none; color: var(--muted); }
 .dl-clear svg { width: 16px; height: 16px; }
 .dl-name .input:placeholder-shown + .dl-clear { display: none; }
-.dl-pick { display: grid; gap: 8px; min-width: 0; }
-.dl-pick:empty { display: none; }
-.dl-pick-h { margin: 2px 2px -2px; font-size: 12.5px; color: var(--muted); }
-.dl-pick .chips { gap: 6px; }
-.dl-pick .chip { max-width: 100%; padding: 8px 12px; font-size: 14px; line-height: 1.3; }
-.dl-cats { display: flex; gap: 6px; margin: 0 -2px; padding: 2px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-.dl-cats::-webkit-scrollbar { display: none; }
-.dl-cats button { flex: none; border: 0; border-radius: 999px; padding: 7px 13px; font: inherit; font-size: 13.5px; background: var(--btn); box-shadow: inset 0 0 0 1px var(--btn-line); color: var(--ink-2); white-space: nowrap; transition: background-color .2s, color .2s; }
-.dl-cats button.on { background: var(--ink); color: var(--bg); box-shadow: none; }
-.dl-cat-list:empty { display: none; }
+.dl-sorted { color: var(--muted); }
 .dl-mark { width: 20px; height: 20px; flex: none; margin-left: auto; color: var(--line); }
 .dl-group { padding: 12px 16px; border-top: 1px solid var(--line); }
 .dl-group:first-child { border-top: 0; }
@@ -3018,7 +3018,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 /* 2.13.4 (T2 T4–T6): ปุ่มที่แตะบ่อยสูงอย่างน้อย 44 (Apple HIG) เฉพาะที่นี่ ไม่แก้ .btn.sm ที่ใช้ทั้งแอป */
 .btn.sm.tap { height: 44px; }
 .fb-mine-btn { min-height: 44px; }
-.dl-pick .chip, .dl-cats button, .fb-starter, .seg [data-act="fb-kind"] { min-height: 44px; }
+.fb-starter, .seg [data-act="fb-kind"] { min-height: 44px; }
 .lv-chip, .dm { min-height: 44px; }
 .topbar .icon-btn { width: 44px; height: 44px; }
 </style>
@@ -11953,7 +11953,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     ['ประกันสังคม', ['ssoRate', 'ssoMin', 'ssoMax']],
     ['แจ้งเตือน', ['emailOnApprove', 'ownerEmail', 'lineToken', 'lineAnnounceLeave', 'lineRainNotice', 'lineNews', 'lineHour']],
     ['ความคิดเห็นจากพนักงาน', [], githubHelp],
-    ['บันทึกหน้างาน', ['dailyLeads', 'menuList', 'dailyAsk']],
+    ['บันทึกหน้างาน', ['dailyLeads', 'dailyAsk']],
     ['เกมของทีม', ['gameClosed']],
     ['เช็กมาตรฐาน (หัวหน้าเช็ก)', ['checkTimes', 'checkFront', 'checkKitchen']],
     ['เป้ายอดขายทีม (แต้มทุกคน)', ['salesTarget', 'salesPoints']],
@@ -15260,21 +15260,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var DL_SHORT = { stock: 'ของหมด', waste: 'ของต้องทิ้ง', quality: 'วัตถุดิบไม่ดี', mistake: 'ทำเมนูผิด', recipe: 'ชั่งตวงไม่ได้', leftover: 'กินไม่หมด', ask: 'ถามหาเมนู', want: 'อยากให้มี', swap: 'เปลี่ยนวัตถุดิบ', nomeat: 'ไม่ทานเนื้อสัตว์', topping: 'ย้ายท็อปปิ้ง', praise: 'ลูกค้าชม', complaint: 'ไม่พอใจ', fix: 'อุปกรณ์เสีย', clean: 'สะอาด ปลอดภัย', other: 'เรื่องอื่น' };
   // Where a person could be named: what happened is what the shop needs, never who (the shop fixes the cause).
   var DL_NO_NAMES = { mistake: 1, recipe: 1, clean: 1, complaint: 1, waste: 1 };
-  // Where the name box is not one of the shop's dishes (a dish it has not got, a thing, a place, anything):
-  // it offers what the team typed there before, not the menu.
-  var DL_NOT_MENU = { ask: 1, want: 1, fix: 1, clean: 1, other: 1 };
-  // The menu's group open from the start on a topic (by its name on the owner's menu).
-  var DL_CAT_FIRST = { topping: 'ท็อปปิ้ง' };
   // 2.13.14 (เจ้าของมอบห้องตัดสิน 29 ต.ค. 2569 "ปุ่มเยอะไปไหม"): แต่ละคนเห็นก่อน 8 หัวข้อที่ตรงงานแผนกตัวเอง
-  // (Config.gs DEPTS) ที่เหลืออยู่ใต้ "เรื่องอื่น ๆ" กางในที่เดิม · เลือกจากเรื่องที่แผนกนั้นเจอเองในงาน ครัว: ของ
+  // (Config.gs DEPTS) ที่เหลืออยู่ใต้ "ดูหัวข้อทั้งหมด" (2.13.16 ชื่อเดิม "เรื่องอื่น ๆ") กางในที่เดิม · เลือกจากเรื่องที่แผนกนั้นเจอเองในงาน ครัว: ของ
   // วัตถุดิบ การทำ อุปกรณ์ ความสะอาด · หน้าร้าน: ลูกค้า · เท่ากันเลือกหัวข้อที่เจ้าของตั้งเอง (29 ก.ย.) แล้วตามลำดับเดิม
   // · คนไม่มีแผนก (และเจ้าของที่บันทึกแทน) เห็นครบ · แต้มทุกหัวข้อเท่าเดิม ไม่มีหัวข้อไหนได้เปรียบ
-  // · หัวข้อใหม่ใน Daily.gs ที่ไม่ได้ใส่ตรงนี้ไปอยู่ใต้ "เรื่องอื่น ๆ" ของทุกแผนก
+  // · หัวข้อใหม่ใน Daily.gs ที่ไม่ได้ใส่ตรงนี้ไปอยู่ใต้ "ดูหัวข้อทั้งหมด" ของทุกแผนก · เรื่องอื่น (other) อยู่ที่ปุ่มใหญ่ ไม่อยู่ในปุ่มหัวข้อ
   var DL_DEPT = {
     'ครัว': { stock: 1, waste: 1, quality: 1, mistake: 1, recipe: 1, leftover: 1, fix: 1, clean: 1 },
     'หน้าร้าน': { leftover: 1, ask: 1, want: 1, swap: 1, nomeat: 1, topping: 1, praise: 1, complaint: 1 },
   };
-  var dlMore = false; // "เรื่องอื่น ๆ" กางอยู่ (จนปิดแอป: เปิดแอปใหม่เห็น 8 หัวข้อของแผนกก่อนเสมอ)
+  var dlMore = false; // "ดูหัวข้อทั้งหมด" กางอยู่ (จนปิดแอป: เปิดแอปใหม่เห็น 8 หัวข้อของแผนกก่อนเสมอ)
   var dl = null; // what is being noted: {date, open, quick, items: {topic: {menu, detail}}, draft}
   var dlList = null; // the owner's page of notes
   function dlHome() { return (S.home && S.home.daily) || null; }
@@ -15299,7 +15294,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var news = dlNews(d);
     return html`<section class="card dl-card">
       <div class="fb-invite-h"><span class="fb-ico">${icon('note')}</span><div class="grow"><span class="eyebrow">บันทึกหน้างาน</span><b>วันนี้ที่ร้านเป็นยังไงบ้าง</b></div></div>
-      <p class="small muted" style="margin:0">แตะหัวข้อแล้วพิมพ์สั้น ๆ เรื่องเล็กแค่ไหนก็ช่วยให้ร้านดีขึ้น</p>
+      <button class="dl-all" data-act="dl-all">${icon('chat')}<b class="grow">บอกได้ทุกเรื่อง ไม่ต้องเลือกหัวข้อ</b>${icon('right')}</button>
+      <p class="dl-all-note">หัวข้อไหนก็ +${dlNotePts()} เลือกผิดแก้ได้</p>
       ${d.lead ? (d.sentToday ? html`<div class="dl-done"><span class="pill ok">${icon('check')} ส่งสรุปวันนี้แล้ว</span>${d.streak >= 2 ? html`<span class="pill gold">${icon('spark')} ส่งครบ ${d.streak} วันติด</span>` : ''}</div>` : html`<button class="btn primary block" style="margin-top:12px" data-act="dl-form" data-date="${d.today}">${icon('note')} ส่งสรุปวันนี้</button>`) : ''}
       ${dlTiles()}
       ${dlFixingList(d)}
@@ -15307,17 +15303,22 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="fb-foot"><span>${icon('team')}<span>${team.today ? 'วันนี้ทีมบันทึก ' + team.today + ' เรื่อง' : 'วันนี้ยังไม่มีใครบันทึก'}${team.fixed && !(S.home && S.home.level) ? html`<br>เดือนนี้ร้านแก้แล้ว ${team.fixed} เรื่อง` : ''}</span></span>${(d.mine || []).length ? html`<button class="fb-mine-btn" data-act="dl-mine">บันทึกของฉัน${mineToday ? ' ' + mineToday : ''}${news.length ? html`<i class="dot" aria-label="เจ้าของร้านดูแล้ว"></i>` : ''}${icon('right')}</button>` : ''}</div>
     </section>`;
   }
-  /** ปุ่มหัวข้อ: ของแผนกตัวเองก่อน ที่เหลือใต้ "เรื่องอื่น ๆ" กางในที่เดิม (2.13.14 · DL_DEPT) */
+  /** แต้มของบันทึก 1 เรื่อง (Levels.gs LEVEL_POINTS.note) ทุกหัวข้อเท่ากัน */
+  function dlNotePts() { var r = S.home && S.home.level && S.home.level.rules; return (r && r.note) || 2; }
+  /**
+   * ปุ่มหัวข้อ: ของแผนกตัวเองก่อน ที่เหลือใต้ "ดูหัวข้อทั้งหมด" กางในที่เดิม (2.13.14 · DL_DEPT) · เรื่องอื่นไม่ขึ้นซ้ำ
+   * เพราะเป็นปุ่มใหญ่ "บอกได้ทุกเรื่อง" แล้ว (2.13.16)
+   */
   function dlTiles() {
-    var all = dlTopics();
+    var all = dlTopics().filter(function (t) { return t[0] !== 'other'; });
     var me = S.view !== 'owner' && S.home && S.home.me;
     var dept = me && DL_DEPT[me.dept];
     var first = dept ? all.filter(function (t) { return dept[t[0]]; }) : all;
     var rest = dept ? all.filter(function (t) { return !dept[t[0]]; }) : [];
     var tile = function (t) { return html`<button class="dl-tile ${t[0]}" data-act="dl-quick" data-topic="${t[0]}">${icon(DL_ICON[t[0]] || 'chat')}<span>${DL_SHORT[t[0]] || t[1]}</span></button>`; };
-    return html`<div class="dl-tiles">${first.map(tile)}${rest.length ? html`<button class="dl-more" data-act="dl-more" aria-expanded="${dlMore ? 'true' : 'false'}">${icon('more')}<span>เรื่องอื่น ๆ${dlMore ? '' : html` <span class="dl-more-n">อีก ${rest.length} หัวข้อ</span>`}</span>${icon('right')}</button>${dlMore ? rest.map(tile) : ''}` : ''}</div>`;
+    return html`<div class="dl-tiles">${first.map(tile)}${rest.length ? html`<button class="dl-more" data-act="dl-more" aria-expanded="${dlMore ? 'true' : 'false'}">${icon('more')}<span>${dlMore ? 'ย่อหัวข้อ' : html`ดูหัวข้อทั้งหมด <span class="dl-more-n">อีก ${rest.length} หัวข้อ</span>`}</span>${icon('right')}</button>${dlMore ? rest.map(tile) : ''}` : ''}</div>`;
   }
-  /** "เรื่องอื่น ๆ" กางหรือย่อ ในที่เดิม: วาดใหม่เฉพาะปุ่มหัวข้อ หน้าไม่เลื่อน */
+  /** "ดูหัวข้อทั้งหมด" กางหรือย่อ ในที่เดิม: วาดใหม่เฉพาะปุ่มหัวข้อ หน้าไม่เลื่อน */
   function dlMoreToggle(el) {
     dlMore = !dlMore;
     var box = el && el.closest('.dl-tiles');
@@ -15326,105 +15327,40 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var btn = $('.dl-more');
     if (btn) btn.focus({ preventScroll: true });
   }
-  /** What a note is about (a name tapped, or typed) and a few words. */
+  /** What a note is about (typed: no names to tap, 2.13.16) and a few words. */
   function dlFields(key, quick) {
     var t = dlTopic(key);
     var v = (dl && dl.items[key]) || { menu: '', detail: '' };
     return html`<div class="dl-fields" ${quick ? raw('style="padding-left:0"') : ''}>
       <div class="dl-name"><input class="input" id="dl-menu-${key}" data-dl="${key}" data-f="menu" maxlength="60" autocomplete="off" placeholder="${t[4]}" value="${v.menu}"><button type="button" class="dl-clear" data-act="dl-clear" data-topic="${key}" aria-label="ล้างชื่อ">${icon('x')}</button></div>
-      <div class="dl-pick" id="dl-pick-${key}">${dlPick(key)}</div>
       <textarea class="input" id="dl-detail-${key}" data-dl="${key}" data-f="detail" maxlength="500" rows="${quick ? 3 : 2}" placeholder="${t[3]}">${v.detail}</textarea></div>`;
   }
-  /** The owner's menu group by group, and what the team noted under each topic, most first (Daily.gs dailyMenus_). */
-  function dlMenu() { var m = (dlHome() || {}).menu; return { cats: (m && m.cats) || [], used: (m && m.used) || {} }; }
-  function dlCats(key) { return DL_NOT_MENU[key] ? [] : dlMenu().cats; }
-  /** A name as it is looked for: no spaces, brackets or tone marks (ต็อก finds ต๊อก). */
-  function dlFold(s) { return String(s || '').toLowerCase().replace(/[\s()็-๎]/g, ''); }
-  /** What a topic's box offers, each once: what the team noted under it most, then (on the shop's dishes) the menu, and the dishes the team typed elsewhere. */
-  function dlNames(key) {
-    var m = dlMenu(), out = [], seen = {};
-    var add = function (n) { var k = dlFold(n); if (k && !seen[k]) { seen[k] = 1; out.push(n); } };
-    (m.used[key] || []).forEach(add);
-    if (DL_NOT_MENU[key]) return out;
-    m.cats.forEach(function (c) { c[1].forEach(add); });
-    Object.keys(m.used).forEach(function (t) { if (!DL_NOT_MENU[t]) m.used[t].forEach(add); });
-    return out;
-  }
-  function dlNameChips(key, names) { return html`<div class="chips">${names.map(function (n) { return html`<button type="button" class="chip" data-act="dl-name" data-topic="${key}" data-name="${n}">${n}</button>`; })}</div>`; }
-  function dlCatName(cats, i) { return cats[i][0] || (cats.length > 1 ? 'อื่น ๆ' : 'เมนูของร้าน'); }
-  /** The group open under the bar (-1: none): the one tapped, or the topic's own at first (ท็อปปิ้ง). */
-  function dlCatOpen(key, cats) {
-    if (dl.cat && key in dl.cat) return dl.cat[key];
-    for (var i = 0; i < cats.length; i++) if (cats[i][0] && cats[i][0] === DL_CAT_FIRST[key]) return i;
-    return -1;
-  }
-  /**
-   * Under the name box, a name a tap away: what the team notes most here, and the menu's groups to open
-   * (on the shop's dishes); as one types, the names that have it. Nothing once the box has a name on the list.
-   */
-  function dlPick(key) {
-    if (!dl) return html``;
-    var q = dlFold((dl.items[key] || {}).menu);
-    var names = dlNames(key);
-    var cats = dlCats(key);
-    if (q) {
-      if (!names.length || names.some(function (n) { return dlFold(n) === q; })) return html``;
-      var first = [], then = [];
-      names.forEach(function (n) { var at = dlFold(n).indexOf(q); if (at === 0) first.push(n); else if (at > 0) then.push(n); });
-      // (a group's name finds its dishes: ท็อปปิ้ง, ซุป)
-      cats.forEach(function (c) { if (c[0] && dlFold(c[0]).indexOf(q) >= 0) c[1].forEach(function (n) { if (first.indexOf(n) < 0 && then.indexOf(n) < 0) then.push(n); }); });
-      var hits = first.concat(then).slice(0, 12);
-      return hits.length ? dlNameChips(key, hits) : html`<p class="dl-pick-h">ไม่มีในรายชื่อ พิมพ์ต่อได้เลย ครั้งหน้าชื่อนี้ขึ้นให้แตะ</p>`;
-    }
-    var often = (dlMenu().used[key] || []).slice(0, 6);
-    if (!often.length && !cats.length) return html``;
-    var open = dlCatOpen(key, cats);
-    return html`${often.length ? html`<p class="dl-pick-h">ทีมบันทึกบ่อย</p>${dlNameChips(key, often)}` : ''}
-      ${cats.length ? html`<p class="dl-pick-h">${often.length ? 'หรือแตะหมวดเมนู' : 'แตะหมวดเมนู'} · พิมพ์ชื่อเพื่อค้นหาก็ได้</p>
-      <div class="dl-cats">${cats.map(function (c, i) { return html`<button type="button" class="${i === open ? 'on' : ''}" data-act="dl-cat" data-topic="${key}" data-i="${i}" aria-pressed="${i === open}">${dlCatName(cats, i)}</button>`; })}</div>
-      <div class="dl-cat-list" id="dl-cat-list-${key}">${open >= 0 ? dlNameChips(key, cats[open][1]) : ''}</div>` : ''}`;
-  }
-  function dlPickDraw(key) { var box = $('#dl-pick-' + key); if (box) box.innerHTML = String(dlPick(key)); }
-  /** A group tapped: its dishes under the bar, or closed if open; the bar stays as it was scrolled. */
-  function dlCat(key, i) {
-    if (!dl) return;
-    var cats = dlCats(key);
-    var open = dlCatOpen(key, cats) === i ? -1 : i;
-    dl.cat = dl.cat || {};
-    dl.cat[key] = open;
-    var box = $('#dl-pick-' + key);
-    if (!box) return;
-    Array.prototype.forEach.call(box.querySelectorAll('[data-act="dl-cat"]'), function (b) { var on = +b.dataset.i === open; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
-    var list = $('#dl-cat-list-' + key);
-    if (list) list.innerHTML = open >= 0 && cats[open] ? String(dlNameChips(key, cats[open][1])) : '';
-  }
-  /** A name tapped (or the box cleared): in the box and the note; then on to the few words. */
-  function dlPickName(key, name) {
+  /** ปุ่ม × ล้างชื่อในช่อง แล้วพิมพ์ใหม่ (2.13.16 ไม่มีชื่อให้แตะเลือก น้องพิมพ์เอง) */
+  function dlClearName(key) {
     if (!dl) return;
     dl.items[key] = dl.items[key] || { menu: '', detail: '' };
-    dl.items[key].menu = name;
+    dl.items[key].menu = '';
     dlSave();
     var box = $('#dl-menu-' + key);
-    if (box) box.value = name;
-    dlPickDraw(key);
+    if (box) { box.value = ''; box.focus(); }
     if (!dl.quick && !dl.again) setSheetFoot(dailyFormFoot());
-    var next = name ? $('#dl-detail-' + key) : null;
-    if (next) next.focus();
   }
   /** One thing, quickly: the topic's question, what it was about, and a few words. */
   function openDailyQuick(key) {
     var t = dlTopic(key);
-    dl = { date: workDate(), quick: key, open: key, items: {}, cat: {} };
+    // ปุ่มใหญ่ "บอกได้ทุกเรื่อง" (2.13.16): หัวข้อเรื่องอื่น คีย์และชื่อที่เก็บเดิม ถามกว้าง ๆ
+    var any = key === 'other';
+    dl = { date: workDate(), quick: key, open: key, items: {} };
     dl.items[key] = { menu: '', detail: '' };
     var back = dlRestore(key);
-    openSheet({ title: t[1], body: html`<div class="fb-prompt"><h3>${t[2]}</h3><p>เขียนสั้น ๆ ก็พอ${DL_NO_NAMES[key] ? ' · เล่าว่าเกิดอะไร ไม่ต้องบอกว่าใครทำ ร้านอยากแก้ที่ต้นเหตุ' : ''} · พิมพ์ไม่ถนัด แตะไมค์บนแป้นพิมพ์แล้วพูดได้</p></div>${dlFields(key, true)}<p class="small muted" style="margin:10px 2px 0">${icon('clock')} ไม่ต้องรีบ ทำงานก่อน บันทึกหลังเลิกงานได้แต้มเท่ากัน · เรื่องเดียวกันเพื่อนบันทึกด้วยได้ ได้แต้มทุกคน</p>${dlPhotoBox()}`,
+    openSheet({ title: any ? 'บอกได้ทุกเรื่อง' : t[1], body: html`<div class="fb-prompt"><h3>${any ? 'เจออะไรในร้าน อยากบอกอะไร เล่าได้เลย' : t[2]}</h3><p>เขียนสั้น ๆ ก็พอ${DL_NO_NAMES[key] ? ' · เล่าว่าเกิดอะไร ไม่ต้องบอกว่าใครทำ ร้านอยากแก้ที่ต้นเหตุ' : ''} · พิมพ์ไม่ถนัด แตะไมค์บนแป้นพิมพ์แล้วพูดได้</p></div>${dlFields(key, true)}<p class="small muted" style="margin:10px 2px 0">${icon('clock')} ไม่ต้องรีบ ทำงานก่อน บันทึกหลังเลิกงานได้แต้มเท่ากัน · เรื่องเดียวกันเพื่อนบันทึกด้วยได้ ได้แต้มทุกคน</p>${dlPhotoBox()}`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="dl-send">${icon('send')} บันทึก</button>` });
     wireDailyForm();
     if (back) toast('ที่พิมพ์ค้างไว้ยังอยู่ ส่งต่อได้เลย', 'tip');
   }
   /** The day, topic by topic: the ones tapped happened; the rest did not. */
   function openDailyForm(date) {
-    dl = { date: date || workDate(), open: null, items: {}, cat: {} };
+    dl = { date: date || workDate(), open: null, items: {} };
     var back = dlRestore();
     if (back) dl.open = Object.keys(dl.items)[0];
     showDailyForm();
@@ -15498,7 +15434,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         dl.items[k] = dl.items[k] || { menu: '', detail: '' };
         dl.items[k][el.dataset.f] = el.value;
         dlSave();
-        if (el.dataset.f === 'menu') dlPickDraw(k);
         if (dl.quick) return;
         setSheetFoot(dailyFormFoot());
       };
@@ -15511,10 +15446,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     setSheetFoot(dailyFormFoot());
     wireDailyForm();
     var box = dl.open ? $('#dl-detail-' + dl.open) : null;
-    var pick = dl.open ? $('#dl-pick-' + dl.open) : null;
-    // (names to tap under the name box: brought into sight, as the keyboard would cover them)
-    if (pick && pick.firstElementChild) pick.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    else if (box) box.focus();
+    if (box) box.focus();
   }
   /** รูปที่แนบกับบันทึก 1 รูป ไม่บังคับ: ช่องแนบ หรือรูปที่เลือกแล้วพร้อมปุ่มเอาออก */
   function dlPhotoBox() {
@@ -15634,10 +15566,54 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     dlLooked(d.mine || []);
     // Seen now: the card's news goes, without drawing the page again.
     Array.prototype.forEach.call(document.querySelectorAll('.dl-card .dl-news, .dl-card .fb-mine-btn .dot'), function (el) { el.remove(); });
-    openSheet({ title: 'ที่ฉันบันทึก', body: html`<p class="small muted mt0">เจ้าของร้านดูแล้วขึ้นว่า "รับทราบแล้ว" ร้านกำลังแก้ขึ้นว่า "กำลังแก้" แก้เสร็จขึ้นว่า "แก้แล้ว" · เรื่องที่ยังไม่นับแต้มบอกเหตุผล และเพิ่มรายละเอียดได้ 1 ครั้ง · ลบเรื่องของวันนี้ได้ถ้าพิมพ์ผิด</p><section class="card flush"><div class="list">${(d.mine || []).map(function (x) {
+    openSheet({ title: 'ที่ฉันบันทึก', body: html`<p class="small muted mt0">เจ้าของร้านดูแล้วขึ้นว่า "รับทราบแล้ว" ร้านกำลังแก้ขึ้นว่า "กำลังแก้" แก้เสร็จขึ้นว่า "แก้แล้ว" · เรื่องที่ยังไม่นับแต้มบอกเหตุผล และเพิ่มรายละเอียดได้ 1 ครั้ง · เรื่องของวันนี้แก้หัวข้อหรือข้อความได้จนร้านเริ่มแก้ ลบได้ถ้าพิมพ์ผิด</p><section class="card flush"><div class="list">${(d.mine || []).map(function (x) {
       var redo = x.status === 'void' && !x.redo;
-      return html`<div class="item">${icon(DL_ICON[x.topic] || 'chat')}<div class="grow"><div class="t">${x.again ? 'เจออีก · ' : ''}${dlTopic(x.topic)[1]}${x.menu ? ' · ' + x.menu : ''}</div><div class="s">${x.detail ? x.detail + ' · ' : ''}${dlDay(x.date)}${x.at ? ' ' + isoTime(x.at) + ' น.' : ''}</div>${x.ownerNote ? html`<div class="s" style="color:${x.status === 'void' ? 'var(--ink-2)' : 'var(--ok)'}">เจ้าของร้าน: ${x.ownerNote}</div>` : ''}${x.redo && x.status === 'fresh' ? html`<div class="s">เพิ่มรายละเอียดแล้ว รอเจ้าของร้านดูอีกครั้ง</div>` : ''}${redo ? html`<button class="btn sm" style="margin-top:6px" data-act="dl-redo" data-id="${x.id}">${icon('edit')} เพิ่มรายละเอียด</button>` : ''}</div><div class="r">${dlStatusPill(x.status)}${x.date === d.today && x.status === 'fresh' ? html`<button class="icon-btn" data-act="dl-del" data-id="${x.id}" aria-label="ลบเรื่องนี้">${icon('trash')}</button>` : ''}</div></div>`;
+      return html`<div class="item">${icon(DL_ICON[x.topic] || 'chat')}<div class="grow"><div class="t">${x.again ? 'เจออีก · ' : ''}${dlTopic(x.topic)[1]}${x.menu ? ' · ' + x.menu : ''}</div><div class="s">${x.detail ? x.detail + ' · ' : ''}${dlDay(x.date)}${x.at ? ' ' + isoTime(x.at) + ' น.' : ''}</div>${x.ownerNote ? html`<div class="s" style="color:${x.status === 'void' ? 'var(--ink-2)' : 'var(--ok)'}">เจ้าของร้าน: ${x.ownerNote}</div>` : ''}${x.redo && x.status === 'fresh' ? html`<div class="s">เพิ่มรายละเอียดแล้ว รอเจ้าของร้านดูอีกครั้ง</div>` : ''}${redo ? html`<button class="btn sm" style="margin-top:6px" data-act="dl-redo" data-id="${x.id}">${icon('edit')} เพิ่มรายละเอียด</button>` : ''}${x.edit ? html`<button class="btn sm" style="margin-top:6px" data-act="dl-edit" data-id="${x.id}">${icon('edit')} แก้</button>` : ''}</div><div class="r">${dlStatusPill(x.status)}${x.date === d.today && x.status === 'fresh' ? html`<button class="icon-btn" data-act="dl-del" data-id="${x.id}" aria-label="ลบเรื่องนี้">${icon('trash')}</button>` : ''}</div></div>`;
     })}</div></section>`, foot: html`<button class="btn primary" data-act="sheet-close">ปิด</button>` });
+  }
+  /**
+   * แก้เรื่องที่ตัวเองบันทึกวันนี้ (2.13.16 · เจ้าของตกลง 29 ต.ค. 2569 ข้อ 4): แตะหัวข้อใหม่ แก้ชื่อหรือข้อความ จนร้านเริ่มแก้
+   * เรื่องนั้น · แต้มตามกติกาเดิม (Daily.gs apiDailyEdit_)
+   */
+  var dlEd = null; // {id, topic, menu, detail}
+  function openDailyEdit(id) {
+    var x = (((dlHome() || {}).mine) || []).filter(function (m) { return m.id === id; })[0];
+    if (!x || !x.edit) return;
+    dlEd = { id: id, topic: x.topic, menu: x.menu || '', detail: x.detail || '' };
+    openSheet({ title: 'แก้เรื่องที่บันทึก', body: dlEditBody(), foot: html`<button class="btn" data-act="dl-mine">ยกเลิก</button><button class="btn primary" data-act="dl-edit-send">${icon('check')} บันทึก</button>` });
+  }
+  function dlEditBody() {
+    var t = dlTopic(dlEd.topic);
+    return html`<p class="small muted mt0">เลือกหัวข้อผิด แตะหัวข้อใหม่ได้เลย หัวข้อไหนก็ +${dlNotePts()} เท่ากัน</p>
+      <div class="dl-tiles" style="margin-top:8px">${dlTopics().map(function (x) { return html`<button type="button" class="dl-tile ${x[0]}" data-act="dl-edit-topic" data-topic="${x[0]}" aria-pressed="${x[0] === dlEd.topic ? 'true' : 'false'}">${icon(DL_ICON[x[0]] || 'chat')}<span>${DL_SHORT[x[0]] || x[1]}</span></button>`; })}</div>
+      <label class="field" style="margin-top:14px"><span>${t[4]}</span><input class="input" id="dl-edit-menu" maxlength="60" autocomplete="off" value="${dlEd.menu}"></label>
+      <label class="field"><span>เล่าสั้น ๆ</span><textarea class="input" id="dl-edit-detail" maxlength="500" rows="3" placeholder="${t[3]}">${dlEd.detail}</textarea></label>`;
+  }
+  /** ที่พิมพ์อยู่ในแผ่นแก้ เก็บไว้ก่อนวาดใหม่หรือส่ง */
+  function dlEditKeep() {
+    var m = $('#dl-edit-menu'), d = $('#dl-edit-detail');
+    if (dlEd && m) dlEd.menu = m.value;
+    if (dlEd && d) dlEd.detail = d.value;
+  }
+  function dlEditTopic(key) {
+    if (!dlEd) return;
+    dlEditKeep();
+    dlEd.topic = key;
+    setSheetBody(dlEditBody());
+  }
+  function sendDailyEdit(btn) {
+    if (!dlEd) return;
+    dlEditKeep();
+    var had = S.home && S.home.level ? S.home.level.points : null;
+    run(btn, call('dailyEdit', { id: dlEd.id, topic: dlEd.topic, menu: String(dlEd.menu || '').trim(), detail: String(dlEd.detail || '').trim() }, staffAuth())).then(function (d) {
+      if (S.home) { S.home.daily = d.daily; if (d.level) S.home.level = d.level; }
+      if (d.levels) { S.levels = d.levels; if (S.home) S.home.levels = d.levels; }
+      dlEd = null;
+      render();
+      openDailyMine();
+      var got = d.level && had != null ? d.level.points - had : 0;
+      if (!lvCheck(d.level)) toast(d.notice + (got > 0 ? ' · +' + got + ' แต้ม' : ''), 'ok');
+    }, function () {});
   }
   /** A note not counted, added to once: what happened, a few more words, back to the owner. */
   function openDailyRedo(id) {
@@ -16619,6 +16595,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var fixable = g.topic !== 'praise';
     return html`<div class="dl-group"><div class="t">${icon(DL_ICON[g.topic] || 'chat')}<span>${DL_SHORT[g.topic] || g.topic}${g.menu ? ' · ' + g.menu : ''}</span>${g.count > 1 ? html`<span class="pill gold">×${g.count}${g.days > 1 ? ' · ' + g.days + ' วัน' : ''}</span>` : ''}${dlStatusPill(g.status)}${g.again ? html`<span class="pill warn">เจออีก ${g.again}</span>` : ''}${g.back ? html`<span class="pill warn">${icon('alert')} เคยแก้แล้ว กลับมาอีก</span>` : ''}${g.redo ? html`<span class="pill">${icon('edit')} เพิ่มรายละเอียดแล้ว</span>` : ''}</div>
       ${(g.details || []).length || g.detail ? html`<div class="s">${(g.details || [g.detail]).join(' / ')}</div>` : ''}
+      ${g.sorted || (g.from || []).length ? html`<div class="s dl-sorted">${g.sorted ? 'Claude จัด: ' + g.sorted : 'ชื่อเดียวกับเรื่องนี้ · น้องเลือก ' + g.from.map(function (k) { return DL_SHORT[k] || k; }).join(', ')}</div>` : ''}
       ${(g.photos || []).length ? html`<div class="dl-photos">${g.photos.map(function (id, i) { return html`<button class="btn sm dl-photo-btn" data-act="dl-photo-open" data-id="${id}">${icon('image')} ดูรูป${g.photos.length > 1 ? ' ' + (i + 1) : ''}</button>`; })}</div>` : ''}
       ${(g.people || []).length ? html`<div class="s">${g.people.join(', ')}${g.ownerNote ? ' · ตอบ: ' + g.ownerNote : ''}</div>` : ''}
       ${acts && g.status === 'void' ? html`<div class="acts"><button class="btn sm" data-act="dl-mark" data-ids="${ids}" data-status="fresh">นับแต้มกลับ</button></div>`
@@ -18113,12 +18090,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }, function (e) { spin(el, false); toast(e.message, 'bad'); });
     },
     'dl-quick': function (el) { openDailyQuick(el.dataset.topic); },
+    'dl-all': function () { openDailyQuick('other'); },
+    'dl-edit': function (el) { openDailyEdit(el.dataset.id); },
+    'dl-edit-topic': function (el) { dlEditTopic(el.dataset.topic); },
+    'dl-edit-send': function (el) { sendDailyEdit(el); },
     'dl-form': function (el) { openDailyForm(el.dataset.date); },
     'dl-toggle': function (el) { dlToggle(el.dataset.topic); },
     'dl-more': function (el) { dlMoreToggle(el); },
-    'dl-name': function (el) { dlPickName(el.dataset.topic, el.dataset.name); },
-    'dl-clear': function (el) { dlPickName(el.dataset.topic, ''); },
-    'dl-cat': function (el) { dlCat(el.dataset.topic, +el.dataset.i); },
+    'dl-clear': function (el) { dlClearName(el.dataset.topic); },
     'dl-send': function (el) { sendDaily(el, false); },
     'dl-goto': function () { goDailyLog(); },
     'dl-photo-x': function () { if (dl) { dl.photo = ''; dlPhotoRedraw(); } },
