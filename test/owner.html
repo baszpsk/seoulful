@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.18","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"ec5613054b5b"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.19","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"ca9a37bddae0"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -3856,16 +3856,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // · ภาพวาด (มือถือที่ไม่มีสามมิติ ภาพสามมิติไม่มา): ท่าแบบวาดเดิม (go)
   // · หยุดทันที: เลื่อนจอ (ให้เลื่อนลื่นที่สุด) พ้นจอ แผ่นเปิดทับหน้าเพื่อน แอปอยู่เบื้องหลัง เริ่มเดินหรือเล่นกับเพื่อนในลาน ลดภาพเคลื่อนไหวของเครื่อง (ดูสดทุกรอบ
   //   แอปไม่มีค่าตั้งของตัวเอง) · แตะการ์ดเปิดห้องเพื่อน ท่าเล่นบนเวทีในห้องตามเดิม
+  // 2.13.19 (เจ้าของ 29 ต.ค. 2569 "ตอนทำท่ามันดูแลคๆไม่ค่อยลื่นไหล" · "เลื่อนจอแล้วไม่หยุดดีกว่าไหมดูสมูธกว่า"):
+  // · ภาพท่า 3 เท่า (36–72 ภาพ ราว 28–33 ภาพต่อวินาที เดิม 12–24 ภาพ ราว 10 ภาพต่อวินาที ภาพกระโดด) ทำชุดเดิมก่อน
+  //   (ภาพที่ 2 5 8 … จังหวะเดียวกับ 2.13.17–18 เครื่องที่เคยทำไว้ได้จากที่เก็บทันที) เล่นชุดเดิมได้เลย แล้วเติมภาพระหว่างตอนว่าง
+  //   ครบแล้วเล่นทุกภาพ · ภาพระหว่างและภาพล่วงหน้าของลานทำเมื่อไม่มีใครเล่นท่าอยู่ (งานทำภาพไม่ชนท่าที่เล่น) ระหว่างมีคนเล่นทำได้วินาทีละภาพ
+  // · เลื่อนจอแล้วท่าที่เล่นอยู่เล่นต่อจนจบ หยุดเมื่อพ้นจอทั้งตัว · ท่าใหม่ยังไม่เริ่มระหว่างเลื่อน (ตัวเลขที่ใช้ตัดสินใน WORKLOG 2.13.19)
   var MOVE_FREE = { 'm-wave': 1, 'm-wai': 1 };
-  var MVF = { sets: {}, making: null, on: [], rest: {}, t: 0, last: 0, touch: 0 };
-  var MVF_MAX = 2, MVF_H = 160;
+  var MVF = { sets: {}, making: null, on: [], rest: {}, t: 0, last: 0, touch: 0, fillAt: 0, pre: null, preTried: {} };
+  var MVF_MAX = 2, MVF_H = 160, MVF_X = 3;
+  // (ตัวในลาน .pz-char 64×118: ภาพขนาด 128 ตาม c3Size)
+  var PZ_C3H = 128;
   var MVF_MQ = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null;
   ['pointerdown', 'touchstart', 'touchmove', 'wheel', 'scroll'].forEach(function (t) {
-    window.addEventListener(t, function () {
-      MVF.touch = performance.now();
-      // (the page moved: those playing stand again, it scrolls as light as it can)
-      if (MVF.on.length && t !== 'pointerdown' && t !== 'touchstart') MVF.on.slice().forEach(function (p) { mvfEnd(p); });
-    }, { capture: true, passive: true });
+    window.addEventListener(t, function () { MVF.touch = performance.now(); }, { capture: true, passive: true });
   });
   /** The move someone plays by themself: theirs (worn, else the first they have), else the free one they wear. */
   function mvfPick(look, things) {
@@ -3922,43 +3925,97 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var h = Math.min(r.bottom, v.bottom) - Math.max(r.top, v.top), w = Math.min(r.right, v.right) - Math.max(r.left, v.left);
     return r.width > 0 && h >= r.height * 0.4 && w >= r.width * 0.4;
   }
+  /** 2.13.19: ท่าที่เล่นอยู่เล่นต่อจนจบ ระหว่างเลื่อนจอหรือเห็นแค่บางส่วน · หยุดเมื่อพ้นจอทั้งตัว เดิน เวทีสดหรือภาพท่าทับ หลุดจากหน้า */
+  function mvfKeep(x, v) {
+    var s = x.svg, c = s.classList;
+    if (!s.isConnected || c.contains('c3-held') || c.contains('c3-under') || c.contains('pose') || x.box.classList.contains('walking')) return false;
+    var r = s.getBoundingClientRect();
+    return r.width > 0 && Math.min(r.bottom, v.bottom) > Math.max(r.top, v.top) && Math.min(r.right, v.right) > Math.max(r.left, v.left);
+  }
   /** How it plays: 3 its 3D frames, 1 drawn, 0 not yet (its 3D picture still to come). */
   function mvfKind(svg) {
     if (!svg.hasAttribute('data-c3') || C3.state < 0) return 1;
     if (C3.state !== 2) return 0;
     return svg.classList.contains('c3-on') ? 3 : svg.classList.contains('c3-late') ? 1 : 0;
   }
-  /** A look's frames of a move (st: 0 to make or go on making, 1 being made, 2 all made, -1 given up: it breathes). */
+  /** A look's frames of a move (st: 0 to make or go on making, 1 being made, 2 all made, -1 given up: it breathes ·
+   *  2.13.19 ชุดเดิม (ทุกภาพที่ 3) 3 ทำแล้ว เล่นได้ เติมภาพระหว่างต่อ 4 กำลังเติม 5 เติมไม่ได้ เล่นชุดเดิม). */
   function mvfSetOf(svg, mv) {
     var dpr = Math.min(2, c3Sharp());
     var k = svg.getAttribute('data-c3') + '|' + mv + '|' + dpr;
     if (!MVF.sets[k]) {
       var ms = MOVES[mv] ? MOVES[mv][0] : 1800;
-      MVF.sets[k] = { k: k, mv: mv, ms: ms, n: Math.max(12, Math.min(24, Math.round(ms / 100))), dpr: dpr, look: c3Look(svg), urls: [], st: 0, fail: 0, v: 0 };
+      var n0 = Math.max(12, Math.min(24, Math.round(ms / 100)));
+      MVF.sets[k] = { k: k, mv: mv, ms: ms, n: n0 * MVF_X, n0: n0, dpr: dpr, look: c3Look(svg), urls: [], st: 0, fail: 0, fillFail: 0, v: 0 };
     }
     return MVF.sets[k];
   }
-  /** Its frames, made one after another (each when no other picture waits: low), only while the friends' page or the plaza shows. */
-  function mvfMake(set) {
-    set.st = 1;
+  /** ภาพถัดไปที่ต้องทำ: ชุดเดิมก่อน (ภาพที่ 1 4 7 … นับจาก 0 จังหวะเท่าภาพของ 2.13.17–18) แล้วภาพระหว่าง · -1 ครบแล้ว */
+  function mvfMissing(set, fill) {
+    for (var i = fill ? 0 : 1; i < set.n; i += fill ? 1 : MVF_X) if (!set.urls[i]) return i;
+    return -1;
+  }
+  /** งานทำภาพที่ไม่รีบ (ภาพระหว่าง ภาพล่วงหน้าของลาน): เมื่อไม่มีใครเล่นท่าอยู่ หรือไม่ได้ทำมาเกิน 1 วิ (ทีละภาพ) */
+  function mvfFillOk() { return !MVF.on.length || performance.now() - (MVF.fillAt || 0) > 1000; }
+  /** Its frames, made one after another (each when no other picture waits: low), only while the friends' page or the plaza shows.
+   *  `fill`: 2.13.19 ภาพระหว่าง (ชุดเดิมทำแล้ว) หยุดไว้ก่อนเมื่อมีคนเริ่มเล่นท่า ทำต่อรอบหน้า */
+  function mvfMake(set, fill) {
+    set.st = fill ? 4 : 1;
     MVF.making = set;
     var v = set.v;
     var look = Object.assign({}, set.look, { m: set.mv });
     var w = Math.round((MVF_H * 120) / 224);
     var next = function () {
       if (set.v !== v) { MVF.making = null; return; }
-      var i = set.urls.length;
-      if (i >= set.n) { set.st = 2; MVF.making = null; return; }
-      if (!mvfWhere() || mvfCalm() || C3.state !== 2 || C3.lost) { set.st = 0; MVF.making = null; return; }
+      var i = mvfMissing(set, fill);
+      if (i < 0) { set.st = fill ? 2 : 3; MVF.making = null; return; }
+      if (!mvfWhere() || mvfCalm() || C3.state !== 2 || C3.lost || (fill && !mvfFillOk())) { set.st = fill ? 3 : 0; MVF.making = null; return; }
+      if (fill) MVF.fillAt = performance.now();
       C3.mod.still(look, { w: w, h: MVF_H, dpr: set.dpr, move: set.mv, at: Math.round(((i + 0.5) * set.ms) / set.n), bleed: true, low: true }).then(function (u) {
         if (set.v === v) set.urls[i] = u;
         next();
       }, function () {
-        if (set.v === v) set.st = ++set.fail < 2 ? 0 : -1;
+        if (set.v === v) set.st = fill ? (++set.fillFail < 2 ? 3 : 5) : (++set.fail < 2 ? 0 : -1);
         MVF.making = null;
       });
     };
     next();
+  }
+  /** 2.13.19 (เจ้าของ 29 ต.ค. 2569 "5 แก้ให้ดีที่สุดได้ไหม" เปิดลานครั้งแรกตัวเพื่อนซ่อนจนภาพขนาดลานมา): ว่างในหน้าเพื่อน
+   *  ทำภาพขนาดลานแล้วภาพก้าวของทุกคนบนการ์ดไว้ก่อน ตัวเองก่อน ทีละงาน เก็บในเครื่อง (เปิดแอปครั้งหน้ามีเลย) · true: มีงานอยู่ */
+  function mvfPre(all) {
+    if (MVF.pre) return true;
+    var job = null;
+    all.slice().sort(function (a, b) { return (b.me ? 1 : 0) - (a.me ? 1 : 0); }).some(function (x) {
+      var d = x.svg.getAttribute('data-c3');
+      if (!d) return false;
+      var key = d + '||' + PZ_C3H + '|', lk = d + '|' + PZ_C3H;
+      if (!C3.pics[key] && !MVF.preTried[key]) job = { key: key, svg: x.svg };
+      else if (!pzLegPics[lk] && !MVF.preTried[lk]) job = { lk: lk, svg: x.svg };
+      return !!job;
+    });
+    if (!job) return false;
+    MVF.pre = job;
+    MVF.fillAt = performance.now();
+    var look = c3Look(job.svg), w = Math.round((PZ_C3H * 120) / 224);
+    var done = function () { MVF.pre = null; };
+    if (job.key) {
+      MVF.preTried[job.key] = 1;
+      kept3Get(job.key).then(function (rec) {
+        if (rec && rec.v === C3.mod.version && rec.d >= c3Sharp()) { C3.pics[job.key] = rec.u; return; }
+        return C3.mod.still(look, { w: w, h: PZ_C3H, move: '', focus: '', bleed: true, low: true }).then(function (url) {
+          C3.pics[job.key] = url;
+          kept3Put(job.key, url, '', true);
+        });
+      }).then(done, done);
+    } else {
+      MVF.preTried[job.lk] = 1;
+      pzLegPics[job.lk] = Promise.all(PZ_LEG_AT.map(function (at) {
+        return C3.mod.still(look, { w: w, h: PZ_C3H, move: 'm-run', at: at, turn: 55, bleed: true, low: true });
+      }));
+      pzLegPics[job.lk].then(done, function () { delete pzLegPics[job.lk]; done(); });
+    }
+    return true;
   }
   /** Its frames played once over its box, the standing picture hidden meanwhile (kept in it after, hidden, for its next turn). */
   function mvfPlay(x, set) {
@@ -3966,20 +4023,23 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var p = { svg: s, id: x.id, me: x.me, set: set, imgs: null, k: -1, t0: 0, timer: 0 };
     MVF.on.push(p);
     MVF.last = performance.now();
+    // (2.13.19: ครบทุกภาพเล่นทุกภาพ ยังไม่ครบเล่นชุดเดิม ทุกภาพที่ 3)
+    var all = set.st === 2;
+    var urls = set.urls.filter(function (u, i) { return u && (all || i % MVF_X === 1); });
     var have = s._mvf;
-    if (have && have.set === set && have.v === set.v && have.ok === set.n) { p.imgs = have.imgs; mvfGo(p); return; }
+    if (have && have.set === set && have.v === set.v && have.c === urls.length && have.ok === urls.length) { p.imgs = have.imgs; mvfGo(p); return; }
     if (have) have.imgs.forEach(function (im) { if (im.parentNode) im.parentNode.removeChild(im); });
     var b = c3Bleed();
-    var got = (s._mvf = { set: set, v: set.v, ok: 0, imgs: [] });
+    var got = (s._mvf = { set: set, v: set.v, c: urls.length, ok: 0, imgs: [] });
     p.imgs = got.imgs;
-    set.urls.forEach(function (u) {
+    urls.forEach(function (u) {
       var im = document.createElementNS('http://www.w3.org/2000/svg', 'image');
       im.setAttribute('class', 'mvf');
       im.setAttribute('x', String(-120 * b.side));
       im.setAttribute('y', String(-24 - 224 * b.top));
       im.setAttribute('width', String(120 * (1 + 2 * b.side)));
       im.setAttribute('height', String(224 * (1 + b.top)));
-      im.onload = function () { if (++got.ok === set.n && MVF.on.indexOf(p) >= 0) mvfGo(p); };
+      im.onload = function () { if (++got.ok === urls.length && MVF.on.indexOf(p) >= 0) mvfGo(p); };
       im.onerror = function () { mvfBroken(p, u); };
       im.setAttribute('href', u);
       s.appendChild(im);
@@ -4037,7 +4097,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     mvfEnd(p);
     var set = p.set, s = p.svg;
     if (s._mvf) { s._mvf.imgs.forEach(function (im) { if (im.parentNode) im.parentNode.removeChild(im); }); s._mvf = null; }
-    if (set.st === 2) { set.urls = []; set.v++; set.st = ++set.fail < 2 ? 0 : -1; }
+    if (set.st >= 2) { set.urls = []; set.v++; set.st = ++set.fail < 2 ? 0 : -1; }
   }
   /** The drawn move (a phone without 3D, a picture that did not come). */
   function mvfDrawn(x) {
@@ -4063,20 +4123,27 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var ctx = mvfWhere();
     if (!ctx || mvfCalm()) { MVF.on.slice().forEach(function (p) { mvfEnd(p); }); return; }
     var v = mvfView(ctx);
-    var ok = mvfList(ctx).filter(function (x) { return mvfOk(x, v); });
-    MVF.on.slice().forEach(function (p) { if (!ok.some(function (x) { return x.svg === p.svg; })) mvfEnd(p); });
+    var list = mvfList(ctx);
+    var ok = list.filter(function (x) { return mvfOk(x, v); });
+    MVF.on.slice().forEach(function (p) { if (!list.some(function (x) { return x.svg === p.svg && mvfKeep(x, v); })) mvfEnd(p); });
     // (its own first)
     ok.sort(function (a, b) { return (b.me ? 1 : 0) - (a.me ? 1 : 0); });
     if (!MVF.making && C3.state === 2 && !C3.lost && C3.mod) {
-      var mk = ok.filter(function (x) { return mvfKind(x.svg) === 3 && mvfSetOf(x.svg, x.mv).st === 0; })[0];
-      if (mk) mvfMake(mvfSetOf(mk.svg, mk.mv));
+      // (2.13.19: ชุดเดิมของคนที่เห็นก่อน แล้วภาพล่วงหน้าของลาน (หน้าเพื่อน) แล้วภาพระหว่าง)
+      var three = ok.filter(function (x) { return mvfKind(x.svg) === 3; });
+      var mk = three.filter(function (x) { return mvfSetOf(x.svg, x.mv).st === 0; })[0];
+      if (mk) mvfMake(mvfSetOf(mk.svg, mk.mv), false);
+      else if (mvfFillOk() && !(ctx === 'fr' && mvfPre(list))) {
+        var fl = three.filter(function (x) { return mvfSetOf(x.svg, x.mv).st === 3; })[0];
+        if (fl) mvfMake(mvfSetOf(fl.svg, fl.mv), true);
+      }
     }
     var t = performance.now();
     if (MVF.on.length >= MVF_MAX || t - MVF.last < 900 || t - MVF.touch < 600) return;
     var can = ok.filter(function (x) {
       if (x.svg.classList.contains('go') || (MVF.rest[x.id] || 0) > t || MVF.on.some(function (p) { return p.svg === x.svg; })) return false;
       var k = mvfKind(x.svg);
-      return k === 1 || (k === 3 && mvfSetOf(x.svg, x.mv).st === 2);
+      return k === 1 || (k === 3 && mvfSetOf(x.svg, x.mv).st >= 2);
     });
     if (!can.length) return;
     var pick = can.filter(function (x) { return x.me; })[0];
@@ -4287,9 +4354,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       kept3Get(key).then(function (rec) {
         if (rec && svg.isConnected && !svg.classList.contains('c3-on')) { svg._k3 = rec; c3Put(svg, rec.u); }
         if (rec && rec.v === C3.mod.version && rec.d >= c3Sharp()) { clearTimeout(late); C3.pics[key] = rec.u; return; }
+        // 2.13.19: ไม่มีภาพขนาดนี้ ภาพของตัวเดียวกันขนาดอื่นที่มีแล้ว (เช่น การ์ดในหน้าเพื่อนตอนเปิดลาน) ขึ้นแทนทันที ไม่ซ่อนตัวรอ
+        // แล้วทำภาพขนาดนี้ตอนเครื่องว่าง สลับเมื่อมา (เปิดลานครั้งแรกเดิม: ตัวเพื่อนซ่อนจนภาพขนาดลานมา)
+        var near = !rec && !svg.classList.contains('c3-on') && c3Other(key);
+        if (near) c3Put(svg, near);
         // (one showing already, kept by an engine since changed: made once nothing else waits to be, and
         // put in its place when it has opened, never a moment without)
-        var shown = svg.classList.contains('c3-on');
+        var shown = svg.classList.contains('c3-on') || !!near;
         var look = c3Look(svg), o = { w: Math.round((h * 120) / 224), h: h, move: svg.classList.contains('pose') ? c3Move(svg) : '', focus: c3Focus(svg), bleed: !c3Focus(svg), low: shown };
         var make = function () { return C3.mod.still(look, o); };
         // (the rest in their turn, c3Turn: one gone from the page by then is never made)
@@ -4302,9 +4373,25 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           var im = new Image();
           im.onload = function () { if (svg.isConnected) c3Put(svg, url, true); };
           im.src = url;
-        }, function () { clearTimeout(late); if (!svg.classList.contains('c3-on')) svg.classList.add('c3-late'); });
+        }, function () { clearTimeout(late); svg._c3No = 1; if (!svg.classList.contains('c3-on')) svg.classList.add('c3-late'); });
       });
     });
+  }
+  /** 2.13.19: ภาพของตัวเดียวกัน ท่าเดียวกัน มุมเดียวกัน ขนาดอื่นที่มีในเครื่องแล้ว ใกล้ขนาดนี้ที่สุด ใหญ่กว่าก่อน (ไม่มี: null) */
+  function c3Other(key) {
+    var m = /^(.*\|[^|]*\|)(\d+)(\|[^|]*)$/.exec(key);
+    if (!m) return null;
+    var want = +m[2], best = null, bd = Infinity;
+    [C3.pics, KEPT3.mem].forEach(function (box, j) {
+      Object.keys(box).forEach(function (k) {
+        if (k.length <= m[1].length + m[3].length || k.indexOf(m[1]) !== 0 || k.slice(-m[3].length) !== m[3]) return;
+        var h = +k.slice(m[1].length, k.length - m[3].length), u = j ? box[k] && box[k].u : box[k];
+        if (!h || h === want || !u) return;
+        var d = h > want ? h - want : (want - h) * 4;
+        if (d < bd) { bd = d; best = u; }
+      });
+    });
+    return best;
   }
   /** The 3D picture over the drawn character: in the same box (the SVG's own frame), and past it as far as
    *  it was made past it (engine.js bleed: wings, a tall hat, what is held, whole, as on a live stage; not a
@@ -4325,7 +4412,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     c3Show(svg, img, url, function () {
       svg.classList.add('c3-on');
       var pz = svg.closest('.pz-p');
-      if (pz) pzHead(pz, url, b);
+      if (pz) { pzHead(pz, url, b); pzLegs(pz); }
     }, known);
   }
   /** A picture into its place, shown once it has opened there (`known`: one shown already, which opens
@@ -13991,7 +14078,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (MOTION) plaza.timers.push(setInterval(function () {
       if (!$('#plaza') || document.hidden) return;
       var d = plaza.data;
-      var others = d.people.filter(function (x) { return x.id !== d.me; });
+      // 2.13.19: ภาพก้าวของทุกคนขอไว้ก่อน ไม่รอเดินครั้งแรก และเพื่อนเดินเองเฉพาะคนที่เดินเป็นท่าได้แล้ว (pzCanWalk)
+      // · วัด 2.13.18 เครื่องใหม่: 38 วิแรกเดิน 26 ครั้ง ไม่มีภาพก้าวเลย (ภาพก้าวขอตอนเริ่มเดิน มาไม่ทัน ตัวยืนนิ่งเลื่อนไป)
+      d.people.forEach(function (x) { var el = document.getElementById('pz-' + x.id); if (el) pzLegs(el); });
+      var others = d.people.filter(function (x) { return x.id !== d.me && pzCanWalk(x.id); });
       if (!others.length) return;
       var x = others[Math.floor(Math.random() * others.length)];
       var p = pzPos(x.id);
@@ -14024,8 +14114,25 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     mvfStopSvg(el.querySelector('.pz-char svg.char-svg'));
     el.classList.add('walking');
     pzLegs(el);
+    // 2.13.19 (เจ้าของ 29 ต.ค. 2569 "บางจังหวะที่ตัวละครเหมือนบัคไม่เดินเป็นท่า"): หยุดก้าวเมื่อตัวถึงที่จริง (transitionend)
+    // ไม่ใช่ตามนาฬิกา · วัด 2.13.18: เครื่องติดงาน (ทำภาพสามมิติ) การเลื่อนเริ่มช้ากว่านาฬิกา ตัวเลื่อนต่อในท่ายืนหลังหยุดก้าว
+    // สูงสุด 0.8 วิ · ไม่มีการเลื่อน (ลดภาพเคลื่อนไหว ที่เดิม) หรือสัญญาณจบไม่มา: หยุดตามนาฬิกา (เผื่อ 2 วิ)
     clearTimeout(el._walk);
-    el._walk = setTimeout(function () { el.classList.remove('walking'); if (then) then(); }, ms);
+    if (el._walkEnd) el.removeEventListener('transitionend', el._walkEnd);
+    el._walkEnd = null;
+    var done = function () {
+      clearTimeout(el._walk);
+      if (el._walkEnd) el.removeEventListener('transitionend', el._walkEnd);
+      el._walkEnd = null;
+      el.classList.remove('walking');
+      if (then) then();
+    };
+    var moving = dist > 0 && getComputedStyle(el).transitionDuration.split(',').some(function (t) { return parseFloat(t) > 0; });
+    if (moving) {
+      el._walkEnd = function (ev) { if (ev.target === el && (ev.propertyName === 'left' || ev.propertyName === 'top')) done(); };
+      el.addEventListener('transitionend', el._walkEnd);
+    }
+    el._walk = setTimeout(done, moving ? ms + 2000 : ms);
     if (id === plaza.data.me) pzFollow(x);
   }
   // 2.13.14 (เจ้าของ 29 ต.ค. 2569 "ในลานเวลาเดินมี animation ในการเดินดีไหม"): ในสามมิติ คนที่เดินก้าวขาจริง ด้วยท่าวิ่งของ
@@ -14038,8 +14145,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var pzLegPics = {};
   function pzLegs(el) {
     var svg = el.querySelector('.pz-char svg.char-svg[data-c3]');
-    if (!svg || !MOTION || C3.state !== 2 || C3.lost || !C3.mod || svg.querySelector('.pz-leg')) return;
+    if (!svg || !MOTION || C3.state !== 2 || C3.lost || !C3.mod || svg._legs || svg.querySelector('.pz-leg')) return;
     if (!svg.classList.contains('c3-on') || svg.classList.contains('c3-under') || svg.classList.contains('pose')) return;
+    svg._legs = 1;
     var h = c3Size(svg);
     var key = svg.getAttribute('data-c3') + '|' + h;
     if (!pzLegPics[key]) {
@@ -14049,7 +14157,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }));
     }
     pzLegPics[key].then(function (urls) {
-      if (!svg.isConnected || svg.querySelector('.pz-leg') || !svg.classList.contains('c3-on')) return;
+      if (!svg.isConnected || svg.querySelector('.pz-leg')) return;
+      // (ภาพยืนหายไประหว่างรอ: ขอใหม่ได้เมื่อขึ้นอีก)
+      if (!svg.classList.contains('c3-on')) { svg._legs = 0; return; }
       var b = c3Bleed();
       var left = urls.length;
       urls.forEach(function (u, i) {
@@ -14060,10 +14170,32 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         im.setAttribute('width', String(120 * (1 + 2 * b.side)));
         im.setAttribute('height', String(224 * (1 + b.top)));
         im.onload = function () { if (!--left) svg.classList.add('pz-legs'); };
+        im.onerror = function () {
+          if (svg._legsNo) return;
+          svg._legsNo = 1;
+          svg.classList.remove('pz-legs');
+          Array.prototype.forEach.call(svg.querySelectorAll('.pz-leg'), function (x) { x.parentNode.removeChild(x); });
+          delete pzLegPics[key];
+          if (C3.mod && C3.mod.broken) C3.mod.broken(u);
+        };
         im.setAttribute('href', u);
         svg.appendChild(im);
       });
-    }, function () { /* โยกแบบเดิม */ });
+    }, function () { svg._legsNo = 1; /* โยกแบบเดิม */ });
+  }
+  /** เดินเป็นท่าได้แล้ว: ภาพก้าวขึ้นครบ (สามมิติ) หรือเป็นภาพวาด (ไม่มีสามมิติ ภาพสามมิติไม่มา ภาพก้าวทำไม่ได้: โยกแบบเดิม)
+   *  · ยังไม่พร้อม: ตัวยังไม่ขึ้น ภาพก้าวยังไม่มา หรือกำลังเล่นท่าบนเวทีสด */
+  function pzCanWalk(id) {
+    var el = document.getElementById('pz-' + id);
+    var s = el && el.querySelector('.pz-char svg.char-svg');
+    if (!s || s.classList.contains('c3-under') || s.classList.contains('pose')) return false;
+    // (กำลังเล่นท่าอยู่: เล่นให้จบก่อน ไม่ตัดกลางท่าไปเดิน)
+    if (MVF.on.some(function (p) { return p.svg === s; })) return false;
+    if (s.classList.contains('pz-legs')) return true;
+    if (!s.hasAttribute('data-c3') || C3.state < 0 || C3.lost) return true;
+    if (s.classList.contains('c3-on')) return !!s._legsNo;
+    // (ภาพวาดแทนระหว่างรอภาพสามมิติ: รอภาพสามมิติก่อน ไม่เดินแบบโยกแล้วสลับกลางทาง · ภาพสามมิติทำไม่ได้: เดินแบบภาพวาด)
+    return s.classList.contains('c3-late') && (!!s._c3No || C3.state !== 2);
   }
   /** With a mouse, the street is dragged sideways (a drag is not a tap on the ground). */
   function pzDrag() {
