@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.27","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"c4561cdb542f"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.28","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"e1438cf1f9d2"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -172,7 +172,7 @@
     --surface: #1d1a17; --surface-2: rgba(255, 248, 238, .05); --card: rgba(255, 248, 238, .055); --inset: rgba(255, 248, 238, .075);
     --ink: #f2ede6; --ink-2: #cfc6ba; --muted: #9b9185; --line: rgba(255, 248, 238, .09); --line-strong: rgba(255, 248, 238, .17);
     --gold: #d2ac6b; --gold-ink: #e2c088; --gold-soft: rgba(210, 172, 107, .16); --accent: #f2ede6; --accent-ink: #171412;
-    --ok: #7fc9a0; --ok-soft: rgba(127, 201, 160, .13); --warn: #e6b464; --warn-soft: rgba(230, 180, 100, .14); --bad: #f08c82; --bad-soft: rgba(240, 140, 130, .13);
+    --ok: #7fc9a0; --ok-soft: rgba(127, 201, 160, .13); --warn: #e6b464; --warn-soft: rgba(230, 180, 100, .14); --bad: #f08c82; --bad-soft: rgba(240, 140, 130, .13); --badge: #d33a2f;
     --rain: #8db7e6; --rain-soft: rgba(141, 183, 230, .13); --scrim: rgba(0, 0, 0, .5);
     --glass: rgba(36, 32, 28, .72); --glass-strong: rgba(29, 26, 23, .95); --rim-hi: rgba(255, 255, 255, .16); --rim: rgba(255, 255, 255, .07); --lens: rgba(255, 255, 255, .13);
     --btn: rgba(255, 248, 238, .08); --btn-line: rgba(255, 248, 238, .10); --key: rgba(255, 248, 238, .09); --key-on: rgba(255, 248, 238, .30);
@@ -190,7 +190,7 @@
   --surface: #1d1a17; --surface-2: rgba(255, 248, 238, .05); --card: rgba(255, 248, 238, .055); --inset: rgba(255, 248, 238, .075);
   --ink: #f2ede6; --ink-2: #cfc6ba; --muted: #9b9185; --line: rgba(255, 248, 238, .09); --line-strong: rgba(255, 248, 238, .17);
   --gold: #d2ac6b; --gold-ink: #e2c088; --gold-soft: rgba(210, 172, 107, .16); --accent: #f2ede6; --accent-ink: #171412;
-  --ok: #7fc9a0; --ok-soft: rgba(127, 201, 160, .13); --warn: #e6b464; --warn-soft: rgba(230, 180, 100, .14); --bad: #f08c82; --bad-soft: rgba(240, 140, 130, .13);
+  --ok: #7fc9a0; --ok-soft: rgba(127, 201, 160, .13); --warn: #e6b464; --warn-soft: rgba(230, 180, 100, .14); --bad: #f08c82; --bad-soft: rgba(240, 140, 130, .13); --badge: #d33a2f;
   --rain: #8db7e6; --rain-soft: rgba(141, 183, 230, .13); --scrim: rgba(0, 0, 0, .5);
   --glass: rgba(36, 32, 28, .72); --glass-strong: rgba(29, 26, 23, .95); --rim-hi: rgba(255, 255, 255, .16); --rim: rgba(255, 255, 255, .07); --lens: rgba(255, 255, 255, .13);
   --btn: rgba(255, 248, 238, .08); --btn-line: rgba(255, 248, 238, .10); --key: rgba(255, 248, 238, .09); --key-on: rgba(255, 248, 238, .30);
@@ -362,7 +362,8 @@ body.noscroll #app .btn.loading::after { display: none; }
 /* The bell (Push.gs): what this person was told, a red count while any is new (it rings when it goes up). */
 .top-r { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .bell-btn { position: relative; flex: none; background: transparent; }
-.bell-btn .bell-n { position: absolute; top: 3px; right: 1px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 99px; background: var(--bad); color: #fff; font-size: 10.5px; line-height: 17px; font-weight: 600; font-style: normal; text-align: center; box-shadow: 0 0 0 2px var(--bg); }
+/* 2.13.28 เลขแจ้งเตือนตัวขาวที่กระดิ่งและแท็บใช้ --badge: จอมืด --bad เป็นแดงอ่อน #f08c82 ตัวขาวต่างสีแค่ 2.4:1 อ่านยาก จึงใช้แดงเข้ม #d33a2f (4.7:1 และยังเด่นบนพื้นมืด) · จอสว่างคงเดิม */
+.bell-btn .bell-n { position: absolute; top: 3px; right: 1px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 99px; background: var(--badge, var(--bad)); color: #fff; font-size: 10.5px; line-height: 17px; font-weight: 600; font-style: normal; text-align: center; box-shadow: 0 0 0 2px var(--bg); }
 .bell-btn.ring .bell-n { animation: bellPop .5s var(--spring) var(--bell-since, 0s) backwards; }
 .bell-btn.ring svg { animation: bellRing 1.1s ease-in-out var(--bell-since, 0s) 2; transform-origin: 50% 12%; }
 @keyframes bellPop { from { transform: scale(0); } }
@@ -448,7 +449,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .tab[aria-selected="true"] { color: var(--gold-ink); font-weight: 600; }
 .tab[aria-selected="true"]::before, .tabbar .lens { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: var(--lens); box-shadow: inset 0 1px 0 var(--rim-hi), 0 1px 3px rgba(60, 42, 20, .10), 0 6px 16px -8px rgba(60, 42, 20, .22); }
 .tab:active svg { transform: scale(.84); transition-duration: .1s; }
-.tab .badge { position: absolute; top: 4px; left: calc(50% + 5px); min-width: 17px; height: 17px; padding: 0 5px; border-radius: 99px; background: var(--bad); color: #fff; font-size: 10.5px; line-height: 17px; font-weight: 600; box-shadow: 0 0 0 2px var(--glass); }
+.tab .badge { position: absolute; top: 4px; left: calc(50% + 5px); min-width: 17px; height: 17px; padding: 0 5px; border-radius: 99px; background: var(--badge, var(--bad)); color: #fff; font-size: 10.5px; line-height: 17px; font-weight: 600; box-shadow: 0 0 0 2px var(--glass); }
 .tabbar.min .tab { height: 44px; }
 .tabbar.min .tab .lbl { opacity: 0; margin-top: -15px; }
 .seg { position: relative; isolation: isolate; display: flex; background: var(--inset); border-radius: 14px; padding: 3px; gap: 3px; }
@@ -1981,12 +1982,23 @@ html.i3-pz-shop-day .pz-art.day .pz3-shop.pz-d, html.i3-pz-shop-lit .pz-art.lit 
 .fr-plaza-tx { display: grid; gap: 2px; flex: 1; min-width: 0; }
 .fr-plaza-tx b { font-size: 16px; }
 .fr-plaza-tx span { font-size: 12.5px; color: var(--muted); }
-.fr-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.fr-card { display: grid; gap: 3px; padding: 6px 6px 8px; border: 0; border-radius: 18px; background: var(--card); box-shadow: var(--card-shadow); color: var(--ink); font: inherit; text-align: center; cursor: pointer; transition: transform .4s var(--spring); animation: fr-in .6s var(--spring) both; }
+/* 2.13.28 การ์ดฉันนอนเต็มความกว้างบนสุด · เพื่อนช่องละสามเท่ากัน แถวท้ายที่ไม่ครบอยู่กลาง (เจ้าของร้านถาม 30 ต.ค. 2569 "พอหน้าตัวละครมี7คนเรียงงี้ดูไม่ค่อยบาลานเลยไหม") */
+.fr-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.fr-grid > * { flex: none; width: calc((100% - 16px) / 3 - .1px); }
+.fr-grid > .fr-card.me { width: 100%; }
+.fr-card { display: grid; align-content: start; gap: 3px; padding: 6px 6px 8px; border: 0; border-radius: 18px; background: var(--card); box-shadow: var(--card-shadow); color: var(--ink); font: inherit; text-align: center; cursor: pointer; transition: transform .4s var(--spring); animation: fr-in .6s var(--spring) both; }
 .fr-card:nth-child(2n) { animation-delay: .06s; } .fr-card:nth-child(3n) { animation-delay: .12s; }
 @keyframes fr-in { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
 .fr-card:active { transform: scale(.96); }
 .fr-card.me { box-shadow: inset 0 0 0 1.5px var(--gold), var(--card-shadow); }
+/* การ์ดฉัน: ห้องกว้างเท่าช่องเพื่อนข้างล่าง (ตัวละครตรงแนวคอลัมน์ซ้าย) ชื่อและตัวเลขครบทางขวา */
+.fr-card.me { grid-template-columns: calc((100% - 4px) / 3 - 12px) minmax(0, 1fr) auto; grid-template-rows: auto auto; column-gap: 12px; row-gap: 4px; padding: 6px; text-align: left; }
+.fr-card.me .fr-stage { grid-column: 1; grid-row: 1 / -1; }
+.fr-card.me .fr-name { grid-column: 2; grid-row: 1; align-self: end; font-size: 16px; }
+.fr-card.me .fr-stats { grid-column: 2; grid-row: 2; align-self: start; justify-content: flex-start; font-size: 12px; }
+.fr-card.me .fr-stats svg { width: 12px; height: 12px; }
+.fr-go { grid-column: 3; grid-row: 1 / -1; align-self: center; display: grid; margin-right: 4px; color: var(--muted); }
+.fr-go svg { width: 18px; height: 18px; }
 .fr-stage { position: relative; display: block; height: 112px; border-radius: 12px; overflow: hidden; }
 .fr-stage .rm-wall { inset: 0 0 26% 0; }
 .fr-char { position: absolute; left: 50%; bottom: 3px; width: 64px; height: 105px; transform: translateX(-50%); }
@@ -1994,8 +2006,16 @@ html.i3-pz-shop-day .pz-art.day .pz3-shop.pz-d, html.i3-pz-shop-lit .pz-art.lit 
 .fr-pet { position: absolute; left: calc(50% + 20px); bottom: 2px; width: 27px; height: 27px; }
 .fr-me { position: absolute; top: 5px; left: 5px; padding: 1px 6px; border-radius: 99px; background: var(--gold); color: #fff; font-size: 10px; font-weight: 700; }
 .fr-name { font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fr-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 1px 6px; font-size: 10.5px; color: var(--muted); }
+/* 2.13.28 ประกายเลเวลท้ายชื่อ (เลเวล 5 ขึ้นไป) ไม่ดันบรรทัด: ชิดบนสุดของบรรทัดแล้วยกขึ้น 4 พิกเซลด้วย top ซึ่งไม่เปลี่ยนความสูงบรรทัด (เดิมยกด้วย vertical-align บรรทัดสูงขึ้น ชื่อและตัวเลขของใบที่มีประกาย เช่น ต้น พลอย ต่ำกว่าใบอื่น 4 พิกเซล) · กล่องชื่อเว้นบน 4 พิกเซลแล้วดึงขึ้นเท่ากัน ประกายไม่ถูกตัด ชื่ออยู่ที่เดิม */
+.fr-card .fr-name { padding-top: 4px; margin-top: -4px; }
+.fr-card .fr-name .nm-spark { position: relative; top: -4px; vertical-align: top; }
+.fr-stats { display: flex; justify-content: center; gap: 6px; overflow: hidden; white-space: nowrap; font-size: 10.5px; color: var(--muted); }
 .fr-stats svg { width: 11px; height: 11px; vertical-align: -1px; }
+/* 2.13.28 คน 8–10 คน (เพื่อนสามแถว) ระยะระหว่างแถวและในการ์ดชิดขึ้น ห้องเตี้ยลง 4 พิกเซลเท่ากล่องตัวละครพอดี ตัวละครขนาดเดิม: จอ 390x844 เห็นครบไม่โดนเมนูล่าง (เดิมเลย 38 พิกเซล) · ความกว้างช่องเท่าเดิม · 7 คนผังเดิม · 11 คนขึ้นไปเลื่อนดู */
+.fr-grid:has(> :nth-child(8)):not(:has(> :nth-child(11))) { row-gap: 6px; }
+.fr-grid:has(> :nth-child(8)):not(:has(> :nth-child(11))) > .fr-card { padding-top: 4px; padding-bottom: 6px; row-gap: 2px; }
+.fr-grid:has(> :nth-child(8)):not(:has(> :nth-child(11))) > .fr-card.me { padding: 4px 6px; row-gap: 4px; }
+.fr-grid:has(> :nth-child(8)):not(:has(> :nth-child(11))) .fr-stage { height: 108px; }
 .me-top { display: grid; gap: 10px; }
 .me-id { display: flex; align-items: center; gap: 12px; }
 .me-id > .av { margin: 0 6px 0 4px; }
@@ -3295,6 +3315,21 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function initial(name) { return String(name || '?').replace(/^(นาย|นางสาว|นาง)/, '').replace(/^[\u0E40-\u0E44]/, '').trim().charAt(0) || '?'; }
   function empById(id) { return (B.employees || []).concat(B.slipNames || []).filter(function (e) { return e.id === id; })[0] || null; }
+  /**
+   * ข้อมูลบูตชุดใหม่หรือชุดที่เครื่องจำไว้ ทับของเดิม (2.13.28 เจ้าของร้าน 30 ต.ค. 2569: แพรวเลื่อนวันสุดท้ายไปเดือนหน้า
+   * แล้วยังอยู่กลุ่ม ออกแล้ว) · หลังบ้านไม่ส่ง slipNames เมื่อไม่มีใครในช่วงดูสลิป กลุ่มเดิมจึงต้องหายตาม ไม่งั้นค้าง
+   * จนเปิดแอปใหม่สองรอบ · คนในรายชื่อทำงานไม่ขึ้นในกลุ่มออกแล้ว กลุ่มตรงกับสิทธิ์เข้าแอป (หลังบ้าน isActiveOn_)
+   */
+  function takeBoot(b) {
+    if (!b || !Object.prototype.hasOwnProperty.call(b, 'slipNames')) delete B.slipNames;
+    B = Object.assign(B, b || {});
+    if (B.slipNames && B.employees) {
+      var on = {};
+      B.employees.forEach(function (e) { on[e.id] = 1; });
+      B.slipNames = B.slipNames.filter(function (e) { return !on[e.id]; });
+    }
+    return B;
+  }
   function isKitchen(dept) { return /ครัว/.test(dept || ''); }
   // Each person's own tone: E01, E02, … take the tones in turn (nine before one repeats).
   var AV_TONES = 9;
@@ -6095,7 +6130,20 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     lastAnswerAt = Date.now();
     call('boot', { page: B.page || '', v: CODE_VERSION }).then(function (b) {
       delete b.scan;
-      B = Object.assign(B, b);
+      B = takeBoot(b);
+    }, function () {});
+  }
+  /** หลังเจ้าของร้านแก้พนักงาน: รายชื่อหน้าเลือกชื่อในเครื่องนี้ใหม่ทันที ไม่ต้องรอเปิดแอปใหม่ (2.13.28) */
+  function namesAgain() {
+    if (S.kiosk) return;
+    var page = B.page || '';
+    call('boot', { page: page, v: CODE_VERSION }).then(function (b) {
+      delete b.scan;
+      takeBoot(b);
+      if (!SITE) return;
+      var keep = Object.assign({}, b);
+      delete keep.serverNow;
+      remember('boot', keep, page);
     }, function () {});
   }
   /** Now, or once the phone is back online (at most 15 seconds). */
@@ -8444,7 +8492,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var keep = Object.assign({}, b);
       delete keep.scan; delete keep.serverNow;
       remember('kboot', keep, S.kiosk.id || '');
-      B = Object.assign(B, b);
+      B = takeBoot(b);
       S.kiosk.name = b.kiosk.name;
       kioskDone(b);
       useFresh();
@@ -8466,7 +8514,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (S.view !== 'kiosk' || S.k.step !== 'names' || !S.kiosk) return;
     call('boot', { kiosk: S.kiosk.token, v: CODE_VERSION }).then(function (b) {
       if (b.kioskInvalid) { LS.del(KEY.kiosk); S.kiosk = null; start(); return; }
-      B = Object.assign(B, b);
+      B = takeBoot(b);
       kioskDone(b);
       if (S.k.step === 'names') render();
     }, function () { /* offline for a moment: keep the screen as is */ });
@@ -9095,8 +9143,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var suddenList = (B.leaveTypes || []).filter(function (x) { return x.type !== sickType() && x.type !== vacationType() && (x.cut > 0 || x.advanceDays > 0); }).map(function (x) { return x.type; });
     var sudden = suddenList.join(' หรือ ') || 'ลา';
     // (2.13.26 ไปทำงานไม่ได้ รวมเป็นหัวข้อเดียว แยกบรรทัด ป่วย ติดธุระ บอกหลังเวลาเข้างาน พักร้อน · กติกาเงินเท่าเดิม · เจ้าของร้านตอบ 30 ต.ค. 2569 "7 ok")
-    var bizSub = biz.map(function (t) { return t.type + 'บอกล่วงหน้า ' + t.advanceDays + ' วันขึ้นไปไม่หัก · บอกน้อยกว่านั้น หักวันละ ' + money(t.cut) + ' บาท'; });
-    if (r.suddenCut) bizSub.push('ขอ' + sudden + 'ในวันที่ลาหรือย้อนหลัง หักเพิ่ม ' + money(r.suddenCut) + ' บาท' + from + ' ลาหลายวันติดกันหักเพิ่มครั้งเดียว');
+    // 2.13.28 หักตามเวลาที่บอก ไม่ดูว่าป่วยหรือธุระ (เจ้าของร้านตอบ "7 ok" 30 ต.ค. 2569) · ประโยคสั้น ตัวอย่างคนสมมติ (เจ้าของร้านสั่ง 30 ต.ค. 2569) · คำเดียวกับ Line.gs toldAheadText_ staffNews212_
+    var toldN = r.toldAhead || 3;
+    var dayCut = (biz[0] || {}).cut || sickCut;
+    var toldWhen = r.toldFrom && r.toldFrom > workDate() ? ' (เริ่ม ' + thShort(r.toldFrom) + ')' : '';
+    var dows = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+    var bizSub = dayCut ? ['บอกล่วงหน้า ' + toldN + ' วันขึ้นไป ไม่หัก · บอกช้ากว่านั้นแต่ก่อนเวลาเข้างาน หักวันละ ' + money(dayCut) + ' บาท · เช่น แนนหยุดวันศุกร์ บอกวัน' + dows[(5 - (toldN % 7) + 7) % 7] + ' ไม่หัก · บอกเช้าวันศุกร์ก่อนเข้างาน หัก ' + money(dayCut) + ' บาท'] : [];
     var freeNow = free.every(function (t) { return suddenList.indexOf(t) < 0; });
     var noWord = money((r.absentCut || 0) + (r.noShowCut || 0));
     openSheet({ title: 'กติกา Incentive', body: html`<ul class="rules">
@@ -9105,9 +9157,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <li>${icon('money')}<span>เข้างานช้ากว่าเวลากะ ได้เงินตามเวลาที่ทำจริง${r.lateTimeFrom && r.lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(r.lateTimeFrom) + ')' : ''}: นับทีละครึ่งชั่วโมง ปัดลง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง · เช่น กะเริ่ม 10:30 มาถึง 10:55 ค่าจ้างและ OT เท่าเดิม มาถึง 11:40 ได้น้อยลง 1 ชม. · ได้อนุญาตเข้างานช้า มาตามเวลาที่อนุญาตไม่หักเลย มาช้ากว่านั้นนับแบบนี้จากเวลาที่อนุญาต</span></li>
         <li>${icon('rain')}<span>วันฝนตก เผื่อเวลาเดินทาง ค่อย ๆ มาให้ปลอดภัย</span></li>
         <li>${icon('cal')}<span><b class="rules-h">ไปทำงานไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน ร้านจะได้หาคนช่วยทัน</b>
-          <span class="rules-sub"><b>ป่วย</b> ${sickCut ? 'สองวันแรกหักวันละ ' + money(sickCut) + ' บาท · วันที่ ' + (r.sickNoteDay || 3) + ' ขึ้นไปมีใบรับรองแพทย์ไม่หัก (ส่งรูปใบให้ผู้อนุมัติภายใน ' + (r.noteLateDays || 3) + ' วันหลังกลับมาทำงาน) · นอนโรงพยาบาลไม่หัก' : 'ไม่หัก'} · มี${vacationType()}เหลือ ใช้แทนได้ ไม่หัก</span>
-          ${bizSub.length ? html`<span class="rules-sub"><b>ติดธุระ</b> ${bizSub.join(' · ')}</span>` : ''}
-          <span class="rules-sub"><b>บอกหลังเวลาเข้างาน</b> ป่วย วันแรกหัก ${noWord} บาท ยังได้ค่าจ้าง · ติดธุระ หรือไม่ได้บอกเลย นับเป็นขาดงาน หัก ${noWord} บาท ไม่ได้ค่าจ้างวันนั้น${from}</span>
+          ${bizSub.length ? html`<span class="rules-sub"><b>ติดธุระ</b> ${bizSub.join(' · ')}${toldWhen}</span>` : ''}
+          <span class="rules-sub"><b>ป่วย</b> ${sickCut ? (bizSub.length ? 'หักแบบเดียวกับติดธุระ · ' : '') + 'ป่วยวันที่ ' + (r.sickNoteDay || 3) + ' ขึ้นไปมีใบรับรองแพทย์ ไม่หัก (ส่งรูปใบให้ผู้อนุมัติภายใน ' + (r.noteLateDays || 3) + ' วันหลังกลับมาทำงาน) · นอนโรงพยาบาล ไม่หัก' : 'ไม่หัก'} · มีวัน${vacationType()}เหลือ ใช้แทนได้ ไม่หัก</span>
+          <span class="rules-sub"><b>บอกหลังเวลาเข้างาน</b> หัก ${noWord} บาท ยังได้ค่าจ้าง ทั้งป่วยและติดธุระ · ไม่ได้บอกเลย หัก ${noWord} บาท และไม่ได้ค่าจ้างวันนั้น${toldWhen}</span>
           ${free.length ? html`<span class="rules-sub">${free.join(', ')}ที่อนุมัติแล้ว ไม่หัก${freeNow ? ' แม้ขอในวันนั้น' : ''}</span>` : ''}</span></li>
         <li>${icon('shield')}<span>เดือนไหน Incentive ไม่พอหัก ส่วนที่เหลือหักเดือนถัดไปครั้งเดียว</span></li>
       </ul>`, foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
@@ -9263,15 +9315,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var d = mineOnly(shelf) && shelf.data;
     if (!d) {
       loadFriends();
-      return html`<div class="stack"><div class="skel" style="height:44px"></div><div class="fr-grid">${[0, 1, 2, 3, 4, 5].map(function () { return html`<div class="skel" style="height:168px"></div>`; })}</div><div class="skel" style="height:100px"></div></div>`;
+      return html`<div class="stack"><div class="skel" style="height:44px"></div><div class="fr-grid"><div class="skel" style="width:100%;height:124px"></div>${[0, 1, 2, 3, 4, 5].map(function () { return html`<div class="skel" style="height:164px"></div>`; })}</div><div class="skel" style="height:100px"></div></div>`;
     }
     var l = S.home.level || {};
     var total = allFigs(d).length;
     var n = playsNew(l.plays);
+    // 2.13.28 การ์ดฉันใบแรก นอนเต็มความกว้าง แล้วเพื่อนตามลำดับเดิม
+    var people = d.people.filter(function (p) { return p.id === d.me; }).concat(d.people.filter(function (p) { return p.id !== d.me; }));
     // 2.13.26 การ์ดเพื่อน 3 ช่องขึ้นก่อน เปิดมาเห็นทุกคน การ์ดเกม 4 ใบอยู่ล่าง (เจ้าของร้านตอบ 30 ต.ค. 2569 "4 ok")
     return html`<div class="stack fr">
       <div class="page-h"><div class="hello" style="font-size:26px;margin:0">เพื่อนในร้าน</div><span class="small muted">แตะการ์ดเพื่อนเข้าไปดูห้อง ส่งคำชม ขอแลกน้อง</span></div>
-      <div class="fr-grid">${d.people.map(function (p) { return friendCard(p, d, total); })}</div>
+      <div class="fr-grid">${people.map(function (p) { return friendCard(p, d, total); })}</div>
       <button class="btn ghost sm" data-act="fr-reload" style="justify-self:center">${icon('refresh')} ดูของใหม่ของเพื่อน</button>
       <button class="card fr-plaza" data-act="plaza-open"><span class="fr-plaza-art">${raw(PLAZA_ART(pzSky(), ''))}</span>
         <span class="fr-plaza-tx"><b>ลานโซลฟูล์</b><span>${n ? 'มีคนเล่นด้วย ' + n + ' ครั้ง · ไปเล่นตอบ' : 'เดินเล่น ทักทาย ไฮไฟว์ ปาหมอนใส่เพื่อน'}</span></span>${icon('right')}</button>
@@ -9293,12 +9347,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var top = plus.length ? Math.max.apply(null, plus) : 0;
     var things = (p.things || []).length;
     roomWant(roomTheme(p), 1500);
+    // 2.13.28 ตัวเลขบรรทัดเดียวทุกใบ: การ์ดเพื่อน (ช่องกว้างราว 100 พิกเซลบนจอ 390) มีน้องกับหัวใจ · ตีบวกกับของเห็นในห้องของเพื่อน และครบบนการ์ดฉัน
     return html`<button class="fr-card ${me ? 'me' : ''}" data-act="fr-room" data-id="${p.id}" aria-label="ห้องของ${p.name}">
       <span class="fr-stage room th-${roomTheme(p)}"><i class="rm-wall"></i><i class="rm-floor"></i>
         <span class="fr-char" data-mv="${mvfPick(p.look, p.things)}">${raw(charOf(p.look))}</span>${p.look && p.look.p ? html`<span class="fr-pet">${raw(PET_ART(p.look.p, p.look))}</span>` : ''}
         ${me ? html`<span class="fr-me">ฉัน</span>` : ''}</span>
       <span class="fr-name">${nameLv(p.lv, p.name, (p.look || {}).b)}</span>
-      <span class="fr-stats"><span>น้อง ${p.figs.length}/${total}</span>${top ? html`<span>+${top}</span>` : ''}<span>${icon('heart')} ${p.hearts || 0}</span>${things ? html`<span>ของ ${things}</span>` : ''}</span>
+      <span class="fr-stats"><span>น้อง ${p.figs.length}/${total}</span>${me && top ? html`<span>+${top}</span>` : ''}<span>${icon('heart')} ${p.hearts || 0}</span>${me && things ? html`<span>ของ ${things}</span>` : ''}</span>${me ? html`<span class="fr-go">${icon('right')}</span>` : ''}
     </button>`;
   }
 
@@ -9680,17 +9735,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // ---- 2.13.27 k-tap (เจ้าของสั่ง 30 ต.ค. 2569 "ป้องกันความผิดพลาดทุกรูปแบบ" "คลีนตาสุด"): แตะพลาดแก้ง่าย กันตัวเลขผิด
   /** ของที่นับเป็นชิ้น (ลูก ขวด แพ็ค ...) รับแต่เลขเต็ม · น้ำหนัก ปริมาตร และของที่ก้าวไม่เต็ม รับทศนิยม */
   function odPiece(it) { return !!it && !/^(กก\.|ลิตร|ก\.|กรัม|มล\.|ขีด)$/.test(String(it.unit || '')) && Math.round(+it.step || 1) === (+it.step || 1); }
-  /** ขนาดต่อชิ้นของร้านในหน่วยที่นับ 'แพ็คละ 0.15 กก.' · ของที่กำลังมาล่าสุดก่อน แล้วขนาดในรายการตั้งต้น · ของชิ้นหรือขนาดไม่ลงตัว 2 ตำแหน่ง ไม่บอก */
-  function odEachText(it) {
-    if (odPiece(it)) return '';
-    var c = (it.coming || []).filter(function (x) { return +x.per > 0 && +x.per !== 1; }).slice(-1)[0];
-    var e = it.each || null;
-    var per = c ? +c.per : e ? +e.per : 0;
-    if (!(per > 0) || per === 1 || Math.abs(per * 100 - Math.round(per * 100)) > 1e-6) return '';
-    return (e && (!c || +c.per === +e.per) ? e.w : 'แพ็ค') + 'ละ ' + odNum(per) + ' ' + it.unit;
-  }
-  /** ใต้ชื่อในหน้านับ: ขนาดต่อแพ็ค · PAR · ที่เก็บ (ที่ใช้ตอนนับเท่านั้น) */
-  function odUnder(it) { return [odEachText(it), it.par != null ? 'PAR ' + odNum(it.par) + ' ' + it.unit : '', it.keep || ''].filter(Boolean).join(' · '); }
+  /** ใต้ชื่อในหน้านับ: PAR · ที่เก็บ (ที่ใช้ตอนนับเท่านั้น) · 2.13.28 k-count2 ไม่บอกขนาดแพ็ค (เจ้าของ 30 ต.ค. 2569 "อยากให้พนักงานสั่งตามจริง") */
+  function odUnder(it) { return [it.par != null ? 'PAR ' + odNum(it.par) + ' ' + it.unit : '', it.keep || ''].filter(Boolean).join(' · '); }
   /** ตัวเลขที่มากกว่าที่ร้านเคยมีมาก (เช่น 150 แทน 1.5): มากสุดของ PAR × 3 · PAR + ล็อตใหญ่สุด (สั่งครั้งละไม่เกิน สั่งแล้ว กำลังมา รอส่ง) × 2 · นับครั้งก่อน × 3 · ก้าว × 4 · ไม่มี PAR และไม่เคยนับ ไม่มีเกณฑ์ */
   function odHigh(it) {
     var par = +it.par || 0, last = it.last ? +it.last.have || 0 : 0;
@@ -9722,6 +9768,36 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // iPhone ค้างความสูงจอตอนแป้นพิมพ์ปิด (แถบล่างลอยกลางจอ ชั้นมืดคลุมครึ่งจอ): ปิดแป้นพิมพ์ก่อนเปิดชั้น และเลื่อน 0 ให้จอคำนวณที่ใหม่
   function odBlurField() { var f = document.activeElement; if (f && f.blur && /^(INPUT|TEXTAREA|SELECT)$/.test(f.tagName)) f.blur(); }
   document.addEventListener('focusout', function (ev) { var t = ev.target; if (t && t.dataset && t.dataset.od) setTimeout(function () { window.scrollTo(window.scrollX, window.scrollY); }, 80); });
+  // 2.13.28 k-count2 (เจ้าของ 30 ต.ค. 2569 "ถ้าเราไปกดโดนกะหล่ำปลีแต่เรานับอย่างอื่นอยู่มันบังคับให้เราต้องใส่จำนวนกะหล่ำปลีที่มีก่อนถึงจะไปทำอย่างอื่นต่อได้"): แตะโดนช่องเลขของที่ไม่ได้ตั้งใจ ออกได้ทันที
+  // แตะที่อื่น (ปุ่มของอื่น ชื่อ ที่ว่าง แถบ) หรือลากนิ้วเลื่อนจอ ปิดแป้นพิมพ์ของช่องนั้น (iPhone ไม่ปิดแป้นตัวเลขเองเมื่อแตะปุ่มหรือที่ว่าง) · ช่องที่ยังว่างไม่บันทึกอะไร ยังไม่นับคงยังไม่นับ
+  // 2.13.28 k-count3 (เจ้าของ 30 ต.ค. 2569 iPhone แตะที่ว่างแล้วแป้นพิมพ์ไม่ปิดเอง แป้นตัวเลขไม่มีปุ่มเสร็จ จึงรู้สึกว่าต้องใส่จำนวนก่อน): แอปปิดแป้นพิมพ์เอง ไม่พึ่งเบราว์เซอร์
+  // ช่องพิมพ์ของหน้านับและสั่งของ (data-od) แผ่นสั่งของนอกรายการ (data-odx) ค้นหาในแผ่น (data-odu) และหน้ารับของ (data-rc): แตะตรงไหนก็ได้นอกช่อง (ที่ว่าง หัวหมวด แถวอื่น ปุ่ม + − แถบล่าง เมนูล่าง ปุ่มในแผ่น) หรือลากนิ้วเลื่อนจอ ปิดแป้นพิมพ์
+  // ปิดตอนนิ้วแตะ ก่อนปุ่มทำงาน ปุ่มที่แตะจึงทำงานในแตะเดียวกัน · แตะช่องพิมพ์อื่นหรือป้ายของช่องเดิม ให้เบราว์เซอร์ย้ายโฟกัสเอง
+  function odTyping(f) { return !!(f && f.dataset && /^(INPUT|TEXTAREA)$/.test(f.tagName) && (f.dataset.od || f.dataset.odx || f.dataset.odu || f.dataset.rc)); }
+  document.addEventListener('pointerdown', function (e) {
+    var f = document.activeElement, t = e.target, lb = t && t.closest && t.closest('label');
+    if (!odTyping(f) || f === t || (t && t.closest && t.closest('input, textarea, select')) || (lb && lb.control === f)) return;
+    f.blur();
+  }, true);
+  document.addEventListener('touchmove', function () { var f = document.activeElement; if (odTyping(f)) f.blur(); }, { passive: true, capture: true });
+  // k-count3: ออกจากช่องเหลือโดยไม่พิมพ์ หรือลบจนว่าง ไม่เปลี่ยนสถานะ ยังไม่นับคงยังไม่นับ ที่นับแล้วคงค่าเดิม (ของหมดจริงพิมพ์ 0 · เลิกนับกด − ที่ 0) · ไม่แทนแถว ปุ่มที่กำลังแตะยังอยู่
+  var odWas = null;
+  document.addEventListener('focusin', function (ev) {
+    var t = ev.target;
+    if (!t || !t.dataset || t.dataset.od !== 'have') return;
+    var e = odDraft()[t.dataset.id];
+    odWas = { id: t.dataset.id, d: e ? JSON.parse(JSON.stringify(e)) : null };
+  });
+  document.addEventListener('focusout', function (ev) {
+    var t = ev.target, w = odWas;
+    if (!t || !t.dataset || t.dataset.od !== 'have' || !w || w.id !== t.dataset.id) return;
+    odWas = null;
+    if (String(t.value).trim() !== '' || !w.d || w.d.have == null) return;
+    odDraft()[w.id] = w.d;
+    odKeep();
+    t.value = odNum(w.d.have);
+    odRefreshRow(w.id, true);
+  });
   /** 2.13.27 k-tap: ข้อความเด้งไม่บังแถบนับของ · ยกขึ้นเหนือแถบ และแตะทะลุไปถึงปุ่มข้างใต้ */
   function odToastLift(box) {
     if (!box) return;
@@ -10201,6 +10277,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (f === 'have') {
       d.qty = null;
       delete d.par;
+      // 2.13.28 k-count3: นับใหม่ด้วยการพิมพ์ถือว่าตั้งใจ ลบที่จำว่ามาจากการแตะ + (od-step ใส่คืนเองเมื่อมาจากปุ่ม)
+      delete d.tap;
     }
     if (d.have == null && !d.qty) delete drafts[id];
     else drafts[id] = d;
@@ -10953,6 +11031,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var late = o.told === 'after' && ahead <= 0;
     var suddenOn = !r.suddenFrom || from >= r.suddenFrom;
     var absent = (r.absentCut || 0) + (suddenOn ? r.noShowCut || 0 : 0);
+    // 2.13.28 หักตามเวลาที่บอก ไม่ดูว่าป่วยหรือธุระ (ลาพักร้อนคงเดิม) · คำเดียวกับหลังบ้าน leaveCostNotes_ · บอกวันนี้: แอปไม่รู้เวลาเข้างาน จึงบอกทั้งสองกรณี
+    if ((!r.toldFrom || from >= r.toldFrom) && !o.ill && t.type !== vacationType() && (t.cut || t.advanceDays)) {
+      var aheadN = r.toldAhead || 3;
+      if (sick && o.hospital) return 'นอนโรงพยาบาล ไม่หัก Incentive';
+      if (ahead >= aheadN) return 'บอกล่วงหน้า ' + ahead + ' วัน ไม่หัก Incentive';
+      var noteTail = sick && t.cut ? ' · ตั้งแต่ป่วยวันที่ ' + (r.sickNoteDay || 3) + ' วันที่ใบรับรองแพทย์ให้หยุดไม่หัก' : '';
+      if (late || ahead < 0) return 'บอกหลังเวลาเข้างาน หัก Incentive ' + money(absent) + ' บาท ยังได้ค่าจ้าง' + noteTail;
+      if (ahead === 0 && o.told !== 'before') return 'บอกวันนี้ก่อนเวลาเข้างาน หัก Incentive วันละ ' + money(t.cut) + ' บาท · หลังเวลาเข้างาน หัก ' + money(absent) + ' บาท ยังได้ค่าจ้าง' + noteTail;
+      return 'หัก Incentive วันละ ' + money(t.cut) + ' บาท (บอกล่วงหน้า ' + aheadN + ' วันขึ้นไปไม่หัก)' + noteTail;
+    }
     if (late && !sick) return 'วันแรกนับเป็นขาดงานไม่แจ้ง: หัก Incentive ' + money(absent) + ' บาท และไม่ได้ค่าจ้างวันนั้น · วันต่อไป (ถ้ามี) บันทึกเป็น' + t.type + ' · ป่วยให้เลือก' + sickType();
     if (sick && o.hospital) return 'นอนโรงพยาบาล ไม่หัก Incentive';
     // (the time off this one carries on: the same type, days off between and none worked)
@@ -11703,7 +11791,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (sick && l.hospital) return html`<div class="s ok-text">${icon('check')} นอนโรงพยาบาล · ไม่หัก Incentive</div>`;
     var tags = [];
     if (sick && l.cert) tags.push(html`<div class="s ok-text">${icon('check')} ใบรับรองแพทย์ให้หยุด ${thRange(l.certFrom || l.from, l.certTo || l.to)} · ตั้งแต่วันที่ ${(B.rules && B.rules.sickNoteDay) || 3} ของการป่วยไม่หัก</div>`);
-    if (sick && l.lateTold) tags.push(html`<div class="s">บอกหลังเวลาเข้างาน · ยังได้ค่าจ้าง</div>`);
+    if (l.lateTold) tags.push(html`<div class="s">บอกหลังเวลาเข้างาน · ยังได้ค่าจ้าง</div>`);
     if (l.ill) tags.push(html`<div class="s ok-text">${icon('check')} ไม่สบาย ใช้แทน${sickType()} · ไม่หัก Incentive</div>`);
     return tags;
   }
@@ -12052,6 +12140,33 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${d.days.length ? html`<div class="list">${d.days.map(day)}</div>` : html`<p class="small muted rh-none">รอบนี้ไม่มีวันฝน</p>`}` });
     }, function () {});
   }
+  /**
+   * 2.13.28 ใครหยุดกะทันหันบ่อย (หน้าเจ้าของร้าน · Api.gs apiSuddenLeave_): ดูอย่างเดียว ไม่มีปุ่มทำอะไรกับน้อง
+   * เปลี่ยนช่วงโหลดใหม่ · แตะชื่อเปิดหรือปิดรายการวัน ใช้ข้อมูลที่โหลดแล้ว ไม่ถามหลังบ้านซ้ำ
+   */
+  var suddenLast = null;
+  function openSuddenLeave(el, days, who) {
+    var kindWord = { sick: 'ป่วย', errand: 'ธุระ', vacation: 'พักร้อน' };
+    var told = function (x) { return x.ahead > 0 ? 'บอกก่อน ' + x.ahead + ' วัน' : x.ahead === 0 ? 'บอกวันนั้น' : 'บอกหลังวันลา'; };
+    var range = function (x) { return x.from === x.to ? thShort(x.from) : thShort(x.from) + ' – ' + thShort(x.to); };
+    var nameOf = function (p) { var e = empById(p.id); return e ? ownName(e) : p.name; };
+    var show = function (d) {
+      suddenLast = d;
+      var person = function (p) {
+        var open = p.id === who;
+        return html`<button class="item sl-who" data-act="sudden-leave" data-days="${d.days}" data-who="${open ? '' : p.id}" aria-expanded="${open ? 'true' : 'false'}"><div class="grow"><div class="t">${nameOf(p)} · ${p.times} ครั้ง ${p.days} วัน</div>
+          <div class="s">ป่วย ${p.sick} · ธุระ ${p.errand} · พักร้อน ${p.vacation} วัน${p.late ? ' · บอกหลังเวลาเข้างาน ' + p.late + ' ครั้ง' : ''} · ติดวันหยุด ${p.near} ครั้ง</div></div><span class="muted">${open ? '▴' : '▾'}</span></button>
+          ${open ? html`<div class="item sl-days"><div class="grow">${p.items.map(function (x) { return html`<div class="s">${range(x)} · ${x.kind === 'errand' && x.type !== 'ลากิจ' ? x.type : kindWord[x.kind]}${x.kind === 'sick' && x.type !== 'ลาป่วย' ? ' (ใช้วันพักร้อน)' : ''} ${x.days} วัน · ${told(x)}${x.late ? ' · บอกหลังเวลาเข้างาน' : ''}${x.near ? ' · ติด' + x.near : ''}</div>`; })}</div></div>` : ''}`;
+      };
+      openSheet({ use: 'ใครหยุดกะทันหันบ่อย', title: 'ใครหยุดกะทันหันบ่อย', body: html`<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center">${d.spans.map(function (n) { return n === d.days ? html`<b class="small">${n} วัน</b>` : html`<button class="btn" data-act="sudden-leave" data-days="${n}">${n} วัน</button>`; })}</div>
+        <p class="small muted">${thShort(d.from)} – ${thShort(d.to)} · วันลาที่อนุมัติแล้วที่บอกไม่ถึง ${d.ahead} วันก่อนวันลาวันแรก · บ่อยสุดขึ้นก่อน · แตะชื่อดูรายการวัน</p>
+        ${d.people.length ? html`<div class="list">${d.people.map(person)}</div>` : html`<p class="small muted">ช่วงนี้ไม่มีใครหยุดโดยบอกไม่ถึง ${d.ahead} วัน</p>`}
+        ${d.calm.length && d.people.length ? html`<p class="small muted">ไม่มีในช่วงนี้: ${d.calm.map(nameOf).join(' · ')}</p>` : ''}
+        <p class="small muted">ติดวันหยุด = วันก่อนหรือวันหลังเป็นวันหยุดประจำของคนนั้น วันร้านปิด หรือวันประเพณี · บอกหลังเวลาเข้างาน: น้องกดขอเอง เทียบเวลาที่กดกับเวลาเข้างานของน้องวันนั้น ผู้อนุมัติบันทึกแทน ใช้ที่ผู้อนุมัติเลือก · ไม่นับขาดงาน${d.noAsk ? ' · ' + d.noAsk + ' รายการไม่มีวันที่ขอ นับไม่ได้ว่าบอกล่วงหน้ากี่วัน' : ''}${d.first && d.first > d.from ? ' · วันลาแรกในแอป ' + thShort(d.first) : ''}</p>` });
+    };
+    if (suddenLast && who !== undefined && suddenLast.days === days) return show(suddenLast);
+    run(el, call('suddenLeave', days ? { days: days } : {}, ownerAuth())).then(show, function () {});
+  }
   /** What the approver recorded on themselves lately: to see, nothing to press. */
   function openSelfEdits() {
     var list = (S.ownerHome && S.ownerHome.selfEdits) || [];
@@ -12374,6 +12489,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${(o.rainReview || []).length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ฝนตกที่ควรตรวจ</span></div><p class="small muted" style="margin:6px 16px 0">ข้อมูลอากาศไม่ตรงกับที่บันทึก บันทึกย้อนหลัง หรือปิดตอนที่ยังมีฝน · ถูกต้อง = คงไว้ · ลบ = ทุกคนที่ลงเวลาในช่วงนั้นไม่ได้ผ่อนผันฝนตก</p><div class="list">${o.rainReview.map(function (x) { return entryRow(x, true); })}</div></section>` : ''}
       ${(o.clockFixes || []).length ? html`<section class="card flush"><button class="item" data-act="clock-fixes">${icon('clock')}<span class="grow">แก้เวลาและผ่อนผันสาย ${o.clockFixes.length} รายการ<span class="s" style="display:block">ลงแทน แก้ ลบ อนุญาตเข้าช้า ฝนตก · 45 วัน · แจ้งคุณทุกครั้งแล้ว</span></span>${icon('right')}</button></section>` : ''}
       <section class="card flush"><button class="item" data-act="rain-history">${icon('clock')}<div class="grow"><div class="t">ประวัติวันฝน</div><div class="s">วันไหนฝนตก กะไหนมาสายได้ ใครได้ผ่อนผัน</div></div></button></section>
+      <section class="card flush"><button class="item" data-act="sudden-leave">${icon('list')}<div class="grow"><div class="t">ใครหยุดกะทันหันบ่อย</div><div class="s">ลาที่บอกไม่ถึง 3 วัน กี่ครั้งติดวันหยุด ไว้คุยเป็นรายคน</div></div></button></section>
       ${(o.selfEdits || []).length ? html`<section class="card flush"><button class="item" data-act="self-edits">${icon('list')}<span class="grow">ผู้อนุมัติทำรายการให้ตัวเอง ${o.selfEdits.length} รายการ<span class="s" style="display:block">45 วันล่าสุด · ไว้ให้เห็นเฉย ๆ</span></span>${icon('right')}</button></section>` : ''}
       ${todo.length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">สิ่งที่ต้องทำ</span></div><div class="list">${todo.map(function (t) { return html`<button class="item" data-act="owner-tab" data-tab="${t[2]}">${icon(t[0])}<span class="grow">${t[1]}</span>${icon('right')}</button>`; })}</div></section>` : ''}
       <h3 class="h3">เงินเดือนย้อนหลัง</h3>
@@ -12435,7 +12551,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   var EMP_FIELDS = [
     ['ข้อมูลพนักงาน', [['nick', 'ชื่อเล่น'], ['display', 'ชื่อที่แสดงในแอป', 'ไม่บังคับ · ชื่อที่อยากให้แอปเรียก ถ้าว่างใช้ชื่อเล่น · ชื่อเล่นซ้ำกันไม่ต้องใส่อะไร แอปเติมแผนกให้เองเฉพาะในรายการรวม (เช่น นิดครัว)'], ['fullName', 'ชื่อ-นามสกุล (ในสลิป)'], ['citizenId', 'เลขบัตรประชาชน'], ['bank', 'บัญชีรับเงิน']]],
-    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses', 'ให้ออก: ใส่วันทำงานวันสุดท้ายและเหตุที่ออก สถานะเปลี่ยนเป็น ลาออก เอง · ลบวันสุดท้ายกลับเป็น ทำงาน'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date', 'เป็นพนักงานถึงวันนี้ · เข้าแอปและลงเวลาได้ถึงวันนี้ หลังจากนั้นดูได้เฉพาะสลิปเงินเดือน'], ['endReason', 'เหตุที่ออก', 'endReasons']]],
+    ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses', 'ให้ออก: ใส่วันทำงานวันสุดท้ายและเหตุที่ออก สถานะเปลี่ยนเป็น ลาออก เอง · กลับมาทำงาน: เลือกเหตุที่ออก ยังไม่ออก หรือกด ล้าง ที่วันสุดท้าย สถานะกลับเป็น ทำงาน'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date', 'เป็นพนักงานถึงวันนี้ · เข้าแอปและลงเวลาได้ถึงวันนี้ หลังจากนั้นดูได้เฉพาะสลิปเงินเดือน'], ['endReason', 'เหตุที่ออก', 'endReasons']]],
     ['ค่าจ้าง', [['employment', 'สถานะการจ้าง', 'employment'], ['probationEnd', 'วันผ่านโปร', 'date', 'ตั้งแต่วันนี้ได้เงินเดือน + Incentive + ประกันสังคม'], ['probationRate', 'ค่าแรงช่วงทดลองงาน (บาท/วัน)', 'num'], ['probationWht', 'ภาษีหัก ณ ที่จ่ายช่วงทดลองงาน (%)', 'num'], ['payType', 'ประเภทค่าจ้าง', 'payTypes'], ['rate', 'เงินเดือน/ค่าแรง (บาท)', 'num'], ['otRate', 'ค่า OT (บาท/ชม.)', 'num'], ['sso', 'หักประกันสังคม', 'yesno']]],
     ['Incentive', [['diligence', 'เบี้ยขยัน (บาท)', 'num'], ['headAllowance', 'ค่าหัวหน้า (บาท)', 'num'], ['tenureAllowance', 'ค่าอยู่นาน (บาท)', 'num']]],
     ['อื่น ๆ', [['note', 'หมายเหตุ']]],
@@ -12458,7 +12574,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var end = key === 'endDate' || key === 'endReason' ? 'emp-end' : '';
       var ctl = list
         ? html`<select class="input" data-f="${key}" data-change="${end}">${list.map(function (x) { var o = Array.isArray(x) ? x : [x, x]; return html`<option value="${o[0]}" ${String(v) === o[0] ? 'selected' : ''}>${o[1]}</option>`; })}</select>`
-        : html`<input class="input" data-f="${key}" data-change="${end}" type="${type === 'date' ? 'date' : type === 'num' ? 'number' : 'text'}" ${type === 'num' ? 'inputmode="decimal" step="any"' : ''} value="${v}">`;
+        : html`<input class="input" data-f="${key}" data-change="${end}" type="${type === 'date' ? 'date' : type === 'num' ? 'number' : 'text'}" ${type === 'num' ? 'inputmode="decimal" step="any"' : ''} ${key === 'endDate' ? 'style="flex:1;min-width:0"' : ''} value="${v}">`;
+      // (2.13.28: ช่องวันที่บน iPhone ลบเองไม่ได้ · ปุ่ม ล้าง = ยังไม่ออก)
+      if (key === 'endDate') ctl = html`<div class="row" style="gap:8px">${ctl}<button type="button" class="btn sm" data-act="emp-end-clear" style="${v ? '' : 'display:none'}">ล้าง</button></div>`;
       return html`<label class="field"><span>${f[1]}</span>${ctl}${empHint(f) ? html`<small>${empHint(f)}</small>` : ''}</label>`;
     };
     var face = id ? faceOf({ id: id }) : '';
@@ -12470,13 +12588,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    * ฟอร์มพนักงาน (2.13.15 เจ้าของร้านสะดุด 29 ต.ค. 2569): ใส่วันสุดท้ายหรือเลือกเหตุที่ออก สถานะเป็น ลาออก เอง ·
    * ลบวันสุดท้าย = ยังทำงานต่อ สถานะกลับเป็น ทำงาน และล้างเหตุที่ออก · เลือก ยังไม่ออก ตอนไม่มีวันสุดท้ายก็กลับเป็น ทำงาน
    * (กรอกไม่ครบ หลังบ้านยังเตือนแบบเดิมตอนบันทึก checkEmployee_)
+   * 2.13.28 (เจ้าของร้าน 30 ต.ค. 2569 "วันที่ลาออกกดลบออกไม่ได้"): ช่องวันที่บน iPhone ลบเองไม่ได้ ปุ่ม Reset คืนค่าเดิม ·
+   * เลือกเหตุ ยังไม่ออก = กลับมาทำงาน วันสุดท้ายหายด้วย · ปุ่ม ล้าง ข้างวันสุดท้ายทำแบบเดียวกัน · ไม่แตะวันเริ่มงานและทดลองงาน
    */
   function empEndSync(el) {
     var f = function (k) { return $('#sheet-body [data-f="' + k + '"]'); };
     var st = f('status'), end = f('endDate'), why = f('endReason');
     if (!st || !end || !why) return;
+    if (el === why && !why.value) end.value = '';
     if (el === end && !end.value) why.value = '';
     st.value = end.value || why.value ? 'ลาออก' : 'ทำงาน';
+    var clr = $('#sheet-body [data-act="emp-end-clear"]');
+    if (clr) clr.style.display = end.value ? '' : 'none';
   }
 
   // ---- settings -----------------------------------------------------------
@@ -17997,8 +18120,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }
       var cur = f === 'have' ? (d.have != null ? d.have : 0) : odQty(it);
       var next = Math.max(0, Math.round((cur + dn * it.step) * 100) / 100);
-      if (f === 'have' && d.have == null && dn < 0) next = 0;
+      // 2.13.28 k-count2 (เจ้าของ 30 ต.ค. 2569 "ถ้าใส่0ก็ถือว่านับ0"): แตะโดน − ของที่ยังไม่นับ ไม่เปลี่ยนอะไร (เดิมกลายเป็นนับ 0 แล้วแอปเสนอสั่งถึง PAR) · นับ 0 ด้วยการพิมพ์ 0 เอง หรือกด − จากที่นับไว้
+      if (f === 'have' && d.have == null && dn < 0) return;
+      // 2.13.28 k-count3 (เจ้าของ 30 ต.ค. 2569 "ถ้าใส่0ก็ถือว่านับ0"): + ของที่ยังไม่นับ จำในร่างว่าค่ามาจากการแตะ (แตะพลาดได้) · − ลงถึง 0 จากค่านั้น กลับเป็นยังไม่นับในครั้งเดียว ไม่ใช่นับ 0 ที่ทำให้แอปเสนอสั่งเต็ม PAR
+      // ของที่นับไว้ก่อนแตะ − ลงถึง 0 ได้ตามเดิม แล้ว − ที่ 0 กลับเป็นยังไม่นับ · ค่าที่พิมพ์เองถือว่าตั้งใจ (odSet ลบที่จำไว้) · ของหมดจริงพิมพ์ 0 · ร่างเก็บในเครื่อง โหลดหน้าใหม่ยังจำ
+      var byTap = f === 'have' && (d.have == null || !!d.tap);
+      if (byTap && dn < 0 && next <= 0) next = null;
       odSet(it.id, f, next);
+      if (byTap && next != null) { var e = odDraft()[it.id]; if (e) { e.tap = 1; odKeep(); } }
       odRefreshRow(it.id, false);
     },
     'od-menu': function (el) {
@@ -18379,6 +18508,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'open-rules': function () { openRules(); },
     'howto-open': function (el) { openHowTo(el); },
     'rain-history': function (el) { openRainHistory(el, el.dataset.key || ''); },
+    'sudden-leave': function (el) { openSuddenLeave(el, +el.dataset.days || 0, el.dataset.who); },
     'self-edits': function () { openSelfEdits(); },
     'clock-fixes': function () { openClockFixes(); },
     'close-sub': function () {
@@ -19206,10 +19336,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         render(); toast(d.notice, 'ok');
       }, function () {});
     },
+    // 2.13.28: ล้างวันสุดท้ายของพนักงาน = กลับมาทำงาน (ช่องวันที่บน iPhone ลบเองไม่ได้)
+    'emp-end-clear': function () {
+      var end = $('#sheet-body [data-f="endDate"]');
+      if (!end) return;
+      end.value = '';
+      empEndSync(end);
+    },
     'save-emp': function (el) {
       var fields = {};
       document.querySelectorAll('#sheet-body [data-f]').forEach(function (i) { fields[i.dataset.f] = i.value; });
-      run(el, call('employeeSave', { id: el.dataset.id || undefined, fields: fields }, ownerAuth())).then(function (d) { closeSheet(); S.employees = d; if (S.ownerHome && d.turnover) { S.ownerHome.turnover = d.turnover; ownerChanged(); } render(); toast(d.notice, 'ok'); }, function () {});
+      run(el, call('employeeSave', { id: el.dataset.id || undefined, fields: fields }, ownerAuth())).then(function (d) { closeSheet(); S.employees = d; namesAgain(); if (S.ownerHome && d.turnover) { S.ownerHome.turnover = d.turnover; ownerChanged(); } render(); toast(d.notice, 'ok'); }, function () {});
     },
     'pin-unlock': function (el) {
       run(el, call('pinUnlock', { key: el.dataset.key }, ownerAuth())).then(function (d) {
@@ -19485,7 +19622,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var lastK = recall('kboot', S.kiosk.id || '');
       if (lastK) {
         if (!bootBefore) bootBefore = Object.assign({}, B);
-        try { B = Object.assign(B, lastK.data); kioskDone(lastK.data); } catch (e) { if (!dropKept()) throw e; }
+        try { B = takeBoot(lastK.data); kioskDone(lastK.data); } catch (e) { if (!dropKept()) throw e; }
       }
       S.view = 'kiosk';
       kioskReset();
@@ -19571,12 +19708,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var last = recall('boot', page);
     if (last) {
       if (!bootBefore) bootBefore = Object.assign({}, B);
-      B = Object.assign(B, last.data);
+      B = takeBoot(last.data);
     }
     B.page = page;
     start();
     fresh.then(function (b) {
-      B = Object.assign(B, b);
+      B = takeBoot(b);
       S.bootErr = '';
       var keep = Object.assign({}, b);
       delete keep.scan; delete keep.serverNow;
