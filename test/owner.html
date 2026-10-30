@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.25","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"b7722df9f1a3"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.26","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"fe939ac727cd"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -542,6 +542,8 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .rules { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
 .rules li { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; line-height: 1.5; }
 .rules li svg { width: 18px; height: 18px; flex: none; margin-top: 3px; color: var(--gold); }
+.rules .rules-h { display: block; }
+.rules .rules-sub { display: block; margin-top: 6px; padding-left: 10px; border-left: 2px solid var(--line); font-size: 14px; }
 .today-time { font-size: 58px; font-weight: 200; letter-spacing: -0.035em; line-height: 1; font-variant-numeric: tabular-nums; }
 .state-line { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .hint { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--ink-2); background: var(--surface-2); border: 0; box-shadow: inset 0 0 0 1px var(--line); border-radius: var(--r-md); padding: 11px 13px; }
@@ -752,6 +754,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-store-h { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
 .od-store-h b { font-size: 17px; margin-right: 8px; }
 .od-store-h .r { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.od-store-h .amt, .od-nw { white-space: nowrap; }
 .od-store-f { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 16px 14px; border-top: 1px solid var(--line); }
 .od-store-f .btn { flex: 1 1 auto; }
 .od-note { margin: 0; padding: 10px 16px; color: var(--ink-2); display: flex; gap: 6px; align-items: center; }
@@ -1972,21 +1975,21 @@ html.i3-pz-shop-day .pz-art.day .pz3-shop.pz-d, html.i3-pz-shop-lit .pz-art.lit 
 .fr-plaza-tx { display: grid; gap: 2px; flex: 1; min-width: 0; }
 .fr-plaza-tx b { font-size: 16px; }
 .fr-plaza-tx span { font-size: 12.5px; color: var(--muted); }
-.fr-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.fr-card { display: grid; gap: 4px; padding: 8px 8px 10px; border: 0; border-radius: 22px; background: var(--card); box-shadow: var(--card-shadow); color: var(--ink); font: inherit; text-align: center; cursor: pointer; transition: transform .4s var(--spring); animation: fr-in .6s var(--spring) both; }
+.fr-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.fr-card { display: grid; gap: 3px; padding: 6px 6px 8px; border: 0; border-radius: 18px; background: var(--card); box-shadow: var(--card-shadow); color: var(--ink); font: inherit; text-align: center; cursor: pointer; transition: transform .4s var(--spring); animation: fr-in .6s var(--spring) both; }
 .fr-card:nth-child(2n) { animation-delay: .06s; } .fr-card:nth-child(3n) { animation-delay: .12s; }
 @keyframes fr-in { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
 .fr-card:active { transform: scale(.96); }
 .fr-card.me { box-shadow: inset 0 0 0 1.5px var(--gold), var(--card-shadow); }
-.fr-stage { position: relative; display: block; height: 176px; border-radius: 16px; overflow: hidden; }
+.fr-stage { position: relative; display: block; height: 112px; border-radius: 12px; overflow: hidden; }
 .fr-stage .rm-wall { inset: 0 0 26% 0; }
-.fr-char { position: absolute; left: 50%; bottom: 4px; width: 96px; height: 158px; transform: translateX(-50%); }
+.fr-char { position: absolute; left: 50%; bottom: 3px; width: 64px; height: 105px; transform: translateX(-50%); }
 .fr-char .char-svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.fr-pet { position: absolute; left: calc(50% + 30px); bottom: 2px; width: 40px; height: 40px; }
-.fr-me { position: absolute; top: 8px; left: 8px; padding: 2px 9px; border-radius: 99px; background: var(--gold); color: #fff; font-size: 11px; font-weight: 700; }
-.fr-name { font-size: 15px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fr-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 8px; font-size: 11.5px; color: var(--muted); }
-.fr-stats svg { width: 12px; height: 12px; vertical-align: -1px; }
+.fr-pet { position: absolute; left: calc(50% + 20px); bottom: 2px; width: 27px; height: 27px; }
+.fr-me { position: absolute; top: 5px; left: 5px; padding: 1px 6px; border-radius: 99px; background: var(--gold); color: #fff; font-size: 10px; font-weight: 700; }
+.fr-name { font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fr-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 1px 6px; font-size: 10.5px; color: var(--muted); }
+.fr-stats svg { width: 11px; height: 11px; vertical-align: -1px; }
 .me-top { display: grid; gap: 10px; }
 .me-id { display: flex; align-items: center; gap: 12px; }
 .me-id > .av { margin: 0 6px 0 4px; }
@@ -2027,6 +2030,8 @@ html.c3 .pz-char { transition: none; }
    breathing neither. A sheet of the shop's 21 moves was 1,939 parts to work out anew, 1,717 of them its
    drawings; #227. Late, it shows at once: a fade of its own would stop a move it plays drawn.) */
 html.c3:not(.c3-slow) .char-svg[data-c3]:not(.c3-on):not(.c3-under):not(.c3-late) > g:not(.cp-shadow) { display: none; }
+/* 2.13.26 การ์ดเพื่อน: ระหว่างรอภาพสามมิติ ภาพวาดขึ้นทันที ส่วนย่อยไม่ขยับจนภาพสามมิติขึ้น เปิดมาเห็นครบทุกคน (ท่าเล่นพร้อมกันไม่เกิน 2 ตัวเท่าเดิม) */
+html.c3:not(.c3-slow) .fr-char .char-svg[data-c3]:not(.c3-on):not(.c3-under):not(.c3-late) > g:not(.cp-shadow) { display: inline; }
 /* The figures, pets and shelf things in 3D: the picture in the drawing's box, the drawing none of the
    page while it is made (as the characters'), and gone once it shows. */
 svg.c3o-on > :not(.c3-o) { display: none; }
@@ -9074,20 +9079,23 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var sickCut = ((B.leaveTypes || []).filter(function (x) { return x.type === sickType(); })[0] || {}).cut || 0;
     var from = r.suddenFrom && r.suddenFrom > workDate() ? ' (เริ่ม ' + thShort(r.suddenFrom) + ')' : '';
     // (ลาที่โดนหักลาในวันนั้น ชื่อตามที่ตั้งไว้ เช่น ลากิจ หรือ ลาไม่รับค่าจ้าง · ลาป่วยและลาพักร้อนไม่โดน · 2.13.3)
-    var sudden = (B.leaveTypes || []).filter(function (x) { return x.type !== sickType() && x.type !== vacationType() && (x.cut > 0 || x.advanceDays > 0); }).map(function (x) { return x.type; }).join(' หรือ ') || 'ลา';
+    var suddenList = (B.leaveTypes || []).filter(function (x) { return x.type !== sickType() && x.type !== vacationType() && (x.cut > 0 || x.advanceDays > 0); }).map(function (x) { return x.type; });
+    var sudden = suddenList.join(' หรือ ') || 'ลา';
+    // (2.13.26 ไปทำงานไม่ได้ รวมเป็นหัวข้อเดียว แยกบรรทัด ป่วย ติดธุระ บอกหลังเวลาเข้างาน พักร้อน · กติกาเงินเท่าเดิม · เจ้าของร้านตอบ 30 ต.ค. 2569 "7 ok")
+    var bizSub = biz.map(function (t) { return t.type + 'บอกล่วงหน้า ' + t.advanceDays + ' วันขึ้นไปไม่หัก · บอกน้อยกว่านั้น หักวันละ ' + money(t.cut) + ' บาท'; });
+    if (r.suddenCut) bizSub.push('ขอ' + sudden + 'ในวันที่ลาหรือย้อนหลัง หักเพิ่ม ' + money(r.suddenCut) + ' บาท' + from + ' ลาหลายวันติดกันหักเพิ่มครั้งเดียว');
+    var freeNow = free.every(function (t) { return suddenList.indexOf(t) < 0; });
     var noWord = money((r.absentCut || 0) + (r.noShowCut || 0));
     openSheet({ title: 'กติกา Incentive', body: html`<ul class="rules">
         <li>${icon('check')}<span>มาตรงเวลา ได้ Incentive เต็มทุกเดือน</span></li>
-        <li>${icon('clock')}<span>สายไม่เกิน ${r.grace} นาที ได้ ${r.allowed} ครั้งต่อเดือนโดยไม่หัก</span></li>
+        <li>${icon('clock')}<span>สายไม่เกิน ${r.grace} นาที ได้ ${r.allowed} ครั้งต่อเดือนโดยไม่หัก${r.lateCut ? ' · เกินนั้นหักครั้งละ ' + money(r.lateCut) + ' บาท' : ''}</span></li>
         <li>${icon('money')}<span>เข้างานช้ากว่าเวลากะ ได้เงินตามเวลาที่ทำจริง${r.lateTimeFrom && r.lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(r.lateTimeFrom) + ')' : ''}: นับทีละครึ่งชั่วโมง ปัดลง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง · เช่น กะเริ่ม 10:30 มาถึง 10:55 ค่าจ้างและ OT เท่าเดิม มาถึง 11:40 ได้น้อยลง 1 ชม. · ได้อนุญาตเข้างานช้า มาตามเวลาที่อนุญาตไม่หักเลย มาช้ากว่านั้นนับแบบนี้จากเวลาที่อนุญาต</span></li>
         <li>${icon('rain')}<span>วันฝนตก เผื่อเวลาเดินทาง ค่อย ๆ มาให้ปลอดภัย</span></li>
-        ${free.length ? html`<li>${icon('leave')}<span>${free.join(', ')}ตามสิทธิ์ที่อนุมัติแล้ว ไม่หัก</span></li>` : ''}
-        ${biz.map(function (t) { return html`<li>${icon('cal')}<span>${t.type}แจ้งล่วงหน้า ${t.advanceDays} วันขึ้นไป ไม่หัก · แจ้งน้อยกว่านั้น หักวันละ ${money(t.cut)} บาท</span></li>`; })}
-        <li>${icon('heart')}<span>ไม่สบาย รู้ตัวว่าไม่ไหวบอกผู้อนุมัติทันที ยิ่งเร็วยิ่งดี แล้วพักให้หาย${sickCut ? ' · ลาป่วยสองวันแรกหักวันละ ' + money(sickCut) + ' บาท · ตั้งแต่วันที่ ' + (r.sickNoteDay || 3) + ' มีใบรับรองแพทย์ไม่หัก (ส่งรูปใบให้ผู้อนุมัติภายใน ' + (r.noteLateDays || 3) + ' วันหลังกลับมาทำงาน) · นอนโรงพยาบาลไม่หัก' : ''} · มี${vacationType()}เหลือ ใช้แทนลาป่วยได้ ไม่หัก Incentive</span></li>
-        ${r.suddenCut ? html`<li>${icon('bell')}<span>ลาในวันนั้น คือขอ${sudden} ในวันที่หยุดหรือย้อนหลัง หักเพิ่ม ${money(r.suddenCut)} บาท${from} · ลาติดกันหลายวันหักครั้งเดียว · ลาป่วยและลาพักร้อนไม่โดน</span></li>` : ''}
-        <li>${icon('info')}<span>ไปไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน</span></li>
-        <li>${icon('info')}<span>ไม่บอก นับเป็นขาดงาน หัก ${noWord} บาท ไม่ได้ค่าจ้างวันนั้น${from} · ป่วย ${sickCut ? 'บอกก่อนหัก ' + money(sickCut) + ' บาท' : 'บอกก่อนไม่หัก'} บอกหลังหัก ${noWord} บาท ได้ค่าจ้าง</span></li>
-        ${r.lateCut ? html`<li>${icon('clock')}<span>มาสายเกินกำหนด หักครั้งละ ${money(r.lateCut)} บาท</span></li>` : ''}
+        <li>${icon('cal')}<span><b class="rules-h">ไปทำงานไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน ร้านจะได้หาคนช่วยทัน</b>
+          <span class="rules-sub"><b>ป่วย</b> ${sickCut ? 'สองวันแรกหักวันละ ' + money(sickCut) + ' บาท · วันที่ ' + (r.sickNoteDay || 3) + ' ขึ้นไปมีใบรับรองแพทย์ไม่หัก (ส่งรูปใบให้ผู้อนุมัติภายใน ' + (r.noteLateDays || 3) + ' วันหลังกลับมาทำงาน) · นอนโรงพยาบาลไม่หัก' : 'ไม่หัก'} · มี${vacationType()}เหลือ ใช้แทนได้ ไม่หัก</span>
+          ${bizSub.length ? html`<span class="rules-sub"><b>ติดธุระ</b> ${bizSub.join(' · ')}</span>` : ''}
+          <span class="rules-sub"><b>บอกหลังเวลาเข้างาน</b> ป่วย วันแรกหัก ${noWord} บาท ยังได้ค่าจ้าง · ติดธุระ หรือไม่ได้บอกเลย นับเป็นขาดงาน หัก ${noWord} บาท ไม่ได้ค่าจ้างวันนั้น${from}</span>
+          ${free.length ? html`<span class="rules-sub">${free.join(', ')}ที่อนุมัติแล้ว ไม่หัก${freeNow ? ' แม้ขอในวันนั้น' : ''}</span>` : ''}</span></li>
         <li>${icon('shield')}<span>เดือนไหน Incentive ไม่พอหัก ส่วนที่เหลือหักเดือนถัดไปครั้งเดียว</span></li>
       </ul>`, foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
   }
@@ -9174,7 +9182,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var d = h.daily;
     var l = h.level;
     return html`<div class="stack">
-      <div class="page-h"><div class="hello" style="font-size:26px;margin:0">ช่วยกันทำร้านให้ดีขึ้น</div><span class="small muted">ทุกเรื่องที่บอก เจ้าของร้านอ่านทุกเรื่อง และได้แต้ม</span></div>
+      <div class="page-h"><div class="hello" style="font-size:26px;margin:0">ช่วยกันทำร้านให้ดีขึ้น</div><span class="small muted">บอกเรื่องไหนก็ได้แต้ม เจ้าของร้านอ่านทุกเรื่อง</span></div>
       ${dailyDue(d)}
       ${dailyCard(d)}
       ${fbCheer(h.feedback)}
@@ -9242,20 +9250,21 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var d = mineOnly(shelf) && shelf.data;
     if (!d) {
       loadFriends();
-      return html`<div class="stack"><div class="skel" style="height:44px"></div><div class="skel" style="height:150px"></div><div class="fr-grid">${[0, 1, 2, 3].map(function () { return html`<div class="skel" style="height:230px"></div>`; })}</div></div>`;
+      return html`<div class="stack"><div class="skel" style="height:44px"></div><div class="fr-grid">${[0, 1, 2, 3, 4, 5].map(function () { return html`<div class="skel" style="height:168px"></div>`; })}</div><div class="skel" style="height:100px"></div></div>`;
     }
     var l = S.home.level || {};
     var total = allFigs(d).length;
     var n = playsNew(l.plays);
+    // 2.13.26 การ์ดเพื่อน 3 ช่องขึ้นก่อน เปิดมาเห็นทุกคน การ์ดเกม 4 ใบอยู่ล่าง (เจ้าของร้านตอบ 30 ต.ค. 2569 "4 ok")
     return html`<div class="stack fr">
-      <div class="page-h"><div class="hello" style="font-size:26px;margin:0">เพื่อนในร้าน</div><span class="small muted">แตะเพื่อนเพื่อไปห้อง ชม และขอแลก</span></div>
+      <div class="page-h"><div class="hello" style="font-size:26px;margin:0">เพื่อนในร้าน</div><span class="small muted">แตะการ์ดเพื่อนเข้าไปดูห้อง ส่งคำชม ขอแลกน้อง</span></div>
+      <div class="fr-grid">${d.people.map(function (p) { return friendCard(p, d, total); })}</div>
+      <button class="btn ghost sm" data-act="fr-reload" style="justify-self:center">${icon('refresh')} ดูของใหม่ของเพื่อน</button>
       <button class="card fr-plaza" data-act="plaza-open"><span class="fr-plaza-art">${raw(PLAZA_ART(pzSky(), ''))}</span>
         <span class="fr-plaza-tx"><b>ลานโซลฟูล์</b><span>${n ? 'มีคนเล่นด้วย ' + n + ' ครั้ง · ไปเล่นตอบ' : 'เดินเล่น ทักทาย ไฮไฟว์ ปาหมอนใส่เพื่อน'}</span></span>${icon('right')}</button>
       ${thanksCard()}
       ${arenaCard(l)}
       ${runCard(l)}
-      <div class="fr-grid">${d.people.map(function (p) { return friendCard(p, d, total); })}</div>
-      <button class="btn ghost sm" data-act="fr-reload" style="justify-self:center">${icon('refresh')} ดูของใหม่ของเพื่อน</button>
     </div>`;
   }
   /** ศึกน้อง, on the friends' page: trophies, raids left, a raid on my room to answer. */
@@ -9317,7 +9326,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var friends = (B.employees || []).filter(function (e) { return e.id !== me; });
     var fresh = thx.fresh || [];
     return html`${fresh.length ? html`<h3 class="h3 mt0">เพื่อนขอบคุณคุณ</h3><section class="card flush"><div class="list">${fresh.map(thxRow)}</div></section>` : ''}
-      <p class="small muted ${fresh.length ? '' : 'mt0'}">เพื่อนเห็นว่าคุณขอบคุณเรื่องอะไร เจ้าของร้านเห็นด้วย · ไม่มีแต้ม และไม่มีใครเห็นว่าใครได้กี่ครั้ง · ขอบคุณเพื่อนแต่ละคนได้วันละครั้ง</p>
+      <p class="small muted ${fresh.length ? '' : 'mt0'}">ขอบคุณเพื่อนได้คนละครั้งต่อวัน · เพื่อนและเจ้าของร้านเห็นว่าขอบคุณเรื่องอะไร · ไม่มีแต้ม ไม่มีใครเห็นว่าใครได้กี่ครั้ง</p>
       <h3 class="h3">ขอบคุณใคร</h3>
       <div class="thx-people">${friends.map(function (e) {
         var was = done.indexOf(e.id) >= 0;
@@ -9375,7 +9384,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var t = thxOf();
     thxSeen();
     softRender();
-    openSheet({ title: 'คำขอบคุณจากเพื่อน', body: html`<p class="small muted mt0">เห็นคนเดียว · เพื่อนขอบคุณเรื่องงานที่คุณช่วย ไม่มีแต้ม ไม่มีการนับแข่งกัน</p>${(t.got || []).length ? html`<section class="card flush"><div class="list">${t.got.map(thxRow)}</div></section>` : html`<div class="empty">ยังไม่มีคำขอบคุณ ลองขอบคุณเพื่อนก่อนก็ได้นะ</div>`}`,
+    openSheet({ title: 'คำขอบคุณจากเพื่อน', body: html`<p class="small muted mt0">เห็นแค่คุณ · เพื่อนขอบคุณเรื่องงานที่คุณช่วย ไม่มีแต้ม ไม่มีการนับแข่งกัน</p>${(t.got || []).length ? html`<section class="card flush"><div class="list">${t.got.map(thxRow)}</div></section>` : html`<div class="empty">ยังไม่มีคำขอบคุณ ลองขอบคุณเพื่อนก่อนก็ได้นะ</div>`}`,
       foot: html`<button class="btn" data-act="sheet-close">ปิด</button><button class="btn primary" data-act="thx-open">${icon('heart')} ขอบคุณเพื่อน</button>` });
   }
 
@@ -9406,7 +9415,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       </div></section>
       <section class="card flush"><div class="list">
         ${fbHome(h.feedback).count ? row('data-act="fb-mine"', 'list', 'เรื่องที่ฉันส่ง', fbHome(h.feedback).count + ' เรื่อง') : ''}
-        ${row('data-act="thx-mine"', 'heart', 'คำขอบคุณจากเพื่อน', thxOf().n ? thxOf().n + ' ครั้ง · เห็นคนเดียว' : 'ขอบคุณเพื่อนได้ที่แท็บเพื่อน', thxNew() ? html`<span class="pill gold">ใหม่ ${thxNew()}</span>` : '')}
+        ${row('data-act="thx-mine"', 'heart', 'คำขอบคุณจากเพื่อน', thxOf().n ? thxOf().n + ' ครั้ง · เห็นแค่คุณ' : 'ขอบคุณเพื่อนได้ที่แท็บเพื่อน', thxNew() ? html`<span class="pill gold">ใหม่ ${thxNew()}</span>` : '')}
         ${row('data-act="howto-open"', 'info', 'วิธีใช้แอปและประกาศจากร้าน', 'ลงเวลา ฝนตก ขอลา · ประกาศล่าสุด')}
         ${row('data-act="refresh-home"', 'refresh', 'รีเฟรชข้อมูล', '')}
         <button class="item danger" data-act="logout-staff"><span class="me-ic">${icon('logout')}</span><div class="grow"><div class="t">ออกจากระบบในเครื่องนี้</div></div></button>
@@ -9428,9 +9437,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function odWhen(iso) {
     if (!iso) return '';
     var d = ymdOf(new Date(iso));
-    return (d === ymdOf(now()) ? '' : odDay(d) + ' ') + isoTime(iso) + ' น.';
+    return (d === ymdOf(now()) ? '' : odDay(d) + ' ') + isoTime(iso) + ' น.'; // 2.13.26 เวลากับ น. ไม่แยกบรรทัด
   }
   function odEta(c) { return odDay(c.eta) + (c.slot ? ' ' + c.slot : ''); }
+  /** 2.13.26 ช่วงเวลาไม่ขาดกลางบรรทัด เช่น 12:00–16:00 (หัวการ์ดคำสั่งซื้อ หน้ากำลังมา) */
+  function odNw(s) { return String(s).split(/(\d{1,2}[:.]\d{2}\s*[–-]\s*\d{1,2}[:.]\d{2})/).map(function (x, i) { return i % 2 ? html`<span class="od-nw">${x}</span>` : x; }); }
   /** When a count was made, short: 'วันนี้ 10:28', 'เมื่อวาน', 'อา. 27 ก.ย.' */
   function odAgo(iso) {
     if (!iso) return '';
@@ -10456,7 +10467,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var issues = b.issues || [];
       // (what was found later: said from here in the two days after, as staff can; the server takes it longer)
       var say = done && b.fresh;
-      return html`<section class="card flush"><div class="od-store-h"><div class="grow"><b>${b.store}${b.orderNo ? ' · ' + b.orderNo : ''}</b><span class="small muted">${done ? 'ได้ของ ' + odWhen(b.gotAt) + (b.gotBy ? ' · ' + b.gotBy : '') : 'มา' + odEta(b)}</span></div><div class="r"><div class="amt">${money(b.total)} บาท</div></div></div>
+      return html`<section class="card flush"><div class="od-store-h"><div class="grow"><b>${b.store}${b.orderNo ? ' · ' + b.orderNo : ''}</b><span class="small muted">${done ? 'ได้ของ ' + odWhen(b.gotAt) + (b.gotBy ? ' · ' + b.gotBy : '') : odNw('มา' + odEta(b))}</span></div><div class="r"><div class="amt">${money(b.total)} บาท</div></div></div>
         <div class="list">${b.items.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.name}</div><div class="s">${x.pname} · ${odoQtyPrice(x.q, x.per, x.unit, x.price)}</div></div></div>`; })}</div>
         ${b.note ? html`<p class="small od-note">${b.note}</p>` : ''}
         ${issues.map(function (is) { var x = b.items[is.n]; return x ? html`<p class="od-issue"><span class="pill ${is.fix ? '' : 'warn'}">${x.name} ${rcSay(is, x)}</span><span class="grow small muted">${is.fix ? RC_FIXES[is.fix] + ' ' + odWhen(is.fixAt) + (is.fixBy ? ' · ' + is.fixBy : '') : 'รอร้านค้า'}</span><button class="od-plain" data-act="odo-fix-more" data-id="${b.id}" data-n="${is.n}">แก้</button></p>` : ''; })}
@@ -10629,7 +10640,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (it.max) ps.push('สั่งครั้งละไม่เกิน ' + odNum(it.max) + ' ' + it.unit);
       var sp = odoShopee(it);
       return html`<div class="item od-cat-item ${it.active ? '' : 'off'}">${odPic(odoImgOf(it), it.name)}<div class="grow"><div class="t"><button type="button" class="od-name" data-act="odo-item" data-id="${it.id}">${it.name}</button></div><div class="s">${ps.join(' · ')}</div>${odoUsualBuy(it)}
-        ${sp ? html`<div class="s od-sp">Shopee: <a href="${sp.link}" target="_blank" rel="noopener">${sp.name}</a> · ชิ้นละ ${money(sp.price, true)} บาท จ่ายจริง${sp.per !== 1 ? ' (= ' + odNum(sp.per) + ' ' + it.unit + ')' : ''} · Claude เทียบ ${sp.checkedAt ? thShort(ymdOf(new Date(sp.checkedAt))) : '-'}${sp.expired ? html` · <span style="color:var(--warn)">เกิน ${odo.cat.shopeeDays || 35} วัน แอปไม่ใช้</span>` : ''}${it.keeps ? '' : ' · ไม่ใช่ของเก็บได้นาน แอปไม่ใช้'} <button class="od-plain" data-act="odo-shopee-off" data-id="${it.id}">เลิกใช้</button></div>` : ''}
+        ${sp ? html`<div class="s od-sp">Shopee: <a href="${sp.link}" target="_blank" rel="noopener">${sp.name}</a> · ${sp.per !== 1 ? 'แพ็คละ' : it.unit + 'ละ'} ${money(sp.price, true)} บาท จ่ายจริง${sp.per !== 1 ? ' (= ' + odNum(sp.per) + ' ' + it.unit + ')' : ''} · Claude เทียบ ${sp.checkedAt ? thShort(ymdOf(new Date(sp.checkedAt))) : '-'}${sp.expired ? html` · <span style="color:var(--warn)">เกิน ${odo.cat.shopeeDays || 35} วัน แอปไม่ใช้</span>` : ''}${it.keeps ? '' : ' · ไม่ใช่ของเก็บได้นาน แอปไม่ใช้'} <button class="od-plain" data-act="odo-shopee-off" data-id="${it.id}">เลิกใช้</button></div>` : ''}
         <div class="od-par">${it.staff ? '' : html`<span class="small muted">PAR</span><span class="stepper"><button type="button" data-act="odo-par" data-id="${it.id}" data-d="-1" aria-label="ลด PAR">−</button><b>${it.par != null ? odNum(it.par) : '–'}</b><button type="button" data-act="odo-par" data-id="${it.id}" data-d="1" aria-label="เพิ่ม PAR">+</button></span><span class="small muted">${it.unit}</span>`}
           ${count}
           <select class="od-keepsel" data-change="odo-keep" data-id="${it.id}" aria-label="ซื้อเผื่อ ${it.name}"><option value="" ${it.keepDays == null ? 'selected' : ''}>${it.keepAuto != null ? 'ซื้อเผื่อ: ตามอายุของ (' + (it.keepAuto ? 'ไม่เกิน ' + it.keepAuto + ' วัน' : 'ไม่ซื้อเผื่อ') + ')' : 'ซื้อเผื่อ: ถามก่อน'}</option><option value="0" ${it.keepDays === 0 ? 'selected' : ''}>ไม่ซื้อเผื่อ</option>${days.map(function (d) { return html`<option value="${d}" ${it.keepDays === d ? 'selected' : ''}>ซื้อเผื่อ เก็บได้ ${d} วัน</option>`; })}</select></div></div></div>`;
@@ -15775,7 +15786,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!d || !d.lead || !(d.missing || []).length) return '';
     var first = d.missing[0];
     var yest = dlDay(first) === 'เมื่อวาน';
-    var title = d.missing.length > 1 ? 'ยังไม่ได้ส่งสรุปหน้างาน ' + d.missing.length + ' วัน' : yest ? 'เมื่อวานยังไม่ได้ส่งสรุปหน้างาน' : 'ยังไม่ได้ส่งสรุปหน้างานของ ' + dlDay(first);
+    var title = d.missing.length > 1 ? 'ส่งสรุปหน้างาน ' + d.missing.length + ' วันได้เลย' : yest ? 'ส่งสรุปหน้างานเมื่อวานได้เลย' : 'ส่งสรุปหน้างานของ ' + dlDay(first) + ' ได้เลย';
     return html`<button class="card dl-due" data-act="dl-form" data-date="${first}">${icon('note')}<div class="grow"><b>${title}</b><span>${d.missing.length > 1 ? d.missing.map(dlDay).join(', ') + ' · ' : ''}แตะเพื่อส่ง${d.missing.length > 1 ? 'ทีละวัน' : ''} ใช้เวลาไม่ถึงนาที · ไม่มีเรื่องก็ส่งได้</span></div>${icon('right')}</button>`;
   }
   /** The day's card: a tile for each topic, and the heads send their day from it. */
@@ -15787,12 +15798,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<section class="card dl-card">
       <div class="fb-invite-h"><span class="fb-ico">${icon('note')}</span><div class="grow"><span class="eyebrow">บันทึกหน้างาน</span><b>วันนี้ที่ร้านเป็นยังไงบ้าง</b></div></div>
       <button class="dl-all" data-act="dl-all">${icon('chat')}<b class="grow">บอกได้ทุกเรื่อง ไม่ต้องเลือกหัวข้อ</b>${icon('right')}</button>
-      <p class="dl-all-note">หัวข้อไหนก็ +${dlNotePts()} เลือกผิดแก้ได้</p>
+      <p class="dl-all-note">ทุกหัวข้อ +${dlNotePts()} เท่ากัน · เลือกที่ใกล้สุดได้เลย</p>
       ${d.lead ? (d.sentToday ? html`<div class="dl-done"><span class="pill ok">${icon('check')} ส่งสรุปวันนี้แล้ว</span>${d.streak >= 2 ? html`<span class="pill gold">${icon('spark')} ส่งครบ ${d.streak} วันติด</span>` : ''}</div>` : html`<button class="btn primary block" style="margin-top:12px" data-act="dl-form" data-date="${d.today}">${icon('note')} ส่งสรุปวันนี้</button>`) : ''}
       ${dlTiles()}
       ${dlFixingList(d)}
       ${news.length ? html`<button class="dl-news" data-act="dl-mine">${icon('check')}<span>เจ้าของร้านดูเรื่องที่คุณบันทึกแล้ว ${news.length} เรื่อง · ขอบคุณที่บอกนะ</span>${icon('right')}</button>` : ''}
-      <div class="fb-foot"><span>${icon('team')}<span>${team.today ? 'วันนี้ทีมบันทึก ' + team.today + ' เรื่อง' : 'วันนี้ยังไม่มีใครบันทึก'}${team.fixed && !(S.home && S.home.level) ? html`<br>เดือนนี้ร้านแก้แล้ว ${team.fixed} เรื่อง` : ''}</span></span>${(d.mine || []).length ? html`<button class="fb-mine-btn" data-act="dl-mine">บันทึกของฉัน${mineToday ? ' ' + mineToday : ''}${news.length ? html`<i class="dot" aria-label="เจ้าของร้านดูแล้ว"></i>` : ''}${icon('right')}</button>` : ''}</div>
+      <div class="fb-foot"><span>${icon('team')}<span>${team.today ? 'วันนี้ทีมบันทึก ' + team.today + ' เรื่อง' : 'วันนี้ยังไม่มีใครบันทึก บอกเป็นคนแรกเลย'}${team.fixed && !(S.home && S.home.level) ? html`<br>เดือนนี้ร้านแก้แล้ว ${team.fixed} เรื่อง` : ''}</span></span>${(d.mine || []).length ? html`<button class="fb-mine-btn" data-act="dl-mine">บันทึกของฉัน${mineToday ? ' ' + mineToday : ''}${news.length ? html`<i class="dot" aria-label="เจ้าของร้านดูแล้ว"></i>` : ''}${icon('right')}</button>` : ''}</div>
     </section>`;
   }
   /** แต้มของบันทึก 1 เรื่อง (Levels.gs LEVEL_POINTS.note) ทุกหัวข้อเท่ากัน */
@@ -15880,7 +15891,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function dlFilled(v) { return !!v && !!(String(v.menu || '').trim() || String(v.detail || '').trim()); }
   function dlCount() { return Object.keys(dl.items).filter(function (k) { return dlFilled(dl.items[k]); }).length; }
   function dailyFormBody() {
-    return html`<p class="small muted mt0">แตะหัวข้อที่มีเรื่อง แล้วพิมพ์สั้น ๆ · หัวข้อที่ไม่ได้แตะ = ไม่มี · เล่าว่าเกิดอะไร ไม่ต้องบอกว่าใครทำ</p>
+    return html`<p class="small muted mt0">แตะหัวข้อที่มีเรื่อง แล้วพิมพ์สั้น ๆ · ไม่มีเรื่องไหนก็ข้ามได้ · เล่าว่าเกิดอะไร ไม่ต้องบอกว่าใครทำ</p>
       <div class="dl-list">${dlTopics().map(function (t) {
         var v = dl.items[t[0]];
         var has = dlFilled(v);
@@ -16091,7 +16102,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function dlEditBody() {
     var t = dlTopic(dlEd.topic);
-    return html`<p class="small muted mt0">เลือกหัวข้อผิด แตะหัวข้อใหม่ได้เลย หัวข้อไหนก็ +${dlNotePts()} เท่ากัน</p>
+    return html`<p class="small muted mt0">อยากเปลี่ยนหัวข้อ แตะหัวข้อใหม่ได้เลย แต้มเท่าเดิม</p>
       <div class="dl-tiles" style="margin-top:8px">${dlTopics().map(function (x) { return html`<button type="button" class="dl-tile ${x[0]}" data-act="dl-edit-topic" data-topic="${x[0]}" aria-pressed="${x[0] === dlEd.topic ? 'true' : 'false'}">${icon(DL_ICON[x[0]] || 'chat')}<span>${DL_SHORT[x[0]] || x[1]}</span></button>`; })}</div>
       <label class="field" style="margin-top:14px"><span>${t[4]}</span><input class="input" id="dl-edit-menu" maxlength="60" autocomplete="off" value="${dlEd.menu}"></label>
       <label class="field"><span>เล่าสั้น ๆ</span><textarea class="input" id="dl-edit-detail" maxlength="500" rows="3" placeholder="${t[3]}">${dlEd.detail}</textarea></label>`;
