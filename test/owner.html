@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.21","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"79865222f790"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.22","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"0998f07e803b"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -9506,7 +9506,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
 
   // ---- staff: the count on this phone, kept until it is sent (12 hours at most)
-  function odKey() { return 'seoulful.od.' + staffId(); }
+  // (od2: 2.13.22 หน่วยนับของบางอย่างเปลี่ยน ร่างที่นับไว้ก่อนหน้าไม่ใช้)
+  function odKey() { return 'seoulful.od2.' + staffId(); }
   function odDraft() {
     if (!S.odDraft) {
       var d = LS.get(odKey());
@@ -9879,7 +9880,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** The unit a delivery's thing comes in: the item's when one is one, else the store's pieces (its name says what they are). */
   function rcUnit(x) { return (+x.per || 1) === 1 ? x.unit : 'ชิ้น'; }
   /** 'ขาด 2 กก.', 'ส่งผิด 4 ชิ้น', 'เสีย 1 แพ็ค' */
-  function rcSay(is, x) { return RC_KINDS[is.kind] + ' ' + odNum(x.q - is.got) + ' ' + rcUnit(x); }
+  // 2.13.22 (เจ้าของ 29 ต.ค. 2569): จำนวนเป็นหน่วยเดียวกับที่นับ ชิ้นของร้านค้า (แพ็ค ลัง) ในวงเล็บ
+  function rcQty(x, n) { var per = +x.per || 1; return odNum(n * per) + ' ' + x.unit + (per === 1 ? '' : ' (' + odNum(n) + ' ชิ้น)'); }
+  function rcSay(is, x) { return RC_KINDS[is.kind] + ' ' + rcQty(x, x.q - is.got); }
   /** The sheet for a delivery: to receive it, or (received already) to say what was found since; `owner` from the owner's sheet. */
   function rcOpen(b, owner) {
     rc = { b: b, owner: !!owner, later: b.status === 'got', said: {} };
@@ -9902,7 +9905,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var open = !!was && !was.fix;
     var say = st ? html`<span class="rc-say bad">${rcSay(st, x)}</span>`
       : was ? html`<span class="rc-say ${open ? 'bad' : ''}">${rcSay(was, x)}<small>${open ? 'รอร้านค้า' : RC_FIXES[was.fix]}</small></span>`
-      : html`<span class="rc-say">${odNum(x.q)} ${rcUnit(x)}</span>`;
+      : html`<span class="rc-say">${rcQty(x, x.q)}</span>`;
     return html`<div class="rc-row ${st ? 'on' : ''}" id="rc-${n}">
       <button type="button" class="rc-top" data-act="rc-tap" data-n="${n}" aria-expanded="${st ? 'true' : 'false'}"><span class="rc-ck ${st || open ? 'bad' : ''}">${icon(st || open ? 'alert' : 'check')}</span><span class="grow"><b>${x.name}</b>${x.pname ? html`<small>${x.pname}</small>` : ''}</span>${say}</button>
       ${st ? rcMore(x, n, st) : ''}</div>`;
@@ -9911,7 +9914,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function rcMore(x, n, st) {
     return html`<div class="rc-more">
       <div class="seg" role="group" aria-label="${x.name}">${['short', 'wrong', 'bad'].map(function (k) { return html`<button type="button" aria-pressed="${st.kind === k}" data-act="rc-kind" data-n="${n}" data-k="${k}">${RC_KINDS[k]}</button>`; })}<button type="button" aria-pressed="false" data-act="rc-kind" data-n="${n}" data-k="">ครบ</button></div>
-      ${x.q > 1 ? html`<div class="rc-got"><span>${st.kind === 'short' ? 'ได้มา' : st.kind === 'wrong' ? 'ที่ถูก' : 'ที่ดี'}</span><span class="stepper"><button type="button" data-act="rc-step" data-n="${n}" data-d="-1" aria-label="ลด">−</button><b>${st.got}</b><button type="button" data-act="rc-step" data-n="${n}" data-d="1" aria-label="เพิ่ม">+</button></span><span>จาก ${odNum(x.q)} ${rcUnit(x)}</span></div>` : ''}
+      ${x.q > 1 ? html`<div class="rc-got"><span>${st.kind === 'short' ? 'ได้มา' : st.kind === 'wrong' ? 'ที่ถูก' : 'ที่ดี'}</span><span class="stepper"><button type="button" data-act="rc-step" data-n="${n}" data-d="-1" aria-label="ลด">−</button><b>${st.got}</b><button type="button" data-act="rc-step" data-n="${n}" data-d="1" aria-label="เพิ่ม">+</button></span><span>จาก ${odNum(x.q)} ${rcUnit(x)}${(+x.per || 1) === 1 ? '' : ' = ' + odNum(x.q * x.per) + ' ' + x.unit}</span></div>` : ''}
       ${st.kind === 'short' ? '' : html`<input class="input" data-rc="note" data-n="${n}" maxlength="120" autocomplete="off" enterkeyhint="done" placeholder="${st.kind === 'wrong' ? 'ได้อะไรมาแทน (ไม่ใส่ก็ได้)' : 'เสียอย่างไร เช่น เน่า แตก บุบ (ไม่ใส่ก็ได้)'}" value="${st.note}">`}
     </div>`;
   }
@@ -10143,7 +10146,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var items = (only || odTouched()).map(function (it) {
       var d = odEntry(it) || {};
       var f = only ? null : odFlag(it);
-      return { id: it.id, have: only ? null : d.have, qty: odQty(it), seen: odWaiting(it), par: f && f.on ? f.kind : '', menu: it.staff ? String(d.menu || '').trim() : '' };
+      return { id: it.id, unit: it.unit, have: only ? null : d.have, qty: odQty(it), seen: odWaiting(it), par: f && f.on ? f.kind : '', menu: it.staff ? String(d.menu || '').trim() : '' };
     });
     return run(btn, call('orderAdd', { items: items, extras: only ? [] : odExtras(), people: odPeople(), confirm: confirmIds || [] }, staffAuth())).then(function (r) {
       S.od = r.list;
@@ -17902,7 +17905,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var is = b && (b.issues || []).filter(function (x) { return x.n === n; })[0];
       if (!is) return;
       var x = b.items[n];
-      var what = x.name + ' ' + odNum(x.q - is.got) + ' ' + rcUnit(x);
+      var what = x.name + ' ' + rcQty(x, x.q - is.got);
       confirmSheet(is.kind === 'short'
         ? { title: 'ร้านค้าส่งของที่ขาดมาแล้ว', text: what + ' จาก ' + b.store + ' มาถึงร้านแล้วใช่ไหม', yes: 'ได้แล้ว' }
         : { title: 'ร้านค้าเปลี่ยนให้แล้ว', text: what + ' (' + RC_KINDS[is.kind] + ') จาก ' + b.store + ' ได้ของที่ถูกและดีแล้วใช่ไหม', yes: 'ได้แล้ว' }).then(function (ok) {
