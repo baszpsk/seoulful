@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.26","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"fe939ac727cd"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.27","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"92404745d8d7"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -679,14 +679,16 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-pick-row .t a { color: inherit; }
 .od-pst { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .od-warn { color: var(--warn); margin: 0 0 8px; }
-.od-big { position: fixed; inset: 0; z-index: 10000; background: rgba(0, 0, 0, .82); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.od-big { position: fixed; top: 0; left: 0; right: 0; height: 100vh; height: 100lvh; z-index: 10000; background: rgba(0, 0, 0, .9); display: flex; align-items: center; justify-content: center; padding: 16px; }
 .od-big figure { margin: 0; text-align: center; color: #fff; }
+.od-big figcaption { display: inline-block; max-width: 92vw; padding: 6px 14px; border-radius: 999px; background: rgba(0, 0, 0, .72); font-weight: 600; }
 .od-big img { max-width: min(92vw, 600px); max-height: 78vh; border-radius: 14px; background: #fff center / contain no-repeat; display: block; margin: 0 auto 10px; }
 .od-big .icon-btn { position: absolute; top: 14px; right: 14px; color: #fff; }
 .od-top b { display: block; font-weight: 600; font-size: 15.5px; line-height: 1.3; }
 .od-top .s { display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
 .od-have { display: flex; align-items: center; gap: 6px; flex: none; }
 .od-have .lbl { font-size: 13px; color: var(--muted); }
+.od-high { margin: 8px 0 0; padding: 6px 10px; border-radius: 10px; font-size: 13px; color: var(--ink); background: rgba(234, 88, 12, .16); }
 .stepper { display: inline-flex; align-items: center; background: var(--inset); border-radius: 12px; padding: 2px; flex: none; }
 .stepper button { width: 34px; height: 34px; border: 0; background: transparent; border-radius: 10px; font-size: 20px; line-height: 1; color: var(--ink); }
 .stepper button:active { background: var(--btn); }
@@ -700,13 +702,13 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .meal-row .grow { display: grid; min-width: 0; }
 .meal-row b { font-size: 14px; }
 .meal-row small { font-size: 12px; color: var(--muted); }
-.meal-ck { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--card); color: #b42318; box-shadow: inset 0 0 0 1px var(--line); }
+.meal-ck { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--card); color: var(--bad); box-shadow: inset 0 0 0 1px var(--line); }
 .meal-ck svg { width: 15px; height: 15px; }
-.meal-row.on .meal-ck { background: var(--gold); color: #fff; box-shadow: none; }
+.meal-row.on .meal-ck { background: var(--gold); color: var(--surface); box-shadow: none; }
 .meal-row:not(.on) b { text-decoration: line-through; text-decoration-color: rgba(0, 0, 0, .3); color: var(--muted); }
 .od-lot { display: flex; align-items: center; gap: 6px; margin: 6px 0 0; padding: 6px 10px; border-radius: 10px; background: var(--gold-soft); color: var(--gold-ink); font-size: 12.5px; font-weight: 600; }
 .od-lot svg { flex: none; width: 15px; height: 15px; }
-.od-lot.due, .od-first .due, .od-due { color: #b42318; }
+.od-lot.due, .od-first .due, .od-due { color: var(--bad); }
 .od-lot.due { background: #fdecea; }
 .od-first { display: grid; gap: 3px; margin-top: 10px; padding: 8px 10px; border-radius: 12px; background: var(--gold-soft); font-size: 12.5px; color: var(--ink); }
 .od-first b { display: flex; align-items: center; gap: 5px; color: var(--gold-ink); font-size: 13px; }
@@ -721,6 +723,10 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-say.on { color: var(--ink); font-weight: 600; }
 .od-say svg { width: 15px; height: 15px; color: var(--ok); }
 .od-u { font-size: 13px; color: var(--muted); min-width: 30px; }
+/* 2.13.27 หน่วยติดตัวเลขในช่องนับและช่องสั่ง (ตัวเล็กใต้ตัวเลข ไม่กินที่ชื่อของ) */
+.stepper.od-su { position: relative; }
+.stepper.od-su input { padding: 0 0 11px; line-height: 1; }
+.od-iu { position: absolute; left: 0; right: 0; bottom: 5px; text-align: center; font-size: 10.5px; font-style: normal; line-height: 1; color: var(--muted); pointer-events: none; white-space: nowrap; }
 .od-plain { border: 0; background: none; color: var(--gold-ink); font-size: 13px; padding: 2px 0; display: inline-flex; gap: 4px; align-items: center; }
 .od-meal { display: grid; gap: 8px; margin-top: 10px; }
 .od-meal .input { height: 42px; font-size: 15px; }
@@ -729,7 +735,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-mh { display: inline-flex; gap: 6px; align-items: flex-start; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
 .od-mh svg { flex: none; width: 15px; height: 15px; margin-top: 1px; }
 .od-mh.ok { color: var(--ok); }
-.od-mh.over { color: #b42318; font-weight: 600; }
+.od-mh.over { color: var(--bad); font-weight: 600; }
 .od-meal-top { display: flex; gap: 12px; align-items: center; margin: 0 0 10px; padding: 12px 14px; }
 .od-meal-top b { display: flex; align-items: center; gap: 6px; font-size: 14.5px; }
 .od-meal-top b svg { width: 17px; height: 17px; }
@@ -794,7 +800,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .rc-top small { font-size: 12px; color: var(--muted); line-height: 1.35; overflow-wrap: anywhere; }
 .rc-ck { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--card); color: var(--ok); box-shadow: inset 0 0 0 1px var(--line); }
 .rc-ck svg { width: 15px; height: 15px; }
-.rc-ck.bad { background: var(--warn); color: var(--card); box-shadow: none; }
+.rc-ck.bad { background: var(--warn); color: var(--surface); box-shadow: none; }
 .rc-say { flex: none; max-width: 46%; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink-2); text-align: right; line-height: 1.35; }
 .rc-say.bad { color: var(--warn); }
 .rc-say small { display: block; font-size: 11.5px; font-weight: 500; color: var(--muted); }
@@ -2000,7 +2006,7 @@ html.i3-pz-shop-day .pz-art.day .pz3-shop.pz-d, html.i3-pz-shop-lit .pz-art.lit 
 .me-top-char .char-svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .me-ic { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--inset); color: var(--ink); }
 .me-ic svg { width: 18px; height: 18px; }
-.item.danger .t, .item.danger .me-ic { color: #b42318; }
+.item.danger .t, .item.danger .me-ic { color: var(--bad); }
 @media (prefers-reduced-motion: reduce) { .fr-card { animation: none; } }
 .pz-p { position: absolute; left: var(--x); top: var(--y); width: 0; height: 0; transition: left var(--ms, 1s) linear, top var(--ms, 1s) linear; }
 .pz-body { position: absolute; left: -32px; bottom: 0; width: 64px; padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -2080,6 +2086,11 @@ html.c3 .shop-char, html.c3 .rm-char { touch-action: pan-y; }
 .pz-p.walking .pz-legs .pz-leg.l2 { animation-delay: -.28s; }
 .pz-p.walking .pz-legs .pz-leg.l3 { animation-delay: -.14s; }
 @media (prefers-reduced-motion: reduce) { .pz-p.walking .pz-char .char-svg, .pz-p.walking .pz-pet .pet-svg { animation: none !important; } .pz-p.walking .pz-legs .c3-img { visibility: visible; } .pz-leg { display: none; } }
+/* k-walk (เจ้าของ 30 ต.ค. 2569 "ตัวละครกำลังทำท่าแล้วกดเดินตัวละครยังทำท่าอยู่และเดินไปด้วย"): เริ่มเดิน ท่าที่ค้างหยุด
+   ท่าที่เห็นอยู่ (เวทีของท่าที่แตะ ภาพท่าที่เล่นเอง) จางออกทับท่าเดิน .24 วิ แบบเดียวกับภาพสามมิติที่ขึ้น (c3-in) ไม่ตัดฉับ */
+.pz-char .c3-play.pz-out { opacity: 0; transition: opacity .24s ease-out; }
+.char-svg image.mvf-out { visibility: visible; pointer-events: none; animation: mvf-out .24s ease-out both; }
+@keyframes mvf-out { to { opacity: 0; } }
 .pz-p.dozy .pz-char { filter: saturate(.8); }
 .pz-zz { position: absolute; left: 40px; bottom: calc(var(--hd, 112px) - 16px); color: #fff; font: 700 12px/1 var(--sans); font-style: normal; text-shadow: 0 1px 2px rgba(0, 0, 0, .4); animation: pz-zz 2.4s ease-in-out infinite; }
 @keyframes pz-zz { 0%, 100% { transform: translateY(0); opacity: .6; } 50% { transform: translateY(-5px); opacity: 1; } }
@@ -2785,7 +2796,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 /* ---------- sheet (dialog) ---------- */
 /* A sheet floats up on a spring as a pane of glass, clear of the screen's edges.
    Pulled down by its top, it follows the finger and goes when let go. */
-#sheet-root .scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 60; opacity: 0; transition: opacity .35s ease; }
+#sheet-root .scrim { position: fixed; top: 0; left: 0; right: 0; height: 100vh; height: 100lvh; background: var(--scrim); z-index: 60; opacity: 0; transition: opacity .35s ease; }
 #sheet-root .sheet { position: fixed; left: 8px; right: 8px; bottom: 8px; z-index: 61; max-width: 640px; margin: 0 auto; max-height: 92vh; max-height: calc(100dvh - 16px - env(safe-area-inset-top)); display: flex; flex-direction: column; background: var(--glass-strong); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border-radius: 32px; box-shadow: inset 0 1px 0 var(--rim-hi), inset 0 0 0 1px var(--rim), var(--shadow-2); transform: translateY(calc(100% + 24px)); transition: transform .55s var(--spring-soft); }
 #sheet-root .sheet.wide { max-width: 860px; }
 #sheet-root.open .scrim { opacity: 1; }
@@ -2827,6 +2838,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 .toast.bad { background: rgba(158, 40, 33, .88); }
 .toast.ok { background: rgba(36, 94, 66, .88); }
 .toast.out { animation: toast-out .22s ease-in both; }
+#toasts.od-pass .toast { pointer-events: none; }
 @keyframes toast-in { from { transform: translateY(20px) scale(.9); opacity: 0; } }
 @keyframes toast-out { to { transform: translateY(10px) scale(.95); opacity: 0; } }
 @keyframes rise { from { transform: translateY(10px); opacity: 0; } }
@@ -6644,7 +6656,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (tone === 'bad') { ERRS.push({ m: String(msg).slice(0, 120), t: Date.now(), at: whereNow() }); if (ERRS.length > 5) ERRS.shift(); useEv('e', String(msg).slice(0, 120)); }
     var box = $('#toasts');
     var ms = tone === 'bad' || tone === 'tip' ? 7000 : 4500;
-    var gone = function (el) { if (el.parentNode) el.parentNode.removeChild(el); };
+    var gone = function (el) { if (el.parentNode) el.parentNode.removeChild(el); if (typeof odToastLift === 'function') odToastLift(box); };
     // A message sinks away as it came up.
     var drop = function (el) { if (el.classList.contains('out')) return; el.classList.add('out'); setTimeout(function () { gone(el); }, 220); };
     var live = Array.prototype.filter.call(box.children, function (el) { return !el.classList.contains('out'); });
@@ -6655,11 +6667,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var el = document.createElement('div');
     el.className = 'toast ' + (tone || '');
     el.textContent = msg;
-    box.appendChild(el);
+    box.appendChild(el); if (typeof odToastLift === 'function') odToastLift(box);
     el._t = setTimeout(function () { drop(el); }, ms);
   }
   var sheetState = null;
   function openSheet(o) {
+    odBlurField(); // 2.13.27 k-tap: แป้นพิมพ์ปิดก่อน ชั้นคลุมได้ความสูงจอเต็ม
     sheetState = o;
     usePage();
     var root = $('#sheet-root');
@@ -9653,7 +9666,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<button class="btn primary block" data-act="meal-send">${icon('check')} ยืนยัน · ของกินพนักงาน ${n} อย่าง</button>`;
   }
   function odStepper(f, it, v) {
-    return html`<span class="stepper ${f}"><button type="button" data-act="od-step" data-id="${it.id}" data-f="${f}" data-d="-1" aria-label="ลด">−</button><input inputmode="decimal" enterkeyhint="done" autocomplete="off" data-od="${f}" data-id="${it.id}" value="${odNum(v)}" placeholder="–" aria-label="${f === 'have' ? 'มีอยู่' : 'สั่ง'} ${it.name}"><button type="button" data-act="od-step" data-id="${it.id}" data-f="${f}" data-d="1" aria-label="เพิ่ม">+</button></span>`;
+    return html`<span class="stepper ${f} od-su"><button type="button" data-act="od-step" data-id="${it.id}" data-f="${f}" data-d="-1" aria-label="ลด">−</button><input inputmode="${odPiece(it) ? 'numeric' : 'decimal'}" enterkeyhint="done" autocomplete="off" data-od="${f}" data-id="${it.id}" value="${odNum(v)}" placeholder="–" aria-label="${f === 'have' ? 'เหลือ' : 'สั่ง'} ${it.name} เป็น ${it.unit}"><button type="button" data-act="od-step" data-id="${it.id}" data-f="${f}" data-d="1" aria-label="เพิ่ม">+</button><i class="od-iu" aria-hidden="true">${it.unit}</i></span>`;
   }
   function odSub(it) {
     var d = odEntry(it);
@@ -9662,7 +9675,70 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var enough = !q && d.have != null && it.par != null;
     // Enough for the PAR, and still their call: one tap orders a step more.
     if (enough && d.qty == null) return html`<span class="grow od-say">${icon('check')} พอแล้ว ไม่ต้องสั่ง</span><button class="od-plain" data-act="od-order-only" data-id="${it.id}">${icon('plus')} สั่งเพิ่ม</button>`;
-    return html`<span class="grow od-say ${q ? 'on' : ''}">${enough ? html`${icon('check')} พอแล้ว ไม่ต้องสั่ง` : q ? 'สั่ง' : 'จะสั่ง'}</span>${odStepper('qty', it, q)}<span class="od-u">${it.unit}</span>`;
+    return html`<span class="grow od-say ${q ? 'on' : ''}">${enough ? html`${icon('check')} พอแล้ว ไม่ต้องสั่ง` : q ? 'สั่ง' : 'จะสั่ง'}</span>${odStepper('qty', it, q)}`;
+  }
+  // ---- 2.13.27 k-tap (เจ้าของสั่ง 30 ต.ค. 2569 "ป้องกันความผิดพลาดทุกรูปแบบ" "คลีนตาสุด"): แตะพลาดแก้ง่าย กันตัวเลขผิด
+  /** ของที่นับเป็นชิ้น (ลูก ขวด แพ็ค ...) รับแต่เลขเต็ม · น้ำหนัก ปริมาตร และของที่ก้าวไม่เต็ม รับทศนิยม */
+  function odPiece(it) { return !!it && !/^(กก\.|ลิตร|ก\.|กรัม|มล\.|ขีด)$/.test(String(it.unit || '')) && Math.round(+it.step || 1) === (+it.step || 1); }
+  /** ขนาดต่อชิ้นของร้านในหน่วยที่นับ 'แพ็คละ 0.15 กก.' · ของที่กำลังมาล่าสุดก่อน แล้วขนาดในรายการตั้งต้น · ของชิ้นหรือขนาดไม่ลงตัว 2 ตำแหน่ง ไม่บอก */
+  function odEachText(it) {
+    if (odPiece(it)) return '';
+    var c = (it.coming || []).filter(function (x) { return +x.per > 0 && +x.per !== 1; }).slice(-1)[0];
+    var e = it.each || null;
+    var per = c ? +c.per : e ? +e.per : 0;
+    if (!(per > 0) || per === 1 || Math.abs(per * 100 - Math.round(per * 100)) > 1e-6) return '';
+    return (e && (!c || +c.per === +e.per) ? e.w : 'แพ็ค') + 'ละ ' + odNum(per) + ' ' + it.unit;
+  }
+  /** ใต้ชื่อในหน้านับ: ขนาดต่อแพ็ค · PAR · ที่เก็บ (ที่ใช้ตอนนับเท่านั้น) */
+  function odUnder(it) { return [odEachText(it), it.par != null ? 'PAR ' + odNum(it.par) + ' ' + it.unit : '', it.keep || ''].filter(Boolean).join(' · '); }
+  /** ตัวเลขที่มากกว่าที่ร้านเคยมีมาก (เช่น 150 แทน 1.5): มากสุดของ PAR × 3 · PAR + ล็อตใหญ่สุด (สั่งครั้งละไม่เกิน สั่งแล้ว กำลังมา รอส่ง) × 2 · นับครั้งก่อน × 3 · ก้าว × 4 · ไม่มี PAR และไม่เคยนับ ไม่มีเกณฑ์ */
+  function odHigh(it) {
+    var par = +it.par || 0, last = it.last ? +it.last.have || 0 : 0;
+    if (!par && !last) return 0;
+    var lot = +it.max || 0;
+    (it.open || []).concat(it.coming || [], it.wait || []).forEach(function (x) { lot = Math.max(lot, +x.qty || 0); });
+    return Math.max(par * 3, par + lot * 2, last * 3, (+it.step || 1) * 4);
+  }
+  /** เตือนสั้นในแถวและแถบล่าง ไม่กันส่ง */
+  function odWarn(it, have) {
+    var hi = it && !it.staff && have != null ? odHigh(it) : 0;
+    return hi && have > hi ? 'ตัวเลขเยอะกว่าปกติมาก ตรวจอีกครั้ง' : '';
+  }
+  // แตะที่เริ่มตอนจอยังเลื่อน (นิ้วหยุดจอหรือปัดผ่านปุ่ม) ไม่นับ · ดูตอนนิ้วแตะลง ไม่ใช่ตอนปล่อย
+  var odScrolled = new WeakMap(), odDownMoving = false, odDownAt = 0;
+  // (ฟังที่ document แบบ capture: รวมแผ่นที่เลื่อนในตัว เช่น หน้ารับของ)
+  // 2.13.27 k-demo: จำเวลาเลื่อนแยกตามกล่อง นับเฉพาะกล่องที่ปุ่มอยู่ข้างใน (หน้าหรือแผ่น) และไม่นับตอนแอปพาไปหมวดเอง
+  // (แถบหมวดเลื่อนตามเองราว 1 วิหลังหน้าผ่านหัวหมวด เคยกินแตะ 'สั่งเพิ่ม' ในรายการทั้งที่จอนิ่งแล้ว)
+  document.addEventListener('scroll', function (e) { if (!S.odGoing) odScrolled.set(e.target, Date.now()); }, { passive: true, capture: true });
+  document.addEventListener('pointerdown', function (e) {
+    odDownAt = Date.now();
+    odDownMoving = false;
+    for (var n = e.target; n && !odDownMoving; n = n.parentNode) odDownMoving = odDownAt - (odScrolled.get(n) || 0) < 120;
+  }, true);
+  // 2.13.27 k-items2: ไม่นับแค่คลิกของนิ้วที่แตะลงตอนจอเลื่อนครั้งนั้น คลิกจบแล้วล้าง และหมดอายุใน 1 วิ
+  // (เดิมค่าค้างไปกันคลิกถัดไปที่ไม่มีนิ้วแตะลงของตัวเอง เช่น แป้นพิมพ์ ตัวช่วยอ่านจอ จนแตะแถวหน้ารับของแล้วรายละเอียดไม่เปิด)
+  document.addEventListener('click', function () { if (odDownMoving) setTimeout(function () { odDownMoving = false; }, 0); }, true);
+  function odTapScroll() { return odDownMoving && Date.now() - odDownAt < 1000; }
+  // iPhone ค้างความสูงจอตอนแป้นพิมพ์ปิด (แถบล่างลอยกลางจอ ชั้นมืดคลุมครึ่งจอ): ปิดแป้นพิมพ์ก่อนเปิดชั้น และเลื่อน 0 ให้จอคำนวณที่ใหม่
+  function odBlurField() { var f = document.activeElement; if (f && f.blur && /^(INPUT|TEXTAREA|SELECT)$/.test(f.tagName)) f.blur(); }
+  document.addEventListener('focusout', function (ev) { var t = ev.target; if (t && t.dataset && t.dataset.od) setTimeout(function () { window.scrollTo(window.scrollX, window.scrollY); }, 80); });
+  /** 2.13.27 k-tap: ข้อความเด้งไม่บังแถบนับของ · ยกขึ้นเหนือแถบ และแตะทะลุไปถึงปุ่มข้างใต้ */
+  function odToastLift(box) {
+    if (!box) return;
+    box.style.translate = '';
+    var bar = document.getElementById('od-bar');
+    var b = bar && !bar.hidden ? bar.getBoundingClientRect() : null;
+    var on = !!(b && b.height);
+    box.classList.toggle('od-pass', on);
+    if (!on) return;
+    var r = box.getBoundingClientRect(), lo = Infinity, hi = -Infinity;
+    Array.prototype.forEach.call(box.children, function (el) {
+      if (el.classList.contains('out')) return;
+      var t = el.offsetParent === box ? r.top + box.clientTop + el.offsetTop : el.getBoundingClientRect().top;
+      lo = Math.min(lo, t); hi = Math.max(hi, t + el.offsetHeight);
+    });
+    if (hi === -Infinity || hi <= b.top - 8 || lo >= b.bottom) return;
+    box.style.translate = '0 ' + Math.round(b.top - 8 - hi) + 'px';
   }
   function odRow(it) {
     var d = odEntry(it) || {};
@@ -9680,14 +9756,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${tags.length ? html`<div class="od-tags">${tags}</div>` : ''}
       </div>`;
     }
-    // Who counted it last, how many, when: 'แพรวนับได้ 2 กก. · เมื่อวาน'
-    var last = it.last ? (it.last.empId === staffId() ? 'คุณ' : it.last.by) + 'นับได้ ' + odNum(it.last.have) + ' ' + it.unit + ' · ' + odAgo(it.last.at) : '';
     var lot = it.lot && it.lot.left <= 2 ? it.lot : null;
     return html`<div class="od-item ${odEntry(it) ? 'on' : ''}" id="od-${it.id}">
-      <div class="od-top">${odPic(it.img, it.name)}<div class="grow"><b>${it.name}</b><span class="s">${it.par != null ? 'PAR ' + odNum(it.par) + ' ' + it.unit : 'ยังไม่มี PAR'}${it.max ? ' · สั่งครั้งละไม่เกิน ' + odNum(it.max) + ' ' + it.unit : ''}${odLife(it) ? ' · ' + odLife(it) : ''}${last ? ' · ' + last : ''}</span></div>
-        <div class="od-have"><span class="lbl">มี</span>${odStepper('have', it, d.have)}</div></div>
+      <div class="od-top">${odPic(it.img, it.name)}<div class="grow"><b>${it.name}</b><span class="s">${odUnder(it)}</span></div>
+        <div class="od-have"><span class="lbl">เหลือ</span>${odStepper('have', it, d.have)}</div></div>
       ${lot ? html`<div class="od-lot ${lot.left <= 0 ? 'due' : ''}">${icon('clock')}<span>${odLot(lot, it.unit)}</span></div>` : ''}
       ${tags.length ? html`<div class="od-tags">${tags}</div>` : ''}
+      ${odWarn(it, d.have) ? html`<div class="od-high" id="od-w-${it.id}">${odWarn(it, d.have)}</div>` : html`<div class="od-high" id="od-w-${it.id}" hidden></div>`}
       <div class="od-sub">${odSub(it)}</div>
     </div>`;
   }
@@ -9858,10 +9933,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function odBar() {
     var list = odTouched();
     var orders = list.filter(function (it) { return odQty(it) > 0; }).length + odExtras().length;
-    if (!list.length && !odExtras().length) return html`<div class="od-bar" id="od-bar" hidden></div>`;
+    if (!list.length && !odExtras().length) {
+      // 2.13.27 k-tap: ล้างแล้วเอาคืนได้ในแถบเดิม จนกว่าจะเริ่มนับใหม่
+      var un = S.odUndo ? Object.keys(S.odUndo).filter(function (k) { return k.charAt(0) !== '_'; }).length + (S.odUndo._extras || []).length : 0;
+      if (un) return html`<div class="od-bar" id="od-bar"><span class="grow"><b>ล้างที่นับไว้แล้ว</b><small>${un} อย่าง · กดเอาคืนได้</small></span><button class="btn primary" data-act="od-undo">เอาคืน</button></div>`;
+      return html`<div class="od-bar" id="od-bar" hidden></div>`;
+    }
     var counted = list.filter(function (it) { return !it.staff; }).length;
     var all = S.od.items.filter(function (it) { return !it.staff; }).length;
-    return html`<div class="od-bar" id="od-bar"><span class="grow"><b>นับแล้ว ${counted}/${all}</b><small>${orders ? 'จะสั่ง ' + orders + ' อย่าง' : 'ยังไม่มีของที่ต้องสั่ง'}</small></span><button class="btn" data-act="od-clear">ล้าง</button><button class="btn primary" data-act="od-send">${icon('send')} ส่ง</button></div>`;
+    var hi = list.filter(function (it) { return odWarn(it, (odEntry(it) || {}).have); }).length;
+    return html`<div class="od-bar" id="od-bar"><span class="grow"><b>นับแล้ว ${counted}/${all} อย่าง</b><small>${(orders ? 'จะสั่ง ' + orders + ' อย่าง' : 'ยังไม่มีของที่ต้องสั่ง') + (hi ? ' · ตรวจตัวเลข ' + hi + ' อย่าง' : '')}</small></span><button class="btn" data-act="od-clear">ล้าง</button><button class="btn primary" data-act="od-send">${icon('send')} ส่ง</button></div>`;
   }
   /** After a count changes: its category's progress, on its heading and in the bar on top. */
   function odProgress() {
@@ -9902,7 +9983,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** 'ขาด 2 กก.', 'ส่งผิด 30 ขวด (2 แพ็ค)' */
   // 2.13.22 (เจ้าของ 29 ต.ค. 2569): จำนวนเป็นหน่วยเดียวกับที่นับ ชิ้นของร้านค้า (แพ็ค ลัง) ในวงเล็บ
   // 2.13.25 (เจ้าของ 30 ต.ค. 2569 "แก้ทั้งหมดเลยดูตรงอื่นด้วย"): ทุกหน้าที่บอกจำนวนของสั่ง ใช้หน่วยที่นับก่อน จำนวนแพ็คของร้านค้าในวงเล็บ (คำว่าแพ็ค ของที่นับเป็นชิ้นจะได้ไม่เป็น '30 ชิ้น (2 ชิ้น)') · แพ็คละหน่วยเดียวไม่มีวงเล็บ
-  function odPack(n, per, unit) { per = +per || 1; return odNum(n * per) + ' ' + unit + (per === 1 ? '' : ' (' + odNum(n) + ' แพ็ค)'); }
+  function odPack(n, per, unit) { per = +per || 1; var each = (unit === 'กก.' || unit === 'ลิตร') && Math.abs(per * 100 - Math.round(per * 100)) < 1e-6; return odNum(n * per) + ' ' + unit + (per === 1 ? '' : ' (' + odNum(n) + ' แพ็ค' + (each ? ' แพ็คละ ' + odNum(per) + ' ' + unit : '') + ')'); }
   /** จำนวนที่สั่งจากยอดสั่ง (got = หน่วยที่นับที่ได้จาก q แพ็ค ไม่ใช่ยอดที่รับจริง) · แพ็คเป็น 0 หรือไม่มีค่า บอกแต่หน่วยที่นับ */
   function odGot(q, got, unit) { q = +q; got = +got; if (!(got > 0)) return q > 0 ? odNum(q) + ' แพ็ค' : '-'; return q > 0 ? odPack(q, got / q, unit) : odNum(got) + ' ' + unit; }
   function rcQty(x, n) { return odPack(n, x.per, x.unit); }
@@ -10090,6 +10171,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (keepInput) {
       var sub = el.querySelector('.od-sub');
       if (sub) sub.innerHTML = String(odSub(it));
+      var wn = document.getElementById('od-w-' + id);
+      if (wn) { var wt = odWarn(it, (odEntry(it) || {}).have); wn.hidden = !wt; wn.textContent = wt; }
       var mw = document.getElementById('od-mw-' + id);
       if (mw) {
         var q = odQty(it);
@@ -10110,6 +10193,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var d = drafts[id] || { have: null, qty: null };
     if (v == null || v === '' || isNaN(v)) v = null;
     else v = Math.max(0, Math.min(999, Math.round(v * 100) / 100));
+    // 2.13.27 k-tap: ของชิ้นรับแต่เลขเต็ม (1.5 ลูก = 1 ลูก) · เริ่มนับใหม่แล้ว ที่ล้างไว้เอาคืนไม่ได้
+    if (v != null && odPiece(odItem(id))) v = Math.floor(v + 1e-9);
+    S.odUndo = null;
     d[f] = v;
     // A new count works the order out again.
     if (f === 'have') {
@@ -10164,6 +10250,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     var v = el.value.trim() === '' ? null : Number(el.value.replace(',', '.'));
     if (v != null && isNaN(v)) return;
+    // 2.13.27 k-tap: ของชิ้นพิมพ์ทศนิยม ช่องแก้เป็นเลขเต็มให้เห็นทันที
+    var pit = odItem(el.dataset.id);
+    if (v != null && odPiece(pit) && v !== Math.floor(v)) { v = Math.floor(v); el.value = odNum(v); toast(pit.name + ' นับเป็น' + pit.unit + ' ใส่เลขเต็ม', 'tip'); }
     odSet(el.dataset.id, el.dataset.od, v);
     odRefreshRow(el.dataset.id, true);
   });
@@ -10467,7 +10556,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var issues = b.issues || [];
       // (what was found later: said from here in the two days after, as staff can; the server takes it longer)
       var say = done && b.fresh;
-      return html`<section class="card flush"><div class="od-store-h"><div class="grow"><b>${b.store}${b.orderNo ? ' · ' + b.orderNo : ''}</b><span class="small muted">${done ? 'ได้ของ ' + odWhen(b.gotAt) + (b.gotBy ? ' · ' + b.gotBy : '') : odNw('มา' + odEta(b))}</span></div><div class="r"><div class="amt">${money(b.total)} บาท</div></div></div>
+      return html`<section class="card flush"><div class="od-store-h"><div class="grow"><b>${b.store}${b.orderNo ? ' · ' + b.orderNo : ''}</b><span class="small muted">${done ? html`${odNw('ได้ของ ' + odWhen(b.gotAt))}${b.gotBy ? html` · ${odNw(b.gotBy + 'รับ')}` : ''}` : odNw('มา' + odEta(b))}</span></div><div class="r"><div class="amt">${money(b.total)} บาท</div></div></div>
         <div class="list">${b.items.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.name}</div><div class="s">${x.pname} · ${odoQtyPrice(x.q, x.per, x.unit, x.price)}</div></div></div>`; })}</div>
         ${b.note ? html`<p class="small od-note">${b.note}</p>` : ''}
         ${issues.map(function (is) { var x = b.items[is.n]; return x ? html`<p class="od-issue"><span class="pill ${is.fix ? '' : 'warn'}">${x.name} ${rcSay(is, x)}</span><span class="grow small muted">${is.fix ? RC_FIXES[is.fix] + ' ' + odWhen(is.fixAt) + (is.fixBy ? ' · ' + is.fixBy : '') : 'รอร้านค้า'}</span><button class="od-plain" data-act="odo-fix-more" data-id="${b.id}" data-n="${is.n}">แก้</button></p>` : ''; })}
@@ -10544,6 +10633,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     function close() { d.remove(); document.removeEventListener('keydown', key); }
     d.addEventListener('click', close);
     document.addEventListener('keydown', key);
+    odBlurField();
     document.body.appendChild(d);
   }
   /** รูปของของในแท็บ ของ: สินค้าหลัก ไม่มีรูปใช้ของเดียวกัน */
@@ -14193,7 +14283,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     el.style.zIndex = Math.round(y * 10);
     var c = el.querySelector('.pz-char');
     if (c) c.style.setProperty('--face', p.face);
-    mvfStopSvg(el.querySelector('.pz-char svg.char-svg'));
+    pzHush(el);
     el.classList.add('walking');
     pzLegs(el);
     // 2.13.19 (เจ้าของ 29 ต.ค. 2569 "บางจังหวะที่ตัวละครเหมือนบัคไม่เดินเป็นท่า"): หยุดก้าวเมื่อตัวถึงที่จริง (transitionend)
@@ -14202,11 +14292,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     clearTimeout(el._walk);
     if (el._walkEnd) el.removeEventListener('transitionend', el._walkEnd);
     el._walkEnd = null;
+    el._then = then || null;
     var done = function () {
       clearTimeout(el._walk);
       if (el._walkEnd) el.removeEventListener('transitionend', el._walkEnd);
       el._walkEnd = null;
+      el._then = null;
       el.classList.remove('walking');
+      // (k-walk: ถึงที่แล้วยืนท่าปกติ พักเท่าหลังจบท่าในลาน ไม่เล่นท่าเองทันทีที่ถึง)
+      MVF.rest['pz' + id] = Math.max(MVF.rest['pz' + id] || 0, performance.now() + 4000 + Math.random() * 5000);
       if (then) then();
     };
     var moving = dist > 0 && getComputedStyle(el).transitionDuration.split(',').some(function (t) { return parseFloat(t) > 0; });
@@ -14216,6 +14310,64 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     el._walk = setTimeout(done, moving ? ms + 2000 : ms);
     if (id === plaza.data.me) pzFollow(x);
+  }
+  // k-walk (เจ้าของ 30 ต.ค. 2569 "ตอนนี้ตัวละครกำลังทำท่าแล้วกดเดินตัวละครยังทำท่าอยู่และเดินไปด้วยมันควรหยุดทำท่าและเปลี่ยนมาทำท่าเดินมากกว่าไหม"):
+  // เริ่มเดินเมื่อไร ท่าที่ค้างหยุดทุกแบบ แล้วก้าวขา · ใช้กับทุกคนในลาน (ตัวเอง เพื่อนเดินเองหรือเดินมาเล่นด้วย)
+  // · วัดในเดโมก่อนแก้ (walk-repro): แตะตัวเองแล้วแตะพื้น เวทีของท่าเลื่อนตามตัวไปทั้งทาง ภาพก้าวไม่ขึ้นเลย (c3-under)
+  //   ท่าที่เล่นเอง (ภาพท่า) หยุดอยู่แล้วแต่ตัดฉับ
+  // · ไม่ตัดฉับ: ท่าที่เห็นอยู่จางออกทับภาพก้าว .24 วิ แบบภาพสามมิติที่ขึ้น (c3-in) · ภาพก้าวเป็นภาพนิ่ง ผสมในเวทีไม่ได้
+  //   เวทีของท่า: จางแล้วปิด · ภาพท่า: ภาพที่ขึ้นอยู่ภาพเดียวจางออก · ไม่มีงานต่อเฟรมเพิ่ม (เวทีปิดเร็วกว่าเดิม)
+  // · ท่าแกล้งจากการเล่นกับเพื่อน (pzMove): กลับภาพยืนทันที ไม่กลับมาตามเวลากลางทาง (ภาพยืนแทนทั้งชิ้น: ปิดเวทีทันที)
+  // · ภาพวาด (ไม่มีสามมิติ) และลดภาพเคลื่อนไหว: หยุดทันที
+  function pzHush(el) {
+    var c = el.querySelector('.pz-char');
+    var s = c && c.querySelector('svg.char-svg');
+    if (!s) return;
+    var back = c._backNow;
+    var fade = MOTION && !back;
+    var on = fade && s.classList.contains('mvf-on') && s.querySelector('image.mvf.on');
+    if (on) {
+      var o = on.cloneNode(false);
+      o.setAttribute('class', 'mvf-out');
+      s.appendChild(o);
+      setTimeout(function () { if (o.parentNode) o.parentNode.removeChild(o); }, 260);
+    }
+    mvfStopSvg(s);
+    var L = C3.live;
+    if (L && L.temp && L.host && L.host.parentNode && el.contains(L.host)) {
+      // (แตะซ้ำระหว่างจาง: เวทีใหม่ ไม่เล่นต่อบนเวทีที่กำลังปิด)
+      L.again = null;
+      s.classList.remove('c3-under', 'c3-held');
+      if (fade) {
+        L.host.classList.add('pz-out');
+        setTimeout(function () { if (L.host.parentNode) L.end(); }, 240);
+      } else L.end();
+    }
+    clearTimeout(s._go);
+    s.classList.remove('go', 'loop');
+    el.classList.remove('cheer', 'hit');
+    if (back) back();
+  }
+  /** k-walk: แตะตัวละครระหว่างเดิน หยุดตรงที่ตัวอยู่ตอนนี้แล้วทำท่า (ไม่ทำท่าไปเดินไป) · เดินไปเล่นกับเพื่อนอยู่: ไม่หยุด (false) ไปให้ถึงก่อน */
+  function pzHalt(id) {
+    var el = document.getElementById('pz-' + id);
+    var p = plaza.pos[id];
+    if (!el || !p || !el.classList.contains('walking')) return true;
+    if (el._then) return false;
+    var box = el.offsetParent;
+    if (box && box.offsetWidth && box.offsetHeight) {
+      var cs = getComputedStyle(el);
+      p.x = (parseFloat(cs.left) / box.offsetWidth) * 100;
+      p.y = (parseFloat(cs.top) / box.offsetHeight) * 100;
+      el.style.setProperty('--x', p.x + '%');
+      el.style.setProperty('--y', p.y + '%');
+      el.style.zIndex = Math.round(p.y * 10);
+    }
+    clearTimeout(el._walk);
+    if (el._walkEnd) el.removeEventListener('transitionend', el._walkEnd);
+    el._walkEnd = null;
+    el.classList.remove('walking');
+    return true;
   }
   // 2.13.14 (เจ้าของ 29 ต.ค. 2569 "ในลานเวลาเดินมี animation ในการเดินดีไหม"): ในสามมิติ คนที่เดินก้าวขาจริง ด้วยท่าวิ่งของ
   // วิ่งฝ่าด่าน (moves.mjs m-run) 4 จังหวะ หันข้างแบบนักวิ่ง (turn 55) ในกรอบเดียวกับภาพยืน (c3Put) · ขอครั้งแรกที่คนนั้นเดิน
@@ -14373,7 +14525,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     mvfStopSvg(c.querySelector('svg.char-svg'));
     c.innerHTML = charOf(Object.assign({}, x.look, { m: move }));
     charGo(c);
-    c._back = setTimeout(function () { if (c.isConnected) c.innerHTML = charOf(x.look); }, MOVES[move][0] + 120);
+    // (k-walk: เริ่มเดินระหว่างท่าแกล้ง pzHush กลับภาพยืนทันที ไม่กลับมาตามเวลากลางทาง)
+    c._backNow = function () { clearTimeout(c._back); c._backNow = null; if (c.isConnected) c.innerHTML = charOf(x.look); };
+    c._back = setTimeout(c._backNow, MOVES[move][0] + 120);
   }
   function pzBurst(el, emo, kind) {
     var s = document.createElement('span');
@@ -17827,13 +17981,23 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'od-open': function () { openOrder(); },
     'od-go': function (el) { odGo(+el.dataset.i); },
     'od-step': function (el) {
+      // 2.13.27 k-tap: แตะที่เริ่มตอนจอยังเลื่อนไม่นับ
+      if (odTapScroll()) return;
       var it = odItem(el.dataset.id);
       if (!it) return;
       var f = el.dataset.f;
       var d = odEntry(it) || {};
+      var dn = +el.dataset.d;
+      // 2.13.27 k-tap: กด − ที่ 0 กลับเป็นยังไม่นับ แตะพลาดแก้ทีละอย่าง (ช่องสั่ง: กลับเป็นที่แอปคิดเมื่อแอปคิดว่าไม่ต้องสั่ง)
+      if (dn < 0 && d[f] === 0) {
+        odSet(it.id, f, null);
+        if (f === 'qty' && odQty(it) > 0) odSet(it.id, 'qty', 0);
+        odRefreshRow(it.id, false);
+        return;
+      }
       var cur = f === 'have' ? (d.have != null ? d.have : 0) : odQty(it);
-      var next = Math.max(0, Math.round((cur + (+el.dataset.d) * it.step) * 100) / 100);
-      if (f === 'have' && d.have == null && +el.dataset.d < 0) next = 0;
+      var next = Math.max(0, Math.round((cur + dn * it.step) * 100) / 100);
+      if (f === 'have' && d.have == null && dn < 0) next = 0;
       odSet(it.id, f, next);
       odRefreshRow(it.id, false);
     },
@@ -17883,9 +18047,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var bar = document.getElementById('od-bar');
       if (bar) bar.outerHTML = String(odBar());
     },
-    'od-order-only': function (el) { var it = odItem(el.dataset.id); if (!it) return; odSet(it.id, 'qty', it.step); odRefreshRow(it.id, false); },
+    'od-order-only': function (el) { if (odTapScroll()) return; var it = odItem(el.dataset.id); if (!it) return; odSet(it.id, 'qty', it.step); odRefreshRow(it.id, false); },
     'od-clear': function () {
-      confirmSheet({ title: 'ล้างที่นับไว้', text: 'จำนวนที่ยังไม่ได้ส่งบนมือถือนี้จะหายไป', yes: 'ล้าง', danger: true }).then(function (ok) { if (ok) { odForget(); closeSheet(); render(); } });
+      // 2.13.27 k-tap: ล้างทันที เอาคืนได้ในแถบเดิมจนกว่าจะเริ่มนับใหม่ (ไม่มีกล่องยืนยัน)
+      S.odUndo = JSON.parse(JSON.stringify(odDraft()));
+      odForget();
+      render();
+    },
+    'od-undo': function () {
+      if (!S.odUndo) return;
+      S.odDraft = S.odUndo;
+      S.odUndo = null;
+      odKeep();
+      render();
     },
     'od-urgent': function () { odUrgentSheet(); },
     'odu-pick': function (el) {
@@ -17965,6 +18139,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     'od-rc': function (el) { var b = odBuy(el.dataset.id); if (b) rcOpen(b, false); },
     'rc-tap': function (el) {
+      if (odTapScroll()) return;
       var n = +el.dataset.n;
       var x = rc && rc.b.items[n];
       if (!x) return;
@@ -17977,6 +18152,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       rcDraw();
     },
     'rc-kind': function (el) {
+      if (odTapScroll()) return;
       var n = +el.dataset.n;
       var st = rc && rc.said[n];
       if (!st) return;
@@ -17990,6 +18166,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       rcDraw();
     },
     'rc-step': function (el) {
+      if (odTapScroll()) return;
       var n = +el.dataset.n;
       var st = rc && rc.said[n];
       if (!st) return;
@@ -18466,10 +18643,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'pz-who': function (el) {
       var id = el.dataset.id;
       if (!plaza || !plaza.data) return;
-      if (id === plaza.data.me) { charGo(el.querySelector('.pz-char')); buzz(8); return; }
+      if (id === plaza.data.me) { if (pzHalt(id)) charGo(el.querySelector('.pz-char')); buzz(8); return; }
       plaza.sel = plaza.sel === id ? '' : id;
       plazaPanelSet();
-      charGo(el.querySelector('.pz-char'));
+      if (pzHalt(id)) charGo(el.querySelector('.pz-char'));
     },
     'pz-play': function (el) {
       var to = el.dataset.id;
