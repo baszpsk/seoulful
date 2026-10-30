@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.22","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"b687fa5bbd6d"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.23","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"b564011df16d"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -5992,7 +5992,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // request can be lost on the way ("Load failed"), and the same read sent
   // again a moment later goes through. The app does that by itself; a
   // change (a clock-in, an approval) is never sent twice.
-  var READS = ['boot', 'kioskPing', 'status', 'home', 'month', 'calendar', 'payslips', 'payslip', 'team', 'entries', 'leaves', 'exceptions', 'payroll', 'photo', 'photos', 'owner', 'employees', 'feedbackMine', 'feedbackList', 'feedbackFile', 'feedbackSync', 'orderList', 'orderOwner', 'orderCatalog', 'notes', 'pushKey', 'usageReport', 'exportTables'];
+  var READS = ['boot', 'kioskPing', 'status', 'home', 'month', 'calendar', 'payslips', 'payslip', 'team', 'entries', 'leaves', 'exceptions', 'payroll', 'photo', 'photos', 'owner', 'employees', 'feedbackMine', 'feedbackList', 'feedbackFile', 'feedbackSync', 'orderList', 'orderOwner', 'orderCatalog', 'notes', 'pushKey', 'usageReport', 'exportTables', 'rainHistory', 'howTo'];
   // Reads not sent twice when slow (sendHedged): the shop screen's check-in every 45 seconds, which nobody
   // waits on; pictures and files, slow to come by their size, not by Google; and those slow by their nature
   // (GitHub, the week's use); the shop's tables as a file, slow by its size.
@@ -7834,6 +7834,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     syncBars();
     countUp();
     if ((S.view === 'staff' && S.home) || (S.view === 'owner' && S.ownerHome)) pushPrep();
+    lockRelease();
+    pushCantTell();
     if (S.sub === 'order' && $('#od-cats')) { odSpySet(S.odAt || 0, true); odSpy(); }
     glideLenses();
     runCardPics();
@@ -8640,10 +8642,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (data.slipOnly) { if (data.bell) badgeSet(data.bell.unread || 0); return; }
     if (data.levels) S.levels = data.levels;
     syncFaces(data.avatarTag);
-    lvCheck(data.level);
-    questCheck(data.level);
-    playsCheck(data.level);
-    welcomeCheck(data.level);
+    // (2.13.23: แผ่นที่ขึ้นเองรอจนเปิดแจ้งเตือนแล้ว lockRelease หลังวาดหน้า)
+    S.heldLevel = data.level;
+    var gate = pushGate(data);
+    // (2.13.23: ปล่อยผ่าน lockRelease เสมอ รอหน้าน้องวาดเสร็จ หน้าสอนเปิดแจ้งเตือน และแผ่นที่เปิดอยู่ปิดก่อน ไม่งั้นแผ่นต้อนรับหาย)
+    if (!gate) lockRelease();
+    else if (gate === 'hold') setTimeout(lockRelease, 8100);
     S.cal = null;
     S.month = data.month;
     if (data.month && data.month.period) monthBy[data.month.period.key] = { d: data.month, at: S.homeAt };
@@ -8873,6 +8877,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var h = S.home;
     if (!h || !B.clock) return staffOutline();
     if (h.slipOnly) return slipOnlyView(h);
+    // (2.13.23: ผู้อนุมัติที่ยังไม่เปิดแจ้งเตือนเข้าหน้าทีมได้ ลงเวลาแทนน้องที่ลืมมือถือ ลงเวลาต้องได้เสมอ)
+    if (pushGate() === 'lock' && !((S.sub || S.tab) === 'team' && isApprover())) { S.wasLock = true; return lockView(); }
+    // (2.13.23: เปิดแจ้งเตือนจากหน้าสอนแล้ว หน้าแรกเริ่มจากบนสุด ไม่ค้างตรงปุ่มที่เลื่อนลงไปกด)
+    if (S.wasLock) { S.wasLock = false; window.scrollTo(0, 0); }
     var me = h.me;
     var tab = S.sub || S.tab;
     var body = tab === 'history' ? historyView() : tab === 'order' ? orderView() : tab === 'leave' ? leaveView() : tab === 'slips' ? slipsView() : tab === 'team' ? (isApprover() ? teamApproveView() : teamView()) : tab === 'approve' ? approveView() : tab === 'friends' ? friendsView() : tab === 'ideas' ? ideasView() : tab === 'me' ? meView() : homeView();
@@ -9399,6 +9407,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <section class="card flush"><div class="list">
         ${fbHome(h.feedback).count ? row('data-act="fb-mine"', 'list', 'เรื่องที่ฉันส่ง', fbHome(h.feedback).count + ' เรื่อง') : ''}
         ${row('data-act="thx-mine"', 'heart', 'คำขอบคุณจากเพื่อน', thxOf().n ? thxOf().n + ' ครั้ง · เห็นคนเดียว' : 'ขอบคุณเพื่อนได้ที่แท็บเพื่อน', thxNew() ? html`<span class="pill gold">ใหม่ ${thxNew()}</span>` : '')}
+        ${row('data-act="howto-open"', 'info', 'วิธีใช้แอปและประกาศจากร้าน', 'ลงเวลา ฝนตก ขอลา · ประกาศล่าสุด')}
         ${row('data-act="refresh-home"', 'refresh', 'รีเฟรชข้อมูล', '')}
         <button class="item danger" data-act="logout-staff"><span class="me-ic">${icon('logout')}</span><div class="grow"><div class="t">ออกจากระบบในเครื่องนี้</div></div></button>
       </div></section>
@@ -11906,6 +11915,36 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     openSheet({ use: 'แก้เวลาและผ่อนผันสาย', title: 'แก้เวลาและผ่อนผันสาย', body: html`<p class="small muted mt0">45 วันล่าสุด ใหม่สุดก่อน · ลงเวลาแทน แก้ ลบ อนุญาตเข้างานช้า และยืนยันหรือยกเลิกฝนตก · แอปแจ้งคุณทุกครั้งแล้ว · ทั้งหมดอยู่ในชีต "ประวัติแก้เวลา" · ไม่ถูก แก้ได้ในหน้าทีม</p>
       ${list.length ? html`<div class="list">${list.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.name} · ${x.what} ${thShort(x.date)}</div><div class="s">${x.detail}</div><div class="s">${x.reason ? x.reason + ' · ' : ''}${x.by} ${isoDate(x.at)} ${isoTime(x.at)} น.</div></div></div>`; })}</div>` : html`<div class="empty">ยังไม่มีใน 45 วันล่าสุด</div>`}` });
   }
+  /** 2.13.23 วิธีใช้แอปและประกาศจากร้าน (หน้า ฉัน): วิธีลงเวลาแบบเดียวกับประกาศถึงทีม และประกาศกติกาใหม่ล่าสุด */
+  function openHowTo(el) {
+    run(el, call('howTo', {}, staffAuth())).then(function (d) {
+      var lines = function (l) { return html`<ul class="small" style="margin:6px 0 0;padding-left:18px;line-height:1.7">${(l || []).map(function (x) { return html`<li>${String(x).replace(/^•\s*/, '')}</li>`; })}</ul>`; };
+      openSheet({ use: 'วิธีใช้แอป', title: 'วิธีใช้แอปและประกาศจากร้าน', body: html`<b>ลงเวลา</b>${lines(d.clock)}
+        <b style="display:block;margin-top:14px">เรื่องอื่นในแอป</b>${lines(d.more)}
+        ${d.news ? html`<b style="display:block;margin-top:14px">ประกาศล่าสุดจากร้าน</b>${d.news.at ? html`<p class="small muted" style="margin:2px 0 0">${isoDate(d.news.at)}</p>` : ''}<p class="small howto-news" style="white-space:pre-line;margin:6px 0 0">${d.news.text}</p>` : ''}
+        <p class="small muted" style="margin:14px 0 0">เรื่องใหม่ทั้งหมดอยู่ที่กระดิ่ง ${icon('bell')} มุมบน</p>` });
+    }, function () {});
+  }
+  /** 2.13.23 ประวัติวันฝน (หน้าเจ้าของ): ทีละรอบเงินเดือน วันไหนฝนตก กะที่เริ่มช่วงไหนมาสายได้ไม่เกินกี่นาที ใครได้ผ่อนผัน */
+  function openRainHistory(el, key) {
+    run(el, call('rainHistory', key ? { period: key } : {}, ownerAuth())).then(function (d) {
+      var p = d.period;
+      var src = { seen: 'ระบบเห็นฝนจากข้อมูลอากาศ', forecast: 'พยากรณ์ฝน', manual: 'บันทึกฝนเอง' };
+      var how = { forgiven: 'ได้ผ่อนผัน', late: 'สายเกินช่วงฝน นับเป็นสายน้อย', major: 'สายเกินช่วงฝน', minor: 'สายในเกณฑ์ปกติ', ok: 'ตรงเวลา' };
+      var day = function (x) {
+        return html`<div class="item rh-day"><div class="grow"><div class="t">${thShort(x.date)}</div>
+          ${x.rains.map(function (r) { return html`<div class="s">${src[r.how] || ''}${r.by ? ' (' + r.by + ')' : ''} · ${r.from ? 'กะที่เริ่ม ' + r.from + '–' + r.to + ' น.' : 'ทุกกะของวัน'} มาสายได้ไม่เกิน ${d.grace} นาที${r.seen ? ' · เห็นฝน ' + r.seen + ' น.' : ''}${r.off ? ' · ' + r.off : ''}${r.review ? ' · รอคุณตรวจ' : ''}</div>${r.wx ? html`<div class="s muted">${r.wx}</div>` : ''}`; })}
+          ${x.people.length ? html`<div class="s rh-people">${x.people.map(function (q) { var e = empById(q.empId); return (e ? ownName(e) : q.name) + ' เข้า ' + q.in + ' น.' + (q.late ? ' สาย ' + q.late + ' นาที' : '') + ' (' + (how[q.how] || '') + (q.mark ? ' · ยืนยันฝนรายคน' : '') + ')'; }).join(' · ')}</div>` : html`<div class="s muted">ไม่มีใครลงเวลาใต้ฝนวันนี้</div>`}
+        </div></div>`;
+      };
+      openSheet({ use: 'ประวัติวันฝน', title: 'ประวัติวันฝน', body: html`<div class="row" style="justify-content:space-between;align-items:center;gap:8px">
+          ${d.prev ? html`<button class="btn" data-act="rain-history" data-key="${d.prev}">‹ รอบก่อน</button>` : html`<span></span>`}
+          <b class="small">${thShort(p.start)} – ${thShort(p.end)}</b>
+          ${d.next ? html`<button class="btn" data-act="rain-history" data-key="${d.next}">รอบถัดไป ›</button>` : html`<span></span>`}</div>
+        <p class="small muted rh-basis">วันฝนมาสายได้ไม่เกิน ${d.grace} นาที (วันปกติ ${d.lateGrace} นาที) · ${d.basis === 'paid' ? 'ตามเงินเดือนรอบนี้ที่อนุมัติแล้ว' + (d.graceNow !== d.grace ? ' (ค่าตั้งตอนนี้ ' + d.graceNow + ' นาที ใช้กับรอบที่ยังไม่อนุมัติ)' : '') : d.basis === 'now' ? 'ค่าตั้งปัจจุบัน (รอบนี้อนุมัติก่อนแอปเก็บนาทีที่ใช้) ใครได้ผ่อนผันตามเงินเดือนที่อนุมัติแล้ว' : 'ค่าตั้งปัจจุบัน รอบนี้ยังไม่อนุมัติ เงินเดือนคิดด้วยค่านี้'}${d.oldest ? ' · มีบันทึกฝนตั้งแต่ ' + thShort(d.oldest) : ''} · เวลาที่เห็นฝนเก็บตั้งแต่รุ่น 2.13.23</p>
+        ${d.days.length ? html`<div class="list">${d.days.map(day)}</div>` : html`<p class="small muted rh-none">รอบนี้ไม่มีวันฝน</p>`}` });
+    }, function () {});
+  }
   /** What the approver recorded on themselves lately: to see, nothing to press. */
   function openSelfEdits() {
     var list = (S.ownerHome && S.ownerHome.selfEdits) || [];
@@ -12226,6 +12265,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${useCard(o.usage)}
       ${(o.rainReview || []).length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ฝนตกที่ควรตรวจ</span></div><p class="small muted" style="margin:6px 16px 0">ข้อมูลอากาศไม่ตรงกับที่บันทึก บันทึกย้อนหลัง หรือปิดตอนที่ยังมีฝน · ถูกต้อง = คงไว้ · ลบ = ทุกคนที่ลงเวลาในช่วงนั้นไม่ได้ผ่อนผันฝนตก</p><div class="list">${o.rainReview.map(function (x) { return entryRow(x, true); })}</div></section>` : ''}
       ${(o.clockFixes || []).length ? html`<section class="card flush"><button class="item" data-act="clock-fixes">${icon('clock')}<span class="grow">แก้เวลาและผ่อนผันสาย ${o.clockFixes.length} รายการ<span class="s" style="display:block">ลงแทน แก้ ลบ อนุญาตเข้าช้า ฝนตก · 45 วัน · แจ้งคุณทุกครั้งแล้ว</span></span>${icon('right')}</button></section>` : ''}
+      <section class="card flush"><button class="item" data-act="rain-history">${icon('clock')}<div class="grow"><div class="t">ประวัติวันฝน</div><div class="s">วันไหนฝนตก กะไหนมาสายได้ ใครได้ผ่อนผัน</div></div></button></section>
       ${(o.selfEdits || []).length ? html`<section class="card flush"><button class="item" data-act="self-edits">${icon('list')}<span class="grow">ผู้อนุมัติทำรายการให้ตัวเอง ${o.selfEdits.length} รายการ<span class="s" style="display:block">45 วันล่าสุด · ไว้ให้เห็นเฉย ๆ</span></span>${icon('right')}</button></section>` : ''}
       ${todo.length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">สิ่งที่ต้องทำ</span></div><div class="list">${todo.map(function (t) { return html`<button class="item" data-act="owner-tab" data-tab="${t[2]}">${icon(t[0])}<span class="grow">${t[1]}</span>${icon('right')}</button>`; })}</div></section>` : ''}
       <h3 class="h3">เงินเดือนย้อนหลัง</h3>
@@ -12241,19 +12281,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var n = up.news;
     var when = function (iso) { return isoDate(iso) + ' ' + isoTime(iso) + ' น.'; };
     var pending = !!n && n.state === 'pending';
-    var status = !n ? '' : n.state === 'sent' ? 'ประกาศกติกาใหม่ในกลุ่ม LINE พนักงานแล้ว ' + when(n.sentAt)
+    var status = !n ? '' : n.state === 'sent' ? 'ประกาศกติกาใหม่ในแอปแล้ว (กระดิ่งและแจ้งเตือนของน้องทุกคน) ' + when(n.sentAt) + (n.line ? ' · ส่งเข้ากลุ่ม LINE ด้วย เพราะมีน้องที่มือถือรับแจ้งเตือนไม่ได้' : '')
       : n.state === 'done' ? 'โพสต์ประกาศในกลุ่ม LINE เองแล้ว'
-      : n.state === 'skipped' ? 'ไม่ได้ประกาศในกลุ่ม LINE'
-      : n.auto ? 'ระบบจะประกาศกติกาใหม่ในกลุ่ม LINE พนักงานเอง ช่วง 9:00–20:00 น.' + (n.error ? ' (ครั้งก่อนส่งไม่สำเร็จ: ' + n.error + ')' : '')
-      : !n.linked ? 'ยังไม่ได้ประกาศกติกาใหม่ — ยังไม่ได้เชื่อมกลุ่ม LINE คัดลอกข้อความไปโพสต์ในกลุ่มพนักงานเอง'
-      : n.error ? 'ส่งเข้ากลุ่ม LINE ไม่สำเร็จ (' + n.error + ') — กดส่งอีกครั้ง หรือคัดลอกไปโพสต์เอง'
-      : 'ยังไม่ได้ประกาศกติกาใหม่ (ปิดประกาศอัตโนมัติไว้ในตั้งค่า) — คัดลอกข้อความไปโพสต์ในกลุ่มพนักงานเอง';
+      : n.state === 'skipped' ? 'ไม่ได้ประกาศกติกาใหม่'
+      : n.auto ? 'แอปจะประกาศกติกาใหม่ให้น้องทุกคนในแอปเอง ช่วง 9:00–20:00 น.' + (n.error ? ' (ครั้งก่อนส่ง LINE ไม่สำเร็จ: ' + n.error + ')' : '')
+      : n.error ? 'ส่งเข้ากลุ่ม LINE ไม่สำเร็จ (' + n.error + ') — กดประกาศอีกครั้ง'
+      : 'ยังไม่ได้ประกาศกติกาใหม่ — กดประกาศในแอปตอนนี้';
     return html`<section class="card pad-lg"><div class="card-h"><span class="eyebrow">อัปเดตแอปแล้ว · รุ่น ${up.to}</span><span class="small muted">${when(up.at)}</span></div>
       ${up.report.length ? html`<ul class="small" style="margin:6px 0 0;padding-left:18px;line-height:1.6">${up.report.map(function (x) { return html`<li>${x}</li>`; })}</ul>` : ''}
       ${n ? html`<p class="small" style="margin:12px 0 0">${status}</p>
         <div class="row wrapx" style="margin-top:10px;gap:8px">
           <button class="btn" data-act="update-text">${icon('chat')} ${pending ? 'ดู / คัดลอกข้อความ' : 'ดูข้อความ'}</button>
-          ${pending && n.linked ? html`<button class="btn primary" data-act="update-news" data-do="send">ส่งเข้ากลุ่มตอนนี้</button>` : ''}
+          ${pending ? html`<button class="btn primary" data-act="update-news" data-do="send">ประกาศในแอปตอนนี้</button>` : ''}
           ${pending && !n.auto ? html`<button class="btn" data-act="update-news" data-do="done">โพสต์เองแล้ว</button>` : ''}
           ${pending ? html`<button class="btn" data-act="update-news" data-do="skip">ไม่ต้องประกาศ</button>` : ''}
         </div>` : ''}
@@ -16150,6 +16189,63 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var b = myBell();
     return PUSH.sub && kept && kept.to === pushTo() && Notification.permission === 'granted' && !(b && b.phones === 0) ? 'on' : 'off';
   }
+  /** 2.13.23 เบราว์เซอร์ในแอปแชต (LINE Facebook Instagram): แจ้งเตือนไม่ได้ในนี้ แต่เปิดในเบราว์เซอร์ของเครื่องได้ */
+  function inAppBrowser() { return inLine() || /FBAN|FBAV|FB_IAB|Instagram|Messenger/i.test(navigator.userAgent); }
+  /**
+   * 2.13.23 บังคับเปิดแจ้งเตือน (เจ้าของร้าน 29 ต.ค. 2569 "12 ok แต่คนไม่เปิดหาวิธีต้องเปิดเท่านั้นให้ได้"):
+   * 'lock' ยังไม่เปิดแต่เปิดได้ (หน้าสอนทีละขั้น ลงเวลาได้อย่างเดียว) · 'hold' ยังดูไม่เสร็จ (แผ่นที่ขึ้นเองรอ ไม่เกิน 8 วิ)
+   * · '' ใช้ได้ทุกอย่าง: เปิดแล้ว หรือมือถือรับแจ้งเตือนไม่ได้เลย (iPhone เก่า เบราว์เซอร์ที่ไม่มีแจ้งเตือน เปิดไม่สำเร็จซ้ำ) ร้านส่ง LINE แทน
+   */
+  function pushGate(h) {
+    h = h || S.home;
+    if (S.view !== 'staff' || !h || h.slipOnly || PUSH.cant) return '';
+    var st = pushState();
+    if (st === 'wait') return Date.now() - (S.holdFrom || (S.holdFrom = Date.now())) < 8000 ? 'hold' : '';
+    if (st === 'off' || st === 'home' || st === 'blocked' || (st === 'none' && inAppBrowser())) return 'lock';
+    return '';
+  }
+  /** แผ่นที่ขึ้นเอง (ระดับ ภารกิจ เล่นกับเพื่อน ต้อนรับ) · 2.13.23 ขึ้นหลังเปิดแจ้งเตือนแล้ว และไม่ทับแผ่นที่เปิดอยู่ */
+  function sheetChecks() {
+    var l = S.heldLevel;
+    S.heldLevel = undefined;
+    lvCheck(l);
+    questCheck(l);
+    playsCheck(l);
+    welcomeCheck(l);
+  }
+  function lockRelease() {
+    if (S.heldLevel === undefined || S.view !== 'staff' || !S.home || pushGate()) return;
+    if (sheetState) { if (!S.heldWait) S.heldWait = setTimeout(function () { S.heldWait = 0; lockRelease(); }, 1000); return; }
+    sheetChecks();
+  }
+  /** มือถือที่รับแจ้งเตือนไม่ได้เลย บอกร้านครั้งเดียวต่อคนต่อเหตุ (หน้าเจ้าของบอกว่าคนนี้ได้ LINE แทน) */
+  function pushCantTell() {
+    if (HOOKS.push || S.view !== 'staff' || !S.staff || !S.home || S.home.slipOnly) return;
+    var st = pushState();
+    var why = PUSH.cant ? 'fail' : st === 'old' ? 'old' : st === 'none' && !inAppBrowser() ? 'none' : '';
+    var k = 'seoulful.pushCant.' + S.staff.empId;
+    if (!why || LS.get(k) === why) return;
+    LS.set(k, why);
+    call('pushCant', { why: why, device: deviceName() }, staffAuth()).catch(function () { LS.set(k, ''); });
+  }
+  /** 2.13.23 หน้าสอนเปิดแจ้งเตือน: ลงเวลาได้เสมอ ส่วนอื่นของแอปเปิดหลังเปิดแจ้งเตือน */
+  function lockView() {
+    var h = S.home;
+    var me = h.me;
+    var st = h.status || {};
+    S.pushLock = true;
+    var card;
+    try { card = pushCard(); } finally { S.pushLock = false; }
+    return html`${topbar({ name: nameTag(me, ownName(me)), sub: '', av: avatar(me) }, 'staff-menu', null)}
+      <main class="wrap page"><div class="stack home-stack push-lock">
+        ${!st.checkedIn && !st.leaveToday && !st.closedToday ? rainBanner(h.rain, 'home') : ''}
+        ${todayCard()}
+        <section class="card pad-lg"><b>เปิดแจ้งเตือนก่อนใช้แอป</b><p class="small" style="margin:6px 0 0">เรื่องจากร้าน วันลาที่อนุมัติ และฝนตกแถวร้าน มาทางแจ้งเตือนของแอป เปิดครั้งเดียว แล้วใช้แอปได้ทุกอย่าง · ระหว่างนี้ลงเวลาได้ตามปกติ</p></section>
+        ${card}
+        ${isApprover() ? html`<button class="btn block" data-act="tab" data-tab="team">${icon('team')} ลงเวลาแทนน้อง (หน้าทีม)</button>` : ''}
+        <button class="btn block" data-act="logout-staff">ออกจากระบบในเครื่องนี้</button>
+      </div></main>`;
+  }
   /** What the phone is called in the owner's list of phones. */
   function deviceName() {
     var ua = navigator.userAgent;
@@ -16468,13 +16564,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var b = myBell();
       if (b) b.phones = d.on;
       if (S.view === 'owner') ownerChanged(); else if (S.home && S.staff) remember('home', S.home, homeTag(S.staff.empId, S.home));
+      // (2.13.23: แผ่น "เปิดแจ้งเตือนแล้ว" เปิดก่อนวาดหน้า แผ่นที่ขึ้นเองที่รอหน้าสอนอยู่ (ต้อนรับ ระดับ ภารกิจ) จึงขึ้นต่อหลังแผ่นนี้ปิด ไม่ถูกทับ)
+      pushDone();
       render();
       sfx('ding');
-      pushDone();
     }, function (e) {
       spin(btn, false);
       render();
       toast(e.message || 'เปิดแจ้งเตือนไม่สำเร็จ ลองอีกครั้ง', e.quiet ? '' : 'bad');
+      // (2.13.23: อนุญาตแล้วแต่เปิดไม่สำเร็จ 2 ครั้ง = มือถือเครื่องนี้รับแจ้งเตือนไม่ได้ ใช้แอปได้ตามปกติ ร้านส่ง LINE แทน)
+      if (!e.quiet && !HOOKS.push && window.Notification && Notification.permission === 'granted' && (PUSH.fails = (PUSH.fails || 0) + 1) >= 2) { PUSH.cant = true; render(); }
     });
   }
   /**
@@ -16545,15 +16644,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           <li>กดปุ่มแชร์ ${icon('share')} (ถ้าไม่เห็น กด ··· ก่อน)</li>
           <li>เลือก "เพิ่มไปยังหน้าจอโฮม" (Add to Home Screen) แล้วกด "เพิ่ม" (Add)</li>
           <li>เปิดแอปจากไอคอน Seoulful บนหน้าจอโฮม ใส่ชื่อและ PIN อีกครั้ง (ครั้งแรกครั้งเดียว) แล้วกด "เปิดแจ้งเตือน"</li></ol>
-        ${what}${later}</section>`;
+        ${what}${S.pushLock ? '' : later}</section>`;
     }
     if (st === 'old') {
       return html`<section class="card push-card">${head('iPhone เครื่องนี้ต้องอัปเดตก่อน')}
-        <p>รับแจ้งเตือนจากแอปได้ตั้งแต่ iOS 16.4 ขึ้นไป · อัปเดตที่ ตั้งค่า (Settings) › ทั่วไป (General) › รายการอัปเดตซอฟต์แวร์ (Software Update) แล้วเปิดแอปนี้อีกครั้ง</p>${later}</section>`;
+        <p>รับแจ้งเตือนจากแอปได้ตั้งแต่ iOS 16.4 ขึ้นไป · อัปเดตที่ ตั้งค่า (Settings) › ทั่วไป (General) › รายการอัปเดตซอฟต์แวร์ (Software Update) แล้วเปิดแอปนี้อีกครั้ง</p>${S.pushLock ? '' : later}</section>`;
     }
     if (st === 'none') {
       return html`<section class="card push-card">${head('เบราว์เซอร์นี้รับแจ้งเตือนไม่ได้')}
-        <p>${inLine() ? 'เปิดอยู่ในแอป LINE · กดเมนูมุมขวาบนของ LINE แล้วเลือกเปิดใน Chrome จากนั้นกด "เปิดแจ้งเตือน"' : 'เปิดแอปใน Chrome (Android) หรือเพิ่มลงหน้าจอโฮมจาก Safari (iPhone) แล้วกด "เปิดแจ้งเตือน"'}</p>${later}</section>`;
+        <p>${inLine() ? 'เปิดอยู่ในแอป LINE · กดเมนูมุมขวาบนของ LINE แล้วเลือกเปิดใน Chrome จากนั้นกด "เปิดแจ้งเตือน"' : 'เปิดแอปใน Chrome (Android) หรือเพิ่มลงหน้าจอโฮมจาก Safari (iPhone) แล้วกด "เปิดแจ้งเตือน"'}</p>${S.pushLock ? '' : later}</section>`;
     }
     if (st === 'blocked') {
       return html`<section class="card push-card">${head('มือถือปิดแจ้งเตือนของแอปนี้ไว้')}
@@ -16923,15 +17022,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var fresh = !!t.at;
     var told = list.reduce(function (n, x) { return n + x.told; }, 0);
     var zero = list.filter(function (x) { return !x.told; }).length;
-    var on = list.filter(function (x) { return x.push; }).length;
+    var on = list.filter(function (x) { return x.push || x.cant; }).length;
     return html`<section class="card flush team-use"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">${icon('team')} ทีมใช้แอป · 7 วันถึงเมื่อคืน</span><span class="pill">${fresh ? 'บอก ' + told + ' เรื่อง' : 'รอสรุปคืนนี้'}</span></div>
       <p class="small muted team-sum">${fresh ? (zero ? 'ยังไม่ได้บอกเรื่อง ' + zero + ' คน · ' : 'บอกเรื่องครบทุกคน · ') : ''}แจ้งเตือนเปิดแล้ว ${on}/${list.length} คน</p>
       <div class="list">${list.map(function (x) {
         return html`<button class="item team-row ${fresh && !x.told ? 'zero' : ''}" data-act="team-one" data-id="${x.id}"><div class="grow"><div class="t">${x.name}${fresh ? html` · <b>${x.told ? 'บอก ' + x.told + ' เรื่อง' : 'ยังไม่ได้บอก'}</b>` : ''}</div>
-          <div class="s">${fresh ? teamSeen(x.last) + ' · ' : ''}${x.push ? 'แจ้งเตือนเปิดแล้ว' : html`<span class="team-off">ยังไม่เปิดแจ้งเตือน</span>`}</div>
+          <div class="s">${fresh ? teamSeen(x.last) + ' · ' : ''}${x.push ? 'แจ้งเตือนเปิดแล้ว' : x.cant ? 'มือถือรับแจ้งเตือนไม่ได้ · ได้ LINE แทน' : html`<span class="team-off">ยังไม่เปิดแจ้งเตือน</span>`}</div>
           </div>${icon('right')}</button>`;
       })}</div>
-      ${on < list.length ? html`<p class="small muted" style="margin:0 16px 14px">ชวนคนที่ยังไม่เปิดให้กด "เปิดแจ้งเตือน" บนหน้าแรก</p>` : ''}</section>`;
+      ${on < list.length ? html`<p class="small muted" style="margin:0 16px 14px">คนที่ยังไม่เปิด เข้าแอปแล้วเจอหน้าสอนเปิดแจ้งเตือนทีละขั้น ลงเวลาได้ตามปกติ ส่วนอื่นเปิดหลังเปิดแจ้งเตือน</p>` : ''}</section>`;
   }
   /** หน้ารายละเอียดของคนหนึ่ง: ที่บอก การใช้แอป เกม แต้มสะสม (ของละเอียดทั้งหมดอยู่ที่ การใช้แอป) */
   function openTeamOne(id) {
@@ -16942,7 +17041,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     openSheet({ title: x.name + ' · 7 วันถึงเมื่อคืน', body: html`<div class="stack">
       ${fresh ? html`<div class="hint">${icon('note')}<span><b>บอกเจ้าของ ${x.told} เรื่อง</b> · บันทึกหน้างาน ${x.notes} · ความคิดเห็น ${x.fb}</span></div>
       <div class="hint">${icon('phone')}<span><b>${teamSeen(x.last)}</b> · เข้าแอป ${x.opens} ครั้ง · ใช้ ${x.min} นาที · เล่นเกม ${x.game} นาที</span></div>` : html`<p class="small muted mt0">ตัวเลขการใช้แอปมาหลังสรุปคืนนี้</p>`}
-      <div class="hint">${icon('bell')}<span>${x.push ? 'แจ้งเตือนเปิดแล้ว' : 'ยังไม่เปิดแจ้งเตือน: ชวนกด "เปิดแจ้งเตือน" บนหน้าแรก (iPhone เพิ่มแอปลงหน้าจอโฮมก่อน)'}</span></div>
+      <div class="hint">${icon('bell')}<span>${x.push ? 'แจ้งเตือนเปิดแล้ว' : x.cant ? 'มือถือเครื่องนี้รับแจ้งเตือนไม่ได้ ร้านส่ง LINE แทน' : 'ยังไม่เปิดแจ้งเตือน: ชวนกด "เปิดแจ้งเตือน" บนหน้าแรก (iPhone เพิ่มแอปลงหน้าจอโฮมก่อน)'}</span></div>
       <div class="hint">${icon('spark')}<span><b>${x.lv ? 'ระดับ' + LV_NAMES[x.lv] : 'ยังไม่มีระดับ'}${x.crown ? ' · ใส่มงกุฎเดือนนี้' : ''}</b> · แต้มเดือนนี้ ${x.month} · สะสมทั้งหมด ${x.all} แต้ม</span></div>
       ${fresh ? html`<div class="hint">${icon('spark')}<span><b>ของสะสม</b> · ฟิกเกอร์ ${x.figs || 0}/${x.figAll || 0} ตัว · ของแต่งตัว ${x.looks || 0} ชิ้น</span></div>` : ''}
       <p class="small muted mt0">หน้าที่เปิด ปุ่มที่กด และความเร็วของแอปรายคน ดูได้ที่ การใช้แอป</p></div>`,
@@ -18076,6 +18175,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       call('orderItemSave', { id: it.id, par: next || '' }, ownerAuth()).then(function () { odo.v = null; loadOrderOwner(); }, function (e) { it.par = before; setSheetBody(odOwnerBody()); toast(e.message, 'bad'); });
     },
     'open-rules': function () { openRules(); },
+    'howto-open': function (el) { openHowTo(el); },
+    'rain-history': function (el) { openRainHistory(el, el.dataset.key || ''); },
     'self-edits': function () { openSelfEdits(); },
     'clock-fixes': function () { openClockFixes(); },
     'close-sub': function () {
@@ -18878,7 +18979,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           S.ownerHome.update = d.update;
           ownerChanged();
           render();
-          if (what === 'send') toast('ส่งประกาศเข้ากลุ่ม LINE แล้ว', 'ok');
+          if (what === 'send') toast('ประกาศในแอปแล้ว', 'ok');
         }, function () {});
       };
       if (what !== 'skip') return go();
