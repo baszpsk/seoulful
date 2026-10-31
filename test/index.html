@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.29","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"3d04481b0b4e"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.30","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"daa169eb7ff4"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -2176,6 +2176,8 @@ html.i3-ar-arena .fr-arena .fr-arena-art { background: var(--i3-ar-arena) 50% 10
 #arena .ar-closed { display: flex; align-items: center; gap: 6px; margin: 10px 0 0; padding: 8px 12px; border-radius: 12px; background: #fff7ed; color: #9a3412; font-size: 13px; }
 #arena .ar-closed svg { width: 15px; height: 15px; }
 #arena .ar-tabs { margin: 12px 0 4px; }
+/* 2.13.30 สี่แท็บไม่ตกบรรทัดบนจอแคบ */
+#arena .ar-tabs button { white-space: nowrap; }
 #arena .ar-rule { margin: 8px 0; }
 .ar-taste { display: inline-flex; align-items: center; gap: 2px; padding: 0 6px; border-radius: 99px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
 .ar-taste.t-hot { background: #fee2e2; color: #b91c1c; }
@@ -2205,19 +2207,17 @@ html.i3-ar-arena .fr-arena .fr-arena-art { background: var(--i3-ar-arena) 50% 10
 .ar-fig-card { position: relative; display: grid; justify-items: center; gap: 3px; padding: 8px 4px 10px; border: 0; border-radius: 18px; background: var(--card); box-shadow: var(--card-shadow); color: var(--ink); font: inherit; text-align: center; cursor: pointer; transition: transform .35s var(--spring), box-shadow .2s; }
 .ar-fig-card:active:not([disabled]) { transform: scale(.95); }
 .ar-fig-card.on { box-shadow: inset 0 0 0 2.5px var(--gold), var(--card-shadow); }
-.ar-fig-card.rest { filter: grayscale(.85); }
 .ar-fig-card[disabled] { cursor: default; }
 .ar-fig-card b { font-size: 12.5px; }
 .ar-fig-art { position: relative; display: block; width: 64px; height: 76px; }
 .ar-fig-art .fig-svg { width: 100%; height: 100%; }
 .ar-plus { position: absolute; left: -6px; top: 0; padding: 0 5px; border-radius: 99px; background: #7c3aed; color: #fff; font-size: 10px; font-weight: 700; }
-.ar-check { position: absolute; right: -6px; top: -2px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--gold); color: #fff; }
-.ar-check svg { width: 13px; height: 13px; }
+/* 2.13.30 ลำดับที่ออกสู้ (1..k) แทนเครื่องหมายถูก: ตัวที่แตะก่อนออกก่อน · ฝั่งคู่มีเลขของตัวเอง เห็นว่าตัวไหนเจอตัวไหน */
+.ar-ord { position: absolute; right: -6px; top: -2px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--gold); color: #fff; font-size: 12.5px; font-style: normal; font-weight: 800; line-height: 1; box-shadow: 0 1px 3px rgba(0, 0, 0, .2); }
+.ar-mini .ar-ord { right: auto; left: -6px; width: 18px; height: 18px; font-size: 11px; background: #7c2d12; }
 .ar-stats { display: flex; gap: 5px; font-size: 10.5px; color: var(--ink-2); }
 .ar-power { font-size: 11px; color: var(--muted); }
 .ar-gear-on { font-size: 11px; font-weight: 600; color: #7c3aed; }
-.ar-rest { display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; color: #b45309; }
-.ar-rest svg { width: 11px; height: 11px; }
 #arena .ar-gears { display: grid; gap: 8px; margin-top: 10px; }
 .ar-gear { display: grid; grid-template-columns: 40px 1fr auto; grid-template-rows: auto auto; column-gap: 10px; align-items: center; padding: 10px 12px; border: 0; border-radius: 16px; background: var(--card); box-shadow: var(--card-shadow); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
 .ar-gear.on { box-shadow: inset 0 0 0 2px var(--gold), var(--card-shadow); }
@@ -2284,7 +2284,38 @@ html.i3-ar-arena .ar-stage .ar-floor { display: none; }
 .ar-res span { font-size: 14px; font-weight: 600; }
 .ar-res small { font-size: 12.5px; opacity: .8; }
 @keyframes ar-res { from { transform: scale(.7); opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .ar-fig.ar-in, .ar-fig.lunge-a, .ar-fig.lunge-d, .ar-fig.hit, .ar-res { animation: none; } }
+/* 2.13.30 น้องป่า บอสทีม (น้องตัวเดิมตัวใหญ่) ถ้วยบนการ์ดเพื่อน และบอสต่อจากภารกิจทีมบนหน้าแรก */
+#arena .ar-boss { display: grid; grid-template-columns: 104px minmax(0, 1fr); align-items: center; gap: 10px; margin: 0 0 4px; padding: 10px 14px 10px 8px; border-radius: 20px; background: linear-gradient(135deg, #4c0519, #9a3412); color: #fff7ed; }
+#arena .ar-boss.down { background: linear-gradient(135deg, #78350f, #ca8a04); }
+.ar-boss-art { position: relative; display: block; width: 104px; height: 124px; }
+.ar-boss-art .fig-svg { width: 100%; height: 100%; overflow: visible; }
+#arena .ar-boss .grow { display: grid; gap: 3px; min-width: 0; }
+#arena .ar-boss .eyebrow { color: #fed7aa; }
+#arena .ar-boss b { font-size: 16px; }
+#arena .ar-boss .ar-hp { height: 10px; background: rgba(255, 255, 255, .22); }
+#arena .ar-boss .ar-hp > i { background: linear-gradient(90deg, #ef4444, #fb923c); }
+#arena .ar-boss small { font-size: 11.5px; opacity: .92; }
+#arena .ar-wild { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 18px; background: var(--card); box-shadow: var(--card-shadow); }
+#arena .ar-wild .grow { display: grid; gap: 6px; min-width: 0; }
+#arena .ar-wild .ar-def-row, #arena .ar-foe .ar-def-row { min-height: 0; flex-wrap: wrap; }
+#arena .ar-foe-fig small { max-width: 76px; text-align: center; line-height: 1.25; }
+.fr-cup { position: absolute; top: 5px; right: 5px; display: inline-flex; align-items: center; gap: 2px; padding: 1px 6px 1px 4px; border-radius: 99px; background: rgba(255, 255, 255, .9); box-shadow: 0 1px 3px rgba(0, 0, 0, .15); color: #92400e; font-size: 10px; font-weight: 700; line-height: 16px; white-space: nowrap; }
+.fr-cup img.u3 { width: 13px; height: 13px; }
+.quest.boss { margin-top: 14px; }
+.quest .q-gem.q-boss { background: #ffe4e6; color: #be123c; }
+.quest .q-boss img.u3 { width: 22px; height: 22px; }
+.q-bar.q-hp > i { background: linear-gradient(90deg, #ef4444, #fb923c); }
+/* 2.13.30 (เจ้าของ 29 ต.ค. 2569 "หน้าศึกน้องกับลาโซลฟูก็เคลือนไหวด้วยดีไหม"): น้องที่ยืนอยู่ทุกที่ในหน้าศึกเด้งเบา ๆ (รายชื่อเพื่อน น้องป่า การ์ดน้อง
+   ทีมเฝ้าห้อง บอส เวทีสู้) ขยับแค่ transform แบบ char-idle เฟสเหลื่อมกัน · ฝั่งขวาของเวทีหันกลับ (ar-idle-d) · พุ่งตี โดนตีสั่น แพ้ล้ม คงเดิม
+   · ลดภาพเคลื่อนไหว: ปิดทุกท่ารวมท่าล้ม ตัวที่ล้มจางค้างแทน */
+.ar-mini .fig-svg, .ar-fig-art .fig-svg, .ar-boss-art .fig-svg, .ar-fig:not(.ko) .fig-svg { transform-origin: 50% 100%; animation: ar-idle 2.4s ease-in-out infinite; will-change: transform; }
+.ar-side.d .ar-fig:not(.ko) .fig-svg { animation-name: ar-idle-d; animation-delay: -1.2s; }
+.ar-mini:nth-child(3n+2) .fig-svg, .ar-foe-fig:nth-child(3n+2) .fig-svg, .ar-fig-card:nth-child(3n+2) .fig-svg { animation-delay: -.8s; }
+.ar-mini:nth-child(3n) .fig-svg, .ar-foe-fig:nth-child(3n) .fig-svg, .ar-fig-card:nth-child(3n) .fig-svg { animation-delay: -1.6s; }
+.ar-boss-art .fig-svg { animation-duration: 3.2s; }
+@keyframes ar-idle { 0%, 100% { transform: none; } 30% { transform: translateY(-4px) scale(.98, 1.03); } 52% { transform: translateY(0) scale(1.03, .97); } 72% { transform: translateY(-1px); } }
+@keyframes ar-idle-d { 0%, 100% { transform: scaleX(-1); } 30% { transform: translateY(-4px) scale(-.98, 1.03); } 52% { transform: translateY(0) scale(-1.03, .97); } 72% { transform: translateY(-1px) scaleX(-1); } }
+@media (prefers-reduced-motion: reduce) { .ar-fig.ar-in, .ar-fig.lunge-a, .ar-fig.lunge-d, .ar-fig.hit, .ar-fig.ko, .ar-res, .ar-mini .fig-svg, .ar-fig-art .fig-svg, .ar-boss-art .fig-svg, .ar-fig .fig-svg { animation: none !important; } .ar-fig.ko { opacity: .3; filter: grayscale(1); } }
 /* ---- วิ่งฝ่าด่าน ---- */
 /* The run's card (#215): the course passing at one speed (its cake ground, a jelly hurdle, a rolling
    peppermint), one's character running on it in its 3D pictures from the run (side on, its four steps),
@@ -9227,7 +9258,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${h.order && h.order.keeper ? mealCard(h.order.staffMeal, false) : ''}
       ${parCard(h.order)}
       ${h.level ? welcomeCard(h.level) : ''}
-      ${h.level ? html`<div class="lv-chips">${levelChip(h.level)}${shelfChip(h.level)}${plazaChip(h.level)}<button class="lv-chip" data-act="shop-open"><span class="gem">${icon('bag')}</span><span>แต่งตัว</span>${icon('right')}</button></div>${questRow(h.level.quest)}${salesRow(h.sales)}` : ''}
+      ${h.level ? html`<div class="lv-chips">${levelChip(h.level)}${shelfChip(h.level)}${plazaChip(h.level)}<button class="lv-chip" data-act="shop-open"><span class="gem">${icon('bag')}</span><span>แต่งตัว</span>${icon('right')}</button></div>${questRow(h.level.quest)}${bossRow(h.level.arena)}${salesRow(h.sales)}` : ''}
       ${h.level ? dayCard(h.level.day) : ''}
       ${monthCard(h.month)}
     </div>`;
@@ -9339,7 +9370,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var a = (l && l.arena) || { trophies: 0, left: 3, raids: 0 };
     i3Want('ar-arena');
     return html`<button class="card fr-plaza fr-arena ${a.raids ? 'hot' : ''}" data-act="arena-open"><span class="fr-arena-art"><i>${raw(FIG_ART('chili'))}</i><b>VS</b><i class="flip">${raw(FIG_ART('mochi'))}</i></span>
-      <span class="fr-plaza-tx"><b>ศึกน้อง</b><span>${a.raids ? 'มีคนบุกห้องคุณ ' + a.raids + ' ครั้ง · ท้ากลับได้' : html`${ui3('ui-trophy', '🏆')} ${a.trophies} ถ้วย · บุกได้อีก ${a.left} ครั้งวันนี้`}</span></span>${icon('right')}</button>`;
+      <span class="fr-plaza-tx"><b>ศึกน้อง</b><span>${a.raids ? 'มีคนบุกห้องคุณ ' + a.raids + ' ครั้ง · ท้ากลับได้' : html`${ui3('ui-trophy', '🏆')} ${a.trophies} ถ้วย · สู้ได้อีก ${a.left} ครั้งวันนี้`}</span></span>${icon('right')}</button>`;
   }
   function friendCard(p, d, total) {
     var me = p.id === d.me;
@@ -9351,7 +9382,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<button class="fr-card ${me ? 'me' : ''}" data-act="fr-room" data-id="${p.id}" aria-label="ห้องของ${p.name}">
       <span class="fr-stage room th-${roomTheme(p)}"><i class="rm-wall"></i><i class="rm-floor"></i>
         <span class="fr-char" data-mv="${mvfPick(p.look, p.things)}">${raw(charOf(p.look))}</span>${p.look && p.look.p ? html`<span class="fr-pet">${raw(PET_ART(p.look.p, p.look))}</span>` : ''}
-        ${me ? html`<span class="fr-me">ฉัน</span>` : ''}</span>
+        ${me ? html`<span class="fr-me">ฉัน</span>` : ''}${p.trophies ? html`<span class="fr-cup">${ui3('ui-trophy', '🏆')} ${p.trophies}</span>` : ''}</span>
       <span class="fr-name">${nameLv(p.lv, p.name, (p.look || {}).b)}</span>
       <span class="fr-stats"><span>น้อง ${p.figs.length}/${total}</span>${me && top ? html`<span>+${top}</span>` : ''}<span>${icon('heart')} ${p.hearts || 0}</span>${me && things ? html`<span>ของ ${things}</span>` : ''}</span>${me ? html`<span class="fr-go">${icon('right')}</span>` : ''}
     </button>`;
@@ -12999,6 +13030,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var pct = Math.min(100, Math.round((q.n / Math.max(1, q.of)) * 100));
     return html`<button class="quest ${q.done ? 'done' : ''}" data-act="quest-open"><span class="q-gem">${icon(q.done ? 'check' : 'team')}</span><span class="grow"><b>${q.done ? 'ภารกิจทีมสำเร็จ!' : 'ภารกิจทีมสัปดาห์นี้'}</b><span>${q.name} ${cnt('quest', q.n)}/${q.of} ${q.unit} · ${q.done ? 'ทุกคนที่มาทำงานได้กล่องฟรี' : 'ครบแล้วทุกคนได้กล่องฟรี'}</span><i class="q-bar"><i style="width:${pct}%"></i></i></span>${icon('right')}</button>`;
   }
+  /** 2.13.30 บอสทีมสัปดาห์นี้ต่อจากภารกิจทีม (รอบสัปดาห์เดียวกัน): พลังชีวิตที่เหลือ เหรียญเมื่อล้ม · แตะแล้วไปสู้น้องป่า */
+  function bossRow(a) {
+    var b = a && a.boss;
+    if (!b) return '';
+    var pct = Math.max(0, Math.min(100, Math.round((b.left / Math.max(1, b.hp)) * 100)));
+    return html`<button class="quest boss ${b.down ? 'done' : ''}" data-act="boss-open"><span class="q-gem q-boss">${ui3('ui-boom', '💥')}</span><span class="grow"><b>${b.down ? 'ล้มบอสทีมแล้ว!' : 'บอสทีม: ' + b.name}</b><span>${b.down ? (b.got ? 'คุณได้ ' + b.coins + ' เหรียญ' : 'คนที่มาทำงานสัปดาห์นี้หรือช่วยตีได้ ' + b.coins + ' เหรียญ') : 'พลังชีวิต ' + b.left + '/' + b.hp + ' · ล้มแล้วได้ ' + b.coins + ' เหรียญ'}</span><i class="q-bar q-hp"><i style="width:${pct}%"></i></i></span>${icon('right')}</button>`;
+  }
   /** The goal up close: how it counts, one's own part, the team's best, and what comes next week. */
   function openQuest() {
     var q = S.home && S.home.level && S.home.level.quest;
@@ -14824,7 +14862,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     arenaStop();
     i3Want('ar-arena');
     var was = mineOnly(arena);
-    arena = { data: was && was.data, tab: tab || (was && was.tab) || 'fight', pick: null, def: null, gear: '', fight: null, viewer: staffId() };
+    // 2.13.30 เปิดที่น้องป่า (ชนะแล้วตีบอสทีม) · มีคนบุกห้องที่ท้ากลับได้ เปิดที่บุกเพื่อน
+    var news = (S.home && S.home.level && S.home.level.arena) || {};
+    arena = { data: was && was.data, tab: tab || (was && was.tab) || (news.raids ? 'fight' : 'wild'), pick: null, def: null, gear: '', fight: null, viewer: staffId() };
     openSheet({ title: 'ศึกน้อง', sound: true, wide: true, body: arena.data ? arenaBody() : html`<div id="arena" aria-busy="true"><div class="skel" style="height:110px"></div><div class="skel" style="height:320px;margin-top:12px"></div></div>`, foot: arenaFoot(), onClose: arenaStop });
     arenaLoad();
   }
@@ -14848,87 +14888,113 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function arTaste(d, t) { var x = (d.tastes || {})[t] || ['', '']; return html`<span class="ar-taste t-${t}">${arTasteIc(d, t)} ${x[0]}</span>`; }
   /** A taste's own little 3D thing (a chilli, a sweet, a lemon, sparkles), its emoji meanwhile. */
   function arTasteIc(d, t) { var e = ((d.tastes || {})[t] || [])[1] || ''; return AR_TASTE3[t] ? art3(AR_TASTE3[t], e, 'u3') : e; }
-  /** How long a figure still rests: 'อีก 2 ชม. 15 นาที'. */
-  function arRest(iso) {
-    var ms = new Date(iso).getTime() - now().getTime();
-    if (ms <= 0) return '';
-    var m = Math.ceil(ms / 60000);
-    return 'พักฟื้นอีก ' + (m >= 60 ? Math.floor(m / 60) + ' ชม. ' : '') + (m % 60 ? (m % 60) + ' นาที' : '');
-  }
+  /** What beats what, on each tab one fights from. */
+  function arBeats(d) { return html`<p class="small muted ar-rule">${arTaste(d, 'sweet')} ชนะ ${arTaste(d, 'hot')} · ${arTaste(d, 'sour')} ชนะ ${arTaste(d, 'sweet')} · ${arTaste(d, 'hot')} ชนะ ${arTaste(d, 'sour')} · ได้เปรียบแรงขึ้นครึ่งหนึ่ง</p>`; }
+  /** 2.13.30 สู้เพิ่มจากบันทึกหน้างาน (ไม่บอกว่าแบบไหนได้แต้ม) */
+  function arMore(d) { return 'บอกปัญหาในบันทึกหน้างานที่ได้แต้ม สู้เพิ่มได้เรื่องละ ' + (d.toldMore || 1) + ' ครั้ง'; }
   function arenaBody() {
     var d = arena.data;
     if (arena.fight) return arenaFightBody();
     if (arena.pick) return arenaPickBody(d);
     if (arena.def) return arenaDefBody(d);
     if (arena.gear) return arenaGearBody(d);
-    var tabs = [['fight', 'บุกห้องเพื่อน'], ['team', 'น้องของฉัน'], ['log', 'ประวัติ']];
+    // 2.13.30 น้องป่าก่อน (ชนะแล้วตีบอสทีม) · สิทธิ์สู้วันนี้ใช้ร่วมกับบุกเพื่อน
+    var tabs = [['wild', 'น้องป่า'], ['fight', 'บุกเพื่อน'], ['team', 'น้องฉัน'], ['log', 'ประวัติ']];
     return html`<div id="arena">
       <section class="ar-head"><div class="ar-cup"><b>${ui3('ui-trophy', '🏆')} ${d.trophies}</b><span>ถ้วย${d.rank ? ' · อันดับ ' + d.rank : ''}</span></div>
-        <div class="ar-head-tx"><b>${d.closed ? 'พักช่วงร้านยุ่ง ถึง ' + d.closed.until + ' น.' : 'บุกได้อีก ' + d.left + '/' + d.perDay + ' ครั้งวันนี้'}</b><span>ชนะได้ถ้วย ห้องที่โดนบุกไม่เสียถ้วย ไม่มีใครเสียของ · น้องที่ล้มพักฟื้น ${d.rest} ชม.</span></div></section>
+        <div class="ar-head-tx"><b class="ar-left" data-left="${d.left}">${d.closed ? 'พักช่วงร้านยุ่ง ถึง ' + d.closed.until + ' น.' : d.left > 0 ? 'สู้ได้อีก ' + d.left + '/' + d.perDay + ' ครั้งวันนี้' : 'วันนี้สู้ครบแล้ว'}</b><span>${arMore(d)}</span></div></section>
       ${d.closed ? html`<p class="ar-closed">${icon('clock')} ศึกน้องพักช่วงร้านยุ่ง ${d.closedTimes.map(function (w) { return w[0] + '–' + w[1]; }).join(' และ ')} น. มาสู้กันตอนพักนะ</p>` : ''}
       ${d.calm ? html`<p class="ar-closed">${icon('shield')} ตอนนี้คุณพักจากศึก ห้องของคุณไม่ถูกบุก และคุณไม่บุกห้องใคร · กลับมาเล่นได้ที่ ฉัน › เล่นแกล้งกับเพื่อน</p>` : ''}
       <div class="seg ar-tabs" role="tablist">${tabs.map(function (t) { return html`<button aria-pressed="${arena.tab === t[0]}" data-act="ar-tab" data-tab="${t[0]}">${t[1]}${t[0] === 'log' && d.log.some(function (x) { return x.answer; }) ? html`<i class="rm-dot">!</i>` : ''}</button>`; })}</div>
-      ${arena.tab === 'team' ? arenaTeamTab(d) : arena.tab === 'log' ? arenaLogTab(d) : arenaFightTab(d)}
+      ${arena.tab === 'team' ? arenaTeamTab(d) : arena.tab === 'log' ? arenaLogTab(d) : arena.tab === 'fight' ? arenaFightTab(d) : arenaWildTab(d)}
     </div>`;
   }
-  /** Friends' rooms: who stands there, their trophies; raid (or answer a raid). */
+  /** 2.13.30 บอสทีมสัปดาห์นี้: น้องยักษ์ พลังชีวิตที่เหลือ คนช่วยตี และเหรียญเมื่อล้ม */
+  function arBoss(d) {
+    var b = d.boss;
+    if (!b) return '';
+    var pct = Math.max(0, Math.min(100, Math.round((b.left / Math.max(1, b.hp)) * 100)));
+    return html`<section class="ar-boss ${b.down ? 'down' : ''}" data-left="${b.left}" data-hit="${b.hitWin}"><span class="ar-boss-art">${raw(FIG_ART(b.fig))}</span>
+      <div class="grow"><span class="eyebrow">บอสทีมสัปดาห์นี้</span><b>${b.down ? 'ล้มบอส' + b.name + 'แล้ว!' : 'บอส' + b.name}</b>
+        <i class="ar-hp"><i style="width:${pct}%"></i></i><small>พลังชีวิต ${b.left}/${b.hp} · ช่วยตีแล้ว ${b.helpers || 0} คน${b.mine ? ' · คุณตี ' + b.mine : ''}</small>
+        <small>ชนะน้องป่าตี ${b.hitWin} · บันทึกหน้างานที่ได้แต้มตี ${b.hitTold}</small>
+        <small>${b.down ? (b.got ? 'คุณได้ ' + b.coins + ' เหรียญแล้ว' : 'คนที่มาทำงานสัปดาห์นี้หรือช่วยตีได้ ' + b.coins + ' เหรียญ') : 'ล้มแล้วคนที่มาทำงานสัปดาห์นี้หรือช่วยตีได้ ' + b.coins + ' เหรียญ'}</small></div></section>`;
+  }
+  /** A figure the other side sends: its picture, name and taste, and its place in the order. */
+  function arFoeFig(d, f, n) {
+    var c = d.catalog[f.id] || [];
+    return html`<span class="ar-foe-fig" data-taste="${f.taste}"><span class="ar-mini big">${raw(FIG_ART(f.id))}${n ? html`<i class="ar-ord">${n}</i>` : ''}</span><small>${c[0] || ''}</small>${arTaste(d, f.taste)}</span>`;
+  }
+  /** 2.13.30 น้องป่า: บอสทีม คู่สู้วันนี้ (เห็นรสก่อนสู้) ปุ่มสู้ · ใช้สิทธิ์สู้วันนี้ร่วมกับบุกเพื่อน */
+  function arenaWildTab(d) {
+    var w = d.wild || { figs: [] };
+    var can = !d.closed && d.figs.length && w.figs.length && d.left > 0;
+    return html`${arBoss(d)}${arBeats(d)}
+      <p class="small muted ar-rule">ส่งกี่ตัว น้องป่าออกเท่ากันตามเลข · ชนะ +${w.win || 0} ถ้วย${d.boss && !d.boss.down ? ' และตีบอสทีม ' + d.boss.hitWin : ''} · แพ้ไม่เสียถ้วย</p>
+      ${!d.figs.length ? html`<p class="empty">ยังไม่มีน้องไปสู้ เปิดกล่องสุ่มที่ห้องของฉันก่อนนะ</p>` : !w.figs.length ? html`<p class="empty">ยังไม่มีน้องป่าให้สู้วันนี้</p>` : html`<section class="ar-wild"><div class="grow"><b>น้องป่าวันนี้</b><div class="ar-def-row">${w.figs.map(function (f, i) { return arFoeFig(d, f, i + 1); })}</div></div><button class="btn sm primary" data-act="ar-wild" ${can ? '' : 'disabled'}>สู้</button></section>`}
+      ${d.left > 0 || d.closed || !d.figs.length ? '' : html`<p class="ar-closed">${icon('note')} วันนี้สู้ครบแล้ว ${arMore(d)}</p>`}`;
+  }
+  /** Friends' rooms: who stands there, their trophies; raid (or answer a raid). 2.13.30 พลังเท่ากันทุกตัว */
   function arenaFightTab(d) {
     var answers = {};
     d.log.forEach(function (x) { if (x.answer && !answers[x.who]) answers[x.who] = x.id; });
-    var ready = d.figs.filter(function (f) { return !f.rest; }).length;
-    return html`<p class="small muted ar-rule">${arTaste(d, 'sweet')} ชนะ ${arTaste(d, 'hot')} · ${arTaste(d, 'sour')} ชนะ ${arTaste(d, 'sweet')} · ${arTaste(d, 'hot')} ชนะ ${arTaste(d, 'sour')} · ได้เปรียบแรงขึ้นครึ่งหนึ่ง</p>
-      ${!d.figs.length ? html`<p class="empty">ยังไม่มีน้องไปสู้ เปิดกล่องสุ่มที่ห้องของฉันก่อนนะ</p>` : !ready ? html`<p class="empty">น้องทุกตัวพักฟื้นอยู่ รอสักพักนะ</p>` : ''}
+    return html`${arBeats(d)}
+      <p class="small muted ar-rule">บุกเพื่อนพลังเท่ากันทุกตัว ชนะด้วยรสและลำดับ · ห้องที่โดนบุกไม่เสียถ้วย ไม่มีใครเสียของ</p>
+      ${!d.figs.length ? html`<p class="empty">ยังไม่มีน้องไปสู้ เปิดกล่องสุ่มที่ห้องของฉันก่อนนะ</p>` : ''}
       <div class="ar-rooms">${d.people.map(function (p) {
         var rev = answers[p.id];
-        var can = !d.closed && ready && (rev || (d.left > 0 && !p.done));
+        var can = !d.closed && d.figs.length && (rev || (d.left > 0 && !p.done));
         return html`<div class="ar-room ${rev ? 'rev' : ''}">${avatar(p, '', [p.lv, 0, p.look])}
-          <div class="grow"><b>${nameLv(p.lv, p.name)}</b><span>${ui3('ui-trophy', '🏆')} ${p.trophies} · พลัง ${p.power}</span>
-            <span class="ar-team-mini">${p.team.map(function (f) { var c = d.catalog[f.id] || []; return html`<i class="ar-mini" title="${c[0] || ''}">${raw(FIG_ART(f.id))}<em class="t-${f.taste}">${arTasteIc(d, f.taste)}</em>${f.plus ? html`<small>+${f.plus}</small>` : ''}</i>`; })}${p.team.length ? '' : html`<small class="muted">น้องพักฟื้นหมด</small>`}</span></div>
+          <div class="grow"><b>${nameLv(p.lv, p.name)}</b><span>${ui3('ui-trophy', '🏆')} ${p.trophies} ถ้วย</span>
+            <span class="ar-team-mini">${p.team.map(function (f) { var c = d.catalog[f.id] || []; return html`<i class="ar-mini" title="${c[0] || ''}">${raw(FIG_ART(f.id))}<em class="t-${f.taste}">${arTasteIc(d, f.taste)}</em></i>`; })}</span></div>
           ${rev ? html`<button class="btn sm primary" data-act="ar-raid" data-id="${p.id}" data-rev="${rev}" ${can ? '' : 'disabled'}>ท้ากลับ</button>` : html`<button class="btn sm" data-act="ar-raid" data-id="${p.id}" ${can && p.team.length ? '' : 'disabled'}>${p.done ? 'บุกแล้ว' : 'บุก'}</button>`}
         </div>`;
       })}</div>
       ${d.board.length ? html`<section class="card ar-board"><div class="card-h"><span class="eyebrow">ถ้วยมากสุด</span></div>${d.board.map(function (x, i) { return html`<div class="ar-board-row ${x.id === d.me ? 'me' : ''}"><span class="ideas-rank r${i + 1}">${i + 1}</span><b class="grow">${x.id === d.me ? 'ฉัน' : x.name}</b><span>${ui3('ui-trophy', '🏆')} ${x.trophies}</span></div>`; })}</section>` : ''}`;
   }
-  /** One of my figures, as a card: its taste, strength, gear, and how long it rests. */
+  /** One of my figures, as a card: its taste, strength, gear · 2.13.30 its place in the order (ord) · on a raid (fair) all alike. */
   function arFigCard(d, f, opts) {
     opts = opts || {};
-    var g = f.gear && d.gear[f.gear];
-    return html`<button class="ar-fig-card ${f.rest ? 'rest' : ''} ${opts.on ? 'on' : ''}" data-act="${opts.act || 'ar-fig'}" data-id="${f.id}" ${opts.disabled ? 'disabled' : ''}>
-      <span class="ar-fig-art">${raw(FIG_ART(f.id))}${f.plus ? html`<small class="ar-plus">+${f.plus}</small>` : ''}${opts.on ? html`<i class="ar-check">${icon('check')}</i>` : ''}</span>
+    var fair = opts.fair && d.fair;
+    var st = fair || f.st;
+    var g = !fair && f.gear && d.gear[f.gear];
+    return html`<button class="ar-fig-card ${opts.ord ? 'on' : ''}" data-act="${opts.act || 'ar-fig'}" data-id="${f.id}" data-taste="${f.st.taste}" ${opts.disabled ? 'disabled' : ''}>
+      <span class="ar-fig-art">${raw(FIG_ART(f.id))}${f.plus && !fair ? html`<small class="ar-plus">+${f.plus}</small>` : ''}${opts.ord ? html`<i class="ar-ord">${opts.ord}</i>` : ''}</span>
       <b>${f.name}</b>${arTaste(d, f.st.taste)}
-      <span class="ar-stats"><span>${ui3('fx-heart', '❤️')} ${f.st.hp}</span><span>${ui3('ui-atk', '⚔️')} ${f.st.atk}</span><span>${ui3('ui-spd', '💨')} ${f.st.spd}</span></span>
+      <span class="ar-stats"><span>${ui3('fx-heart', '❤️')} ${st.hp}</span><span>${ui3('ui-atk', '⚔️')} ${st.atk}</span><span>${ui3('ui-spd', '💨')} ${st.spd}</span></span>
       ${g ? html`<span class="ar-gear-on">${gearArt(f.gear)} ${g[0]}</span>` : ''}
-      ${f.rest ? html`<span class="ar-rest">${icon('clock')} ${arRest(f.rest)}</span>` : html`<span class="ar-power">พลัง ${f.st.power}</span>`}
+      <span class="ar-power">${fair ? 'พลังเท่ากัน' : 'พลัง ' + f.st.power}</span>
     </button>`;
   }
   function arenaTeamTab(d) {
     var def = d.defence.map(function (id) { return d.figs.filter(function (f) { return f.id === id; })[0]; }).filter(Boolean);
     return html`<section class="card ar-def"><div class="card-h"><span class="eyebrow">ทีมเฝ้าห้อง</span><button class="btn sm" data-act="ar-def" ${d.figs.length ? '' : 'disabled'}>ตั้งทีม</button></div>
-        <div class="ar-def-row">${def.length ? def.map(function (f) { return html`<span class="ar-mini big">${raw(FIG_ART(f.id))}<em class="t-${f.st.taste}">${arTasteIc(d, f.st.taste)}</em></span>`; }) : html`<span class="small muted">ยังไม่มีน้องเฝ้าห้อง</span>`}</div>
-        <p class="small muted" style="margin:6px 0 0">${d.chosen.length ? 'เพื่อนที่มาบุกเจอทีมนี้ · ตัวที่พักฟื้นอยู่ ตัวที่แข็งแรงที่สุดออกแทน' : 'ยังไม่ได้ตั้ง: ตัวที่แข็งแรงที่สุด 3 ตัวเฝ้าห้องให้เอง'}</p></section>
-      <p class="small muted ar-rule">แตะน้องเพื่อใส่อุปกรณ์ · ใส่แล้วถอดไม่ได้ ติดตัวน้องตลอดไป · ตีบวกแต่ละขั้นแรงขึ้น 5%</p>
+        <div class="ar-def-row">${def.length ? def.map(function (f, i) { return html`<span class="ar-mini big">${raw(FIG_ART(f.id))}<em class="t-${f.st.taste}">${arTasteIc(d, f.st.taste)}</em><i class="ar-ord">${i + 1}</i></span>`; }) : html`<span class="small muted">ยังไม่มีน้องเฝ้าห้อง</span>`}</div>
+        <p class="small muted" style="margin:6px 0 0">${d.chosen.length ? 'เพื่อนที่มาบุกเจอทีมนี้ ออกตามเลข' : 'ยังไม่ได้ตั้ง: ตัวที่แข็งแรงที่สุด 3 ตัวเฝ้าห้องให้เอง'}</p></section>
+      <p class="small muted ar-rule">แตะน้องเพื่อใส่อุปกรณ์ · ใส่แล้วถอดไม่ได้ ติดตัวน้องตลอดไป · ตีบวกแต่ละขั้นแรงขึ้น 5% · อุปกรณ์และตีบวกใช้ตอนสู้น้องป่า บุกเพื่อนพลังเท่ากัน</p>
       <div class="ar-figs">${d.figs.map(function (f) { return arFigCard(d, f, { act: 'ar-gear' }); })}</div>`;
   }
   function arenaLogTab(d) {
     return html`${d.log.length ? html`<section class="card flush"><div class="list">${d.log.map(function (x) {
-        var what = x.att ? 'คุณบุกห้อง' + x.name : x.name + 'บุกห้องคุณ';
+        var what = x.wild ? 'คุณสู้น้องป่า' : x.att ? 'คุณบุกห้อง' + x.name : x.name + 'บุกห้องคุณ';
         return html`<div class="item ar-log ${x.won ? 'won' : 'lost'}"><span class="ar-log-ic">${x.won ? ui3('ui-trophy', '🏆') : ui3('ui-boom', '💥')}</span><div class="grow"><div class="t">${what}${x.revenge ? ' (ท้ากลับ)' : ''}</div><div class="s">${x.won ? 'ชนะ' : 'แพ้'}${x.t ? ' · ' + (x.t > 0 ? '+' : '') + x.t + ' ถ้วย' : ''} · ${whenAt(x.at)}</div></div>${x.answer ? html`<button class="btn sm primary" data-act="ar-raid" data-id="${x.who}" data-rev="${x.id}" ${d.closed ? 'disabled' : ''}>ท้ากลับ</button>` : ''}</div>`;
-      })}</div></section>` : html`<p class="empty">ยังไม่มีศึก ลองบุกห้องเพื่อนดูสิ</p>`}`;
+      })}</div></section>` : html`<p class="empty">ยังไม่มีศึก ลองสู้น้องป่าดูสิ</p>`}`;
   }
-  /** Choosing who goes: up to three ready figures (the strongest chosen at first), against the team in that room. */
+  /** Choosing who goes, in order (1..k), against the other side's own order: a friend's room (all alike), or 2.13.30 the wild ones. */
   function arenaPickBody(d) {
     var pk = arena.pick;
-    var p = d.people.filter(function (x) { return x.id === pk.to; })[0] || { team: [], name: pk.name };
+    var p = pk.wild ? null : d.people.filter(function (x) { return x.id === pk.to; })[0] || { team: [], name: pk.name };
+    var foe = pk.wild ? (d.wild || {}).figs || [] : p.team;
     return html`<div id="arena" class="ar-pick">
-      <section class="card ar-foe"><div class="card-h"><span class="eyebrow">${pk.revenge ? 'ท้ากลับ' : 'บุกห้อง'}${p.name}</span><span class="small muted">${ui3('ui-trophy', '🏆')} ${p.trophies || 0}</span></div>
-        <div class="ar-def-row">${p.team.map(function (f) { var c = d.catalog[f.id] || []; return html`<span class="ar-foe-fig"><span class="ar-mini big">${raw(FIG_ART(f.id))}<em class="t-${f.taste}">${arTasteIc(d, f.taste)}</em></span><small>${c[0] || ''}${f.plus ? ' +' + f.plus : ''}</small></span>`; })}</div></section>
-      <p class="small muted ar-rule">เลือก ${d.team} ตัว ออกตามลำดับที่แตะ · เลือกรสที่ชนะรสของเขา</p>
-      <div class="ar-figs">${d.figs.map(function (f) { var i = pk.figs.indexOf(f.id); return arFigCard(d, f, { act: 'ar-sel', on: i >= 0, disabled: !!f.rest }); })}</div>
+      <section class="card ar-foe"><div class="card-h"><span class="eyebrow">${pk.wild ? 'สู้น้องป่า' : (pk.revenge ? 'ท้ากลับ' : 'บุกห้อง') + p.name}</span>${pk.wild ? '' : html`<span class="small muted">${ui3('ui-trophy', '🏆')} ${p.trophies || 0}</span>`}</div>
+        <div class="ar-def-row">${foe.map(function (f, i) { return arFoeFig(d, f, i + 1); })}</div></section>
+      <p class="small muted ar-rule">${pk.wild ? 'น้องป่าออกเท่าจำนวนที่ส่ง' : 'พลังเท่ากันทุกตัว ชนะด้วยรสและลำดับ'} · แตะเลือก ${pk.max || d.team} ตัว ออกตามเลข เลือกรสที่ชนะรสของคู่เลขเดียวกัน</p>
+      <div class="ar-figs">${d.figs.map(function (f) { return arFigCard(d, f, { act: 'ar-sel', ord: pk.figs.indexOf(f.id) + 1, fair: !pk.wild }); })}</div>
     </div>`;
   }
   function arenaDefBody(d) {
-    return html`<div id="arena" class="ar-pick"><p class="small muted ar-rule">เลือกน้องเฝ้าห้อง ${d.team} ตัว ตามลำดับที่แตะ</p>
-      <div class="ar-figs">${d.figs.map(function (f) { return arFigCard(d, f, { act: 'ar-def-sel', on: arena.def.indexOf(f.id) >= 0 }); })}</div></div>`;
+    return html`<div id="arena" class="ar-pick"><p class="small muted ar-rule">เลือกน้องเฝ้าห้อง ${d.team} ตัว ออกตามเลขที่แตะ</p>
+      <div class="ar-figs">${d.figs.map(function (f) { return arFigCard(d, f, { act: 'ar-def-sel', ord: arena.def.indexOf(f.id) + 1 }); })}</div></div>`;
   }
   function arenaGearBody(d) {
     var f = d.figs.filter(function (x) { return x.id === arena.gear; })[0];
@@ -14946,7 +15012,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!arena || !arena.data) return html`<button class="btn primary" data-act="sheet-close">ปิด</button>`;
     var d = arena.data;
     if (arena.fight) return arena.fight.done ? html`<button class="btn primary" data-act="ar-back">กลับไปศึกน้อง</button>` : html`<button class="btn" data-act="ar-skip">ข้าม ${icon('right')}</button>`;
-    if (arena.pick) return html`<button class="btn" data-act="ar-back">ยกเลิก</button><button class="btn primary" data-act="ar-go" ${arena.pick.figs.length && !arena.busy ? '' : 'disabled'}>${icon('spark')} เริ่มสู้! (${arena.pick.figs.length}/${d.team})</button>`;
+    if (arena.pick) return html`<button class="btn" data-act="ar-back">ยกเลิก</button><button class="btn primary" data-act="ar-go" ${arena.pick.figs.length && !arena.busy ? '' : 'disabled'}>${icon('spark')} เริ่มสู้! (${arena.pick.figs.length}/${arena.pick.max || d.team})</button>`;
     if (arena.def) return html`<button class="btn" data-act="ar-back">ยกเลิก</button><button class="btn primary" data-act="ar-def-save" ${arena.def.length ? '' : 'disabled'}>บันทึกทีมเฝ้าห้อง</button>`;
     if (arena.gear) {
       var f = d.figs.filter(function (x) { return x.id === arena.gear; })[0];
@@ -15089,9 +15155,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (stage) stage.classList.add('over');
     var d = arena.data;
     var hurt = r.aKO.map(function (id) { var f = r.a.filter(function (x) { return x.id === id; })[0]; return f ? f.name : id; });
+    var b = d && d.boss;
+    // 2.13.30 น้องป่า: ชนะแล้วตีบอสทีม แพ้ไม่เสียถ้วย · ไม่มีพักฟื้น
+    var said = r.wild ? (r.win ? 'ชนะน้องป่า' : 'น้องป่าชนะรอบนี้') : r.win ? 'บุกห้อง' + r.toName + 'สำเร็จ' : r.toName + 'เฝ้าห้องไว้ได้';
     if (box) box.innerHTML = String(html`<div class="ar-res ${r.win ? 'win' : 'lose'}"><b>${r.win ? 'ชนะ!' : 'แพ้…'}</b>
-      <span>${r.win ? 'บุกห้อง' + r.toName + 'สำเร็จ' : r.toName + 'เฝ้าห้องไว้ได้'}${r.tA ? ' · ' + (r.tA > 0 ? '+' : '') + r.tA + ' ถ้วย' : ''}</span>
-      ${hurt.length ? html`<small>${hurt.join(' ')} ล้ม · พักฟื้น ${d ? d.rest : 6} ชม.</small>` : html`<small>น้องของคุณไม่มีตัวไหนล้ม</small>`}</div>${gameFind(r.drop)}`);
+      <span>${said}${r.tA ? ' · ' + (r.tA > 0 ? '+' : '') + r.tA + ' ถ้วย' : ''}</span>
+      ${r.boss ? html`<small>ตีบอสทีม ${r.boss}${b ? ' · พลังชีวิตบอสเหลือ ' + b.left + '/' + b.hp : ''}</small>` : ''}
+      ${hurt.length ? html`<small>${hurt.join(' ')} ล้ม${r.wild && !r.win ? ' · แพ้ไม่เสียถ้วย ลองเรียงรสใหม่นะ' : ''}</small>` : html`<small>น้องของคุณไม่มีตัวไหนล้ม</small>`}</div>${gameFind(r.drop)}`);
     if (r.win) { sfx('fanfare'); confetti(); } else sfx('lose');
     if (r.drop) setTimeout(function () { gameFound(r.drop, r.games); if (!r.win) confetti(); }, 600);
     setSheetFoot(arenaFoot());
@@ -16983,7 +17053,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   // -- the bell: what this person was told (the last 30 days)
   var bellList = null; // {notes, unread, phones} as last fetched
-  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', 'daily-new': 'note', 'daily-seen': 'check', 'daily-ask': 'note', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', 'order-wait': 'cart', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', 'pin-lock': 'lock', test: 'bell' };
+  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', 'daily-new': 'note', 'daily-seen': 'check', 'daily-ask': 'note', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', 'order-wait': 'cart', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', 'pin-lock': 'lock', test: 'bell', battle: 'shield' };
   function noteWhen(iso) {
     var ms = now().getTime() - Date.parse(iso);
     if (ms < 60000) return 'เมื่อสักครู่';
@@ -17065,6 +17135,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ACTIONS['owner-tab']({ dataset: { tab: go === 'leaves' || go === 'team' ? 'team' : 'overview' } });
       return;
     }
+    // 2.13.30 แจ้งว่าน้องเฝ้าห้องป้องกันไว้ได้: เปิดประวัติศึก
+    if (go === 'arena') { if (sheetState) closeSheet(); openArena('log'); return; }
     if (go === 'team' || go === 'leaves') { tab(isApprover() ? 'team' : 'home'); return; }
     if (go === 'leave') { tab('me'); ACTIONS['me-go']({ dataset: { sub: 'leave' } }); return; }
     if (go === 'clock-mine') { tab('me'); ACTIONS['me-go']({ dataset: { sub: 'history' } }); return; }
@@ -18815,8 +18887,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var d = arena && arena.data;
       if (!d) return;
       var p = d.people.filter(function (x) { return x.id === el.dataset.id; })[0] || {};
-      var ready = d.figs.filter(function (f) { return !f.rest; }).slice(0, d.team).map(function (f) { return f.id; });
-      arena.pick = { to: el.dataset.id, name: p.name || '', revenge: el.dataset.rev || '', figs: ready };
+      // 2.13.30 ออกสู้เท่ากัน: เลือกได้เท่าทีมเฝ้าห้องของเขา (ไม่เกิน 3) · ไม่มีพักฟื้น ทุกตัวพร้อม
+      var max = Math.max(1, Math.min(d.team, (p.team || []).length || d.team));
+      var ready = d.figs.slice(0, max).map(function (f) { return f.id; });
+      arena.pick = { to: el.dataset.id, name: p.name || '', revenge: el.dataset.rev || '', figs: ready, max: max };
       // (their pictures for the fight's stage made while the team is chosen)
       c3Warm(ready, 140);
       arenaRedraw();
@@ -18827,8 +18901,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (!pk) return;
       var i = pk.figs.indexOf(el.dataset.id);
       if (i >= 0) pk.figs.splice(i, 1);
-      else if (pk.figs.length < arena.data.team) { pk.figs.push(el.dataset.id); c3Warm([el.dataset.id], 140); }
-      else { toast('เลือกได้ ' + arena.data.team + ' ตัว แตะตัวที่เลือกไว้เพื่อเอาออกก่อน'); return; }
+      else if (pk.figs.length < (pk.max || arena.data.team)) { pk.figs.push(el.dataset.id); c3Warm([el.dataset.id], 140); }
+      else { toast('เลือกได้ ' + (pk.max || arena.data.team) + ' ตัว แตะตัวที่เลือกไว้เพื่อเอาออกก่อน'); return; }
       buzz(6); sfx('tap');
       arenaRedraw();
     },
@@ -18838,17 +18912,29 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       arena.busy = true;
       // (one's own team's pictures made while the server fights)
       c3Warm(pk.figs, 140);
-      run(el, call('battleFight', { to: pk.to, figs: pk.figs, revenge: pk.revenge }, staffAuth())).then(function (r) {
+      run(el, call('battleFight', pk.wild ? { wild: true, figs: pk.figs } : { to: pk.to, figs: pk.figs, revenge: pk.revenge }, staffAuth())).then(function (r) {
         arena.busy = false;
         arena.data = r.battle;
         arena.pick = null;
-        if (S.home && S.home.level) { S.home.level.arena = { trophies: r.battle.trophies, left: r.battle.left, raids: r.battle.log.filter(function (x) { return x.answer; }).length }; softRender(); }
+        // (2.13.30 บอสทีมไปกับข่าวศึกของหน้าแรก: แถวบอสใต้ภารกิจทีมขยับตาม)
+        if (S.home && S.home.level) { var bs = r.battle.boss; S.home.level.arena = Object.assign({}, S.home.level.arena, { trophies: r.battle.trophies, left: r.battle.left, raids: r.battle.log.filter(function (x) { return x.answer; }).length, boss: bs ? { fig: bs.fig, name: bs.name, hp: bs.hp, left: bs.left, down: bs.down, got: bs.got, coins: bs.coins } : null }); softRender(); }
         r.result.drop = r.drop;
         r.result.games = r.games;
         arenaPlay(r.result);
       }, function () { arena.busy = false; });
     },
     'ar-skip': function () { arenaSkip(); },
+    // 2.13.30 น้องป่า: เลือกตัวและลำดับแบบเดียวกับบุกเพื่อน · บอสทีมบนหน้าแรกเปิดที่แท็บน้องป่า
+    'ar-wild': function () {
+      var d = arena && arena.data;
+      if (!d || !d.wild) return;
+      var ready = d.figs.slice(0, d.team).map(function (f) { return f.id; });
+      arena.pick = { wild: true, to: '', name: 'น้องป่า', revenge: '', figs: ready, max: d.team };
+      c3Warm(ready.concat(d.wild.figs.map(function (f) { return f.id; })), 140);
+      arenaRedraw();
+      var b = $('#sheet-body'); if (b) b.scrollTop = 0;
+    },
+    'boss-open': function () { openArena('wild'); },
     'ar-back': function () {
       arenaStop();
       arena.pick = null; arena.def = null; arena.gear = ''; arena.gearPick = '';
