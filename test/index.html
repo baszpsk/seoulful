@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.33","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"da3f50a4a777"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.34","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"ded7e107018f"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -11249,7 +11249,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var asked = ($('#lv-asked') && $('#lv-asked').value) || workDate();
     var ahead = daysBetween(asked, from);
     var toldRow = $('#lv-told-row');
-    if (toldRow) toldRow.hidden = ahead > 0;
+    if (toldRow) {
+      // k-q1d ปุ่มที่เป็นไปไม่ได้ตามวันที่แจ้งปิดไว้พร้อมเหตุสั้นในหัวแถว (lvToldView)
+      var tv = lvToldView(from, to, asked);
+      var bb = toldRow.querySelector('[data-v="before"]');
+      toldRow.hidden = tv.hide;
+      toldRow.firstElementChild.textContent = tv.label;
+      if (bb) {
+        bb.disabled = !tv.before;
+        bb.style.opacity = tv.before ? '' : '.45';
+        if (!tv.before) bb.setAttribute('aria-pressed', 'false');
+      }
+    }
     var told = lvTold();
     // (annual leave instead of sick leave: for being ill today or tomorrow, told before the shift)
     var illRow = $('#lv-ill-row'), ill = $('#lv-ill');
@@ -11272,8 +11283,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       o.hospital = $('#lv-hospital').checked;
     }
     var c = $('#lv-cost');
-    if (c) c.lastElementChild.textContent = leaveCostText(t, from, to, asked, o);
-    lvCostAsk(t);
+    // k-q1d ฟอร์มลงแทนที่ยังไม่เลือกว่าบอกเมื่อไร: ชวนเลือกก่อน ยังไม่บอกยอด (ยอดต่างกันมากตามปุ่มที่เลือก) และไม่ถามหลังบ้าน
+    var ask = !!(toldRow && !toldRow.hidden && !told && t);
+    if (c) c.lastElementChild.textContent = ask ? 'เลือกก่อนว่าพนักงานบอกเมื่อไร แล้วจะขึ้นยอดหักและค่าจ้างของแต่ละวัน' : leaveCostText(t, from, to, asked, o);
+    lvCostAsk(ask ? null : t);
     var vac = $('#lv-vac');
     if (vac) vac.hidden = !(sick && vacationLeft() > 0);
   }
@@ -11293,6 +11306,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         if (mine === lvCostSeq && box && d) box.lastElementChild.textContent = d.text || 'ไม่หัก Incentive';
       }, function () {});
     }, 350);
+  }
+  /**
+   * k-q1d ฟอร์มลงแทน แถว "บอกก่อนเวลาเข้างานไหม" ตามวันที่แจ้ง: แจ้งล่วงหน้าไม่ถาม · แจ้งหลังวันลาวันสุดท้าย ทุกวันผ่านไปแล้วตอนบอก
+   * ปุ่มบอกก่อนเวลาเข้างานเป็นไปไม่ได้ ปิดไว้พร้อมเหตุ · แจ้งหลังวันเริ่มลาแต่วันที่แจ้งยังเป็นวันลา บอกก่อนเวลาเข้างานของวันที่แจ้งยังคิดต่าง
+   * (วันนั้นหักเท่าประเภทลาแทนเท่าขาดงานไม่แจ้ง Payroll.gs leaveCuts_) จึงเปิดไว้และบอกว่าเป็นของวันที่แจ้ง
+   */
+  function lvToldView(from, to, asked) {
+    var ahead = daysBetween(asked, from);
+    if (ahead > 0) return { hide: true, before: true, label: 'บอกก่อนเวลาเข้างานไหม' };
+    if (asked > (to || from)) return { hide: false, before: false, label: 'แจ้งหลังวันลาแล้ว จึงเลือกบอกก่อนเวลาเข้างานไม่ได้' };
+    return { hide: false, before: true, label: ahead < 0 ? 'วันที่แจ้งลา บอกก่อนเวลาเข้างานไหม · วันก่อนหน้านับเป็นบอกหลังเวลาเข้างาน' : 'บอกก่อนเวลาเข้างานไหม' };
   }
   /** On the approver's form, leave from today or before: whether they were told before the shift began (#262). */
   function lvTold() {
