@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.30","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"3032e8df0ca8"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.31","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"56224fbf55ac"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -1789,6 +1789,37 @@ html.i3-wait-sh-t-wood .th-t-wood :is(.rm-row, .sh-row)::after, html.i3-wait-sh-
 .wc-card-box { flex: none; width: 42px; height: 48px; animation: wc-wiggle 2.8s ease-in-out infinite; }
 .wc-card-box svg { width: 100% !important; height: 100% !important; }
 @media (prefers-reduced-motion: reduce) { .wc-box, .wc-card-box, .wc-pet-big, .wc-hearts i { animation: none !important; } .wc-hearts i { opacity: 0; } }
+/* ---- 2.13.31 ชุดต้อนรับ: การ์ดแนะนำ 3 ใบ การ์ดถาม การ์ดไม่มีผู้อนุมัติ บัตรต้อนรับของเจ้าของร้าน ---- */
+.tips-page { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding-top: max(18px, env(safe-area-inset-top)); padding-bottom: max(18px, env(safe-area-inset-bottom)); }
+.tips { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 460px; margin: 0 auto; }
+.tips-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.tips-dots { display: flex; gap: 6px; }
+.tips-dots i { width: 8px; height: 8px; border-radius: 4px; background: var(--line-strong); transition: width .3s; }
+.tips-dots i.on { width: 22px; background: var(--ink); }
+.tips-card { animation: tipsIn .35s ease both; }
+.tips-shot { margin: -4px -4px 0; border-radius: 14px; overflow: hidden; aspect-ratio: 345 / 220; background: var(--inset); box-shadow: inset 0 0 0 1px var(--line); }
+.tips-shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tips-card h2 { margin: 16px 0 6px; font-size: 22px; line-height: 1.3; }
+.tips-card p { margin: 0; color: var(--ink-2); line-height: 1.55; }
+.tips-foot { display: flex; gap: 10px; }
+.tips-foot .btn { white-space: nowrap; }
+.tips-foot .btn.primary { flex: 1; }
+@keyframes tipsIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .tips-card { animation: none; } .tips-dots i { transition: none; } }
+.wl-ask .eyebrow svg { width: 14px; height: 14px; vertical-align: -2px; margin-right: 2px; }
+.wl-ask p { margin: 8px 0 0; line-height: 1.5; }
+.wl-ask .wl-hint { margin-top: 6px; color: var(--muted); font-size: 13px; }
+.wl-acts { display: flex; gap: 8px; margin-top: 12px; }
+.wl-acts .btn { flex: 1; white-space: nowrap; }
+.wl-noappr { display: flex; align-items: center; gap: 10px; padding: 14px 16px; }
+.wl-noappr svg { flex: none; width: 20px; height: 20px; color: var(--warn); }
+.team-row .pill.new-day { margin-left: 4px; white-space: nowrap; vertical-align: 1px; }
+.dl-asked .pill { white-space: nowrap; }
+.wc-entry { margin-bottom: 14px; }
+/* 2.13.31 บัตรต้อนรับ (wlc-card): ป้าย ข้อความ หมายเหตุ เรียงบนลงล่าง ข้อความเต็มกว้าง แผ่นเลื่อนเอง ไม่มีกล่องเลื่อนซ้อน · ไม่ใช้ .wc-card ของการ์ดของขวัญที่เรียงเป็นแถว */
+.wlc-card { display: block; }
+.wc-msg { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.55; background: var(--inset); border-radius: 12px; padding: 12px 14px; user-select: text; -webkit-user-select: text; }
+.wc-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
 .pet-svg .pt-all { transform-origin: 50% 95%; animation: pt-bob 3.2s ease-in-out infinite; }
 .pet-svg .pt-tail { transform-box: fill-box; transform-origin: 0% 50%; animation: pt-wag 1.1s ease-in-out infinite; }
 .pet-svg .pt-eyes { transform-box: fill-box; transform-origin: 50% 50%; animation: pt-blink 4.6s linear infinite; }
@@ -8975,6 +9006,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!h || !B.clock) return staffOutline();
     if (h.slipOnly) return slipOnlyView(h);
     // (2.13.23: ผู้อนุมัติที่ยังไม่เปิดแจ้งเตือนเข้าหน้าทีมได้ ลงเวลาแทนน้องที่ลืมมือถือ ลงเวลาต้องได้เสมอ)
+    if (pushGate() === 'tips') { S.wasLock = true; return tipsView(); }
     if (pushGate() === 'lock' && !((S.sub || S.tab) === 'team' && isApprover())) { S.wasLock = true; return lockView(); }
     // (2.13.23: เปิดแจ้งเตือนจากหน้าสอนแล้ว หน้าแรกเริ่มจากบนสุด ไม่ค้างตรงปุ่มที่เลื่อนลงไปกด)
     if (S.wasLock) { S.wasLock = false; window.scrollTo(0, 0); }
@@ -9250,6 +9282,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${ideasLink(h)}
       ${!st.checkedIn && !st.leaveToday && !st.closedToday ? rainBanner(h.rain, 'home') : ''}
       ${todayCard()}
+      ${welcomeAsk(h.welcome)}
+      ${noApproverCard(h.welcome)}
       ${dailyDue(h.daily)}
       ${checkDue(h.check)}
       ${approver && h.approver && h.approver.pendingLeaves ? html`<button class="card row" style="width:100%;text-align:left" data-act="tab" data-tab="team">${icon('approve')}<span class="grow"><b>มีคำขอลารออนุมัติ ${h.approver.pendingLeaves} รายการ</b></span>${icon('right')}</button>` : ''}
@@ -10976,6 +11010,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="stack">
       ${S.sub === 'leave' ? html`<button class="btn ghost sm" data-act="close-sub">${icon('left')} กลับ</button>` : ''}
       <div class="row between"><div class="hello" style="font-size:24px;margin:0">วันลา ${+workDate().slice(0, 4) + 543}</div><button class="btn primary" data-act="open-leave">${icon('plus')} ขอลา</button></div>
+      ${noApproverCard(S.home.welcome)}
       <div class="stats" style="grid-template-columns:repeat(2,1fr)">${(L.balance || []).filter(function (b) { return b.paid || b.used; }).map(function (b) {
         var body = b.paid
           ? html`<b style="font-size:24px">${b.remaining}<small class="muted" style="font-size:14px"> / ${b.quota} วัน</small></b><span>ใช้ไป ${b.used}${b.pending ? ' · รออนุมัติ ' + b.pending : ''}${b.eligible ? '' : ' · ยังไม่มีสิทธิ์'}${b.cashed ? ' · ที่เหลือคิดเป็นเงินแล้ว' : ''}</span>`
@@ -12437,8 +12472,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="list">${list.map(function (p) {
         var sub = p.kind === 'out' ? 'ออก · วันสุดท้าย ' + thShort(p.end) + (p.reason ? ' · ' + p.reason : '') : p.kind === 'in' ? 'คนใหม่ · เริ่มงาน ' + thShort(p.start) : '';
         return html`<div class="item" style="display:block">
-          <div class="row between"><b>${p.name}</b><button class="btn sm" data-act="edit-emp" data-id="${p.id}">แก้ไข</button></div>
+          <div class="row between"><b>${p.name}</b><span class="row" style="gap:6px">${p.card ? html`<button class="btn sm" data-act="wlc-open" data-id="${p.id}">บัตรต้อนรับ</button>` : ''}<button class="btn sm" data-act="edit-emp" data-id="${p.id}">แก้ไข</button></span></div>
           ${sub ? html`<div class="s">${sub}</div>` : ''}
+          ${p.card && !p.card.opened ? html`<div class="s" style="margin-top:6px"><span class="pill warn">ยังไม่เคยเข้าแอป</span></div>` : ''}
           ${p.prob ? html`<div class="s" style="margin-top:8px">ครบทดลองงาน ${thShort(p.prob)} — ผลเป็นอย่างไร</div>
             <div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><button class="btn sm primary" data-act="emp-check" data-id="${p.id}" data-k="probOk">ผ่าน</button><button class="btn sm" data-act="edit-emp" data-id="${p.id}" data-preset="extend">ขยาย</button><button class="btn sm" data-act="edit-emp" data-id="${p.id}" data-preset="fail">ไม่ผ่าน</button></div>` : ''}
           ${(p.items || []).map(function (c) {
@@ -12611,7 +12647,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return html`<label class="field"><span>${f[1]}</span>${ctl}${empHint(f) ? html`<small>${empHint(f)}</small>` : ''}</label>`;
     };
     var face = id ? faceOf({ id: id }) : '';
-    openSheet({ use: 'แก้ไข/เพิ่มพนักงาน', title: id ? 'แก้ไข ' + (e.display || e.nick) : 'เพิ่มพนักงาน', body: html`${face ? html`<div class="form-group"><div class="row" style="gap:14px">${avatar({ id: id }, 'lg')}<div class="grow small muted">รูปที่${e.display || e.nick}ถ่ายเองในแอป เห็นเฉพาะคนที่เข้าระบบแล้ว</div><button class="btn sm" data-act="face-remove-emp" data-id="${id}">เอารูปออก</button></div></div>` : ''}${EMP_FIELDS.map(function (g) { return html`<div class="form-group"><div class="eyebrow" style="margin-bottom:8px">${g[0]}</div>${g[1].map(input)}</div>`; })}
+    openSheet({ use: 'แก้ไข/เพิ่มพนักงาน', title: id ? 'แก้ไข ' + (e.display || e.nick) : 'เพิ่มพนักงาน', body: html`${wcEntry(e)}${face ? html`<div class="form-group"><div class="row" style="gap:14px">${avatar({ id: id }, 'lg')}<div class="grow small muted">รูปที่${e.display || e.nick}ถ่ายเองในแอป เห็นเฉพาะคนที่เข้าระบบแล้ว</div><button class="btn sm" data-act="face-remove-emp" data-id="${id}">เอารูปออก</button></div></div>` : ''}${EMP_FIELDS.map(function (g) { return html`<div class="form-group"><div class="eyebrow" style="margin-bottom:8px">${g[0]}</div>${g[1].map(input)}</div>`; })}
       ${id ? html`<div class="form-group"><div class="row between"><span>PIN <b>${e.pin}</b></span><button class="btn sm" data-act="reset-pin" data-id="${id}">สุ่ม PIN ใหม่</button></div></div>` : ''}`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="save-emp" data-id="${id || ''}">บันทึก</button>` });
   }
@@ -13223,6 +13259,77 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // Shown once a visit until taken (and a card on the home says it waits); taken, the boxes open at once
   // or later, in the room.
   var welcome = null; // { pet, took } while its sheet is open
+  // ---- 2.13.31 ชุดต้อนรับ (Api.gs welcomeHome_ · เจ้าของ ok 29 ต.ค. 2569 ข้อ 12 18 19) ----
+  /** รูปของการ์ดแนะนำ: ไฟล์ข้างหน้าแอปบนเว็บร้าน (site/tips/ ทำด้วย dev/welcome-shots.js) โหลดเมื่อการ์ดเปิด · เดโมเป็นไฟล์เดียว ฝังรูปในหน้า */
+  var TIP_SHOTS = ['clock', 'tell', 'gift'];
+  function tipShot(k) {
+    var d = window.__DEMO_TIPS__;
+    if (d && d[k]) return d[k];
+    return SITE && TIP_SHOTS.indexOf(k) >= 0 ? 'tips/' + k + '.webp' : '';
+  }
+  var tipAt = 0;
+  function tipsCards(h) { var w = (h || S.home || {}).welcome; return w && w.card && w.card.k === 'tips' ? w.card.cards || [] : []; }
+  function tipsDue(h) { return S.view === 'staff' && !!S.staff && S.tipsSkip !== S.staff.empId && tipsCards(h).length > 0; }
+  /** การ์ดแนะนำทีละใบ เต็มหน้า (ไม่มีแถบแท็บ แผ่นที่ขึ้นเองรอจนดูครบ) · ใบท้าย "เริ่มใช้แอป" บันทึกว่าเห็น (welcomeSeen tips) */
+  function tipsView() {
+    var list = tipsCards();
+    if (tipAt > list.length - 1) tipAt = list.length - 1;
+    var c = list[tipAt];
+    var last = tipAt === list.length - 1;
+    var src = tipShot(c.k);
+    var next = list[tipAt + 1] ? tipShot(list[tipAt + 1].k) : '';
+    if (next) { var pre = new Image(); pre.src = next; }
+    return html`<main class="wrap page tips-page"><section class="tips" aria-label="แนะนำแอป">
+      <div class="tips-top"><div class="tips-dots" aria-hidden="true">${list.map(function (x, i) { return html`<i class="${i === tipAt ? 'on' : ''}"></i>`; })}</div><span class="small muted">${tipAt + 1}/${list.length}</span></div>
+      <div class="card tips-card" data-tip="${c.k}">
+        ${src ? html`<div class="tips-shot"><img src="${src}" alt="ภาพหน้าจอ ${c.title}" width="345" height="220" decoding="async"></div>` : ''}
+        <h2>${c.title}</h2>
+        <p>${c.text}</p>
+      </div>
+      <div class="tips-foot">${tipAt > 0 ? html`<button class="btn" data-act="tips-back">${icon('left')} ย้อน</button>` : ''}${last ? html`<button class="btn primary" data-act="tips-done">เริ่มใช้แอป</button>` : html`<button class="btn primary" data-act="tips-next">ถัดไป ${icon('right')}</button>`}</div>
+    </section></main>`;
+  }
+  var WL_ASK_LABEL = { d3: 'ตอบการ์ดถามวันที่ 3', d14: 'ตอบการ์ดถามวันที่ 14', out: 'ตอบการ์ดถามก่อนออก' };
+  /** การ์ดถามที่หน้าแรก (วันที่ 3 · 14 · ก่อนออก): ตอบ = ช่องบอกปัญหาเดิมพร้อมคำถาม · ไว้ก่อน = ปิด */
+  function welcomeAsk(w) {
+    var c = w && w.card;
+    if (!c || !WL_ASK_LABEL[c.k]) return '';
+    return html`<section class="card wl-ask" data-k="${c.k}"><span class="eyebrow">${icon('chat')} ${c.title}</span><p>${c.text}</p>${c.hint ? html`<p class="wl-hint">${c.hint}</p>` : ''}
+      <div class="wl-acts"><button class="btn primary" data-act="wl-ask-open">ตอบ</button><button class="btn" data-act="wl-ask-later">ไว้ก่อน</button></div></section>`;
+  }
+  /** ไม่มีผู้อนุมัติที่ยังทำงาน: คำขอไปที่เจ้าของร้าน (หน้าแรกและหน้าวันลา) */
+  function noApproverCard(w) {
+    return w && w.noApprover ? html`<div class="card wl-noappr">${icon('approve')}<span class="grow">ตอนนี้ไม่มีผู้อนุมัติ คำขอไปที่เจ้าของร้าน</span></div>` : '';
+  }
+  /** บัตรต้อนรับของคนหนึ่ง: บัตรจากรายชื่อพนักงาน (employees) หรือการ์ดคนเข้า · PIN ปัจจุบันจากรายชื่อที่หน้าเจ้าของโหลดแล้ว */
+  function wlCardOf(id) {
+    var e = S.employees && (S.employees.employees || []).filter(function (x) { return x.id === id; })[0];
+    var t = S.ownerHome && (S.ownerHome.turnover || []).filter(function (x) { return x.id === id && x.card; })[0];
+    var c = (e && e.card) || (t && t.card);
+    return c ? { e: e, c: c } : null;
+  }
+  function wlText(c, pin) {
+    return ['สวัสดี ' + c.nick + ' ยินดีต้อนรับสู่ทีม Seoulful', 'แอปของร้านใช้ลงเวลา ดูกะ ขอลา และบอกเรื่องในร้าน']
+      .concat(c.open ? ['ลิงก์แอป: ' + c.open] : [], ['ชื่อ: ' + c.nick + ' · PIN: ' + pin, ''], (c.steps || []).map(function (s, i) { return (i + 1) + '. ' + s; }),
+        ['', 'ลงเวลา: ' + c.clock, 'เข้าแอปครั้งแรกมีการ์ดสอนใช้แอป 3 ใบ ดูจบแล้วเริ่มใช้ได้เลย', 'PIN นี้ของคุณคนเดียว เก็บไว้กับตัวนะ']).join('\n');
+  }
+  function wcEntry(e) {
+    return e && e.id && e.card ? html`<div class="wc-entry"><button class="btn block" data-act="wlc-open" data-id="${e.id}">${icon('send')} บัตรต้อนรับ · ส่งลิงก์แอปและ PIN</button>${e.card.opened ? '' : html`<div class="wc-tags" style="margin:8px 0 0"><span class="pill warn">ยังไม่เคยเข้าแอป</span></div>`}</div>` : '';
+  }
+  /** แผ่นบัตรต้อนรับ: ข้อความพร้อม PIN · ส่งทาง LINE (เจ้าของร้านเลือกแชตเอง) · คัดลอก · ไม่มี PIN ไปตั้งที่หน้าแก้ไขเดิม */
+  function openWlCard(id) {
+    var w = wlCardOf(id);
+    if (!w) { toast('ยังไม่มีบัตรต้อนรับของคนนี้', 'bad'); return; }
+    var pin = w.e && w.e.pin ? String(w.e.pin) : '';
+    var msg = pin ? wlText(w.c, pin) : '';
+    openSheet({ title: 'บัตรต้อนรับ ' + w.c.nick, body: html`<div class="wlc-card" data-id="${id}">
+        <div class="wc-tags">${w.c.opened ? html`<span class="pill ok">เข้าแอปแล้ว</span>` : html`<span class="pill warn">ยังไม่เคยเข้าแอป</span>`}</div>
+        ${pin ? html`<div class="wc-msg" id="wc-msg">${msg}</div><p class="small muted" style="margin:10px 0 0">มี PIN ของ${w.c.nick} ส่งในแชตส่วนตัวของ${w.c.nick}เท่านั้น ไม่ลงกลุ่ม</p>`
+          : html`<div class="hint warn">${icon('alert')}<span>${w.c.nick}ยังไม่มี PIN · ตั้ง PIN ที่หน้าแก้ไขก่อน แล้วเปิดบัตรนี้อีกครั้ง</span></div>`}
+      </div>`,
+      foot: pin ? html`<button class="btn" data-act="wlc-copy">${icon('copy')} คัดลอก</button><a class="btn primary" id="wc-line" href="${'https://line.me/R/share?text=' + encodeURIComponent(msg)}" target="_blank" rel="noopener">${icon('send')} ส่งทาง LINE</a>`
+        : html`<button class="btn" data-act="sheet-close">ปิด</button><button class="btn primary" data-act="edit-emp" data-id="${id}">ไปตั้ง PIN</button>` });
+  }
   function welcomeCheck(l) {
     if (!l || !l.starter || !S.staff || S.welcomeShown === S.staff.empId) return;
     S.welcomeShown = S.staff.empId;
@@ -16211,14 +16318,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!dl.quick && !dl.again) setSheetFoot(dailyFormFoot());
   }
   /** One thing, quickly: the topic's question, what it was about, and a few words. */
-  function openDailyQuick(key) {
+  function openDailyQuick(key, ask) {
     var t = dlTopic(key);
     // ปุ่มใหญ่ "บอกได้ทุกเรื่อง" (2.13.16): หัวข้อเรื่องอื่น คีย์และชื่อที่เก็บเดิม ถามกว้าง ๆ
     var any = key === 'other';
     dl = { date: workDate(), quick: key, open: key, items: {} };
     dl.items[key] = { menu: '', detail: '' };
+    // 2.13.31 การ์ดถาม: ช่องเดิมของบันทึกหน้างาน คำถามของการ์ดอยู่บนช่อง ส่งพร้อมรหัสการ์ด (dailySend ask)
+    if (ask) dl.ask = ask.k;
     var back = dlRestore(key);
-    openSheet({ title: any ? 'บอกได้ทุกเรื่อง' : t[1], body: html`<div class="fb-prompt"><h3>${any ? 'เจออะไรในร้าน อยากบอกอะไร เล่าได้เลย' : t[2]}</h3><p>เขียนสั้น ๆ ก็พอ${DL_NO_NAMES[key] ? ' · เล่าว่าเกิดอะไร ไม่ต้องบอกว่าใครทำ ร้านอยากแก้ที่ต้นเหตุ' : ''} · พิมพ์ไม่ถนัด แตะไมค์บนแป้นพิมพ์แล้วพูดได้</p></div>${dlFields(key, true)}<p class="small muted" style="margin:10px 2px 0">${icon('clock')} ไม่ต้องรีบ ทำงานก่อน บันทึกหลังเลิกงานได้แต้มเท่ากัน · เรื่องเดียวกันเพื่อนบันทึกด้วยได้ ได้แต้มทุกคน</p>${dlPhotoBox()}`,
+    openSheet({ title: ask ? ask.title : any ? 'บอกได้ทุกเรื่อง' : t[1], body: html`<div class="fb-prompt"><h3>${ask ? ask.text : any ? 'เจออะไรในร้าน อยากบอกอะไร เล่าได้เลย' : t[2]}</h3><p>เขียนสั้น ๆ ก็พอ${DL_NO_NAMES[key] ? ' · เล่าว่าเกิดอะไร ไม่ต้องบอกว่าใครทำ ร้านอยากแก้ที่ต้นเหตุ' : ''} · พิมพ์ไม่ถนัด แตะไมค์บนแป้นพิมพ์แล้วพูดได้</p></div>${dlFields(key, true)}<p class="small muted" style="margin:10px 2px 0">${icon('clock')} ไม่ต้องรีบ ทำงานก่อน บันทึกหลังเลิกงานได้แต้มเท่ากัน · เรื่องเดียวกันเพื่อนบันทึกด้วยได้ ได้แต้มทุกคน</p>${dlPhotoBox()}`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="dl-send">${icon('send')} บันทึก</button>` });
     wireDailyForm();
     if (back) toast('ที่พิมพ์ค้างไว้ยังอยู่ ส่งต่อได้เลย', 'tip');
@@ -16363,9 +16472,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var draft = dl.draft || (dl.draft = randomDraft());
     var date = dl.date;
     var photo = none ? '' : dl.photo || '';
+    var ask = dl.ask || '';
     var had = S.home && S.home.level ? S.home.level.points : null;
-    run(btn, sendAgainOnLoss(function () { return call('dailySend', { draft: draft, date: date, items: items, none: !!none, photo: photo }, staffAuth()); })).then(function (d) {
-      if (S.home) { S.home.daily = d.daily; if (d.level) S.home.level = d.level; }
+    run(btn, sendAgainOnLoss(function () { return call('dailySend', ask ? { draft: draft, date: date, items: items, none: !!none, photo: photo, ask: ask } : { draft: draft, date: date, items: items, none: !!none, photo: photo }, staffAuth()); })).then(function (d) {
+      if (S.home) { S.home.daily = d.daily; if (d.level) S.home.level = d.level; if (d.welcome) S.home.welcome = d.welcome; }
       if (d.levels) { S.levels = d.levels; if (S.home) S.home.levels = d.levels; }
       dlSent(!!none);
       if (none) delete USE_FORMS['บันทึกหน้างาน']; else useFormSent('บันทึกหน้างาน', items.length);
@@ -16565,7 +16675,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    */
   function pushGate(h) {
     h = h || S.home;
-    if (S.view !== 'staff' || !h || h.slipOnly || PUSH.cant) return '';
+    if (S.view !== 'staff' || !h || h.slipOnly) return '';
+    // 2.13.31 ชุดต้อนรับ: การ์ดแนะนำ 3 ใบขึ้นก่อนหน้าสอนเปิดแจ้งเตือนและแผ่นที่ขึ้นเอง ทีละอย่าง ไม่ซ้อนกัน
+    if (tipsDue(h)) return 'tips';
+    if (PUSH.cant) return '';
     var st = pushState();
     if (st === 'wait') return Date.now() - (S.holdFrom || (S.holdFrom = Date.now())) < 8000 ? 'hold' : '';
     if (st === 'off' || st === 'home' || st === 'blocked' || (st === 'none' && inAppBrowser())) return 'lock';
@@ -17400,7 +17513,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<section class="card flush team-use"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">${icon('team')} ทีมใช้แอป · 7 วันถึงเมื่อคืน</span><span class="pill">${fresh ? 'บอก ' + told + ' เรื่อง' : 'รอสรุปคืนนี้'}</span></div>
       <p class="small muted team-sum">${fresh ? (zero ? 'ยังไม่ได้บอกเรื่อง ' + zero + ' คน · ' : 'บอกเรื่องครบทุกคน · ') : ''}แจ้งเตือนเปิดแล้ว ${on}/${list.length} คน</p>
       <div class="list">${list.map(function (x) {
-        return html`<button class="item team-row ${fresh && !x.told ? 'zero' : ''}" data-act="team-one" data-id="${x.id}"><div class="grow"><div class="t">${x.name}${fresh ? html` · <b>${x.told ? 'บอก ' + x.told + ' เรื่อง' : 'ยังไม่ได้บอก'}</b>` : ''}</div>
+        return html`<button class="item team-row ${fresh && !x.told ? 'zero' : ''}" data-act="team-one" data-id="${x.id}"><div class="grow"><div class="t">${x.name}${x.newDay ? html` <span class="pill new-day">เพิ่งเริ่ม ${x.newDay} วัน</span>` : ''}${fresh ? html` · <b>${x.told ? 'บอก ' + x.told + ' เรื่อง' : 'ยังไม่ได้บอก'}</b>` : ''}</div>
           <div class="s">${fresh ? teamSeen(x.last) + ' · ' : ''}${x.push ? 'แจ้งเตือนเปิดแล้ว' : x.cant ? 'มือถือรับแจ้งเตือนไม่ได้ · ได้ LINE แทน' : html`<span class="team-off">ยังไม่เปิดแจ้งเตือน</span>`}</div>
           </div>${icon('right')}</button>`;
       })}</div>
@@ -17527,6 +17640,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var fixable = g.topic !== 'praise';
     return html`<div class="dl-group"><div class="t">${icon(DL_ICON[g.topic] || 'chat')}<span>${DL_SHORT[g.topic] || g.topic}${g.menu ? ' · ' + g.menu : ''}</span>${g.count > 1 ? html`<span class="pill gold">×${g.count}${g.days > 1 ? ' · ' + g.days + ' วัน' : ''}</span>` : ''}${dlStatusPill(g.status)}${g.again ? html`<span class="pill warn">เจออีก ${g.again}</span>` : ''}${g.back ? html`<span class="pill warn">${icon('alert')} เคยแก้แล้ว กลับมาอีก</span>` : ''}${g.redo ? html`<span class="pill">${icon('edit')} เพิ่มรายละเอียดแล้ว</span>` : ''}</div>
       ${(g.details || []).length || g.detail ? html`<div class="s">${(g.details || [g.detail]).join(' / ')}</div>` : ''}
+      ${(g.asks || []).length ? html`<div class="s dl-asked">${g.asks.map(function (k) { return html`<span class="pill">${WL_ASK_LABEL[k] || 'ตอบการ์ดถาม'}</span>`; })}</div>` : ''}
       ${g.sorted || (g.from || []).length ? html`<div class="s dl-sorted">${g.sorted ? 'Claude จัด: ' + g.sorted : 'ชื่อเดียวกับเรื่องนี้ · น้องเลือก ' + g.from.map(function (k) { return DL_SHORT[k] || k; }).join(', ')}</div>` : ''}
       ${(g.photos || []).length ? html`<div class="dl-photos">${g.photos.map(function (id, i) { return html`<button class="btn sm dl-photo-btn" data-act="dl-photo-open" data-id="${id}">${icon('image')} ดูรูป${g.photos.length > 1 ? ' ' + (i + 1) : ''}</button>`; })}</div>` : ''}
       ${(g.people || []).length ? html`<div class="s">${g.people.join(', ')}${g.ownerNote ? ' · ตอบ: ' + g.ownerNote : ''}</div>` : ''}
@@ -19132,6 +19246,33 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var p = S.view === 'owner' ? loadOwner(true, true) : loadHome(true, true);
       p.then(function () { S.retrying = false; softRender(); });
     },
+    // 2.13.31 ชุดต้อนรับ: การ์ดแนะนำ (ถัดไป ย้อน เริ่มใช้แอป) · การ์ดถาม (ตอบ ไว้ก่อน) · บัตรต้อนรับของเจ้าของร้าน
+    'tips-next': function () { tipAt++; render(); window.scrollTo(0, 0); },
+    'tips-back': function () { if (tipAt > 0) tipAt--; render(); window.scrollTo(0, 0); },
+    'tips-done': function (el) {
+      run(el, call('welcomeSeen', { k: 'tips' }, staffAuth())).then(function (d) {
+        tipAt = 0;
+        if (S.home) S.home.welcome = d.welcome;
+        render(); window.scrollTo(0, 0); lockRelease();
+      }, function () {
+        // บันทึกไม่ได้ (เน็ตหลุด): ใช้แอปต่อได้ ลงเวลาต้องได้เสมอ · เข้าแอปครั้งหน้าการ์ดขึ้นอีก
+        tipAt = 0;
+        if (S.staff) S.tipsSkip = S.staff.empId;
+        render(); lockRelease();
+      });
+    },
+    'wl-ask-open': function () { var w = S.home && S.home.welcome; if (w && w.card && WL_ASK_LABEL[w.card.k]) openDailyQuick('other', w.card); },
+    'wl-ask-later': function (el) {
+      var w = S.home && S.home.welcome;
+      if (!w || !w.card) return;
+      run(el, call('welcomeSeen', { k: w.card.k }, staffAuth())).then(function (d) { if (S.home) S.home.welcome = d.welcome; render(); }, function () {});
+    },
+    'wlc-open': function (el) {
+      var id = el.dataset.id;
+      if (S.employees) { openWlCard(id); return; }
+      run(el, call('employees', {}, ownerAuth())).then(function (d) { S.employees = d; openWlCard(id); }, function () {});
+    },
+    'wlc-copy': function () { var m = $('#wc-msg'); if (m) copyText(m.textContent, 'คัดลอกข้อความแล้ว · วางในแชตส่วนตัวของน้อง'); },
     'logout-staff': function () { closeSheet(); logoutStaff(); },
     'open-leave': function () { openLeaveForm(); },
     'submit-leave': function (el) {
@@ -19430,9 +19571,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       empEndSync(end);
     },
     'save-emp': function (el) {
+      // 2.13.31: เพิ่มคนใหม่แล้วบัตรต้อนรับขึ้นทันที (PIN ของคนนั้นจากรายชื่อที่คืนมา)
+      var fresh = !el.dataset.id;
       var fields = {};
       document.querySelectorAll('#sheet-body [data-f]').forEach(function (i) { fields[i.dataset.f] = i.value; });
-      run(el, call('employeeSave', { id: el.dataset.id || undefined, fields: fields }, ownerAuth())).then(function (d) { closeSheet(); S.employees = d; namesAgain(); if (S.ownerHome && d.turnover) { S.ownerHome.turnover = d.turnover; ownerChanged(); } render(); toast(d.notice, 'ok'); }, function () {});
+      run(el, call('employeeSave', { id: el.dataset.id || undefined, fields: fields }, ownerAuth())).then(function (d) { closeSheet(); S.employees = d; namesAgain(); if (S.ownerHome && d.turnover) { S.ownerHome.turnover = d.turnover; ownerChanged(); } render(); toast(d.notice, 'ok'); if (fresh && d.saved && d.saved.id) openWlCard(d.saved.id); }, function () {});
     },
     'pin-unlock': function (el) {
       run(el, call('pinUnlock', { key: el.dataset.key }, ownerAuth())).then(function (d) {
