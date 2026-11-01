@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.31","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"56224fbf55ac"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.32","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"d9d53fb4e3fe"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -11043,16 +11043,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var sick = !!types[0] && types[0].type === sickType();
     // (สลับวันหยุดขอได้เมื่อตั้งวันหยุดประจำแล้ว · ฟอร์มของผู้อนุมัติหลังบ้านตรวจให้ · งาน 327)
     var myOff = S.home && S.home.me ? S.home.me.dayOff : null;
+    // (k-q1b คำในฟอร์มที่ผู้อนุมัติลงแทนถูกทั้งแบบเดิมและแบบหักตามเวลาที่บอก ยอดหักและค่าจ้างจริงขึ้นในกล่อง lv-cost ตามแบบที่ใช้กับวันลานั้น)
     return html`${opts.pickEmp ? html`<label class="field"><span>พนักงาน</span><select class="input" id="lv-emp" data-change="lv-cost">${(B.employees || []).map(function (e) { return html`<option value="${e.id}">${e.name}</option>`; })}</select></label>` : ''}
       <label class="field"><span>ประเภทการลา</span><select class="input" id="lv-type" data-change="lv-type">${types.map(function (t) { return html`<option value="${t.type}">${t.type}</option>`; })}${opts.pickEmp || myOff != null ? html`<option value="${swapType()}">${swapType()}</option>` : ''}</select><small id="lv-note">${leaveTypeNote(types[0])}</small></label>
       <label class="field" id="lv-work-row" hidden><span>มาทำงานวันหยุดประจำวันที่</span><input class="input" type="date" id="lv-work" data-change="lv-cost"><small id="lv-work-note"></small></label>
       <div class="two"><label class="field"><span id="lv-from-label">ตั้งแต่</span><input class="input" type="date" id="lv-from" data-change="lv-cost" value="${opts.from || today}"></label>
       <label class="field" id="lv-to-row"><span>ถึง</span><input class="input" type="date" id="lv-to" data-change="lv-cost" value="${opts.to || today}"></label></div>
       <label class="check" id="lv-ill-row" hidden><input type="checkbox" id="lv-ill" data-change="lv-cost"><span>ไม่สบาย ใช้แทน${sickType()}<small>ไม่หัก Incentive แม้ลาในวันนั้น</small></span></label>
-      ${opts.pickEmp ? html`<label class="field" id="lv-asked-row"><span>แจ้งลาเมื่อ</span><input class="input" type="date" id="lv-asked" data-change="lv-cost" value="${today}" max="${today}"><small>วันที่พนักงานบอกว่าจะลา · บอกก่อนวันลาไม่ถูกหักเพิ่ม</small></label>
+      ${opts.pickEmp ? html`<label class="field" id="lv-asked-row"><span>แจ้งลาเมื่อ</span><input class="input" type="date" id="lv-asked" data-change="lv-cost" value="${today}" max="${today}"><small>วันที่พนักงานบอกว่าจะลา ใช้คิดยอดหัก · ดูยอดในกล่องล่างสุด</small></label>
         <div class="field" id="lv-told-row"><span>บอกก่อนเวลาเข้างานไหม</span>
-          <div class="chips"><button type="button" class="chip" aria-pressed="false" data-act="lv-told" data-v="before">บอกก่อนเวลาเข้างาน</button><button type="button" class="chip" aria-pressed="false" data-act="lv-told" data-v="after">ไม่ได้บอก หรือบอกหลังเวลาเข้างาน</button></div>
-          <small>ไม่ได้บอกก่อนเวลาเข้างาน วันแรกนับเป็นขาดงาน แม้มาบอกทีหลัง · ป่วยให้เลือก${sickType()} ได้ค่าจ้าง วันแรกหักเท่าขาดงาน · เหตุสุดวิสัยติ๊กด้านล่าง</small></div>
+          <div class="chips"><button type="button" class="chip" aria-pressed="false" data-act="lv-told" data-v="before">บอกก่อนเวลาเข้างาน</button><button type="button" class="chip" aria-pressed="false" data-act="lv-told" data-v="after">บอกหลังเวลาเข้างาน</button></div>
+          <small>ป่วยให้เลือก${sickType()} · เหตุสุดวิสัยติ๊กด้านล่าง · ยอดหักและค่าจ้างดูในกล่องล่างสุด</small></div>
         <div id="lv-cert-row" ${sick ? '' : 'hidden'}>
           <label class="check"><input type="checkbox" id="lv-cert" data-change="lv-cost"><span>เห็นใบรับรองแพทย์แล้ว<small>ตั้งแต่วันที่ ${r.sickNoteDay || 3} ของการป่วย วันที่ใบให้หยุดไม่หัก Incentive · ดูตัวจริงหรือรูปที่ส่งมา ไม่ต้องเก็บไว้ในแอป</small></span></label>
           <div class="two" id="lv-cert-days" hidden><label class="field"><span>ใบให้หยุดตั้งแต่</span><input class="input" type="date" id="lv-cert-from" data-change="lv-cost"></label><label class="field"><span>ถึง</span><input class="input" type="date" id="lv-cert-to" data-change="lv-cost"></label></div>
@@ -11103,8 +11104,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (sick && o.hospital) return 'นอนโรงพยาบาล ไม่หัก Incentive';
       if (ahead >= aheadN) return 'บอกล่วงหน้า ' + ahead + ' วัน ไม่หัก Incentive';
       var noteTail = sick && t.cut ? ' · ตั้งแต่ป่วยวันที่ ' + (r.sickNoteDay || 3) + ' วันที่ใบรับรองแพทย์ให้หยุดไม่หัก' : '';
-      if (late || ahead < 0) return 'บอกหลังเวลาเข้างาน หัก Incentive ' + money(absent) + ' บาท ยังได้ค่าจ้าง' + noteTail;
-      if (ahead === 0 && o.told !== 'before') return 'บอกวันนี้ก่อนเวลาเข้างาน หัก Incentive วันละ ' + money(t.cut) + ' บาท · หลังเวลาเข้างาน หัก ' + money(absent) + ' บาท ยังได้ค่าจ้าง' + noteTail;
+      // (k-q1b เหมือนหลังบ้าน: วันที่ผ่านไปแล้วตอนบอก และวันที่บอกหลังเวลาเข้างาน หักเท่าขาดงานไม่แจ้ง วันต่อไปหักวันละเท่าประเภทลา ·
+      // ค่าจ้างตามประเภทลา ลาไม่รับค่าจ้างบอกหลังเวลาเข้างานก็ไม่ได้ค่าจ้าง)
+      var pay = t.paid === false ? ' และไม่ได้ค่าจ้าง' : ' ยังได้ค่าจ้าง';
+      var days = leaveDates(from, to && to >= from ? to : from);
+      var lateN = days.filter(function (d) { return d < asked || (d === asked && late); }).length;
+      if (lateN) return 'บอกหลังเวลาเข้างาน หัก Incentive ' + (lateN > 1 ? 'วันละ ' : '') + money(absent) + ' บาท' + pay + (lateN < days.length ? ' · วันต่อไปหักวันละ ' + money(t.cut) + ' บาท' : '') + noteTail;
+      if (ahead === 0 && o.told !== 'before') return 'บอกวันนี้ก่อนเวลาเข้างาน หัก Incentive วันละ ' + money(t.cut) + ' บาท · หลังเวลาเข้างาน' + (days.length > 1 ? 'วันนี้' : '') + ' หัก ' + money(absent) + ' บาท' + pay + noteTail;
       return 'หัก Incentive วันละ ' + money(t.cut) + ' บาท (บอกล่วงหน้า ' + aheadN + ' วันขึ้นไปไม่หัก)' + noteTail;
     }
     if (late && !sick) return 'วันแรกนับเป็นขาดงานไม่แจ้ง: หัก Incentive ' + money(absent) + ' บาท และไม่ได้ค่าจ้างวันนั้น · วันต่อไป (ถ้ามี) บันทึกเป็น' + t.type + ' · ป่วยให้เลือก' + sickType();
@@ -11130,7 +11136,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     if (o.ill) return 'ไม่สบาย ใช้' + t.type + 'แทน' + sickType() + ' ไม่หัก Incentive';
     if (t.cut) out.push(t.advanceDays && ahead >= t.advanceDays ? 'แจ้งล่วงหน้า ' + ahead + ' วัน ไม่หัก Incentive' : 'หัก Incentive วันละ ' + money(t.cut) + ' บาท' + (t.advanceDays ? ' (แจ้งล่วงหน้า ' + t.advanceDays + ' วันขึ้นไปไม่หัก)' : ''));
-    if (ahead <= 0 && r.suddenCut && t.type !== vacationType() && (t.cut || t.advanceDays) && suddenOn) out.push(run && run.sudden ? 'ต่อจากลาครั้งก่อน ไม่หักลากะทันหันซ้ำ' : 'ลาในวันนั้น หักเพิ่ม ' + money(r.suddenCut) + ' บาท (ขอก่อนวันลาไม่หักส่วนนี้)');
+    // (k-q1b แบบเดิมก่อนวันเริ่ม toldFrom: คำง่าย บอกว่าเพิ่มจากวันละเท่าไร ครั้งเดียวต่อการลา · คำเดียวกับหลังบ้าน leaveCostNotes_)
+    if (ahead <= 0 && r.suddenCut && t.type !== vacationType() && (t.cut || t.advanceDays) && suddenOn) out.push(run && run.sudden ? 'ลาต่อจากครั้งก่อน ไม่หักเพิ่มอีก' : 'ขอลาในวันลาหรือขอทีหลัง หัก Incentive เพิ่มอีก ' + money(r.suddenCut) + ' บาท ครั้งเดียว · ขอก่อนวันลาไม่หักส่วนนี้');
     return out.join(' · ') || 'ไม่หัก Incentive';
   }
   /** The days of a leave from `from` to `to`, the shop's closed days left out (as the payroll counts them) · ไม่นับวันหยุดประจำ (งาน 327) */
@@ -11857,7 +11864,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (sick && l.hospital) return html`<div class="s ok-text">${icon('check')} นอนโรงพยาบาล · ไม่หัก Incentive</div>`;
     var tags = [];
     if (sick && l.cert) tags.push(html`<div class="s ok-text">${icon('check')} ใบรับรองแพทย์ให้หยุด ${thRange(l.certFrom || l.from, l.certTo || l.to)} · ตั้งแต่วันที่ ${(B.rules && B.rules.sickNoteDay) || 3} ของการป่วยไม่หัก</div>`);
-    if (l.lateTold) tags.push(html`<div class="s">บอกหลังเวลาเข้างาน · ยังได้ค่าจ้าง</div>`);
+    // (k-q1b ลาไม่รับค่าจ้างที่บอกหลังเวลาเข้างานไม่ได้ค่าจ้าง จึงไม่บอกว่าได้)
+    if (l.lateTold) tags.push(html`<div class="s">บอกหลังเวลาเข้างาน${(leaveTypeOf(l.type) || {}).paid === false ? '' : ' · ยังได้ค่าจ้าง'}</div>`);
     if (l.ill) tags.push(html`<div class="s ok-text">${icon('check')} ไม่สบาย ใช้แทน${sickType()} · ไม่หัก Incentive</div>`);
     return tags;
   }
