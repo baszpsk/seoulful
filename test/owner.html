@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.37","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"2f53c87ec2e8"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.38","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"eec11bd76bc4"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -11033,7 +11033,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var suddenOn = !r.suddenFrom || from >= r.suddenFrom;
     var absent = (r.absentCut || 0) + (suddenOn ? r.noShowCut || 0 : 0);
     // (k-q1c ผู้อนุมัติลงว่าไม่ได้บอกเลย: วันแรกบันทึกเป็นขาดงานทั้งแบบเดิมและแบบหักตามเวลาที่บอก ทางเดียวกับหลังบ้าน leaveAddPlan_ · ยอดจริงมาจากหลังบ้าน lvCostAsk)
-    if (o.told === 'none' && ahead <= 0) return 'ไม่ได้บอกเลย: วันแรกบันทึกเป็นขาดงาน หัก Incentive ' + money(absent) + ' บาท และไม่ได้ค่าจ้างวันนั้น' + (leaveDates(from, to && to >= from ? to : from).length > 1 ? ' · วันต่อไปบันทึกเป็น' + t.type : '');
+    // (k-q1f วันที่บันทึกคือวันลาแรกที่ไม่ได้มาลงเวลาทำงาน หลังบ้านรู้วันที่มาทำงาน กล่องแทนด้วยคำของหลังบ้านที่บอกวันที่)
+    if (o.told === 'none' && ahead <= 0) return 'ไม่ได้บอกเลย: วันลาแรกที่ไม่ได้มาทำงานบันทึกเป็นขาดงาน หัก Incentive ' + money(absent) + ' บาท และไม่ได้ค่าจ้างวันนั้น' + (leaveDates(from, to && to >= from ? to : from).length > 1 ? ' · วันต่อไปบันทึกเป็น' + t.type : '');
     // 2.13.28 หักตามเวลาที่บอก ไม่ดูว่าป่วยหรือธุระ (ลาพักร้อนคงเดิม) · คำเดียวกับหลังบ้าน leaveCostNotes_ · บอกวันนี้: แอปไม่รู้เวลาเข้างาน จึงบอกทั้งสองกรณี
     if ((!r.toldFrom || from >= r.toldFrom) && !o.ill && t.type !== vacationType() && (t.cut || t.advanceDays)) {
       var aheadN = r.toldAhead || 3;
