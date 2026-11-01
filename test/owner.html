@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.40","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"2f3156d0dbbc"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.41","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"68ba70645424"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -18681,6 +18681,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var tries = 0;
     var go = function () {
       return fn().catch(function (e) {
+        // (2.13.41 g-b1) ส่งซ้ำด้วยรหัสร่างเดิม หลังบ้านไม่บันทึกซ้ำ: เน็ตหลุดจนลองครบแล้ว บอกให้กดอีกครั้งได้เลย (เดิมขึ้น "อาจบันทึกไปแล้ว ดูในรายการก่อน")
+        if (e.network && tries >= 3) e.message = 'เน็ตไม่ดี ส่งไม่สำเร็จ — กดอีกครั้งได้เลย ไม่ซ้ำกัน';
         if (!(e.network || e.transient) || tries >= 3) throw e;
         tries++;
         return later(tries * 1500).then(whenOnline).then(go);
@@ -19478,19 +19480,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'poster-retake': function (el) { closeSheet(); posterClockIn(el); },
     'poster-review': function (el) { posterClockIn(el, true); },
     'review-ok': function (el) {
-      // Passed at once on the screen; the server confirms, or it comes back with the reason.
+      // (2.13.41 g-b1) ขึ้นผลและปิดชีตเมื่อบันทึกสำเร็จจริง (CLAUDE.md ปุ่มที่บันทึก · เดิมขึ้นว่าผ่านก่อนหลังบ้านตอบ) · ระหว่างรอปุ่มหมุน กดซ้ำไม่ส่งซ้ำ · ล้มแล้วบอกเหตุ ชีตยังเปิด กดใหม่ได้
       var id = el.dataset.id;
-      var before = S.team;
-      closeSheet();
-      if (before && before.reviews) { S.team = Object.assign({}, before, { reviews: before.reviews.filter(function (x) { return x.id !== id; }) }); render(); }
-      toast('ตรวจแล้ว: ผ่าน', 'ok');
-      call('clockReview', { id: id }, actorAuth()).then(function (d) {
+      run(el, call('clockReview', { id: id }, actorAuth())).then(function (d) {
+        closeSheet();
+        if (S.team && S.team.reviews) { S.team = Object.assign({}, S.team, { reviews: S.team.reviews.filter(function (x) { return x.id !== id; }) }); render(); }
+        toast('ตรวจแล้ว: ผ่าน', 'ok');
         if (d.also) toast('ผ่านรวมอีก ' + d.also + ' วันจากมือถือเครื่องนี้', 'ok');
         loadTeam();
-      }, function (e) {
-        if (before) { S.team = before; render(); }
-        toast(e.message, 'bad');
-      });
+      }, function () {});
     },
     'review-fix': function (el) {
       var preset = { date: el.dataset.date, shift: el.dataset.shift, time: el.dataset.in };
@@ -19968,7 +19966,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'cancel-leave': function (el) {
       confirmSheet({ title: 'ยกเลิกคำขอลา', text: 'ต้องการยกเลิกคำขอนี้ใช่ไหม', yes: 'ยกเลิกคำขอ', danger: true }).then(function (ok) {
         if (!ok) return;
-        call('leaveCancel', { id: el.dataset.id }, staffAuth()).then(function (d) { homeChanged(d); render(); toast(d.notice, 'ok'); }, function (e) { toast(e.message, 'bad'); });
+        // (2.13.41 g-b1) ระหว่างบันทึกปุ่มหมุน กดซ้ำไม่ส่งซ้ำ · ล้มแล้วบอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
+        run(el, call('leaveCancel', { id: el.dataset.id }, staffAuth())).then(function (d) { homeChanged(d); render(); toast(d.notice, 'ok'); }, function () {});
       });
     },
     'open-slip': function (el) { openSlip(el.dataset.key, el); },
@@ -20128,38 +20127,35 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (ok && waiting && waiting.warn) return ask(waiting.warn);
       decide(false);
       function decide(confirmed) {
-        // Done at once on the screen; the server confirms, or it is put back with the reason.
-        var before = S.leaves;
-        var l = before ? before.pending.filter(function (x) { return x.id === id; })[0] : null;
-        if (before) S.leaves = Object.assign({}, before, { pending: before.pending.filter(function (x) { return x.id !== id; }) });
-        // The number waiting, on the menu and the overview, goes down with it.
-        var counts = [S.home && S.home.approver, S.view === 'owner' && S.ownerHome].filter(function (c) { return l && c && c.pendingLeaves > 0; });
-        counts.forEach(function (c) { c.pendingLeaves--; });
-        leavesShown();
+        // (2.13.41 g-b1) ขึ้นผลเมื่อบันทึกสำเร็จจริง (CLAUDE.md ปุ่มที่บันทึก · เดิมขึ้นว่าอนุมัติแล้วก่อนหลังบ้านตอบ): ระหว่างรอปุ่มหมุน
+        // กดซ้ำหรือกดอีกปุ่มของใบเดียวกันไม่ส่งซ้ำ · ล้มแล้วบอกเหตุ ใบยังอยู่ กดใหม่ได้
+        var l = S.leaves ? S.leaves.pending.filter(function (x) { return x.id === id; })[0] : null;
+        if (l && l.busy) return;
+        if (l) l.busy = true;
         var what = l && l.swap ? 'สลับวันหยุด' : 'การลา';
-        toast((l ? l.name + ' · ' : '') + (ok ? 'อนุมัติ' + what + 'แล้ว' : 'ไม่อนุมัติ' + what), 'ok');
-        call('leaveDecide', { id: id, approve: ok, confirmed: confirmed || undefined }, actorAuth()).then(function (d) {
+        run(el, call('leaveDecide', { id: id, approve: ok, confirmed: confirmed || undefined }, actorAuth())).then(function (d) {
+          // The number waiting, on the menu and the overview, goes down with it.
+          [S.home && S.home.approver, S.view === 'owner' && S.ownerHome].forEach(function (c) { if (l && c && c.pendingLeaves > 0) c.pendingLeaves--; });
           S.leaves = d;
           partAt.leaves = Date.now();
           keepPart('leaves', d);
           leavesShown();
+          toast((l ? l.name + ' · ' : '') + (ok ? 'อนุมัติ' + what + 'แล้ว' : 'ไม่อนุมัติ' + what), 'ok');
           if (d.line) toast(d.line, 'ok');
           if (S.home && S.home.approver) loadHome(true, true);
           if (S.view === 'owner') loadOwner(true, true);
           if (S.team) loadTeam();
         }, function (e) {
-          S.leaves = before;
-          counts.forEach(function (c) { c.pendingLeaves++; });
-          leavesShown();
-          if (e.code === 'CONFIRM') return ask(e.message);
-          toast(e.message, 'bad');
+          if (l) l.busy = false;
+          if (e.code === 'CONFIRM') ask(e.message);
         });
       }
     },
     'revoke-leave': function (el) {
       confirmSheet({ title: 'ยกเลิกการลา', text: 'ยกเลิกการลาที่อนุมัติแล้วนี้ใช่ไหม', yes: 'ยกเลิกการลา', danger: true }).then(function (ok) {
         if (!ok) return;
-        call('leaveRevoke', { id: el.dataset.id }, actorAuth()).then(function (d) { S.leaves = d; render(); toast(d.notice, 'ok'); }, function (e) { toast(e.message, 'bad'); });
+        // (2.13.41 g-b1) ระหว่างบันทึกปุ่มหมุน กดซ้ำไม่ส่งซ้ำ · ล้มแล้วบอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
+        run(el, call('leaveRevoke', { id: el.dataset.id }, actorAuth())).then(function (d) { S.leaves = d; render(); toast(d.notice, 'ok'); }, function () {});
       });
     },
     'open-exceptions': function () { openExceptions(); },
@@ -20169,7 +20165,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       run(el, call('exceptionSave', data, actorAuth())).then(function (d) { S.exceptions = d.exceptions; setSheetBody(exceptionsBody(d.exceptions)); toast('บันทึกแล้ว', 'ok'); }, function () {});
     },
     'delete-exception': function (el) {
-      call('exceptionDelete', { row: el.dataset.row, empId: el.dataset.emp }, actorAuth()).then(function (d) { S.exceptions = d.exceptions; setSheetBody(exceptionsBody(d.exceptions)); toast('ลบแล้ว', 'ok'); }, function (e) { toast(e.message, 'bad'); });
+      // (2.13.41 g-b1) ระหว่างบันทึกปุ่มหมุน กดซ้ำไม่ส่งซ้ำ · ล้มแล้วบอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
+      run(el, call('exceptionDelete', { row: el.dataset.row, empId: el.dataset.emp }, actorAuth())).then(function (d) { S.exceptions = d.exceptions; setSheetBody(exceptionsBody(d.exceptions)); toast('ลบแล้ว', 'ok'); }, function () {});
     },
 
     // payroll
