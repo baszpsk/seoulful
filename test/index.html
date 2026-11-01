@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.41","page":"","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"d77d7af579cb"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.42","page":"","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"80a860002dd7"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -11918,7 +11918,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<p class="muted small mt0">เวลาเข้างานประจำที่ต่างจากกะปกติ เช่น เข้า 18:00 วันจันทร์–ศุกร์ช่วงเปิดเทอม ใส่วันสิ้นสุดเทอมในช่อง "ถึง"</p>
       ${list.map(function (x) {
         return html`<div class="card" style="margin-top:10px"><div class="row between"><div><b>${x.name}</b> · ${x.days} ${x.shiftType ? '· กะ' + x.shiftType : ''}<div class="small muted">เข้า ${x.start} น. · ${x.from ? thShort(x.from) : 'ไม่มีวันเริ่ม'} – ${x.to ? thShort(x.to) : 'ไม่มีวันสิ้นสุด'} · ${x.ot ? 'ได้ OT ในกะ' : 'ไม่ได้ OT'}${x.note ? ' · ' + x.note : ''}</div></div>
-          <div class="row"><button class="icon-btn" data-act="edit-exception" data-row="${x.row}" aria-label="แก้ไข">${icon('edit')}</button><button class="icon-btn" data-act="delete-exception" data-row="${x.row}" data-emp="${x.empId}" aria-label="ลบ">${icon('trash')}</button></div></div></div>`;
+          <div class="row"><button class="icon-btn" data-act="edit-exception" data-row="${x.row}" aria-label="แก้ไข">${icon('edit')}</button><button class="icon-btn" data-act="delete-exception" data-row="${x.row}" data-emp="${x.empId}" data-key="${x.key}" aria-label="ลบ">${icon('trash')}</button></div></div></div>`;
       })}
       <button class="btn block" style="margin-top:14px" data-act="edit-exception">${icon('plus')} เพิ่มเวลาเข้างานพิเศษ</button>`;
   }
@@ -11937,7 +11937,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="two"><label class="field"><span>ตั้งแต่</span><input class="input" type="date" id="ex-from" value="${toThai(x.from)}"></label><label class="field"><span>ถึง (เช่น วันปิดเทอม)</span><input class="input" type="date" id="ex-to" value="${toThai(x.to)}"></label></div>
       <label class="check"><input type="checkbox" id="ex-ot" ${x.ot ? 'checked' : ''}><span>ได้ OT ในกะตามปกติ</span></label>
       <label class="field"><span>หมายเหตุ</span><input class="input" id="ex-note" value="${x.note || ''}"></label>
-      <div class="row" style="margin-top:18px"><button class="btn grow" data-act="open-exceptions">ยกเลิก</button><button class="btn primary grow" data-act="submit-exception" data-row="${x.row || ''}">บันทึก</button></div>`);
+      <div class="row" style="margin-top:18px"><button class="btn grow" data-act="open-exceptions">ยกเลิก</button><button class="btn primary grow" data-act="submit-exception" data-row="${x.row || ''}" data-key="${x.key || ''}">บันทึก</button></div>`);
   }
 
   // ======================================================================
@@ -13129,12 +13129,25 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var date = el.dataset.date;
     var row = el.closest('.sales-day');
     var get = function (f) { var x = row && row.querySelector('[data-sales="' + f + '"]'); return x ? String(x.value || '').trim().replace(/,/g, '') : ''; };
-    call('salesSave', { date: date, sales: get('sales'), customers: get('customers') }, ownerAuth()).then(function (o) {
-      if (S.ownerHome) S.ownerHome.sales = o;
-      var sum = $('#sales-sum');
-      if (sum) sum.innerHTML = String(salesOwnerSum(o));
-      toast('บันทึกยอดขาย ' + thShort(date) + ' แล้ว', 'ok');
-    }, function (e) { toast(e.message, 'bad'); });
+    // (2.13.42 g-c1) ส่งทีละคำขอต่อแถว: เปลี่ยนอีกช่องระหว่างบันทึก ส่งค่าล่าสุดของแถวต่อเมื่อคำขอก่อนจบ ค่าเก่าไม่ทับค่าใหม่ ·
+    // ช่องที่กำลังบันทึกปิดไว้ บอกบันทึกแล้วเมื่อค่าล่าสุดบันทึกสำเร็จ ล้มแล้วบอกเหตุ แก้ใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
+    var box = row || el;
+    if (box.salesJob) { box.salesJob.again = true; return; }
+    var job = (box.salesJob = { again: false });
+    (function go() {
+      job.again = false;
+      run(el, call('salesSave', { date: date, sales: get('sales'), customers: get('customers') }, ownerAuth())).then(function (o) {
+        if (job.again) return go();
+        box.salesJob = null;
+        if (S.ownerHome) S.ownerHome.sales = o;
+        var sum = $('#sales-sum');
+        if (sum) sum.innerHTML = String(salesOwnerSum(o));
+        toast('บันทึกยอดขาย ' + thShort(date) + ' แล้ว', 'ok');
+      }, function () {
+        if (job.again) return go();
+        box.salesJob = null;
+      });
+    })();
   }
   document.addEventListener('change', function (ev) {
     var el = ev.target;
@@ -14300,14 +14313,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     petGo(box, l && l.pet ? l.pet.love : 1);
     buzz(10);
     sfx('pet');
+    // (2.13.42 g-c1) ลูบซ้ำระหว่างบันทึกเล่นท่าได้ แต่ไม่ส่งซ้ำ · ล้มแล้วบอกเหตุ ลูบใหม่ได้
+    if (box.patting) return;
+    box.patting = true;
     call('petPat', {}, staffAuth()).then(function (r) {
+      box.patting = false;
       if (S.home) S.home.level = r.level;
       if (shelf && shelf.data) { var me = shelfOf(shelf.data.me); if (me) me.pet = r.pet; }
       if (r.up) setTimeout(function () { petGo(box, r.pet.love, r.pet.love); sfx('fanfare'); }, 900);
       if (r.first || r.up) toast(r.notice, 'ok');
       box.classList.remove('wants');
       softRender();
-    }, function (e) { toast(e.message, 'bad'); });
+    }, function (e) { box.patting = false; toast(e.message, 'bad'); });
   }
   /** Days from one date to another. */
   function daysBetween(a, b) { return Math.round((new Date(b + 'T12:00:00+07:00') - new Date(a + 'T12:00:00+07:00')) / 86400000); }
@@ -18991,7 +19008,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'confirm-no': function () { closeSheet(); },
     'confirm-work': function (el) {
       var o = confirmWork;
-      if (!o) return;
+      // (2.13.42 g-c1) กดซ้ำระหว่างบันทึกไม่ส่งซ้ำ
+      if (!o || el.disabled) return;
       run(el, o.work()).then(function (d) { if (confirmWork === o) confirmWork = null; o.done(d); }, function () {});
     },
     'print': function () { window.print(); },
@@ -19280,6 +19298,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     // the store sent what it owed: whoever took it in (the owner is told)
     'od-fix': function (el) {
+      if (el.disabled) return; // (2.13.42 g-c1) กำลังบันทึกอยู่ ไม่ถามซ้ำ
       var b = odBuy(el.dataset.id);
       var n = +el.dataset.n;
       var is = b && (b.issues || []).filter(function (x) { return x.n === n; })[0];
@@ -19290,7 +19309,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ? { title: 'ร้านค้าส่งของที่ขาดมาแล้ว', text: what + ' จาก ' + b.store + ' มาถึงร้านแล้วใช่ไหม', yes: 'ได้แล้ว' }
         : { title: 'ร้านค้าเปลี่ยนให้แล้ว', text: what + ' (' + RC_KINDS[is.kind] + ') จาก ' + b.store + ' ได้ของที่ถูกและดีแล้วใช่ไหม', yes: 'ได้แล้ว' }).then(function (ok) {
         if (!ok) return;
-        call('orderFix', { id: b.id, n: n, fix: 'sent' }, staffAuth()).then(function (r) { S.od = r.list; render(); toast('บันทึกแล้ว เจ้าของร้านเห็นแล้ว', 'ok'); }, function (e) { toast(e.message, 'bad'); loadOrderList(); });
+        // (2.13.42 g-c1) ระหว่างบันทึกปุ่มหมุน กดซ้ำไม่ส่งซ้ำ · ล้มแล้วบอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
+        run(el, call('orderFix', { id: b.id, n: n, fix: 'sent' }, staffAuth())).then(function (r) { S.od = r.list; render(); toast('บันทึกแล้ว เจ้าของร้านเห็นแล้ว', 'ok'); }, function () { loadOrderList(); });
       });
     },
     // ordering: the owner
@@ -19413,10 +19433,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     'odo-unplace': function (el) {
       var id = el.dataset.id;
-      confirmSheet({ title: 'ยกเลิกรอบนี้', text: 'รายการจะกลับไปรอสั่งเหมือนเดิม (ถ้ายกเลิกคำสั่งซื้อในเว็บ ทำในเว็บด้วย)', yes: 'ยกเลิกรอบนี้', danger: true }).then(function (ok) {
-        if (!ok) { openOrderOwner(); return; }
-        call('orderUnplace', { id: id }, ownerAuth()).then(function (v) { odo.v = v; openOrderOwner(); }, function (e) { toast(e.message, 'bad'); openOrderOwner(); });
-      });
+      // (2.13.42 g-c1) ถามแล้วรอบันทึกในชีต: ปุ่มยืนยันหมุน กดซ้ำไม่ส่งซ้ำ ผลขึ้นเมื่อบันทึกสำเร็จ ล้มแล้วชีตยังเปิด บอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
+      confirmThen({ title: 'ยกเลิกรอบนี้', text: 'รายการจะกลับไปรอสั่งเหมือนเดิม (ถ้ายกเลิกคำสั่งซื้อในเว็บ ทำในเว็บด้วย)', yes: 'ยกเลิกรอบนี้', danger: true, back: html`<button class="btn" data-act="odo-back">กลับ</button>`,
+        work: function () { return call('orderUnplace', { id: id }, ownerAuth()); },
+        done: function (v) { odo.v = v; openOrderOwner(); toast('ยกเลิกรอบนี้แล้ว รายการกลับไปรอสั่ง', 'ok'); } });
     },
     'meal-open': function (el) { openMeal(!!el.dataset.owner); },
     'meal-t': function (el) {
@@ -19448,12 +19468,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     'odo-par': function (el) {
       var it = odo.cat && odo.cat.items.filter(function (x) { return x.id === el.dataset.id; })[0];
-      if (!it) return;
-      var before = it.par;
+      // (2.13.42 g-c1) เลข PAR เปลี่ยนเมื่อบันทึกสำเร็จจริง (CLAUDE.md ปุ่มที่บันทึก): ระหว่างบันทึกปุ่มหมุน ปุ่ม + − ของของชิ้นนี้ไม่ส่งซ้ำ
+      // ล้มแล้วเลขเดิมคงไว้ บอกเหตุ กดใหม่ได้ · กดรัวแล้วเลขบนจอตรงกับที่บันทึกในหลังบ้านเสมอ
+      if (!it || it.saving) return;
       var next = Math.max(0, Math.round(((it.par || 0) + (+el.dataset.d) * it.step) * 100) / 100);
-      it.par = next || null;
-      setSheetBody(odOwnerBody());
-      call('orderItemSave', { id: it.id, par: next || '' }, ownerAuth()).then(function () { odo.v = null; loadOrderOwner(); }, function (e) { it.par = before; setSheetBody(odOwnerBody()); toast(e.message, 'bad'); });
+      it.saving = true;
+      run(el, call('orderItemSave', { id: it.id, par: next || '' }, ownerAuth())).then(function () {
+        it.saving = false;
+        it.par = next || null;
+        setSheetBody(odOwnerBody());
+        odo.v = null;
+        loadOrderOwner();
+      }, function () { it.saving = false; });
     },
     'open-rules': function () { openRules(); },
     'howto-open': function (el) { openHowTo(el); },
@@ -19739,6 +19765,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }, function () {});
     },
     'pz-find': function (el) {
+      // (2.13.42 g-c1) แตะซ้ำระหว่างบันทึกไม่ส่งซ้ำ · ล้มแล้วบอกเหตุ แตะใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
+      if (el.classList.contains('found')) return;
       el.classList.add('found');
       buzz([20, 40, 20]);
       call('plazaFind', {}, staffAuth()).then(function (r) {
@@ -20006,26 +20034,26 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (el.dataset.kind === 'permit') { permitDeleteForm(el.dataset.id, el.dataset.emp); return; }
       // A shop's rain period goes for everyone in it, as "ฝนตกที่ควรตรวจ" says too (2.12.9).
       var rain = el.dataset.kind === 'rain';
-      confirmSheet({ title: rain ? 'ลบช่วงฝนตก' : 'ลบรายการ', text: rain ? 'ทุกคนที่ลงเวลาในช่วงนี้จะไม่ได้ผ่อนผันฝนตก และอาจนับเป็นสาย' : 'ลบรายการนี้ใช่ไหม', yes: 'ลบ', danger: true }).then(function (ok) {
-        if (!ok) return;
-        call('entryDelete', { id: el.dataset.id }, actorAuth()).then(function () { toast('ลบรายการแล้ว', 'ok'); loadTeam(); }, function (e) { toast(e.message, 'bad'); });
-      });
+      // (2.13.42 g-c1) ถามแล้วรอบันทึกในชีต: ปุ่มยืนยันหมุน กดซ้ำไม่ส่งซ้ำ ผลขึ้นเมื่อบันทึกสำเร็จ ล้มแล้วชีตยังเปิด บอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
+      confirmThen({ title: rain ? 'ลบช่วงฝนตก' : 'ลบรายการ', text: rain ? 'ทุกคนที่ลงเวลาในช่วงนี้จะไม่ได้ผ่อนผันฝนตก และอาจนับเป็นสาย' : 'ลบรายการนี้ใช่ไหม', yes: 'ลบ', danger: true,
+        work: function () { return call('entryDelete', { id: el.dataset.id }, actorAuth()); },
+        done: function () { closeSheet(); toast('ลบรายการแล้ว', 'ok'); loadTeam(); } });
     },
     'open-rain': function () { openRainForm(); },
     'rain-end': function (el) {
-      confirmSheet({ title: 'ฝนหยุดแล้ว', text: 'ปิดโหมดฝนตกตั้งแต่ตอนนี้ คนที่ลงเวลาหลังจากนี้ใช้เวลาปกติ คนที่ลงเวลาไปแล้วยังได้ผ่อนผันตามเดิม', yes: 'ปิดโหมดฝนตก' }).then(function (ok) {
-        if (!ok) return;
-        call('rainEnd', {}, actorAuth()).then(function (d) { toast(d.notice, 'ok'); loadTeam(); }, function (e) { toast(e.message, 'bad'); });
-      });
+      // (2.13.42 g-c1) ถามแล้วรอบันทึกในชีต: ปุ่มยืนยันหมุน กดซ้ำไม่ส่งซ้ำ ผลขึ้นเมื่อบันทึกสำเร็จ ล้มแล้วชีตยังเปิด บอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
+      confirmThen({ title: 'ฝนหยุดแล้ว', text: 'ปิดโหมดฝนตกตั้งแต่ตอนนี้ คนที่ลงเวลาหลังจากนี้ใช้เวลาปกติ คนที่ลงเวลาไปแล้วยังได้ผ่อนผันตามเดิม', yes: 'ปิดโหมดฝนตก',
+        work: function () { return call('rainEnd', {}, actorAuth()); },
+        done: function (d) { closeSheet(); toast(d.notice, 'ok'); loadTeam(); } });
     },
     'rain-keep': function (el) {
       run(el, call('rainReview', { id: el.dataset.id, keep: true }, ownerAuth()), 'คงไว้แล้ว').then(function (d) { S.ownerHome.rainReview = d.rainReview; ownerChanged(); render(); }, function () {});
     },
     'rain-drop': function (el) {
-      confirmSheet({ title: 'ลบรายการฝนตก', text: 'ทุกคนที่ลงเวลาในช่วงนี้จะไม่ได้ผ่อนผันฝนตก และอาจนับเป็นสาย', yes: 'ลบ', danger: true }).then(function (ok) {
-        if (!ok) return;
-        call('rainReview', { id: el.dataset.id, keep: false }, ownerAuth()).then(function (d) { S.ownerHome.rainReview = d.rainReview; ownerChanged(); toast('ลบแล้ว', 'ok'); render(); }, function (e) { toast(e.message, 'bad'); });
-      });
+      // (2.13.42 g-c1) ถามแล้วรอบันทึกในชีต: ปุ่มยืนยันหมุน กดซ้ำไม่ส่งซ้ำ ผลขึ้นเมื่อบันทึกสำเร็จ ล้มแล้วชีตยังเปิด บอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
+      confirmThen({ title: 'ลบรายการฝนตก', text: 'ทุกคนที่ลงเวลาในช่วงนี้จะไม่ได้ผ่อนผันฝนตก และอาจนับเป็นสาย', yes: 'ลบ', danger: true,
+        work: function () { return call('rainReview', { id: el.dataset.id, keep: false }, ownerAuth()); },
+        done: function (d) { closeSheet(); S.ownerHome.rainReview = d.rainReview; ownerChanged(); toast('ลบแล้ว', 'ok'); render(); } });
     },
     'submit-rain': function (el) {
       var from = $('#rn-from').value, to = $('#rn-to').value;
@@ -20161,12 +20189,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'open-exceptions': function () { openExceptions(); },
     'edit-exception': function (el) { exceptionForm(el.dataset.row); },
     'submit-exception': function (el) {
-      var data = { row: el.dataset.row || '', empId: $('#ex-emp').value, days: $('#ex-days').value, start: $('#ex-start').value, shiftType: $('#ex-shift').value, from: $('#ex-from').value, to: $('#ex-to').value, ot: $('#ex-ot').checked, note: $('#ex-note').value };
+      var data = { row: el.dataset.row || '', key: el.dataset.key || '', empId: $('#ex-emp').value, days: $('#ex-days').value, start: $('#ex-start').value, shiftType: $('#ex-shift').value, from: $('#ex-from').value, to: $('#ex-to').value, ot: $('#ex-ot').checked, note: $('#ex-note').value };
       run(el, call('exceptionSave', data, actorAuth())).then(function (d) { S.exceptions = d.exceptions; setSheetBody(exceptionsBody(d.exceptions)); toast('บันทึกแล้ว', 'ok'); }, function () {});
     },
     'delete-exception': function (el) {
       // (2.13.41 g-b1) ระหว่างบันทึกปุ่มหมุน กดซ้ำไม่ส่งซ้ำ · ล้มแล้วบอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
-      run(el, call('exceptionDelete', { row: el.dataset.row, empId: el.dataset.emp }, actorAuth())).then(function (d) { S.exceptions = d.exceptions; setSheetBody(exceptionsBody(d.exceptions)); toast('ลบแล้ว', 'ok'); }, function () {});
+      run(el, call('exceptionDelete', { row: el.dataset.row, empId: el.dataset.emp, key: el.dataset.key }, actorAuth())).then(function (d) { S.exceptions = d.exceptions; setSheetBody(exceptionsBody(d.exceptions)); toast('ลบแล้ว', 'ok'); }, function () {});
     },
 
     // payroll
@@ -20178,7 +20206,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var t = S.pay.payroll.totals;
       confirmSheet({ title: 'อนุมัติเงินเดือน' + S.pay.payroll.period.month, text: (t.net != null ? 'รวมจ่ายสุทธิ ' + money(t.net) + ' บาท ' : 'ทั้งหมด ') + t.headcount + ' คน — หลังอนุมัติจะแก้ข้อมูลเดือนนี้ไม่ได้จนกว่าจะยกเลิกอนุมัติ และระบบจะส่ง Excel ให้เจ้าของร้าน', yes: 'อนุมัติ' }).then(function (ok) {
         if (!ok) return;
-        run(el, call('payrollApprove', { period: S.payKey }, actorAuth())).then(function (d) { payChanged(d); render(); toast(d.notice, 'ok'); }, function () {});
+        // (2.13.42 g-c1) อนุมัติไปแล้วจากอีกเครื่องหรือหน้าที่ค้าง: บอกเหตุแล้วโหลดหน้าเงินเดือนใหม่ให้เห็นสถานะจริง
+        run(el, call('payrollApprove', { period: S.payKey }, actorAuth())).then(function (d) { payChanged(d); render(); toast(d.notice, 'ok'); }, function (e) { if (e && e.code === 'APPROVED') loadPay(S.payKey); });
       });
     },
     'pay-unapprove': function (el) {
@@ -20322,10 +20351,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }, function () {});
     },
     'kiosk-remove': function (el) {
-      confirmSheet({ title: 'ยกเลิกเครื่องลงเวลา', text: 'เครื่องนี้จะลงเวลาไม่ได้อีก', yes: 'ยกเลิกเครื่อง', danger: true }).then(function (ok) {
-        if (!ok) return;
-        call('kioskRemove', { id: el.dataset.id }, ownerAuth()).then(function (d) { ownerChanged(d); render(); toast('ยกเลิกแล้ว', 'ok'); }, function (e) { toast(e.message, 'bad'); });
-      });
+      // (2.13.42 g-c1) ถามแล้วรอบันทึกในชีต: ปุ่มยืนยันหมุน กดซ้ำไม่ส่งซ้ำ ผลขึ้นเมื่อบันทึกสำเร็จ ล้มแล้วชีตยังเปิด บอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
+      confirmThen({ title: 'ยกเลิกเครื่องลงเวลา', text: 'เครื่องนี้จะลงเวลาไม่ได้อีก', yes: 'ยกเลิกเครื่อง', danger: true,
+        work: function () { return call('kioskRemove', { id: el.dataset.id }, ownerAuth()); },
+        done: function (d) { closeSheet(); ownerChanged(d); render(); toast('ยกเลิกแล้ว', 'ok'); } });
     },
     'line-code': function (el) { run(el, call('lineCode', {}, ownerAuth())).then(function (d) { S.ownerHome.line.linkCode = d.linkCode; ownerChanged(); render(); }, function () {}); },
     'backup': function (el) { run(el, call('backup', {}, ownerAuth())).then(function (d) { backupDone(d); }, function () {}); },
@@ -20420,17 +20449,21 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (el.dataset.change === 'lf-cert' && $('#lf-days')) $('#lf-days').hidden = !el.checked;
     if (el.dataset.change === 'restore-when' && $('#rs-say')) $('#rs-say').textContent = restoreSay(restoreAt()).text;
     if (el.dataset.change === 'odo-keep') {
+      // (2.13.42 g-c1) ระหว่างบันทึกช่องปิด เปลี่ยนซ้ำไม่ส่งซ้ำ · ล้มแล้วบอกเหตุ ช่องกลับเป็นค่าที่บันทึกไว้ (CLAUDE.md ปุ่มที่บันทึก)
+      if (el.disabled) return;
       var keep = el.value === '' ? '' : +el.value;
-      call('orderItemSave', { id: el.dataset.id, keepDays: keep }, ownerAuth()).then(function () {
+      run(el, call('orderItemSave', { id: el.dataset.id, keepDays: keep }, ownerAuth())).then(function () {
         (odo.cat.items.filter(function (x) { return x.id === el.dataset.id; })[0] || {}).keepDays = keep === '' ? null : keep;
         toast(keep === '' ? 'ครั้งหน้าถามก่อนซื้อเผื่อ' : keep ? 'ซื้อเผื่อได้ เมื่อใช้หมดใน ' + keep + ' วัน' : 'ไม่ซื้อเผื่อของนี้', 'ok');
         odo.v = null;
         loadOrderOwner();
-      }, function (e) { toast(e.message, 'bad'); setSheetBody(odOwnerBody()); });
+      }, function () { setSheetBody(odOwnerBody()); });
     }
     if (el.dataset.change === 'odo-count') {
+      // (2.13.42 g-c1) แบบเดียวกับซื้อเผื่อ
+      if (el.disabled) return;
       var staffOnly = el.value === '0';
-      call('orderItemSave', { id: el.dataset.id, staff: staffOnly }, ownerAuth()).then(function () {
+      run(el, call('orderItemSave', { id: el.dataset.id, staff: staffOnly }, ownerAuth())).then(function () {
         var it = odo.cat.items.filter(function (x) { return x.id === el.dataset.id; })[0] || {};
         it.staff = staffOnly;
         toast(staffOnly ? it.name + ': ไม่ต้องนับ พนักงานสั่งเมื่อต้องการ' : it.name + ': นับทุกครั้ง สั่งตาม PAR', 'ok');
@@ -20438,7 +20471,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         if (box) box.innerHTML = String(odoItemRows(odo.cat.items.filter(function (x) { var q = String(odo.catQ || '').trim().toLowerCase(); return !q || x.name.toLowerCase().indexOf(q) >= 0; })));
         odo.v = null;
         loadOrderOwner();
-      }, function (e) { toast(e.message, 'bad'); setSheetBody(odOwnerBody()); });
+      }, function () { setSheetBody(odOwnerBody()); });
     }
     if (el.dataset.change === 'en-type') {
       var o = { type: el.value, emp: $('#en-emp').value, date: $('#en-date').value, reason: $('#en-reason').value };
