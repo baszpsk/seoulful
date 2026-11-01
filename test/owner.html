@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.38","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"eec11bd76bc4"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.39","page":"owner","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"e3bcb4a77ce9"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -2092,7 +2092,8 @@ html.c3 .pz-char { transition: none; }
    drawings; #227. Late, it shows at once: a fade of its own would stop a move it plays drawn.) */
 html.c3:not(.c3-slow) .char-svg[data-c3]:not(.c3-on):not(.c3-under):not(.c3-late) > g:not(.cp-shadow) { display: none; }
 /* 2.13.26 การ์ดเพื่อน: ระหว่างรอภาพสามมิติ ภาพวาดขึ้นทันที ส่วนย่อยไม่ขยับจนภาพสามมิติขึ้น เปิดมาเห็นครบทุกคน (ท่าเล่นพร้อมกันไม่เกิน 2 ตัวเท่าเดิม) */
-html.c3:not(.c3-slow) .fr-char .char-svg[data-c3]:not(.c3-on):not(.c3-under):not(.c3-late) > g:not(.cp-shadow) { display: inline; }
+/* 2.13.39 การ์ดทีมครัวโซลฟูล (.bk-ch) แบบเดียวกับการ์ดเพื่อน */
+html.c3:not(.c3-slow) .fr-char .char-svg[data-c3]:not(.c3-on):not(.c3-under):not(.c3-late) > g:not(.cp-shadow), html.c3:not(.c3-slow) .bk-ch .char-svg[data-c3]:not(.c3-on):not(.c3-under):not(.c3-late) > g:not(.cp-shadow) { display: inline; }
 /* The figures, pets and shelf things in 3D: the picture in the drawing's box, the drawing none of the
    page while it is made (as the characters'), and gone once it shows. */
 svg.c3o-on > :not(.c3-o) { display: none; }
@@ -2238,7 +2239,6 @@ body.sb-on #toasts { z-index: 5001; }
 .bk-unsent .grow { display: grid; }
 .bk-note { display: flex; align-items: center; gap: 6px; margin: 0; padding: 8px 12px; border-radius: 12px; background: #fef3c7; font-size: 13px; }
 .bk-note svg { width: 15px; height: 15px; }
-.bk-foot { justify-self: center; }
 .fr-block { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px; border: 0; text-align: left; font: inherit; color: inherit; }
 .fr-block-tx { display: grid; gap: 2px; flex: 1; min-width: 0; }
 .fr-block-tx b { font-size: 15px; }
@@ -3931,7 +3931,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** Where they play: the friends' page with no sheet over it, or the plaza ('' elsewhere, and the app put away). */
   function mvfWhere() {
     if (document.hidden) return '';
-    if ($('#sheet-root.open')) return $('#plaza') ? 'pz' : '';
+    // การ์ดทีมของครัวโซลฟูล (แผ่นเกมเปิด ไม่ได้อยู่ในจอเล่น): ตัวน้องเล่นท่าแบบหน้าเพื่อน (2.13.39)
+    if ($('#sheet-root.open')) return $('#plaza') ? 'pz' : $('#block .bk-ch') && !document.body.classList.contains('sb-on') ? 'bk' : '';
     return $('main .fr-grid') ? 'fr' : '';
   }
   /** Each one there: the character, its move, who (for its rest), own or not, and its box. */
@@ -3942,6 +3943,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (svg && box) out.push({ svg: svg, mv: c.getAttribute('data-mv') || 'm-wave', id: key + box.getAttribute('data-id'), me: box.classList.contains('me'), box: box });
     };
     if (ctx === 'fr') Array.prototype.forEach.call(document.querySelectorAll('main .fr-card .fr-char'), function (c) { add(c, c.closest('.fr-card'), 'fr'); });
+    else if (ctx === 'bk') Array.prototype.forEach.call(document.querySelectorAll('#block .bk-mem .bk-ch'), function (c) { add(c, c.closest('.bk-mem'), 'bk'); });
     else Array.prototype.forEach.call(document.querySelectorAll('#plaza .pz-p .pz-char'), function (c) { add(c, c.closest('.pz-p'), 'pz'); });
     return out;
   }
@@ -15155,8 +15157,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     (function (root) {
       'use strict';
       var C = SBCore, D = document, M = C.MENUS, W = 8;
-      var C1 = ['#f7deb4', '#ff7d6d', '#ffb6c8', '#94dc87', '#ffe36e', '#cbb5f5'];
-      var C2 = ['#d5a565', '#d9372b', '#e9799b', '#3fa447', '#efb200', '#8a69d1'];
+      // สีสดตัดกันชัด ใกล้บล็อกสามมิติ (เจ้าของ 1 พ.ย. 2569 "ควรให้สีสดและแอฟเฟคเยอะกว่านี้ไหม") ใช้ตอนภาพสามมิติยังไม่มา การ์ดออเดอร์ และเศษบล็อก
+      var C1 = ['#ffd49a', '#ff6b5c', '#ff9cc0', '#7be070', '#ffe04a', '#c6a4ff'];
+      var C2 = ['#e89a45', '#e0261c', '#ee5a8c', '#25a33a', '#f5ad00', '#8452e6'];
       var DK = ['#8a5a26', '#8f1810', '#a8436a', '#22672a', '#8d6300', '#53399a'];
       // ไอคอนวัตถุดิบ (วาดเอง) ต๊อก พริก หมู ผัก เส้น กระเทียม
       var ICON = [
@@ -15175,7 +15178,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ham: sv('<rect x="11" y="2.5" width="7" height="11" rx="2" transform="rotate(45 14.5 8)" fill="#7b8494"/><path d="M12.5 11.5L4 20" stroke="#c98a3c" stroke-width="3.2" stroke-linecap="round"/>'),
         swp: sv('<path d="M5 9a7 7 0 0 1 12-3l2 2M19 15a7 7 0 0 1-12 3l-2-2M19 4v4h-4M5 20v-4h4" stroke="#2f7fd6" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'),
         on: sv('<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>'),
-        off: sv('<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>')
+        off: sv('<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'),
+        von: sv('<rect x="7.5" y="3" width="9" height="18" rx="2.2" fill="currentColor"/><path d="M4 8.5v7M1.6 10v4M20 8.5v7M22.4 10v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>'),
+        voff: sv('<rect x="7.5" y="3" width="9" height="18" rx="2.2" fill="currentColor"/><path d="M3.5 3.5l17 17" stroke="#fff" stroke-width="4.4" stroke-linecap="round"/><path d="M3.5 3.5l17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>')
       };
       var FLAME = sv('<path d="M20 2c4 10 14 14 14 28a14 14 0 0 1-28 0c0-8 5-12 8-18 1 6 4 8 6 9-1-7 0-13 0-19z" fill="#ff6a1a"/><path d="M20 18c3 6 8 9 8 16a8 8 0 0 1-16 0c0-5 3-7 5-11 0 3 2 5 3 5 0-4 0-7 0-10z" fill="#ffd23f"/>', '0 0 40 48');
       var POT = sv('<path d="M4 14h48v10a14 14 0 0 1-14 14H18A14 14 0 0 1 4 24z" fill="#c99a3e"/><path d="M4 18h48" stroke="#a47a2a" stroke-width="2"/><ellipse cx="28" cy="14" rx="24" ry="5" fill="#e0552f"/><path d="M0 16h5M51 16h5" stroke="#a47a2a" stroke-width="4" stroke-linecap="round"/>', '0 0 56 40');
@@ -15301,24 +15306,24 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         if (theme === 'loy') s += '<i class="fl" style="left:54%">' + sv(KR, '0 0 32 24') + '</i>';
         return '<div class="sb-deco">' + s + '</div><div class="sb-glow"></div>' +
           '<header class="sb-top"><button class="sb-x" type="button" aria-label="ปิด">' + IC.x + '</button><div class="sb-ttl"><b>ครัวโซลฟูล</b><span class="sb-mode"></span></div>' +
-          '<button class="sb-snd" type="button"></button><div class="sb-left"><b>0</b><span>ชิ้นที่เหลือ</span></div></header>' +
+          '<button class="sb-snd" type="button"></button><button class="sb-vib" type="button"></button><div class="sb-left"><b>0</b><span>ชิ้นที่เหลือ</span></div></header>' +
           '<section class="sb-hud"><div class="sb-chef"></div><div class="sb-sc"><span>คะแนน</span><b class="sb-odo"></b><small></small></div>' +
           '<div class="sb-heat"><div class="sb-pot"><i class="sb-fl">' + FLAME + '</i>' + POT + '</div><b>×1</b><span>คอมโบ</span></div></section>' +
           '<section class="sb-ords"><div class="sb-ord"></div><div class="sb-ord"></div></section>' +
           '<div class="sb-bd"><div class="sb-grid"></div><div class="sb-fx"></div><div class="sb-tip"><b>ลากวัตถุดิบลงครัว</b>เต็มแถวหรือคอลัมน์ = เคลียร์ได้คะแนน<br>วัตถุดิบครบตามออเดอร์ในแถวนั้น = เสิร์ฟเมนู<br>เคลียร์ติดกันหลายตา ไฟเตาแรง คะแนนคูณ</div></div>' +
           '<div class="sb-tray"><div class="sb-slot" data-s="0"></div><div class="sb-slot" data-s="1"></div><div class="sb-slot" data-s="2"></div></div>' +
           '<div class="sb-bar"><button class="sb-tool" type="button" data-t="h">' + IC.ham + '<span>ค้อน</span><em>0</em></button><button class="sb-tool" type="button" data-t="s">' + IC.swp + '<span>เปลี่ยนชิ้น</span><em>0</em></button><div class="sb-cheer"></div><div class="sb-next"><span>ถัดไป</span><i></i></div></div>' +
-          '<div class="sb-msg"></div><div class="sb-end"></div><div class="sb-fly"></div>';
+          '<div class="sb-msg"></div><div class="sb-end"></div><div class="sb-flash"></div><div class="sb-fly"></div>';
       }
       function mount(host, o) {
         o = o || {};
         var day = o.date || ymd(new Date()), mode = o.mode || 'daily', theme = o.theme != null ? o.theme : autoTheme(day);
-        var tl = o.tools || {}, game = o.game || null, last = null, stats = o.stats || load(), snd = o.sound != null ? !!o.sound : ls('sb-snd') === '1';
+        var tl = o.tools || {}, game = o.game || null, last = null, stats = o.stats || load(), snd = o.sound != null ? !!o.sound : ls('sb-snd') === '1', vib = ls('sb-vib') !== '0', hp = null;
         if (!D.getElementById('sb-kcss')) { var ks = h('style'); ks.id = 'sb-kcss'; ks.textContent = kcss; D.head.appendChild(ks); }
         var R = h('div', 'sb' + (theme ? ' th-' + theme : '') + (RM ? ' rm' : ''), tpl(theme));
         host.appendChild(R);
         function q(s) { return R.querySelector(s); }
-        var grid = q('.sb-grid'), fx = q('.sb-fx'), bd = q('.sb-bd'), fly = q('.sb-fly'), chef = q('.sb-chef'), heat = q('.sb-heat'), glow = q('.sb-glow'), msg = q('.sb-msg'), endEl = q('.sb-end'), tip = q('.sb-tip'), scEl = q('.sb-sc');
+        var grid = q('.sb-grid'), fx = q('.sb-fx'), bd = q('.sb-bd'), fly = q('.sb-fly'), chef = q('.sb-chef'), heat = q('.sb-heat'), glow = q('.sb-glow'), msg = q('.sb-msg'), endEl = q('.sb-end'), tip = q('.sb-tip'), scEl = q('.sb-sc'), flash = q('.sb-flash');
         var slots = [].slice.call(R.querySelectorAll('.sb-slot')), ords = [].slice.call(R.querySelectorAll('.sb-ord'));
         var odo = Odo(q('.sb-odo')), cells = [], st, cs = 40, ts = 20, g = 3, pad = 6, tool = '', drag = null, marks = [], shown = 0, tmr = [], mt = 0;
         for (var i = 0; i < 64; i++) { var c = h('i', 'sb-c'); grid.appendChild(c); cells.push(c); }
@@ -15327,11 +15332,28 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         R.appendChild(cv);
         // ไอคอนแปลงเป็นบิตแมปครั้งเดียว วาดซ้ำทุกเฟรมเร็วกว่าวาด SVG ใหม่
         for (var k3 = 0; k3 < 6; k3++) (function (k) { var im = new Image(); IMG[k] = im; im.onload = function () { var b = document.createElement('canvas'); b.width = b.height = 96; b.getContext('2d').drawImage(im, 0, 0, 96, 96); b.complete = true; IMG[k] = b; }; im.src = 'data:image/svg+xml,' + encodeURIComponent(iconSvg(k).replace('<svg ', '<svg width="48" height="48" ')); })(k3);
+        // บล็อกสามมิติ (ภาพนิ่งทำครั้งเดียวด้วย Blender: dev/3d/blocks.py แล้ว dev/3d/blocks.js · o.art = โฟลเดอร์ภาพ)
+        // โหลดครบ 6 ภาพแล้วจึงใช้แทนภาพวาด ระหว่างโหลดหรือหน้าที่ไม่มีภาพ (สคริปต์ Google) ใช้ภาพวาดเดิม
+        var PIC = [], npic = 0, BKN = ['tteok', 'chili', 'pork', 'veg', 'noodle', 'garlic'];
+        function picUrl(k) { return o.art + 'sb-' + BKN[k] + '.webp' + (o.ver ? '?v=' + encodeURIComponent(o.ver) : ''); }
+        if (o.art) BKN.forEach(function (n, k) {
+          var im = new Image();
+          im.decoding = 'async';
+          im.onload = function () {
+            var b = D.createElement('canvas'); b.width = b.height = 96;
+            try { b.getContext('2d').drawImage(im, 0, 0, 96, 96); } catch (e) { return; }
+            PIC[k] = b;
+            if (++npic < 6) return;
+            if (!D.getElementById('sb-b3css')) { var s3 = h('style'); s3.id = 'sb-b3css'; s3.textContent = BKN.map(function (x, j) { return '.sb.b3 .k' + j + '{--b3:url("' + picUrl(j) + '")}'; }).join(''); D.head.appendChild(s3); }
+            R.classList.add('b3');
+          };
+          im.src = picUrl(k);
+        });
         // ของตกแต่งลอยได้เฉพาะที่ว่าง: ตัดกรอบปุ่ม ตัวเลข การ์ดออเดอร์ และถาดชิ้นออก (คำนวณตอนเริ่มและเมื่อจอเปลี่ยนขนาด)
         function decoClip() {
           var dc = q('.sb-deco'); if (!dc || !R.isConnected) return;
           var r0 = R.getBoundingClientRect(), d = 'M0 0H' + r0.width + 'V' + r0.height + 'H0Z';
-          [].forEach.call(R.querySelectorAll('.sb-x,.sb-ttl,.sb-snd,.sb-left,.sb-sc,.sb-heat,.sb-ord,.sb-slot,.sb-tool,.sb-next'), function (e) {
+          [].forEach.call(R.querySelectorAll('.sb-x,.sb-ttl,.sb-snd,.sb-vib,.sb-left,.sb-sc,.sb-heat,.sb-ord,.sb-slot,.sb-tool,.sb-next'), function (e) {
             var b = e.getBoundingClientRect(); if (!b.width) return;
             d += 'M' + (b.left - r0.left - 4).toFixed(1) + ' ' + (b.top - r0.top - 4).toFixed(1) + 'h' + (b.width + 8).toFixed(1) + 'v' + (b.height + 8).toFixed(1) + 'h' + (-b.width - 8).toFixed(1) + 'Z';
           });
@@ -15340,7 +15362,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         function cvFit() { var r = R.getBoundingClientRect(); cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); cv.style.width = r.width + 'px'; cv.style.height = r.height + 'px'; decoClip(); }
         // ตำแหน่งชิ้นหลักอ่านครั้งเดียวต่อเฟรม ก่อนเขียนหน้าเว็บ
         function geo() { if (!gc) { gc = { bd: rel(bd), sc: rel(scEl), heat: rel(heat), R: rel(R) }; requestAnimationFrame(function () { gc = null; }); } return gc; }
-        function emit(p) { if (RM || !g2) return; p.t0 = performance.now() + (p.dl || 0); parts.push(p); if (!pr) pr = requestAnimationFrame(tick); }
+        function emit(p) { if (RM || !g2 || parts.length > 360) return; p.t0 = performance.now() + (p.dl || 0); parts.push(p); if (!pr) pr = requestAnimationFrame(tick); }
         function rr(x, y, w, hh, r) { g2.beginPath(); g2.moveTo(x + r, y); g2.arcTo(x + w, y, x + w, y + hh, r); g2.arcTo(x + w, y + hh, x, y + hh, r); g2.arcTo(x, y + hh, x, y, r); g2.arcTo(x, y, x + w, y, r); g2.closePath(); }
         function star(z) { g2.beginPath(); for (var i = 0; i < 8; i++) { var a = i * .785, d = i % 2 ? z * .3 : z; g2.lineTo(Math.cos(a) * d, Math.sin(a) * d); } g2.closePath(); }
         function tick(now) {
@@ -15356,9 +15378,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
             if (p.ty === 'bk') { // เศษบล็อก: พองแล้วหมุนหาย
               z = t < .15 ? 1 + t / .6 : 1.25 * Math.pow(1 - (t - .15) / .85, 1.3);
               c.globalAlpha = t < .5 ? 1 : 2 - t * 2; c.translate(p.x + cs / 2 + p.vx * t, p.y + cs / 2 + 30 * t * t); c.rotate(p.rot * t); c.scale(z, z);
-              var gr = c.createLinearGradient(0, -cs / 2, 0, cs / 2); gr.addColorStop(0, C1[p.k]); gr.addColorStop(1, C2[p.k]);
-              c.fillStyle = gr; rr(-cs / 2, -cs / 2, cs, cs, cs * .26); c.fill();
-              if (IMG[p.k].complete) c.drawImage(IMG[p.k], -cs * .32, -cs * .32, cs * .64, cs * .64);
+              if (npic >= 6) c.drawImage(PIC[p.k], -cs / 2, -cs / 2, cs, cs);
+              else {
+                var gr = c.createLinearGradient(0, -cs / 2, 0, cs / 2); gr.addColorStop(0, C1[p.k]); gr.addColorStop(1, C2[p.k]);
+                c.fillStyle = gr; rr(-cs / 2, -cs / 2, cs, cs, cs * .26); c.fill();
+                if (IMG[p.k].complete) c.drawImage(IMG[p.k], -cs * .32, -cs * .32, cs * .64, cs * .64);
+              }
               if (!pre && t < .22) { c.globalAlpha = 1 - t / .22; c.fillStyle = '#fffbe8'; rr(-cs / 2, -cs / 2, cs, cs, cs * .26); c.fill(); }
             } else if (p.ty === 'stm') { // ไอร้อนลอยขึ้น
               e = 1 - (1 - t) * (1 - t); z = cs * .55 * (.4 + 1.2 * e);
@@ -15375,7 +15400,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
               if (p.ty === 'bs') { e = t < .55 ? 1 - Math.pow(1 - t / .55, 2) : 1 + (t - .55) * .44; z = t < .55 ? .4 + 1.27 * t : 1.1 * (1 - (t - .55) / .45); c.globalAlpha = t < .55 ? 1 : 1 - (t - .55) / .45; c.translate(p.x + p.dx * e, p.y + p.dy * e + (t > .55 ? (t - .55) * 42 : 0)); }
               else { e = 1 - Math.pow(1 - t, 3); z = 1 - e; c.globalAlpha = 1 - t * .5; c.translate(p.x + p.dx * e, p.y + p.dy * e); c.rotate((p.r || 0) * e); }
               c.scale(z, z); c.fillStyle = p.c;
-              if (p.st) star(8); else rr(-5, -5, 10, 10, 3);
+              if (p.st) star(p.z || 8); else rr(-5, -5, 10, 10, 3);
               c.fill();
             }
           }
@@ -15399,10 +15424,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         requestAnimationFrame(decoClip); setTimeout(decoClip, 700);
         if (root.addEventListener) root.addEventListener('resize', function rs() { if (!R.isConnected) return root.removeEventListener('resize', rs); requestAnimationFrame(decoClip); });
         function mood(m, ms, el) {
-          el = el || chef; ['dance', 'joy', 'sad'].forEach(function (c) { if (c !== m) el.classList.remove(c); });
+          el = el || chef; ['dance', 'joy', 'sad', 'party'].forEach(function (c) { if (c !== m) el.classList.remove(c); });
           if (m) el.classList.add(m);
-          avIn(el, m || 'idle');
-          if (el === chef && !RM && (m === 'dance' || m === 'joy')) [].forEach.call(R.querySelectorAll('.sb-cheer i'), function (e, i) { an(e, [{ transform: 'none' }, { transform: 'translateY(-14px) rotate(' + (i % 2 ? 10 : -10) + 'deg) scale(1.1)' }, { transform: 'none' }], { duration: 560, delay: i * 90, easing: 'cubic-bezier(.3,1.6,.5,1)' }); });
+          // หน้าจบรอบเปิดอยู่: ตัวน้องในจอเล่น (อยู่ใต้หน้าจบรอบ) เปลี่ยนแค่คลาสท่า ท่าที่แอปวาดเล่นที่ตัวในหน้าจบรอบตัวเดียว
+          // (2.13.39 ตัวน้องสามมิติมีเวทีเล่นท่าได้ทีละตัว สั่งสองตัวพร้อมกัน เวทีขึ้นที่ตัวใหญ่แล้วย้ายไปตัวเล็กทันที ต้องวาดใหม่ทั้งเวที)
+          if (!(el === chef && endEl.classList.contains('on'))) avIn(el, m || 'idle');
+          if (el === chef && !RM && (m === 'dance' || m === 'joy' || m === 'party')) [].forEach.call(R.querySelectorAll('.sb-cheer i'), function (e, i) { an(e, [{ transform: 'none' }, { transform: 'translateY(-14px) rotate(' + (i % 2 ? 10 : -10) + 'deg) scale(1.1)' }, { transform: 'none' }], { duration: 560, delay: i * 90, easing: 'cubic-bezier(.3,1.6,.5,1)' }); });
           if (el === chef) { clearTimeout(mt); if (ms) mt = setTimeout(function () { mood(''); }, ms); }
         }
         function sfx(n, c) {
@@ -15417,6 +15444,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           else if (n === 'hit') tone(140, .2, 'square', 0, .07, 60);
         }
         function sndBtn() { var b = q('.sb-snd'); b.innerHTML = snd ? IC.on : IC.off; b.setAttribute('aria-label', snd ? 'ปิดเสียง' : 'เปิดเสียง'); b.classList.toggle('on', snd); }
+        function vibBtn() { var b = q('.sb-vib'); b.innerHTML = vib ? IC.von : IC.voff; b.setAttribute('aria-label', vib ? 'ปิดการสั่น' : 'เปิดการสั่น'); b.classList.toggle('on', vib); }
+        // สั่นตอนเคลียร์และคอมโบ ปิดได้ที่ปุ่มข้างปุ่มเสียง (เจ้าของ 1 พ.ย. 2569 "ตอนเล่นให้โทรสั่นตอนคอมโบ") · Android: navigator.vibrate ยาวและแรงขึ้นตามระดับ
+        function bz(p) { if (vib) buzz(p); }
+        // iPhone ไม่มี navigator.vibrate: Safari บน iOS 18 ขึ้นไปเคาะเบา 1 ครั้งเมื่อสวิตช์ (input checkbox switch) เปลี่ยน
+        // ต้องเรียกทันทีในตัวจัดการตอนปล่อยนิ้ว (ไม่ผ่านตัวจับเวลา) · เครื่องอื่นเป็นช่องติ๊กที่มองไม่เห็น ไม่มีผล
+        function hap() {
+          if (!vib) return;
+          try {
+            if (!hp) { hp = h('label', 'sb-hp', '<input type="checkbox" switch tabindex="-1">'); hp.setAttribute('aria-hidden', 'true'); R.appendChild(hp); }
+            hp.click();
+          } catch (e) { /* เครื่องที่สั่นไม่ได้ เล่นต่อได้ */ }
+        }
         function fit() {
           cvFit(); gc = null;
           var r = R.getBoundingClientRect(), short = r.height < 700;
@@ -15537,7 +15576,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (!d || (e && e.pointerId !== d.id)) return; geo();
           if (d.raf) { cancelAnimationFrame(d.raf); frame(); }
           drag = null; unmark(); d.sl.classList.remove('lift');
-          if (d.ok && C.fits(st.b, d.pc.s, d.gx, d.gy)) { d.el.parentNode.removeChild(d.el); doPlace(d.s, d.gx, d.gy); return; }
+          if (d.ok && C.fits(st.b, d.pc.s, d.gx, d.gy)) { d.el.parentNode.removeChild(d.el); var res3 = doPlace(d.s, d.gx, d.gy); if (res3 && res3.lines.length) hap(); return; }
           var r = d.sl.getBoundingClientRect();
           go(d.el, [{ transform: d.el.style.transform }, { transform: 'translate3d(' + (r.left + r.width / 2 - d.w / 2 - d.rr.left) + 'px,' + (r.top + r.height / 2 - d.h / 2 - d.rr.top) + 'px,0) scale(.4)', opacity: .2 }], { duration: 240, easing: 'ease-in' });
           sfx('no');
@@ -15595,8 +15634,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (big || cb >= 2) word(big || 'คอมโบ ' + cb + '!', big && cb >= 2 ? 'คอมโบ ' + cb : '', Math.max(cb, k));
           if (cb >= 2) glowUp(cb);
           if (k >= 2 || cb >= 3) shake(Math.min(7, 2 + k + cb * .6));
-          if (res.served.length) { mood('joy', 1700); sfx('serve'); } else if (cb >= 2 || k >= 2) mood('dance', 1500);
-          sfx('clear', cb); buzz(k >= 2 ? [18, 40, 22] : 16);
+          // คอมโบไล่ระดับ ยิ่งสูงยิ่งอลัง (เจ้าของ 1 พ.ย. 2569): 2 คำเด้งมีประกาย · 3 คลื่นแสงรอบกระดาน อนุภาคหลากสี · 4 ขึ้นไป จอวาบ ดาวพุ่งเต็มจอ ตัวคูณใหญ่กลางจอ ตัวน้องเต้นท่าพิเศษ
+          var lv = Math.max(cb, k);
+          if (lv >= 2) sparkle(lv);
+          if (lv >= 3) wave(lv);
+          if (cb >= 4) mega(res.mult);
+          // เคลียร์หลายแถวหรือกระดานหมด: ฉากฉลอง
+          if (k >= 2 || res.perfect) party(res.perfect ? 3 : k >= 3 ? 2 : 1);
+          if (cb >= 4) mood('party', 2000); else if (res.served.length) mood('joy', 1700); else if (cb >= 2 || k >= 2) mood('dance', 1500);
+          if (res.served.length) sfx('serve');
+          // สั่นยาวและแรงขึ้นตามระดับ (Android) · iPhone เคาะแล้วตอนปล่อยนิ้ว (hap ใน onUp)
+          sfx('clear', cb); bz(lv >= 4 ? [45, 30, 70, 30, 100] : lv === 3 ? [32, 30, 48, 30, 64] : lv === 2 ? [24, 36, 40] : 18);
         }
         function dishFly(L, sv2, i, res) {
           var b = geo().bd, s = geo().sc, col = L[0], ix = L[1], mid = pad + 4 * cs + 3.5 * g;
@@ -15616,12 +15664,47 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           for (var i = 0; i < n; i++) { var a = i / n * 6.283 + Math.random() * .3, r = 40 + Math.random() * 42; emit({ ty: 'bs', st: !(i % 3), x: x, y: y, dx: Math.cos(a) * r, dy: Math.sin(a) * r, c: (cols || C1)[i % 6], d: 950 + Math.random() * 300 }); }
         }
         function word(t, sub, lvl) {
-          var e = spawn('sb-word', t + (sub ? '<small>' + sub + '</small>' : ''), fly), b = geo().bd, s = 1 + Math.min(lvl || 0, 6) * .12;
+          var e = spawn('sb-word' + (lvl >= 4 ? ' l4' : lvl >= 3 ? ' l3' : lvl >= 2 ? ' l2' : ''), t + (sub ? '<small>' + sub + '</small>' : ''), fly), b = geo().bd, s = 1 + Math.min(lvl || 0, 6) * .12;
           var T = 'translate(' + (b.x + b.w / 2) + 'px,' + (b.y + b.h * .42) + 'px) translate(-50%,-50%)';
           go(e, [{ transform: T + ' scale(' + .3 * s + ') rotate(-12deg)', opacity: 0 }, { transform: T + ' scale(' + 1.2 * s + ') rotate(4deg)', opacity: 1, offset: .22 }, { transform: T + ' scale(' + s + ') rotate(0)', opacity: 1, offset: .7 }, { transform: T + ' translateY(-30px) scale(' + s + ')', opacity: 0 }], { duration: 1200, easing: 'ease-out', fill: 'both' });
         }
         function glowUp(cb) { if (RM) return; an(glow, [{ opacity: 0 }, { opacity: Math.min(1, .45 + cb * .1), offset: .2 }, { opacity: 0 }], { duration: 950, easing: 'ease-out' }); }
         function shake(a) { if (RM) return; an(bd, [{ transform: 'none' }, { transform: 'translate(' + -a + 'px,' + a / 2 + 'px)' }, { transform: 'translate(' + a + 'px,' + -a / 2 + 'px)' }, { transform: 'translate(' + -a / 2 + 'px,0)' }, { transform: 'none' }], { duration: 320 }); }
+        // ประกายทองรอบคำคอมโบ (คอมโบ 2 ขึ้นไป)
+        function sparkle(lv) {
+          if (RM) return;
+          var b = geo().bd, x = b.x + b.w / 2, y = b.y + b.h * .42, n = 8 + lv * 3;
+          for (var i = 0; i < n; i++) { var a = i / n * 6.283, r = 70 + Math.random() * 60; emit({ ty: 'sp', st: 1, x: x + Math.cos(a) * 40, y: y + Math.sin(a) * 16, dx: Math.cos(a) * r, dy: Math.sin(a) * r * .6 - 10, r: 2, c: i % 2 ? '#fff3a0' : '#ffd23f', d: 700 + Math.random() * 300, dl: 60 }); }
+        }
+        var RB = ['#ff3b6b', '#ff9f1c', '#ffe14d', '#3ddc84', '#36c5f0', '#9b6bff'];
+        // คลื่นแสงสองระลอกรอบกระดาน และอนุภาคหลากสีพุ่งออกจากขอบกระดาน (คอมโบ 3 ขึ้นไป)
+        function wave(lv) {
+          if (RM) return;
+          for (var i = 0; i < 2; i++) go(spawn('sb-wave' + (lv >= 4 ? ' l4' : '')), [{ transform: 'scale(.97)', opacity: 0 }, { transform: 'scale(1)', opacity: 1, offset: .2 }, { transform: 'scale(1.12)', opacity: 0 }], { duration: 700, delay: i * 200, easing: 'ease-out', fill: 'both' });
+          var b = geo().bd, n = lv >= 4 ? 28 : 20;
+          for (i = 0; i < n; i++) {
+            var sd = i % 4, u = Math.random(), px = sd < 2 ? b.x + u * b.w : sd === 2 ? b.x : b.x + b.w, py = sd === 0 ? b.y : sd === 1 ? b.y + b.h : b.y + u * b.h;
+            var vx = sd === 2 ? -1 : sd === 3 ? 1 : u - .5, vy = sd === 0 ? -1 : sd === 1 ? 1 : u - .5, r = 30 + Math.random() * 50;
+            emit({ ty: 'sp', st: !(i % 3), x: px, y: py, dx: vx * r, dy: vy * r, r: 3, c: RB[i % 6], d: 650 + Math.random() * 300 });
+          }
+        }
+        // คอมโบ 4 ขึ้นไป: จอวาบ ดาวพุ่งจากกลางกระดานไปทั่วจอ ตัวคูณใหญ่กลางจอ
+        function mega(mult) {
+          if (RM) return;
+          an(flash, [{ opacity: 0 }, { opacity: .8, offset: .15 }, { opacity: 0 }], { duration: 420, easing: 'ease-out' });
+          var r = geo().R, b = geo().bd, cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+          for (var i = 0; i < 26; i++) { var a = i / 26 * 6.283 + Math.random() * .2, d = Math.max(r.w, r.h) * (.45 + Math.random() * .25); emit({ ty: 'bs', st: 1, z: 11, x: cx, y: cy, dx: Math.cos(a) * d, dy: Math.sin(a) * d, c: RB[i % 6], d: 900 + Math.random() * 300 }); }
+          var e = spawn('sb-mul', '×' + mult, fly), T = 'translate(' + cx + 'px,' + (b.y + b.h * .74) + 'px) translate(-50%,-50%)';
+          go(e, [{ transform: T + ' scale(.2) rotate(-20deg)', opacity: 0 }, { transform: T + ' scale(1.3) rotate(6deg)', opacity: 1, offset: .2 }, { transform: T + ' scale(1) rotate(0)', opacity: 1, offset: .65 }, { transform: T + ' scale(1.5)', opacity: 0 }], { duration: 1150, delay: 120, easing: 'ease-out', fill: 'both' });
+        }
+        // ฉากฉลอง: พลุและกระดาษสีหลากสี มากขึ้นตามระดับ (1 เคลียร์ 2 แถว · 2 สามแถวขึ้นไป · 3 กระดานหมด มีจอวาบด้วย)
+        function party(n) {
+          if (RM) return;
+          var r = geo().R;
+          for (var i = 0; i <= n; i++) (function (i) { tmr.push(setTimeout(function () { burst(r.w * (.2 + Math.random() * .6), r.h * (.15 + Math.random() * .25), 12, fly, i % 2 ? RB : null); }, 120 + i * 240)); })(i);
+          for (i = 0; i < 10 + n * 10; i++) emit({ ty: 'cf', x: Math.random() * r.w, y: -20, dx: (Math.random() - .5) * 120, dy: r.h + 40, r: 6 + Math.random() * 9, c: RB[i % 6], d: 1700 + Math.random() * 1200, dl: Math.random() * 500 });
+          if (n >= 3) an(flash, [{ opacity: 0 }, { opacity: .6, offset: .2 }, { opacity: 0 }], { duration: 500, easing: 'ease-out' });
+        }
         function doHammer(c) {
           var x = c % W, y = (c / W) | 0, hit = C.hammer(st, x, y), i;
           if (!hit) return;
@@ -15633,7 +15716,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           }
           var hm = spawn('sb-hm', IC.ham), T2 = 'translate(' + (P(x) - 6) + 'px,' + (P(y) - 30) + 'px)';
           go(hm, [{ transform: T2 + ' rotate(-50deg) scale(1.4)', opacity: 0 }, { transform: T2 + ' rotate(20deg) scale(1.4)', opacity: 1, offset: .4 }, { transform: T2 + ' rotate(0) scale(1.3)', opacity: 0 }], { duration: 520, easing: 'ease-in', fill: 'both' });
-          shake(5); sfx('hit'); buzz(20);
+          shake(5); sfx('hit'); bz(20);
           drawTray(); tools();
           if (st.over) tmr.push(setTimeout(showEnd, 700)); else if (st.stuck) stuck(); else msgOff();
         }
@@ -15669,7 +15752,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
             em.className = 'sb-em bad'; em.textContent = (e && e.message) || 'บันทึกรอบนี้ไม่ได้';
             var b = h('button', 'sb-resend', 'ส่งใหม่'); b.type = 'button'; em.appendChild(b);
             bs.forEach(function (x) { x.disabled = false; });
-            buzz([30, 60, 30]);
+            bz([30, 60, 30]);
           });
         }
         // ได้ของพิเศษจากเกม: การ์ดเด้งขึ้นใต้ผลรอบ ไอคอนส่าย พลุ และเสียงแบบเดียวกับตอนทำสถิติใหม่
@@ -15680,7 +15763,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           c.className = 'sb-find' + (t.rare ? ' rare' : '');
           c.innerHTML = t.find;
           em.parentNode.insertBefore(c, em.nextSibling);
-          sfx('win'); buzz([20, 40, 20]);
+          sfx('win'); bz([20, 40, 20]);
           tmr.push(setTimeout(fireworks, 300));
         }
         function showEnd() {
@@ -15700,7 +15783,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
             '<div class="sb-eb' + (nb ? ' nb' : '') + '">' + (nb ? 'สถิติใหม่!' : sc === prev ? 'เท่าสถิติเดิม! อีกนิดเดียว' : 'อีก ' + fmt(prev - sc + 1) + ' คะแนนจะทำลายสถิติ') + '</div>' +
             '<div class="sb-e3"><div><b>' + st.maxCombo + '</b><span>คอมโบสูงสุด</span></div><div><b>' + st.served.length + '</b><span>เมนูที่เสิร์ฟ</span></div><div><b>' + st.lines + '</b><span>แถวที่เคลียร์</span></div></div>' +
             '<div class="sb-ed">' + dishes + '</div><p class="sb-er">สถิติส่วนตัว ' + fmt(stats.best) + (mode === 'daily' ? ' · วันนี้ดีสุด ' + fmt(dd.best) : '') + '</p><p class="sb-em">' + team + '</p>' +
-            '<button class="sb-again" type="button">เล่นอีกรอบ</button><button class="sb-alt" type="button">' + (mode === 'daily' ? 'ลองเล่นอิสระ' : 'กลับไปโจทย์วันนี้') + '</button></div>';
+            '<div class="sb-eg"><button class="sb-out" type="button">ออกจากเกม</button><button class="sb-again" type="button">เล่นอีกรอบ</button></div><button class="sb-alt" type="button">' + (mode === 'daily' ? 'ลองเล่นอิสระ' : 'กลับไปโจทย์วันนี้') + '</button></div>';
           endEl.classList.add('on');
           if (o.onEnd) send(res);
           var ec = endEl.querySelector('.sb-ec'), od = Odo(endEl.querySelector('.sb-odo'));
@@ -15722,14 +15805,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           // ปุ่มลองใส่บนการ์ดของพิเศษ: ปิดจอเล่นก่อน แล้วแอปเปิดร้านค้าที่ป้ายนั้น
           if (t.classList.contains('sb-try')) { if (o.onClose) o.onClose(); }
           else if (t.classList.contains('sb-snd')) { snd = !snd; ls('sb-snd', snd ? '1' : '0'); sndBtn(); sfx('serve'); }
+          else if (t.classList.contains('sb-vib')) { vib = !vib; ls('sb-vib', vib ? '1' : '0'); vibBtn(); if (vib) { buzz(30); hap(); } }
           else if (t.classList.contains('sb-tool')) { if (!t.classList.contains('off') && !st.over) setTool(t.getAttribute('data-t')); }
           else if (t.classList.contains('sb-quit')) { C.end(st); msgOff(); showEnd(); }
+          // ปุ่มออกจากเกมบนหน้าจบรอบ (เจ้าของ 1 พ.ย. 2569 "พอเล่นเสร็จไม่มีให้กดออก"): ปิดจอเล่นเหมือนปุ่มปิดมุมบน รอบที่กำลังบันทึกบันทึกต่อ
+          else if (t.classList.contains('sb-out')) { if (o.onClose) o.onClose(); }
           else if (t.classList.contains('sb-again')) again(mode);
           else if (t.classList.contains('sb-alt')) again(mode === 'daily' ? 'free' : 'daily');
           else if (t.classList.contains('sb-resend')) { if (last) send(last); }
         });
         root.addEventListener('resize', fit);
-        sndBtn(); start(mode); fit();
+        sndBtn(); vibBtn(); start(mode); fit();
         return {
           get st() { return st; },
           start: start, drop: doPlace, fit: fit, pause: function () { paused = 1; },
@@ -15750,13 +15836,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     })(window);
     var css = document.createElement('style');
     css.id = 'sb-css';
-    css.textContent = "/* ครัวโซลฟูล · หน้าตา (ขยับด้วย transform และ opacity เท่านั้น) */\n.sb{--cs:40px;--g:3px;--t1:#2a1f17;--t2:#85786b;--cd:rgba(255,255,255,.74);--cdl:rgba(92,68,36,.12);position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:6px;height:100%;padding:6px 14px calc(8px + env(safe-area-inset-bottom));overflow:hidden;font-family:var(--font,system-ui,sans-serif);color:var(--t1);background:radial-gradient(120% 60% at 15% 0,rgba(255,206,140,.55),transparent 60%),radial-gradient(80% 50% at 100% 35%,rgba(255,168,140,.32),transparent 60%),var(--bg,#f2eee7);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}\n.sb,.sb *{box-sizing:border-box}\n.sb button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cursor:pointer}\n.sb svg{display:block}\n.sb.th-autumn{background:radial-gradient(120% 60% at 15% 0,rgba(255,180,100,.6),transparent 60%),radial-gradient(80% 50% at 100% 40%,rgba(226,110,60,.26),transparent 60%),#f4ece0}\n.sb.th-loy,.sb.th-xmas{--t1:#fff8ec;--t2:rgba(255,244,228,.72);--cd:rgba(255,255,255,.13);--cdl:rgba(255,255,255,.16)}\n.sb.th-loy{background:radial-gradient(90% 50% at 80% 0,rgba(255,190,90,.35),transparent 60%),linear-gradient(180deg,#0f1c42,#1d3470 60%,#2a4f8f)}\n.sb.th-xmas{background:radial-gradient(90% 50% at 20% 0,rgba(255,120,110,.3),transparent 60%),linear-gradient(180deg,#0f3326,#1b5038)}\n.sb-top,.sb-hud,.sb-ords,.sb-bd,.sb-tray,.sb-bar{position:relative;z-index:1;flex:none}\n.sb-deco{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}\n.sb-deco i{position:absolute;top:0;opacity:.5;will-change:transform}\n.sb-deco i.dn{animation:sbDn 20s linear infinite}\n.sb-deco i.up{animation:sbUp 20s linear infinite}\n.sb-deco i.fl{top:auto;bottom:6px;width:42px;opacity:.9;animation:sbBob 5s ease-in-out infinite}\n.sb-deco svg{width:100%;height:auto}\n@keyframes sbDn{from{transform:translateY(-10vh) rotate(0)}to{transform:translateY(105vh) rotate(300deg)}}\n@keyframes sbUp{from{transform:translateY(105vh)}to{transform:translateY(-12vh)}}\n@keyframes sbBob{50%{transform:translate(16px,-5px) rotate(4deg)}}\n.sb-glow{position:absolute;inset:0;z-index:20;pointer-events:none;opacity:0;will-change:opacity;background:linear-gradient(90deg,rgba(255,110,20,.9),rgba(255,150,40,0) 13%,rgba(255,150,40,0) 87%,rgba(255,110,20,.9)),linear-gradient(180deg,rgba(255,110,20,.9),rgba(255,150,40,0) 9%,rgba(255,150,40,0) 91%,rgba(255,110,20,.9))}\n.sb-top{display:flex;align-items:center;gap:8px;height:42px}\n.sb-x,.sb-snd{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-x svg,.sb-snd svg{width:20px;height:20px}\n.sb-snd{color:var(--t2)}\n.sb-snd.on{color:#e0702a}\n.sb-ttl{flex:1;min-width:0;line-height:1.3}\n.sb-ttl b{display:block;font-size:17px;font-weight:800}\n.sb-ttl span{display:block;font-size:12.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-left{flex:none;min-width:64px;padding:3px 8px;border-radius:14px;text-align:center;line-height:1.2;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-left b{display:block;font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}\n.sb-left span{font-size:10.5px;color:var(--t2)}\n.sb.low .sb-left b{color:#e0482f}\n.sb-hud{display:flex;align-items:flex-end;gap:10px;height:104px}\n.sb-chef{position:relative;flex:none;width:62px;height:104px}\n.sb-chef svg{position:absolute;left:-2px;bottom:-10px;width:66px;height:123px;overflow:visible}\n.sb-av{position:absolute;inset:0;transform-origin:50% 100%}\n.sb-sc{flex:1;min-width:0;padding-bottom:8px;line-height:1.2;transform-origin:20% 70%}\n.sb-sc>span,.sb-sc small{display:block;font-size:12.5px;color:var(--t2)}\n.sb-sc small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-odo{display:flex;height:1em;overflow:hidden;font-size:40px;font-weight:800;line-height:1;letter-spacing:-.5px;font-variant-numeric:tabular-nums}\n.sb-d{display:block;height:1em;overflow:hidden}\n.sb-d>span{display:block;transition:transform .5s cubic-bezier(.3,1.25,.5,1);will-change:transform}\n.sb-heat{flex:none;width:84px;padding-bottom:6px;text-align:center;line-height:1.2}\n.sb-pot{position:relative;width:56px;height:52px;margin:0 auto}\n.sb-pot>svg{position:absolute;left:0;top:0;width:56px;height:40px}\n.sb-fl{position:absolute;left:12px;bottom:-4px;width:32px;height:38px;transform-origin:50% 100%;transition:transform .45s cubic-bezier(.3,1.5,.5,1),opacity .3s}\n.sb-fl svg{width:100%;height:100%;transform-origin:50% 100%;animation:sbFlick .5s ease-in-out infinite alternate}\n@keyframes sbFlick{from{transform:scale(1,1)}to{transform:scale(.9,1.12)}}\n.sb-heat.hot .sb-pot::after{content:\"\";position:absolute;left:-14px;right:-14px;bottom:-16px;height:46px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,150,40,.7),transparent);animation:sbPulse .6s ease-in-out infinite alternate}\n.sb-heat b{display:block;font-size:20px;font-weight:800;color:#e0552f}\n.sb-heat span{display:block;font-size:11px;color:var(--t2)}\n.sb-ords{display:grid;grid-template-columns:1fr 1fr;gap:8px;height:58px}\n.sb-ord{display:flex;align-items:center;gap:5px;min-width:0;padding:5px 7px;border-radius:16px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 6px 14px -10px rgba(60,30,10,.4);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-ord.hit{transform:scale(1.05);box-shadow:inset 0 0 0 2px #ffb020,0 0 16px rgba(255,170,40,.7)}\n.sb-dm{flex:none;width:40px}\n.sb-dm svg{width:40px;height:34px}\n.sb-ot{flex:1;min-width:0;line-height:1.3}\n.sb-ot b{display:block;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-ot span{display:flex;align-items:center;gap:1px;font-size:12.5px;font-weight:800}\n.sb-ki{display:inline-block;width:17px;height:17px;margin-left:3px;border-radius:5px;background:var(--i) center/82% no-repeat,linear-gradient(var(--c1),var(--c2))}\n.sb-ki:first-child{margin-left:0}\n.sb-ord em{flex:none;padding:2px 6px;border-radius:99px;font-style:normal;font-size:11.5px;font-weight:800;color:#b4410f;background:#ffe9cf}\n.sb-bd{align-self:center;will-change:transform}\n.sb-grid{display:grid;grid-template-columns:repeat(8,var(--cs));grid-auto-rows:var(--cs);gap:var(--g);padding:6px;border-radius:20px;background:linear-gradient(180deg,#46342a,#2c2019);box-shadow:inset 0 2px 0 rgba(255,255,255,.1),inset 0 0 0 1px rgba(255,255,255,.05),0 16px 30px -14px rgba(40,20,5,.6)}\n.sb-c{position:relative;display:block;border-radius:calc(var(--cs)*.26);background:rgba(255,255,255,.06);box-shadow:inset 0 1px 2px rgba(0,0,0,.25)}\n.sb-c.f,.sb-bk{background:var(--i) center/64% no-repeat,linear-gradient(var(--c1),var(--c2));box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 2px 3px rgba(0,0,0,.28)}\n.sb-c.gh{background:linear-gradient(var(--c1),var(--c2));opacity:.5;box-shadow:none}\n.sb-c.ln::after{content:\"\";position:absolute;inset:-1px;border-radius:inherit;box-shadow:0 0 0 2px #fff4b8,0 0 14px 3px rgba(255,205,70,.9);animation:sbPulse .55s ease-in-out infinite alternate}\n@keyframes sbPulse{from{opacity:.4}to{opacity:1}}\n.sb-fx,.sb-fly{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}\n.sb-fly{z-index:60}\n.sb-cv{position:absolute;left:0;top:0;z-index:58;pointer-events:none}\n.sb-fx>*,.sb-fly>*{position:absolute;left:0;top:0;will-change:transform,opacity}\n.sb-bk{width:var(--cs);height:var(--cs);border-radius:calc(var(--cs)*.26)}\n.sb-beam{border-radius:12px;background:linear-gradient(90deg,rgba(255,250,220,0),rgba(255,250,220,.95),rgba(255,250,220,0))}\n.sb-ring{width:60px;height:20px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.85)}\n.sb-pts{width:60px;text-align:center;white-space:nowrap;font-size:21px;font-weight:900;color:#fff;text-shadow:0 2px 0 rgba(120,50,0,.55),0 0 10px rgba(255,170,40,.95)}\n.sb-pts small{margin-left:2px;font-size:13px;color:#ffe08a}\n.sb-word{white-space:nowrap;text-align:center;font-size:36px;font-weight:900;line-height:1.15;color:#fff;text-shadow:0 3px 0 #c2410c,0 5px 0 #8a2a07}\n.sb-word small{display:block;font-size:19px;color:#ffe08a}\n.sb-dish{display:flex;flex-direction:column;align-items:center;width:100px;margin:-34px 0 0 -50px}\n.sb-dish svg{width:70px;height:58px}\n.sb-dish.big{width:232px;margin:-56px 0 0 -116px}\n.sb-dish.big svg{width:104px;height:86px}\n.sb-dish b{margin-top:2px;padding:5px 14px;border-radius:99px;white-space:nowrap;font-size:16px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ff9a4a,#e0480f);box-shadow:0 8px 16px -6px rgba(180,60,0,.7),inset 0 1px 0 rgba(255,255,255,.4)}\n.sb-dish em{margin-top:3px;font-style:normal;font-size:18px;font-weight:900;color:#fff4c2;text-shadow:0 2px 0 rgba(120,40,0,.6)}\n.sb-hm,.sb-hm svg{width:36px;height:36px}\n.sb-dw{position:relative;display:block;font-style:normal}\n.sb .sb-stv{position:absolute;left:0;top:0;pointer-events:none;animation:sbStm 1.6s ease-in-out infinite alternate}\n@keyframes sbStm{0%{transform:translateY(5%);opacity:.3}100%{transform:translateY(-7%);opacity:1}}\n.sb-tip{position:absolute;left:7%;right:7%;top:27%;text-align:center;font-size:13.5px;line-height:1.6;color:rgba(255,248,236,.8);pointer-events:none;transition:opacity .4s}\n.sb-tip b{display:block;margin-bottom:6px;font-size:18px;color:#fff}\n.sb-tray{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;height:104px}\n.sb-slot{display:grid;place-items:center;min-width:0;border-radius:20px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 8px 18px -12px rgba(60,30,10,.4);transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .25s}\n.sb-slot.lift{opacity:.25;transform:scale(.9)}\n.sb-slot.no .sb-pc{opacity:.32}\n.sb-pc{position:relative}\n.sb-pc .sb-c{position:absolute}\n.sb.t-s .sb-slot{animation:sbWig .45s ease-in-out infinite alternate}\n@keyframes sbWig{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}\n.sb-drag{position:absolute;left:0;top:0;z-index:50;pointer-events:none;will-change:transform}\n.sb-drag .sb-c{box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 10px 16px rgba(0,0,0,.3)}\n.sb-bar{display:flex;align-items:center;gap:8px;height:46px}\n.sb-tool{display:flex;align-items:center;gap:5px;height:42px;padding:0 10px 0 8px;border-radius:99px;font-size:13.5px;font-weight:700;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-tool svg{width:24px;height:24px}\n.sb-tool em{min-width:20px;height:20px;padding:0 5px;border-radius:99px;font-style:normal;font-size:12px;line-height:20px;text-align:center;color:#fff;background:#e0552f}\n.sb-tool.off{opacity:.38}\n.sb-tool.off em{background:#9a8f84}\n.sb.t-h .sb-tool[data-t=h],.sb.t-s .sb-tool[data-t=s]{transform:scale(1.07);box-shadow:inset 0 0 0 2px #ffb020,0 0 14px rgba(255,170,40,.6)}\n.sb-next{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;color:var(--t2)}\n.sb-next i{display:grid;place-items:center;width:52px;height:42px;border-radius:12px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-msg{position:absolute;left:16px;right:16px;bottom:168px;z-index:30;padding:12px 14px;border-radius:18px;text-align:center;font-size:14px;line-height:1.45;color:#fff;background:rgba(32,22,14,.93);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s,transform .35s cubic-bezier(.3,1.4,.5,1)}\n.sb-msg.on{opacity:1;transform:none;pointer-events:auto}\n.sb-msg b{display:block;font-size:16px}\n.sb .sb-quit{display:block;height:38px;margin:8px auto 0;padding:0 22px;border-radius:99px;font-weight:800;color:#24170e;background:#fff}\n.sb-end{position:absolute;inset:0;z-index:40;display:flex;align-items:flex-end;background:rgba(24,14,6,.5);opacity:0;pointer-events:none;transition:opacity .35s}\n.sb-end.on{opacity:1;pointer-events:auto}\n.sb-ep{width:100%;padding:16px 18px calc(16px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;text-align:center;color:#2a1f17;background:var(--surface,#fffdf9);transform:translateY(100%);transition:transform .55s cubic-bezier(.22,1,.36,1)}\n.sb-end.on .sb-ep{transform:none}\n.sb-et{font-size:20px;font-weight:800}\n.sb .sb-ec{width:92px;height:142px;margin:0 auto}\n.sb .sb-ec svg{left:0;bottom:-12px;width:92px;height:172px}\n.sb-es{display:flex;justify-content:center}\n.sb-es .sb-odo{font-size:54px;color:#e0552f}\n.sb-eb{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:99px;font-size:14px;font-weight:700;color:#6b5b4b;background:#f4ece1}\n.sb-eb.nb{font-size:16px;color:#fff;background:linear-gradient(90deg,#ffcf4a,#ff8a3d);animation:sbBeat 1s ease-in-out infinite}\n.sb-e3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 8px}\n.sb-e3 div{padding:8px 4px;border-radius:14px;line-height:1.25;background:#f7f1e8}\n.sb-e3 b{display:block;font-size:22px;font-weight:800}\n.sb-e3 span{font-size:12px;color:#85786b}\n.sb-ed{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px;min-height:40px;font-size:12.5px;color:#85786b}\n.sb-ed i{position:relative}\n.sb-ed svg{width:44px;height:37px}\n.sb-ed b{position:absolute;right:-4px;bottom:-2px;padding:0 5px;border-radius:99px;font-size:11px;font-weight:800;color:#fff;background:#e0552f}\n.sb-er,.sb-em{margin:6px 0 0;font-size:13px;color:#6b5b4b}\n.sb-ep .sb-em{font-weight:700;color:#2d6a4d}\n.sb .sb-find{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:10px 14px;border-radius:18px;text-align:left;background:linear-gradient(135deg,#fff6d8,#ffe3ee);box-shadow:0 10px 22px -12px rgba(224,85,47,.6);animation:sbFind .75s cubic-bezier(.2,1.5,.4,1) both}\n.sb .sb-find.rare{background:linear-gradient(135deg,#efe6ff,#dcf5ff)}\n.sb .sb-find>i{flex:0 0 56px;height:56px;display:grid;place-items:center;font-style:normal;font-size:36px;animation:sbFindI 1.4s ease-in-out .75s 2}\n.sb .sb-find>i svg,.sb .sb-find>i img{width:56px;height:56px}\n.sb .sb-find b{display:block;font-size:16px;font-weight:800;color:#c2410c}\n.sb .sb-find.rare b{color:#7c3aed}\n.sb .sb-find small{display:block;margin-top:2px;font-size:13px;color:#6b5b4b}\n@keyframes sbFind{0%{opacity:0;transform:translateY(18px) scale(.6)}60%{opacity:1;transform:translateY(-4px) scale(1.06)}100%{opacity:1;transform:none}}\n@keyframes sbFindI{0%,100%{transform:none}50%{transform:rotate(-10deg) scale(1.15)}}\n@media (prefers-reduced-motion:reduce){.sb .sb-find,.sb .sb-find>i{animation:none}}\n.sb .sb-top{z-index:41}.sb .sb-x{position:relative;z-index:41}\n.sb .sb-find .sb-try{margin-left:auto;flex:none;border:0;border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;font-weight:700;background:#7c3aed;color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.35)}.sb .sb-again{display:block;width:100%;height:56px;margin-top:12px;border-radius:99px;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ffa24a,#e0552f);box-shadow:0 12px 24px -10px rgba(224,85,47,.8),inset 0 1px 0 rgba(255,255,255,.4);animation:sbBeat 1.3s ease-in-out infinite}\n.sb .sb-alt{display:block;width:100%;height:44px;margin-top:6px;font-size:14.5px;font-weight:700;color:#85786b}\n@keyframes sbBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}\n.sb.short .sb-hud{height:66px}\n.sb.short .sb-chef{width:40px;height:66px}\n.sb.short .sb-chef svg{width:42px;height:78px;bottom:-6px}\n.sb.short .sb-odo{font-size:30px}\n/* ตัวละคร: ขยับเบา ๆ ตลอด เต้นตอนคอมโบ ดีใจตอนเสิร์ฟ เสียดายตอนจบรอบ */\n.sb-chef.own .sb-joy,.sb-chef.own .sb-sad{opacity:0}\n.sb-chef.own.joy .sb-joy,.sb-chef.own.sad .sb-sad{opacity:1}\n.sb-chef.own.joy .cp-eyes,.sb-chef.own.joy .cp-mouth,.sb-chef.own.sad .cp-mouth{opacity:0}\n.sb-chef .sb-av{animation:sbIdle 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armL{animation:sbSwL 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armR{animation:sbSwR 2.8s ease-in-out infinite}\n.sb-chef.own .cp-eyes{transform-origin:60px 63px;animation:sbBlink 4.2s infinite}\n.sb-chef.dance .sb-av{animation:sbHop .46s ease-in-out infinite}\n.sb-chef.own.dance .cp-armL{animation:sbDL .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-armR{animation:sbDR .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-head{animation:sbNod .46s ease-in-out infinite}\n.sb-chef.joy .sb-av{animation:sbJump .62s ease-in-out infinite}\n.sb-chef.own.joy .cp-armL{animation:sbUpL .31s ease-in-out infinite alternate}\n.sb-chef.own.joy .cp-armR{animation:sbUpR .31s ease-in-out infinite alternate}\n.sb-chef.sad .sb-av{animation:sbSad 2.6s ease-in-out infinite}\n.sb-chef.own.sad .cp-head{animation:none;transform:translateY(4px) rotate(-6deg)}\n.sb-chef.own.sad .cp-armL,.sb-chef.own.sad .cp-armR{animation:none}\n.sb-chef.own.sad .sb-tear{animation:sbTear 1.5s ease-in infinite}\n@keyframes sbIdle{50%{transform:translateY(-2.5px)}}\n@keyframes sbSwL{50%{transform:rotate(6deg)}}\n@keyframes sbSwR{50%{transform:rotate(-6deg)}}\n@keyframes sbBlink{0%,92%,100%{transform:none}95%{transform:scaleY(.1)}}\n@keyframes sbHop{0%,50%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-12px) rotate(-7deg)}75%{transform:translateY(-12px) rotate(7deg)}}\n@keyframes sbDL{from{transform:rotate(30deg)}to{transform:rotate(150deg)}}\n@keyframes sbDR{from{transform:rotate(-150deg)}to{transform:rotate(-30deg)}}\n@keyframes sbNod{50%{transform:rotate(9deg)}}\n@keyframes sbJump{0%,100%{transform:translateY(0) scale(1)}15%{transform:translateY(2px) scale(1.06,.92)}50%{transform:translateY(-22px) scale(.96,1.05)}}\n@keyframes sbUpL{from{transform:rotate(135deg)}to{transform:rotate(165deg)}}\n@keyframes sbUpR{from{transform:rotate(-135deg)}to{transform:rotate(-165deg)}}\n@keyframes sbSad{50%{transform:translateY(3px) rotate(-1.5deg)}}\n@keyframes sbTear{0%{transform:translateY(0);opacity:0}25%{opacity:1}100%{transform:translateY(12px);opacity:0}}\n/* เครื่องที่ตั้งลดการเคลื่อนไหว: เหลือแบบเบา */\n@media (prefers-reduced-motion:reduce){.sb *,.sb *::after{animation:none!important;transition-duration:.01ms!important}}\n.sb .sb-cheer{flex:1;display:flex;justify-content:center;align-items:flex-end;gap:2px;min-width:0;height:46px;pointer-events:none}.sb .sb-cheer i{display:block;width:30px;height:36px;transform-origin:50% 100%;animation:sb-cheer 2.6s ease-in-out infinite}.sb .sb-cheer i:nth-child(2){animation-delay:-.9s}.sb .sb-cheer i:nth-child(3){animation-delay:-1.7s}.sb .sb-cheer svg{width:100%;height:100%;overflow:visible}@keyframes sb-cheer{0%,100%{transform:none}40%{transform:translateY(-3px) rotate(-4deg)}70%{transform:translateY(0) rotate(3deg)}}.sb.rm .sb-cheer i{animation:none}.sb .sb-em.wait{opacity:.7}.sb .sb-em.ok{color:#15803d}.sb .sb-em.bad{color:#b91c1c}.sb .sb-resend{margin-left:8px;padding:4px 12px;border:0;border-radius:99px;background:#b91c1c;color:#fff;font:inherit;font-weight:800}.sb button:disabled{opacity:.55}";
+    css.textContent = "/* ครัวโซลฟูล · หน้าตา (ขยับด้วย transform และ opacity เท่านั้น) */\n.sb{--cs:40px;--g:3px;--t1:#2a1f17;--t2:#85786b;--cd:rgba(255,255,255,.74);--cdl:rgba(92,68,36,.12);position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:6px;height:100%;padding:6px 14px calc(8px + env(safe-area-inset-bottom));overflow:hidden;font-family:var(--font,system-ui,sans-serif);color:var(--t1);background:radial-gradient(120% 60% at 15% 0,rgba(255,206,140,.55),transparent 60%),radial-gradient(80% 50% at 100% 35%,rgba(255,168,140,.32),transparent 60%),var(--bg,#f2eee7);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}\n.sb,.sb *{box-sizing:border-box}\n.sb button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cursor:pointer}\n.sb svg{display:block}\n.sb.th-autumn{background:radial-gradient(120% 60% at 15% 0,rgba(255,180,100,.6),transparent 60%),radial-gradient(80% 50% at 100% 40%,rgba(226,110,60,.26),transparent 60%),#f4ece0}\n.sb.th-loy,.sb.th-xmas{--t1:#fff8ec;--t2:rgba(255,244,228,.72);--cd:rgba(255,255,255,.13);--cdl:rgba(255,255,255,.16)}\n.sb.th-loy{background:radial-gradient(90% 50% at 80% 0,rgba(255,190,90,.35),transparent 60%),linear-gradient(180deg,#0f1c42,#1d3470 60%,#2a4f8f)}\n.sb.th-xmas{background:radial-gradient(90% 50% at 20% 0,rgba(255,120,110,.3),transparent 60%),linear-gradient(180deg,#0f3326,#1b5038)}\n.sb-top,.sb-hud,.sb-ords,.sb-bd,.sb-tray,.sb-bar{position:relative;z-index:1;flex:none}\n.sb-deco{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}\n.sb-deco i{position:absolute;top:0;opacity:.5;will-change:transform}\n.sb-deco i.dn{animation:sbDn 20s linear infinite}\n.sb-deco i.up{animation:sbUp 20s linear infinite}\n.sb-deco i.fl{top:auto;bottom:6px;width:42px;opacity:.9;animation:sbBob 5s ease-in-out infinite}\n.sb-deco svg{width:100%;height:auto}\n@keyframes sbDn{from{transform:translateY(-10vh) rotate(0)}to{transform:translateY(105vh) rotate(300deg)}}\n@keyframes sbUp{from{transform:translateY(105vh)}to{transform:translateY(-12vh)}}\n@keyframes sbBob{50%{transform:translate(16px,-5px) rotate(4deg)}}\n.sb-glow{position:absolute;inset:0;z-index:20;pointer-events:none;opacity:0;will-change:opacity;background:linear-gradient(90deg,rgba(255,110,20,.9),rgba(255,150,40,0) 13%,rgba(255,150,40,0) 87%,rgba(255,110,20,.9)),linear-gradient(180deg,rgba(255,110,20,.9),rgba(255,150,40,0) 9%,rgba(255,150,40,0) 91%,rgba(255,110,20,.9))}\n.sb-top{display:flex;align-items:center;gap:8px;height:42px}\n.sb-x,.sb-snd,.sb-vib{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-x svg,.sb-snd svg,.sb-vib svg{width:20px;height:20px}\n.sb-snd,.sb-vib{color:var(--t2)}\n.sb-snd.on,.sb-vib.on{color:#e0702a}\n.sb-ttl{flex:1;min-width:0;line-height:1.3}\n.sb-ttl b{display:block;font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-ttl span{display:block;font-size:12.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-left{flex:none;min-width:64px;padding:3px 8px;border-radius:14px;text-align:center;line-height:1.2;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-left b{display:block;font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}\n.sb-left span{font-size:10.5px;color:var(--t2)}\n.sb.low .sb-left b{color:#e0482f}\n.sb-hud{display:flex;align-items:flex-end;gap:10px;height:104px}\n.sb-chef{position:relative;flex:none;width:62px;height:104px}\n.sb-chef svg{position:absolute;left:-2px;bottom:-10px;width:66px;height:123px;overflow:visible}\n.sb-av{position:absolute;inset:0;transform-origin:50% 100%}\n.sb-sc{flex:1;min-width:0;padding-bottom:8px;line-height:1.2;transform-origin:20% 70%}\n.sb-sc>span,.sb-sc small{display:block;font-size:12.5px;color:var(--t2)}\n.sb-sc small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-odo{display:flex;height:1em;overflow:hidden;font-size:40px;font-weight:800;line-height:1;letter-spacing:-.5px;font-variant-numeric:tabular-nums}\n.sb-d{display:block;height:1em;overflow:hidden}\n.sb-d>span{display:block;transition:transform .5s cubic-bezier(.3,1.25,.5,1);will-change:transform}\n.sb-heat{flex:none;width:84px;padding-bottom:6px;text-align:center;line-height:1.2}\n.sb-pot{position:relative;width:56px;height:52px;margin:0 auto}\n.sb-pot>svg{position:absolute;left:0;top:0;width:56px;height:40px}\n.sb-fl{position:absolute;left:12px;bottom:-4px;width:32px;height:38px;transform-origin:50% 100%;transition:transform .45s cubic-bezier(.3,1.5,.5,1),opacity .3s}\n.sb-fl svg{width:100%;height:100%;transform-origin:50% 100%;animation:sbFlick .5s ease-in-out infinite alternate}\n@keyframes sbFlick{from{transform:scale(1,1)}to{transform:scale(.9,1.12)}}\n.sb-heat.hot .sb-pot::after{content:\"\";position:absolute;left:-14px;right:-14px;bottom:-16px;height:46px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,150,40,.7),transparent);animation:sbPulse .6s ease-in-out infinite alternate}\n.sb-heat b{display:block;font-size:20px;font-weight:800;color:#e0552f}\n.sb-heat span{display:block;font-size:11px;color:var(--t2)}\n.sb-ords{display:grid;grid-template-columns:1fr 1fr;gap:8px;height:58px}\n.sb-ord{display:flex;align-items:center;gap:5px;min-width:0;padding:5px 7px;border-radius:16px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 6px 14px -10px rgba(60,30,10,.4);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-ord.hit{transform:scale(1.05);box-shadow:inset 0 0 0 2px #ffb020,0 0 16px rgba(255,170,40,.7)}\n.sb-dm{flex:none;width:40px}\n.sb-dm svg{width:40px;height:34px}\n.sb-ot{flex:1;min-width:0;line-height:1.3}\n.sb-ot b{display:block;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-ot span{display:flex;align-items:center;gap:1px;font-size:12.5px;font-weight:800}\n.sb-ki{display:inline-block;width:17px;height:17px;margin-left:3px;border-radius:5px;background:var(--i) center/82% no-repeat,linear-gradient(var(--c1),var(--c2))}\n.sb-ki:first-child{margin-left:0}\n.sb-ord em{flex:none;padding:2px 6px;border-radius:99px;font-style:normal;font-size:11.5px;font-weight:800;color:#b4410f;background:#ffe9cf}\n.sb-bd{align-self:center;will-change:transform}\n.sb-grid{display:grid;grid-template-columns:repeat(8,var(--cs));grid-auto-rows:var(--cs);gap:var(--g);padding:6px;border-radius:20px;background:linear-gradient(180deg,#34428f,#1a2052);box-shadow:inset 0 2px 0 rgba(255,255,255,.16),inset 0 0 0 2px rgba(150,175,255,.24),0 16px 30px -14px rgba(20,20,70,.7)}\n.sb-c{position:relative;display:block;border-radius:calc(var(--cs)*.26);background:rgba(170,190,255,.11);box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}\n.sb-c.f,.sb-bk{background:var(--i) center/64% no-repeat,linear-gradient(var(--c1),var(--c2));box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 2px 3px rgba(0,0,0,.28)}\n.sb-c.gh{background:linear-gradient(var(--c1),var(--c2));opacity:.5;box-shadow:none}\n.sb-c.ln::after{content:\"\";position:absolute;inset:-1px;border-radius:inherit;box-shadow:0 0 0 2px #fff4b8,0 0 14px 3px rgba(255,205,70,.9);animation:sbPulse .55s ease-in-out infinite alternate}\n@keyframes sbPulse{from{opacity:.4}to{opacity:1}}\n.sb-fx,.sb-fly{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}\n.sb-fly{z-index:60}\n.sb-cv{position:absolute;left:0;top:0;z-index:58;pointer-events:none}\n.sb-fx>*,.sb-fly>*{position:absolute;left:0;top:0;will-change:transform,opacity}\n.sb-bk{width:var(--cs);height:var(--cs);border-radius:calc(var(--cs)*.26)}\n.sb-beam{border-radius:12px;background:linear-gradient(90deg,rgba(255,250,220,0),rgba(255,250,220,.95),rgba(255,250,220,0))}\n.sb-ring{width:60px;height:20px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.85)}\n.sb-pts{width:60px;text-align:center;white-space:nowrap;font-size:21px;font-weight:900;color:#fff;text-shadow:0 2px 0 rgba(120,50,0,.55),0 0 10px rgba(255,170,40,.95)}\n.sb-pts small{margin-left:2px;font-size:13px;color:#ffe08a}\n.sb-word{white-space:nowrap;text-align:center;font-size:36px;font-weight:900;line-height:1.15;color:#fff;text-shadow:0 3px 0 #c2410c,0 5px 0 #8a2a07}\n.sb-word small{display:block;font-size:19px;color:#ffe08a}\n.sb-dish{display:flex;flex-direction:column;align-items:center;width:100px;margin:-34px 0 0 -50px}\n.sb-dish svg{width:70px;height:58px}\n.sb-dish.big{width:232px;margin:-56px 0 0 -116px}\n.sb-dish.big svg{width:104px;height:86px}\n.sb-dish b{margin-top:2px;padding:5px 14px;border-radius:99px;white-space:nowrap;font-size:16px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ff9a4a,#e0480f);box-shadow:0 8px 16px -6px rgba(180,60,0,.7),inset 0 1px 0 rgba(255,255,255,.4)}\n.sb-dish em{margin-top:3px;font-style:normal;font-size:18px;font-weight:900;color:#fff4c2;text-shadow:0 2px 0 rgba(120,40,0,.6)}\n.sb-hm,.sb-hm svg{width:36px;height:36px}\n.sb-dw{position:relative;display:block;font-style:normal}\n.sb .sb-stv{position:absolute;left:0;top:0;pointer-events:none;animation:sbStm 1.6s ease-in-out infinite alternate}\n@keyframes sbStm{0%{transform:translateY(5%);opacity:.3}100%{transform:translateY(-7%);opacity:1}}\n.sb-tip{position:absolute;left:7%;right:7%;top:27%;text-align:center;font-size:13.5px;line-height:1.6;color:rgba(255,248,236,.8);pointer-events:none;transition:opacity .4s}\n.sb-tip b{display:block;margin-bottom:6px;font-size:18px;color:#fff}\n.sb-tray{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;height:104px}\n.sb-slot{display:grid;place-items:center;min-width:0;border-radius:20px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 8px 18px -12px rgba(60,30,10,.4);transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .25s}\n.sb-slot.lift{opacity:.25;transform:scale(.9)}\n.sb-slot.no .sb-pc{opacity:.32}\n.sb-pc{position:relative}\n.sb-pc .sb-c{position:absolute}\n.sb.t-s .sb-slot{animation:sbWig .45s ease-in-out infinite alternate}\n@keyframes sbWig{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}\n.sb-drag{position:absolute;left:0;top:0;z-index:50;pointer-events:none;will-change:transform}\n.sb-drag .sb-c{box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 10px 16px rgba(0,0,0,.3)}\n.sb-bar{display:flex;align-items:center;gap:8px;height:46px}\n.sb-tool{display:flex;align-items:center;gap:5px;height:42px;padding:0 10px 0 8px;border-radius:99px;font-size:13.5px;font-weight:700;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-tool svg{width:24px;height:24px}\n.sb-tool em{min-width:20px;height:20px;padding:0 5px;border-radius:99px;font-style:normal;font-size:12px;line-height:20px;text-align:center;color:#fff;background:#e0552f}\n.sb-tool.off{opacity:.38}\n.sb-tool.off em{background:#9a8f84}\n.sb.t-h .sb-tool[data-t=h],.sb.t-s .sb-tool[data-t=s]{transform:scale(1.07);box-shadow:inset 0 0 0 2px #ffb020,0 0 14px rgba(255,170,40,.6)}\n.sb-next{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;color:var(--t2)}\n.sb-next i{display:grid;place-items:center;width:52px;height:42px;border-radius:12px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-msg{position:absolute;left:16px;right:16px;bottom:168px;z-index:30;padding:12px 14px;border-radius:18px;text-align:center;font-size:14px;line-height:1.45;color:#fff;background:rgba(32,22,14,.93);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s,transform .35s cubic-bezier(.3,1.4,.5,1)}\n.sb-msg.on{opacity:1;transform:none;pointer-events:auto}\n.sb-msg b{display:block;font-size:16px}\n.sb .sb-quit{display:block;height:38px;margin:8px auto 0;padding:0 22px;border-radius:99px;font-weight:800;color:#24170e;background:#fff}\n.sb-end{position:absolute;inset:0;z-index:40;display:flex;align-items:flex-end;background:rgba(24,14,6,.5);opacity:0;pointer-events:none;transition:opacity .35s}\n.sb-end.on{opacity:1;pointer-events:auto}\n.sb-ep{width:100%;padding:16px 18px calc(16px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;text-align:center;color:#2a1f17;background:var(--surface,#fffdf9);transform:translateY(100%);transition:transform .55s cubic-bezier(.22,1,.36,1)}\n.sb-end.on .sb-ep{transform:none}\n.sb-et{font-size:20px;font-weight:800}\n.sb .sb-ec{width:92px;height:142px;margin:0 auto}\n.sb .sb-ec svg{left:0;bottom:-12px;width:92px;height:172px}\n.sb-es{display:flex;justify-content:center}\n.sb-es .sb-odo{font-size:54px;color:#e0552f}\n.sb-eb{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:99px;font-size:14px;font-weight:700;color:#6b5b4b;background:#f4ece1}\n.sb-eb.nb{font-size:16px;color:#fff;background:linear-gradient(90deg,#ffcf4a,#ff8a3d);animation:sbBeat 1s ease-in-out infinite}\n.sb-e3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 8px}\n.sb-e3 div{padding:8px 4px;border-radius:14px;line-height:1.25;background:#f7f1e8}\n.sb-e3 b{display:block;font-size:22px;font-weight:800}\n.sb-e3 span{font-size:12px;color:#85786b}\n.sb-ed{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px;min-height:40px;font-size:12.5px;color:#85786b}\n.sb-ed i{position:relative}\n.sb-ed svg{width:44px;height:37px}\n.sb-ed b{position:absolute;right:-4px;bottom:-2px;padding:0 5px;border-radius:99px;font-size:11px;font-weight:800;color:#fff;background:#e0552f}\n.sb-er,.sb-em{margin:6px 0 0;font-size:13px;color:#6b5b4b}\n.sb-ep .sb-em{font-weight:700;color:#2d6a4d}\n.sb .sb-find{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:10px 14px;border-radius:18px;text-align:left;background:linear-gradient(135deg,#fff6d8,#ffe3ee);box-shadow:0 10px 22px -12px rgba(224,85,47,.6);animation:sbFind .75s cubic-bezier(.2,1.5,.4,1) both}\n.sb .sb-find.rare{background:linear-gradient(135deg,#efe6ff,#dcf5ff)}\n.sb .sb-find>i{flex:0 0 56px;height:56px;display:grid;place-items:center;font-style:normal;font-size:36px;animation:sbFindI 1.4s ease-in-out .75s 2}\n.sb .sb-find>i svg,.sb .sb-find>i img{width:56px;height:56px}\n.sb .sb-find b{display:block;font-size:16px;font-weight:800;color:#c2410c}\n.sb .sb-find.rare b{color:#7c3aed}\n.sb .sb-find small{display:block;margin-top:2px;font-size:13px;color:#6b5b4b}\n@keyframes sbFind{0%{opacity:0;transform:translateY(18px) scale(.6)}60%{opacity:1;transform:translateY(-4px) scale(1.06)}100%{opacity:1;transform:none}}\n@keyframes sbFindI{0%,100%{transform:none}50%{transform:rotate(-10deg) scale(1.15)}}\n@media (prefers-reduced-motion:reduce){.sb .sb-find,.sb .sb-find>i{animation:none}}\n.sb .sb-top{z-index:41}.sb .sb-x{position:relative;z-index:41}\n.sb .sb-find .sb-try{margin-left:auto;flex:none;border:0;border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;font-weight:700;background:#7c3aed;color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.35)}.sb .sb-again{display:block;width:100%;height:56px;margin-top:12px;border-radius:99px;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ffa24a,#e0552f);box-shadow:0 12px 24px -10px rgba(224,85,47,.8),inset 0 1px 0 rgba(255,255,255,.4);animation:sbBeat 1.3s ease-in-out infinite}\n.sb .sb-alt{display:block;width:100%;height:44px;margin-top:6px;font-size:14.5px;font-weight:700;color:#85786b}\n@keyframes sbBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}\n.sb.short .sb-hud{height:66px}\n.sb.short .sb-chef{width:40px;height:66px}\n.sb.short .sb-chef svg{width:42px;height:78px;bottom:-6px}\n.sb.short .sb-odo{font-size:30px}\n/* ตัวละคร: ขยับเบา ๆ ตลอด เต้นตอนคอมโบ ดีใจตอนเสิร์ฟ เสียดายตอนจบรอบ */\n.sb-chef.own .sb-joy,.sb-chef.own .sb-sad{opacity:0}\n.sb-chef.own.joy .sb-joy,.sb-chef.own.sad .sb-sad{opacity:1}\n.sb-chef.own.joy .cp-eyes,.sb-chef.own.joy .cp-mouth,.sb-chef.own.sad .cp-mouth{opacity:0}\n.sb-chef .sb-av{animation:sbIdle 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armL{animation:sbSwL 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armR{animation:sbSwR 2.8s ease-in-out infinite}\n.sb-chef.own .cp-eyes{transform-origin:60px 63px;animation:sbBlink 4.2s infinite}\n.sb-chef.dance .sb-av{animation:sbHop .46s ease-in-out infinite}\n.sb-chef.own.dance .cp-armL{animation:sbDL .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-armR{animation:sbDR .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-head{animation:sbNod .46s ease-in-out infinite}\n.sb-chef.joy .sb-av{animation:sbJump .62s ease-in-out infinite}\n.sb-chef.own.joy .cp-armL{animation:sbUpL .31s ease-in-out infinite alternate}\n.sb-chef.own.joy .cp-armR{animation:sbUpR .31s ease-in-out infinite alternate}\n.sb-chef.sad .sb-av{animation:sbSad 2.6s ease-in-out infinite}\n.sb-chef.own.sad .cp-head{animation:none;transform:translateY(4px) rotate(-6deg)}\n.sb-chef.own.sad .cp-armL,.sb-chef.own.sad .cp-armR{animation:none}\n.sb-chef.own.sad .sb-tear{animation:sbTear 1.5s ease-in infinite}\n@keyframes sbIdle{50%{transform:translateY(-2.5px)}}\n@keyframes sbSwL{50%{transform:rotate(6deg)}}\n@keyframes sbSwR{50%{transform:rotate(-6deg)}}\n@keyframes sbBlink{0%,92%,100%{transform:none}95%{transform:scaleY(.1)}}\n@keyframes sbHop{0%,50%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-12px) rotate(-7deg)}75%{transform:translateY(-12px) rotate(7deg)}}\n@keyframes sbDL{from{transform:rotate(30deg)}to{transform:rotate(150deg)}}\n@keyframes sbDR{from{transform:rotate(-150deg)}to{transform:rotate(-30deg)}}\n@keyframes sbNod{50%{transform:rotate(9deg)}}\n@keyframes sbJump{0%,100%{transform:translateY(0) scale(1)}15%{transform:translateY(2px) scale(1.06,.92)}50%{transform:translateY(-22px) scale(.96,1.05)}}\n@keyframes sbUpL{from{transform:rotate(135deg)}to{transform:rotate(165deg)}}\n@keyframes sbUpR{from{transform:rotate(-135deg)}to{transform:rotate(-165deg)}}\n@keyframes sbSad{50%{transform:translateY(3px) rotate(-1.5deg)}}\n@keyframes sbTear{0%{transform:translateY(0);opacity:0}25%{opacity:1}100%{transform:translateY(12px);opacity:0}}\n/* เครื่องที่ตั้งลดการเคลื่อนไหว: เหลือแบบเบา */\n@media (prefers-reduced-motion:reduce){.sb *,.sb *::after{animation:none!important;transition-duration:.01ms!important}}\n.sb .sb-cheer{flex:1;display:flex;justify-content:center;align-items:flex-end;gap:2px;min-width:0;height:46px;pointer-events:none}.sb .sb-cheer i{display:block;width:30px;height:36px;transform-origin:50% 100%;animation:sb-cheer 2.6s ease-in-out infinite}.sb .sb-cheer i:nth-child(2){animation-delay:-.9s}.sb .sb-cheer i:nth-child(3){animation-delay:-1.7s}.sb .sb-cheer svg{width:100%;height:100%;overflow:visible}@keyframes sb-cheer{0%,100%{transform:none}40%{transform:translateY(-3px) rotate(-4deg)}70%{transform:translateY(0) rotate(3deg)}}.sb.rm .sb-cheer i{animation:none}.sb .sb-em.wait{opacity:.7}.sb .sb-em.ok{color:#15803d}.sb .sb-em.bad{color:#b91c1c}.sb .sb-resend{margin-left:8px;padding:4px 12px;border:0;border-radius:99px;background:#b91c1c;color:#fff;font:inherit;font-weight:800}.sb button:disabled{opacity:.55}/* 2.13.39 ปุ่มสั่น บล็อกสามมิติ คอมโบไล่ระดับ ปุ่มออก */.sb-hp{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}.sb.b3 .sb-c.f,.sb.b3 .sb-bk{background:var(--b3) center/100% no-repeat;box-shadow:none}.sb.b3 .sb-c.gh{background:var(--b3) center/100% no-repeat;opacity:.45}.sb.b3 .sb-ki{background:var(--b3) center/100% no-repeat}.sb.b3 .sb-drag .sb-c{box-shadow:none}.sb.b3 .sb-drag .sb-pc{filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))}.sb-flash{position:absolute;inset:0;z-index:55;pointer-events:none;opacity:0;will-change:opacity;background:radial-gradient(circle at 50% 50%,#fff,rgba(255,248,214,.85) 40%,rgba(255,214,120,.35) 75%,rgba(255,200,80,0))}.sb-word.l2{color:#fff8dc;text-shadow:0 3px 0 #ea580c,0 6px 0 #9a3412,0 0 18px rgba(255,196,60,.95)}.sb-word.l3{color:#fff;text-shadow:0 3px 0 #db2777,0 6px 0 #7e22ce,0 0 22px rgba(255,120,220,.95)}.sb-word.l4{color:#fff;text-shadow:0 3px 0 #ef4444,0 6px 0 #6d28d9,0 0 24px rgba(110,200,255,1),0 0 42px rgba(255,214,60,.9)}.sb-fx>.sb-wave{width:100%;height:100%;border-radius:20px;box-shadow:0 0 0 3px #fff,0 0 16px 6px #ff5fd2,0 0 34px 12px rgba(70,200,255,.7)}.sb-fx>.sb-wave.l4{box-shadow:0 0 0 3px #fff,0 0 18px 8px #ffd23f,0 0 40px 16px rgba(255,80,160,.75)}.sb-mul{white-space:nowrap;font-size:88px;font-weight:900;line-height:1;color:#fff;text-shadow:0 4px 0 #ef4444,0 8px 0 #6d28d9,0 0 30px rgba(255,214,60,1)}.sb-chef.party .sb-av{animation:sbParty .9s cubic-bezier(.3,1.3,.5,1) infinite}@keyframes sbParty{0%{transform:none}30%{transform:translateY(-18px) rotate(-14deg) scale(1.08)}60%{transform:translateY(-24px) rotate(190deg) scale(1.12)}85%{transform:translateY(-6px) rotate(350deg)}100%{transform:rotate(360deg)}}.sb .sb-eg{display:grid;grid-template-columns:1fr 1.7fr;gap:10px;margin-top:12px}.sb .sb-eg .sb-again{margin-top:0}.sb .sb-out{height:56px;border-radius:99px;font-size:17px;font-weight:800;color:#4a3626;background:#f3e9dd;box-shadow:inset 0 0 0 1.5px rgba(92,68,36,.22)}";
     document.head.appendChild(css);
     BLOCK_UI = window.SeoulBlock;
     return BLOCK_UI;
   }
-  // ภาพวาดแบบเรียบ (ไม่เปิดตัว 3D) ให้ตัวน้องหลายตัวในหน้าเดียวและในเกมลื่น
-  function bkFlat(svg) { return String(svg || '').replace(/ data-c3[\w-]*="[^"]*"/g, ''); }
   function bkN(n) { return Number(n || 0).toLocaleString('en-US'); }
   /** ชิ้นวัตถุดิบสี่ชิ้น: ภาพเล็กของเกมที่วาดด้วยหน้าเว็บ ไม่ต้องโหลดโค้ดเกม */
   function blockArt() { return '<i class="b0"></i><i class="b3"></i><i class="b1"></i><i class="b4"></i>'; }
@@ -15836,13 +15920,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       </section>
       <section class="card bk-teams">
         <div class="bk-h"><b>${my ? 'ทีมของฉัน: ' + my.name : 'ทีมประจำสัปดาห์'}</b><small class="muted">${blockLeftWords(d.left)}</small></div>
-        <div class="bk-vs">${d.teams.map(function (t) { return html`<div class="bk-team ${t.id === d.team ? 'me' : ''}"><b>${t.name}</b><strong>${bkN(t.score)}</strong><small class="muted">คะแนนเฉลี่ยต่อคน · ${t.people} คน</small><div class="bk-mems">${t.members.map(function (m) { return html`<span class="bk-mem ${m.me ? 'me' : ''}"><i>${raw(bkFlat(charOf(m.look)))}</i><small>${m.me ? 'ฉัน' : m.name}</small></span>`; })}</div></div>`; })}</div>
+        <div class="bk-vs">${d.teams.map(function (t) { return html`<div class="bk-team ${t.id === d.team ? 'me' : ''}"><b>${t.name}</b><strong>${bkN(t.score)}</strong><small class="muted">คะแนนเฉลี่ยต่อคน · ${t.people} คน</small><div class="bk-mems">${t.members.map(function (m, i) { return html`<span class="bk-mem ${m.me ? 'me' : ''}" data-id="${t.id + '-' + i}"><i class="bk-ch" data-mv="${mvfPick(m.look)}">${raw(charOf(m.look))}</i><small>${m.me ? 'ฉัน' : m.name}</small></span>`; })}</div></div>`; })}</div>
         <small class="muted">จบสัปดาห์ ทีมที่คะแนนเฉลี่ยสูงกว่าได้กล่องสุ่มทุกคน คนละ 1 กล่อง · เสมอได้ทั้งสองทีม</small>
       </section>
       <section class="card bk-tools"><b>ตัวช่วยที่มีวันนี้ ${d.tools.left} ชิ้น</b><span>บอกปัญหาในบันทึก 1 เรื่อง ได้ตัวช่วย 1 ชิ้น</span><small class="muted">ใช้เป็นค้อนทุบช่อง หรือเปลี่ยนชิ้นในมือ</small><button class="btn sm" data-act="block-note">ไปเขียนบันทึก</button></section>
       <section class="card bk-stats"><b>สถิติส่วนตัว</b><div class="bk-st">${[[d.stats.best, 'ดีสุด'], [d.stats.today, 'วันนี้ดีสุด'], [d.stats.rounds, 'รอบที่เล่น'], [d.stats.combo, 'คอมโบสูงสุด'], [d.stats.served, 'เมนูที่เสิร์ฟ'], [d.stats.lines, 'แถวที่เคลียร์']].map(function (x) { return html`<div><b>${bkN(x[0])}</b><small>${x[1]}</small></div>`; })}</div></section>
       ${d.last ? blockLast(d) : ''}
-      <button class="btn sm bk-foot" data-act="block-toggle">ไม่อยากเล่น ปิดเกมนี้</button>
     </div>`;
   }
   function blockLast(d) {
@@ -15871,15 +15954,28 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var me = blockMe(d);
     block.ui = SB.mount(block.host, {
       game: g, date: g.day, stats: g.stats,
-      // ตัวน้องของคนเล่นในชุดที่ซื้อไว้ (ฟังก์ชันวาดเดิมของแอป แบบภาพวาด) · คอมโบหรือเสิร์ฟเล่นท่า
+      // ตัวน้องของคนเล่นในชุดที่ซื้อไว้ เป็นตัวสามมิติแบบหน้าอื่น (เจ้าของ 1 พ.ย. 2569 "ทำไมตนละครเป็นตัวเก่า") · ภาพสามมิติทำทีหลังเอง กระดานไม่รอ
+      // คอมโบหรือเสิร์ฟเล่นท่า · คอมโบ 4 ขึ้นไปเต้นท่าพิเศษ
       avatar: function (el, m) {
-        if (!el.firstChild) el.innerHTML = bkFlat(charOf(me ? me.look : {}));
-        if (m === 'joy' || m === 'dance') charGo(el);
+        if (!el.firstChild) el.innerHTML = charOf(me ? me.look : {});
+        if (m === 'party') blockParty(el); else if (m === 'joy' || m === 'dance') charGo(el);
       },
-      cheer: (d.figs || []).map(function (id) { return bkFlat(FIG_ART(id)); }).filter(Boolean),
+      cheer: (d.figs || []).map(function (id) { return FIG_ART(id); }).filter(Boolean),
+      // บล็อกวัตถุดิบสามมิติ: ภาพนิ่งใน 3d/i/ มีเฉพาะเว็บของร้านและเดโม หน้าที่ไม่มีใช้ภาพวาดเดิม
+      art: c3Base() ? c3Base() + 'i/' : '', ver: CODE_VERSION,
       onEnd: blockSend, onAgain: blockAgain, onClose: blockHide
     });
     block.host.sb = block.ui; // ตัวคุมหน้าจอเกม (dev/block-ui-check.js ใช้จบรอบ)
+  }
+  // ท่าพิเศษตอนคอมโบ 4 ขึ้นไป: ท่าเต้นที่ไม่ใช่ท่าประจำตัว (ดิสโก้ หรือหมุน) เล่นครั้งเดียว แล้วคืนท่าประจำตัว
+  function blockParty(el) {
+    var svg = el.querySelector('.char-svg');
+    if (!svg) return;
+    var cur = c3Move(svg), pick = ['m-disco', 'm-spin'].filter(function (x) { return x !== cur && MOVES[x]; })[0] || cur;
+    if (pick !== cur) { svg.classList.remove('mv-' + cur); svg.classList.add('mv-' + pick); }
+    charGo(el);
+    clearTimeout(svg._party);
+    if (pick !== cur) svg._party = setTimeout(function () { svg.classList.remove('mv-' + pick); svg.classList.add('mv-' + cur); }, 3000);
   }
   function blockAgain(mode) {
     if (!block || block.busy) return;
