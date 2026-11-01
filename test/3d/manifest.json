@@ -251,6 +251,20 @@
     "m": 64
    }
   },
+  "u-padding": {
+   "tint": [
+    "#f3e8d2",
+    "#c4a676",
+    "#9c8256",
+    "#e6d6b4",
+    "#b89c6c"
+   ],
+   "kb": {
+    "f": 78,
+    "m": 78
+   },
+   "full": true
+  },
   "l-skirt": {
    "tint": [
     "#2d3a64",
@@ -390,13 +404,14 @@
   }
  },
  "credits": {},
- "v": "cf5b2326",
+ "v": "571abf32",
  "props": [
   "a-balloon",
   "a-boba",
   "a-candy",
   "a-fan",
   "a-flower",
+  "a-goguma",
   "a-icecream",
   "a-krathong",
   "a-pinwheel",
@@ -448,6 +463,7 @@
   "x-holly",
   "x-ribbon",
   "x-star",
+  "x-thaipin",
   "y-board",
   "y-pan"
  ],
@@ -502,6 +518,8 @@
   "d-pumpkin": 20,
   "d-krathong": 26,
   "d-xmastree": 39,
-  "d-fireworks": 22
+  "d-fireworks": 22,
+  "d-lanna": 29,
+  "d-kimchi": 45
  }
 }

@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.39","page":"","e3":"cf0cf2cd","edge":true,"test":true,"store":"test.","build":"2938ba2629a1"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.40","page":"","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"24a96dd3b922"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -3843,10 +3843,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // ---- pets end
   /** A person's character, dressed as they chose (the defaults for what they have not); what they wear
    *  goes with it (data-c3) for its 3D picture. */
-  // ของที่ใส่แต่ยังไม่มีภาพสามมิติ (2.13.35 ของใหม่ พ.ย. 2569 · เครื่องนี้ไม่มี Blender): ตัวที่ใส่ชิ้นนี้คงเป็นภาพวาด
-  // ตัวสามมิติที่วาดตรงจากตัววาด (ลาน วิ่งฝ่าด่าน) ไม่ได้ชิ้นนี้ไป ช่องนั้นเป็นของตั้งต้นของตัววาด ไม่ขึ้นตัวที่ขาดเสื้อ
-  // มีภาพสามมิติแล้วลบออก (test/build.test.js ตรวจว่ารายการนี้ตรงกับของที่ยังไม่มีจริง)
-  var C3_NONE = ['u-padding', 'a-goguma', 'x-thaipin'];
+  // ของที่ใส่แต่ยังไม่มีภาพสามมิติ (ของใหม่ที่ยังไม่ได้ทำภาพ): ตัวที่ใส่ชิ้นนั้นเป็นภาพวาด ตัวสามมิติที่วาดตรงจากตัววาด
+  // (ลาน วิ่งฝ่าด่าน) ไม่ได้ชิ้นนั้นไป ช่องนั้นเป็นของตั้งต้น · มีภาพสามมิติแล้วลบออก (test/build.test.js ตรวจว่ารายการนี้
+  // ตรงกับของที่ยังไม่มีจริง) · 2.13.40 ของใหม่ พ.ย. 2569 มีภาพครบแล้ว ตอนนี้ว่าง
+  var C3_NONE = [];
   /** ของที่ส่งให้ตัววาดสามมิติ: ตัวเดิมเมื่อไม่มีชิ้นใน C3_NONE ไม่งั้นสำเนาที่ไม่มีชิ้นนั้น (ลึกชั้นเดียวในวัตถุธรรมดา) */
   function c3Known(x) {
     if (!x || typeof x !== 'object' || Object.getPrototypeOf(x) !== Object.prototype) return x;
