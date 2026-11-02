@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.44","page":"","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"68380082e8d4"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.45","page":"","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"23fd183f7052"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -9223,7 +9223,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     openSheet({ title: 'กติกา Incentive', body: html`<ul class="rules">
         <li>${icon('check')}<span>มาตรงเวลา ได้ Incentive เต็มทุกเดือน</span></li>
         <li>${icon('clock')}<span>สายไม่เกิน ${r.grace} นาที ได้ ${r.allowed} ครั้งต่อเดือนโดยไม่หัก${r.lateCut ? ' · เกินนั้นหักครั้งละ ' + money(r.lateCut) + ' บาท' : ''}</span></li>
-        <li>${icon('money')}<span>เข้างานช้ากว่าเวลากะ ได้เงินตามเวลาที่ทำจริง${r.lateTimeFrom && r.lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(r.lateTimeFrom) + ')' : ''}: นับทีละครึ่งชั่วโมง ปัดลง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง · เช่น กะเริ่ม 10:30 มาถึง 10:55 ค่าจ้างและ OT เท่าเดิม มาถึง 11:40 ได้น้อยลง 1 ชม. · ได้อนุญาตเข้างานช้า มาตามเวลาที่อนุญาตไม่หักเลย มาช้ากว่านั้นนับแบบนี้จากเวลาที่อนุญาต</span></li>
+        <li>${icon('money')}<span>เข้างานช้ากว่าเวลากะ ได้เงินตามเวลาที่ทำจริง${r.lateTimeFrom && r.lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(r.lateTimeFrom) + ')' : ''}: นับทีละครึ่งชั่วโมง ปัดลง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง · เช่น กะเริ่ม 10:30 มาถึง 10:55 ค่าจ้างและ OT เท่าเดิม มาถึง 11:40 ได้น้อยลง 1 ชม. · ได้อนุญาตเข้างานช้า มาตามเวลาที่อนุญาตไม่หักเลย มาช้ากว่านั้นนับแบบนี้จากเวลาที่อนุญาต · ถึงจะช้ามาก มาทำงานแล้วได้เงินไม่น้อยกว่าแจ้งลาเช้าวันนั้น</span></li>
         <li>${icon('rain')}<span>วันฝนตก เผื่อเวลาเดินทาง ค่อย ๆ มาให้ปลอดภัย</span></li>
         <li>${icon('cal')}<span><b class="rules-h">ไปทำงานไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน ร้านจะได้หาคนช่วยทัน</b>
           ${bizSub.length ? html`<span class="rules-sub"><b>ติดธุระ</b> ${bizSub.join(' · ')}${toldWhen}</span>` : ''}
