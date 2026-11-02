@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.47","page":"","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"588ef64aec9d"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.48","page":"","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"a347ee3f8459"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -12651,6 +12651,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}</div>
       ${pushCard()}
       ${teamUseCard(o.team)}
+      ${morningCard(o.morning)}
       ${pinLocksCard(o.pinLocks)}
       ${turnoverCard(o.turnover)}${yearEndWarnCard(o.yearEnd)}
       ${dailyOwnerCard(o.daily)}
@@ -16101,12 +16102,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (b && b.off) return '';
     var my = b && (b.teams || []).filter(function (x) { return x.id === b.team; })[0];
     return html`<button class="card fr-block" data-act="block-open">${raw(bksScene(l && l.look, 'c'))}
-      <span class="fr-block-tx"><b>ครัวโซลฟูล</b><span>${!b ? 'ต่อบล็อกวัตถุดิบ แข่งเป็นทีมรายสัปดาห์' : (b.left ? 'โจทย์วันนี้นับเข้าทีมได้อีก ' + b.left + ' รอบ' : 'วันนี้นับเข้าทีมครบแล้ว · เล่นเองได้') + (my ? ' · ' + my.name : '')}</span></span>${icon('right')}</button>`;
+      <span class="fr-block-tx"><b>ครัวโซลฟูล</b><span>${!b ? 'ต่อบล็อกวัตถุดิบ แข่งเป็นทีมรายสัปดาห์' : (b.left ? 'โจทย์วันนี้นับเข้าทีมได้อีก ' + b.left + ' รอบ' : 'วันนี้นับเข้าทีมครบแล้ว · เล่นเองได้') + (my ? ' · ' + my.name : '')}</span></span>${icon('right')}</button>`;
   }
   /** ครัวโซลฟูลบนหน้าแรกต่อจากภารกิจทีม: รอบที่เหลือวันนี้ คะแนนสองทีม · แตะแล้วเปิดเกม · คนที่ปิดเกมไม่เห็นแถวนี้ */
   function blockRow(b) {
     if (!b || b.off) return '';
-    return html`<button class="quest blk" data-act="block-open">${raw(bksScene(bksMe(), 'r'))}<span class="grow"><b>ครัวโซลฟูล${b.left ? ' · เหลือ ' + b.left + ' รอบนับเข้าทีม' : ' · วันนี้นับเข้าทีมครบแล้ว'}</b><span>${(b.teams || []).map(function (x) { return x.name + ' ' + bkN(x.score); }).join(' · ')}${b.team ? '' : ' · เปิดเกมแล้วเข้าทีม'}</span></span>${icon('right')}</button>`;
+    return html`<button class="quest blk" data-act="block-open">${raw(bksScene(bksMe(), 'r'))}<span class="grow"><b>ครัวโซลฟูล${b.left ? html` · เหลือ ${b.left} รอบ<span style="white-space:nowrap">นับเข้าทีม</span>` : html` · วันนี้นับเข้าทีม<span style="white-space:nowrap">ครบแล้ว</span>`}</b><span>${(b.teams || []).map(function (x) { return x.name + ' ' + bkN(x.score); }).join(' · ')}${b.team ? '' : ' · เปิดเกมแล้วเข้าทีม'}</span></span>${icon('right')}</button>`;
   }
   // ---- bks: ฉากการ์ดครัวโซลฟูลขยับเฉพาะตอนเห็นบนจอ (2.13.46) ----
   // หยุด (ไม่วาด) เมื่อการ์ดพ้นจอ แอปอยู่เบื้องหลัง เข้าจอเล่นแล้ว หรือมีแผ่นทับ (ฉากในแผ่นที่เปิดอยู่ขยับได้) · เครื่องที่ตั้งลดการเคลื่อนไหวนิ่งเสมอ
@@ -18595,6 +18596,84 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   // ---- the day's notes: the owner --------------------------------------------
   /** The owner's card: the last day with notes, what keeps coming back, the heads, and Claude's word on it. */
+  // ---- รายงานเมื่อวานของเจ้าของร้าน (2.13.48 g-k4 · Line.gs morningView_) ----------------------------------
+  /** ตัวเลขทีมเมื่อวานบรรทัดเดียว */
+  function mrTeamLine(m) {
+    var t = m.team;
+    if (m.closed && !t.in) return 'ร้านปิด';
+    var rested = t.dayoff + (t.rest || 0);
+    var bits = ['มา ' + t.in + '/' + (t.total - t.leave - rested - t.off) + ' คน'];
+    if (t.late) bits.push('สาย ' + t.late);
+    if (t.leave) bits.push('ลา ' + t.leave);
+    if (rested) bits.push('หยุด ' + rested + (t.over ? ' (เกินสิทธิ์ ' + t.over + ')' : ''));
+    if (t.wait) bits.push('รออนุมัติ ' + t.wait);
+    if (t.absent) bits.push('ขาด ' + t.absent);
+    if (t.none) bits.push('ไม่ได้ลงเวลา ' + t.none);
+    if (t.ot) bits.push('OT ' + hrs(t.ot) + ' ชม.');
+    return mrBits(bits);
+  }
+  /** ทีละชิ้นไม่ตัดกลางคำ ตัดบรรทัดได้แค่ที่จุดคั่น (ภาพ 390 เคยเป็น "เช็กมาตร|ฐาน") */
+  function mrBits(a) {
+    return a.filter(Boolean).map(function (x, i) { return html`${i ? ' · ' : ''}<span style="white-space:nowrap">${x}</span>`; });
+  }
+  /** บนหน้าแรกของเจ้าของร้าน: เมื่อวานทั้งวันในการ์ดเดียว (ทีม ยอดขาย บันทึกหน้างาน เช็กมาตรฐาน ของหมด งานหัวหน้าค้าง) แตะดูรายคน */
+  function morningCard(m) {
+    MR_LAST = m;
+    if (!m) return '';
+    var d = m.daily;
+    var bits = [];
+    if (m.sales) bits.push('ยอดขาย ' + money(m.sales.sales) + ' บาท');
+    else if (!m.closed) bits.push('ยังไม่ใส่ยอดขาย');
+    if (d.total) bits.push('บันทึกหน้างาน ' + d.total + ' เรื่อง');
+    if (m.check) bits.push('เช็กมาตรฐาน ' + m.check.done + '/' + m.check.due + ' รอบ');
+    var outN = m.out.length;
+    if (outN) bits.push('ของหมด ' + outN);
+    return html`<button class="card pad-lg mr-card" data-act="mr-open" style="width:100%;text-align:left">
+      <div class="card-h"><span class="eyebrow">รายงานเมื่อวาน · ${thShort(m.date)}</span>${m.stale.length ? html`<span class="pill gold">ค้าง ${m.stale.length}</span>` : ''}</div>
+      ${m.empty ? html`<p class="small muted" style="margin:4px 0 0">เมื่อวานยังไม่มีการลงเวลา บันทึกหน้างาน หรือยอดขาย</p>` : html`<p style="margin:4px 0 0"><b>${mrTeamLine(m)}</b></p>
+      <p class="small" style="margin:6px 0 0">${mrBits(bits)}</p>
+      ${d.missing.length ? html`<p class="small muted" style="margin:6px 0 0">ยังไม่ส่งสรุปหน้างาน: ${d.missing.join(', ')}</p>` : ''}`}
+      ${m.stale.length ? html`<p class="small" style="margin:8px 0 0"><b>งานหัวหน้าค้างเกิน 1 วัน:</b> ${mrBits(m.stale.map(function (x) { return x.who + ' ' + x.say; }))}</p>` : ''}
+      <p class="small muted" style="margin:8px 0 0">แตะดูรายคน · แจ้งในแอปทุกเช้า ${m.at} น.</p>
+    </button>`;
+  }
+  var MR_LAST = null; // การ์ดล่าสุด แผ่นรายละเอียดใช้ข้อมูลชุดเดียวกัน ไม่โหลดเพิ่ม
+  var MR_STATE = { leave: 'ลา', absent: 'ขาดงาน', none: 'ไม่ได้ลงเวลา', dayoff: 'หยุดประจำ', rest: 'หยุด', wait: 'รออนุมัติ', off: 'ร้านปิด' };
+  /** แผ่นรายละเอียด: ทีละคน แล้วยอดขาย บันทึกหน้างาน เช็กมาตรฐาน ของหมด และงานหัวหน้าค้าง (ข้อมูลชุดเดียวกับการ์ด ไม่โหลดเพิ่ม) */
+  function morningBody(m) {
+    var d = m.daily;
+    var c = m.check;
+    var out = m.out;
+    var row = function (p) {
+      var s = p.state === 'in'
+        ? mrBits(['เข้า ' + p.in, p.shift, p.end ? 'เลิกตามกะ ' + p.end : '', p.late ? 'สาย ' + p.late + ' นาที' : '', p.rain ? 'ฝนตก' : '', p.review ? 'รอตรวจ' : ''])
+        : p.state === 'leave' ? p.leave || 'ลา' : p.state === 'absent' ? 'ขาดงาน' + (p.auto ? ' (ระบบบันทึก)' : '') : p.state === 'rest' ? (p.over ? 'หยุด · เกินสิทธิ์รอบนี้ ' + p.over + ' วัน' : 'หยุด · ใช้สิทธิ์รอบนี้ ' + p.offUsed + '/' + p.offAllowed + ' วัน') : p.state === 'wait' ? 'ขอ' + p.wait + ' รออนุมัติ' : MR_STATE[p.state] || '';
+      return html`<div class="item"><div class="grow"><div class="t">${p.name}</div><div class="s">${s}</div></div>${p.state === 'in' && p.hours != null ? html`<div class="r"><div class="amt">${hrs(p.hours)} ชม.</div>${p.ot ? html`<span class="small muted">OT ${hrs(p.ot)}</span>` : ''}</div>` : ''}</div>`;
+    };
+    return html`<div class="stack">
+      <p class="mt0"><b>${m.empty ? 'ยังไม่มีข้อมูลของเมื่อวาน' : mrTeamLine(m)}</b>${m.team.hours ? html`<span class="small muted"> · รวม ${hrs(m.team.hours)} ชม.</span>` : ''}</p>
+      <section class="card flush"><div class="list">${m.people.length ? m.people.map(row) : html`<div class="item"><span class="small muted">ยังไม่มีพนักงาน</span></div>`}</div></section>
+      <p class="small muted mt0">แอปลงเวลาเข้าอย่างเดียว เวลาเลิกและชั่วโมงคิดจากกะบวก OT ที่บันทึก</p>
+      <h3 class="h3">ยอดขาย</h3>
+      <p class="mt0">${m.sales ? 'ยอดขาย ' + money(m.sales.sales) + ' บาท' + (m.sales.customers ? ' · ลูกค้า ' + m.sales.customers + ' คน' : '') : m.closed ? 'ร้านปิด' : 'ยังไม่ใส่ยอดขาย'}</p>
+      <h3 class="h3">บันทึกหน้างาน</h3>
+      <p class="mt0">${d.total ? mrBits([d.total + ' เรื่อง'].concat(d.topics.map(function (x) { return x.label + ' ' + x.n; }))) : 'ไม่มีเรื่อง'}</p>
+      ${d.missing.length ? html`<p class="small muted mt0">ยังไม่ส่งสรุป: ${d.missing.join(', ')} · แอปเตือนให้แล้ว</p>` : ''}
+      <h3 class="h3">เช็กมาตรฐาน</h3>
+      <p class="mt0">${c ? 'เช็กแล้ว ' + c.done + '/' + c.due + ' รอบ' : 'ไม่มีรอบที่ต้องเช็ก'}</p>
+      ${c && c.lines.length ? html`<ul class="small" style="margin:0;padding-left:18px;line-height:1.6">${c.lines.map(function (x) { return html`<li>${x}</li>`; })}</ul>` : ''}
+      <h3 class="h3">ของหมด</h3>
+      <p class="mt0">${out.length ? mrBits(out) : 'ไม่มี'}</p>
+      <h3 class="h3">งานหัวหน้าค้างเกิน 24 ชม.</h3>
+      ${m.stale.length ? html`<section class="card flush"><div class="list">${m.stale.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.who}</div><div class="s">${x.say}</div></div><div class="r"><span class="small muted">ค้าง ${x.hours} ชม.</span></div></div>`; })}</div></section>
+      <p class="small muted mt0">แอปเตือนหัวหน้าซ้ำทุกเช้า ${m.at} น. จนกว่าจะทำ</p>` : html`<p class="mt0">ไม่มี</p>`}
+    </div>`;
+  }
+  function openMorning() {
+    var m = MR_LAST;
+    if (!m) return;
+    openSheet({ title: 'รายงานเมื่อวาน · ' + thDateLong(m.date), wide: true, body: morningBody(m) });
+  }
   function dailyOwnerCard(o) {
     if (!o) return '';
     var counts = Object.keys(o.counts || {}).sort(function (a, b) { return o.counts[b] - o.counts[a]; });
@@ -20284,6 +20363,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       run(el, call('dailyDelete', { id: el.dataset.id }, staffAuth())).then(function (d) { S.home.daily = d.daily; if (d.levels) { S.levels = d.levels; if (S.home) S.home.levels = d.levels; } if (d.level) { S.home.level = d.level; lvCheck(d.level); } render(); openDailyMine(); toast('ลบแล้ว', 'ok'); }, function () {});
     },
     'dl-inbox': function () { openDailyInbox(); },
+    'mr-open': function () { openMorning(); },
     'dl-fix': function (el) { askDailyFix(el.dataset.ids); },
     'dl-fixing': function (el) { askDailyFixing(el.dataset.ids); },
     'dl-again': function (el) { openDailyAgain(el.dataset.key); },
