@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.43","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"cfcb3e92d46f"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.44","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"02f3ee1a2e61"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -992,11 +992,12 @@ html.i3-lv-1 .av.lv1 { --lv3: var(--i3-lv-1); } html.i3-lv-2 .av.lv2 { --lv3: va
 .av-crown svg { display: block; width: 100%; height: 100%; fill: currentColor; stroke: #9a6414; stroke-width: 1.3; }
 .av-crown.side { z-index: 4; left: 8%; top: -22%; width: 46%; height: 34%; transform: translateX(-50%) rotate(-24deg); }
 .nm { background-image: var(--nm3); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
-.nm.lv4 { background-image: var(--nm4); animation: nm-shine 4s linear infinite; }
-.nm.lv5 { background-image: var(--nm5); animation: nm-shine 3.2s linear infinite; }
-.nm.lv6 { background-image: var(--nm6); animation: nm-shine 2.4s linear infinite; }
-.nm.lv7 { background-image: var(--nm7); animation-duration: 2s; }
-.nm.lv8 { background-image: var(--nm8); animation-duration: 1.7s; }
+/* (2.13.44 g-b3) ชื่อระดับ 4–8 ไล่สีด้วยตัวจับเวลา nmTick (4 · 3.2 · 2.4 · 2 · 1.7 วิต่อรอบ เท่าเดิม) ไม่ใช้ animation */
+.nm.lv4 { background-image: var(--nm4); }
+.nm.lv5 { background-image: var(--nm5); }
+.nm.lv6 { background-image: var(--nm6); }
+.nm.lv7 { background-image: var(--nm7); }
+.nm.lv8 { background-image: var(--nm8); }
 @keyframes nm-shine { to { background-position: -200% 0; } }
 .nm-spark { display: inline-block; width: .8em; height: .8em; margin-left: 3px; font-style: normal; line-height: 1; vertical-align: .55em; color: #b46cf5; animation: nm-twinkle 1.8s ease-in-out infinite; }
 .nm-spark svg { display: block; width: 100%; height: 100%; fill: currentColor; stroke: currentColor; stroke-width: 1; }
@@ -6050,6 +6051,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // request can be lost on the way ("Load failed"), and the same read sent
   // again a moment later goes through. The app does that by itself; a
   // change (a clock-in, an approval) is never sent twice.
+  // (2.13.44 g-b3 A2-8) หลังบ้านตอบผิดรูป (ว่าง หน้า HTML ของเครือข่าย): บอกตามจริง ไม่ชี้ว่าเน็ตหลุด
+  var BAD_ANSWER = 'ระบบตอบผิดพลาด ลองใหม่อีกครั้ง';
+  // (2.13.44 g-b3 A2-5) หลังบ้านไม่ตอบ: การอ่านยอมแพ้ภายในราว 30 วิ รวมส่งซ้ำแล้ว (เดิมถึง 156 วิ) การเขียนรอ 30 วิ (เดิม 90)
+  // ระหว่างนั้นปุ่มหมุน · ส่งรูปหรือไฟล์ (คำขอใหญ่) และการอ่านที่ช้าตามขนาด (NO_HEDGE) รอเท่าเดิม
+  var READ_MAX = 30000, WRITE_MAX = 30000, BIG_BODY = 50000;
+  function writeWait(data) {
+    try { return JSON.stringify(data || {}).length > BIG_BODY ? 90000 : WRITE_MAX; } catch (e) { return 90000; }
+  }
   var READS = ['boot', 'kioskPing', 'status', 'home', 'month', 'calendar', 'payslips', 'payslip', 'team', 'entries', 'leaves', 'exceptions', 'payroll', 'photo', 'photos', 'owner', 'employees', 'feedbackMine', 'feedbackList', 'feedbackFile', 'feedbackSync', 'orderList', 'orderOwner', 'orderCatalog', 'notes', 'pushKey', 'usageReport', 'exportTables', 'rainHistory', 'howTo', 'leaveCost', 'leaveAddCost'];
   // Reads not sent twice when slow (sendHedged): the shop screen's check-in every 45 seconds, which nobody
   // waits on; pictures and files, slow to come by their size, not by Google; and those slow by their nature
@@ -6060,9 +6069,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var writing = 0;
   function call(action, data, auth, opts) {
     if (READS.indexOf(action) < 0) {
-      return send(action, data, auth, 90000).catch(function (e) {
+      return send(action, data, auth, writeWait(data)).catch(function (e) {
         // A change is never sent twice: its answer may have been lost after the server saved it.
-        if (e.network) e.message = 'เน็ตสะดุดระหว่างบันทึก อาจบันทึกไปแล้ว — ดูในรายการก่อนกดอีกครั้ง';
+        if (e.network) e.message = (e.bad ? 'ระบบตอบผิดพลาดระหว่างบันทึก' : 'เน็ตสะดุดระหว่างบันทึก') + ' อาจบันทึกไปแล้ว — ดูในรายการก่อนกดอีกครั้ง';
         throw e;
       });
     }
@@ -6072,12 +6081,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var tries = 0;
     // (a PIN being tried goes once (`once`): sent twice, a wrong one would count twice towards the lock)
     var hedge = !(opts && opts.once) && NO_HEDGE.indexOf(action) < 0;
+    var until = NO_HEDGE.indexOf(action) < 0 ? Date.now() + READ_MAX : 0;
     var go = function () {
-      return (hedge ? sendHedged : send)(action, data, auth, 45000).catch(function (e) {
+      return (hedge ? sendHedged : send)(action, data, auth, until ? Math.max(1000, Math.min(45000, until - Date.now())) : 45000).catch(function (e) {
         // Lost on the way: twice more. Google's side failed (not a message for the person): once more.
         if (!(e.network ? tries < 2 : e.transient && tries < 1)) throw e;
+        var pause = tries === 0 ? 700 : 2500;
+        // (2.13.44 g-b3 A2-5) เวลาที่เหลือไม่พอส่งอีกรอบ: บอกเลย ไม่ให้หมุนต่อ
+        if (until && until - Date.now() < pause + 1500) throw e;
         tries++;
-        return later(tries === 1 ? 700 : 2500).then(whenOnline).then(go);
+        return later(pause).then(function () { return whenOnline(until ? until - Date.now() : 15000); }).then(go);
       });
     };
     var p = go();
@@ -6105,9 +6118,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         useDone(used, ok ? 'ok' : v.code || (v.network ? (v.slow ? 'SLOW' : 'NET') : 'ERROR'));
         if (ok) resolve(v); else reject(v);
       };
-      var one = function () {
+      var one = function (ms) {
         open++;
-        send(action, data, auth, timeoutMs, true).then(function (d) {
+        send(action, data, auth, ms, true).then(function (d) {
           open--;
           if (!over) end(true, d);
         }, function (e) {
@@ -6116,12 +6129,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (!over && !((e.network || e.transient) && open > 0)) end(false, e);
         });
       };
-      one();
+      one(timeoutMs);
       timer = setTimeout(function () {
         timer = 0;
         if (over || document.visibilityState === 'hidden') return;
         useEv('h', action);
-        one();
+        // (2.13.44 g-b3 A2-5) ตัวที่ส่งตามไปหมดเวลาพร้อมตัวแรก ไม่ยืดเวลารอรวม
+        one(Math.max(1000, timeoutMs - HEDGE_MS));
       }, HEDGE_MS);
     });
   }
@@ -6153,11 +6167,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }, function () {});
   }
   /** Now, or once the phone is back online (at most 15 seconds). */
-  function whenOnline() {
+  function whenOnline(max) {
     if (navigator.onLine !== false) return Promise.resolve();
     return new Promise(function (resolve) {
       var done = function () { window.removeEventListener('online', done); clearTimeout(t); resolve(); };
-      var t = setTimeout(done, 15000);
+      // (2.13.44 g-b3 A2-5) รอไม่เกินเวลาที่การอ่านนั้นเหลือ
+      var t = setTimeout(done, typeof max === 'number' ? Math.max(0, Math.min(15000, max)) : 15000);
       window.addEventListener('online', done);
     });
   }
@@ -6238,13 +6253,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // each goes alone, as ever.
   var TOGETHER = READS.filter(function (a) { return NO_HEDGE.indexOf(a) < 0; });
   var POST = { q: [], timer: 0 };
-  var POST_FAILED = { ok: false, error: 'ระบบขัดข้อง กรุณาลองใหม่', code: 'ERROR', transient: true };
+  // (2.13.44 g-b3) ข้อความเดียวกับ BAD_ANSWER เขียนตรงไว้ เพราะช่วง post:begin–post:end ต้องรันได้ลำพัง (test/site-edge.test.js ตัดไปรัน)
+  var POST_FAILED = { ok: false, error: 'ระบบตอบผิดพลาด ลองใหม่อีกครั้ง', code: 'ERROR', transient: true };
   /** The server's answer to a request's body, or the reason it is not: lost on the way, its HTTP status, given up on (`signal`). */
   function postAlone(body, signal) {
     return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: body, credentials: 'omit', cache: 'no-store', signal: signal })
       .then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
+        // (2.13.44 g-b3 A2-8) ไม่ใช่ JSON: คำตอบผิดรูป (send บอกว่าระบบตอบผิดพลาด ไม่ใช่เน็ตหลุด)
+        return r.json().catch(function () { return null; });
       });
   }
   function postAborted() {
@@ -6324,24 +6341,28 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var used = untracked ? 0 : useWait(action);
     var p = new Promise(function (resolve, reject) {
       var answered = function (res) {
+        // (2.13.44 g-b3 A2-8) คำตอบผิดรูป: ไม่รู้ว่าบันทึกแล้วหรือยัง จึงไปทางเดียวกับเน็ตหลุด (อ่านลองใหม่เอง การลงเวลาไปตรวจ
+        // ว่าลงแล้วหรือยัง การเขียนบอกว่าอาจบันทึกไปแล้ว) แต่ข้อความบอกตามจริงว่าระบบตอบผิดพลาด
+        if (!res || typeof res !== 'object') { failed(null, false, true); return; }
         useDone(used, res && res.ok ? 'ok' : (res && res.code) || 'ERROR');
         lastAnswerAt = Date.now();
         if (res && res.serverNow) syncClock(Date.parse(res.serverNow), t0, Date.now());
         whenQuiet(function () {
           if (res && res.ok) resolve(res.data);
           else {
-            var e = new Error((res && res.error) || 'ระบบขัดข้อง');
+            var e = new Error((res && res.error) || BAD_ANSWER);
             e.code = res && res.code;
             e.transient = !!(res && res.transient);
             reject(e);
           }
         });
       };
-      var failed = function (err, slow) {
-        useDone(used, slow ? 'SLOW' : 'NET');
-        var e = new Error(slow ? 'ระบบตอบช้าเกินไป กรุณาลองใหม่' : 'เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่');
+      var failed = function (err, slow, bad) {
+        useDone(used, slow ? 'SLOW' : bad ? 'ERROR' : 'NET');
+        var e = new Error(slow ? 'ระบบตอบช้าเกินไป กรุณาลองใหม่' : bad ? BAD_ANSWER : 'เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่');
         e.network = true;
         e.slow = !!slow;
+        e.bad = !!bad;
         e.detail = String((err && err.message) || err || '');
         whenQuiet(function () { reject(e); });
       };
@@ -6544,6 +6565,35 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var name = useFormOther();
     if (name) useFormBegin(name);
   }, true);
+  // (2.13.44 g-b3) ชื่อเรืองแสง (.nm ระดับ 4 ขึ้นไป) ไล่สีด้วยตัวจับเวลา 15 ครั้งต่อวินาที แทนแอนิเมชัน CSS ที่ให้เครื่องคิดหน้าใหม่ทุกเฟรม
+  // (วัด a-4 แท็บเพื่อนอยู่เฉย CPU ช้า 4 เท่า: สองชื่อกิน 688 จาก 998 ms ต่อวินาที · CSS steps ไม่ช่วย เครื่องยังคิดทุกเฟรม)
+  // ความเร็วไล่สีเท่าเดิม · แอปอยู่เบื้องหลังหรือตั้งลดภาพเคลื่อนไหวไม่ไล่
+  var NM_SEL = '.nm.lv4, .nm.lv5, .nm.lv6', nmTimer = 0, nmIo = null, nmWatch = [], nmScrollAt = 0;
+  function nmShineOn() {
+    if (!MOTION) return;
+    var list = document.querySelectorAll(NM_SEL);
+    if (!list.length) return;
+    // (g-b3c) ชื่อที่พ้นจอไม่ไล่สี: ตัวเฝ้าจอดูแค่ชื่อเรืองแสงไม่กี่ชื่อ ตั้งแค่ธงในตัวชื่อ ไม่แตะหน้า
+    if (!nmIo && window.IntersectionObserver) nmIo = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target._nmOff = !e.isIntersecting; }); });
+    if (nmIo) for (var i = 0; i < list.length; i++) if (nmWatch.indexOf(list[i]) < 0) { nmWatch.push(list[i]); nmIo.observe(list[i]); }
+    if (!nmTimer) nmTimer = setInterval(nmTick, 66);
+  }
+  function nmTick() {
+    // (ชื่อที่หลุดจากหน้าแล้ว: เลิกเฝ้า ไม่จับโหนดเก่าไว้)
+    for (var w = nmWatch.length - 1; w >= 0; w--) if (!nmWatch[w].isConnected) { nmIo.unobserve(nmWatch[w]); nmWatch.splice(w, 1); }
+    var list = document.querySelectorAll(NM_SEL);
+    if (!list.length) { clearInterval(nmTimer); nmTimer = 0; return; }
+    if (document.visibilityState === 'hidden') return;
+    var t = performance.now();
+    // (g-b3c) กำลังเลื่อน: พักไล่สีจนหน้านิ่ง 0.2 วิ ไม่ให้เครื่องคิดสีชื่อซ้อนกับการเลื่อน
+    if (t - nmScrollAt < 200) return;
+    for (var i = 0; i < list.length; i++) {
+      var el = list[i], c = el.classList;
+      if (el._nmOff) continue;
+      var d = c.contains('lv8') ? 1700 : c.contains('lv7') ? 2000 : c.contains('lv6') ? 2400 : c.contains('lv5') ? 3200 : 4000;
+      el.style.backgroundPosition = (-200 * (t % d) / d).toFixed(1) + '% 0';
+    }
+  }
   /** การ์ดที่มี data-seen ขึ้นจอจริง (เห็นครึ่งการ์ดขึ้นไป) ครั้งเดียวต่อการเปิดหรือกลับเข้าแอป */
   var useSeenObs = null;
   function useSeenWatch(app) {
@@ -6744,6 +6794,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${o.foot ? html`<div class="sheet-f">${o.foot}</div>` : ''}
       </div>`);
     stamp($('#sheet-body'));
+    nmShineOn();
     if (root.querySelector('.sheet-f')) stamp(root.querySelector('.sheet-f'));
     document.body.classList.add('noscroll');
     // (it slides from the frame after this one, however long making it took: still till then and after)
@@ -6753,7 +6804,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var first = root.querySelector('[autofocus]');
     if (first) setTimeout(function () { first.focus(); }, 260);
   }
-  function setSheetBody(body) { var b = $('#sheet-body'); if (b) { var at = stripsAt(); redraw(b, String(body)); stripsBack(at); glideLenses(); countUp(); } }
+  function setSheetBody(body) { var b = $('#sheet-body'); if (b) { var at = stripsAt(); redraw(b, String(body)); stripsBack(at); glideLenses(); countUp(); nmShineOn(); } }
   // (its foot the same way: a button the same stays, its 3D coin with it, never made anew a moment)
   function setSheetFoot(foot) { var f = $('.sheet-f'); if (f) redraw(f, String(foot)); }
   // ---- drawn anew in place (#216) ------------------------------------------------
@@ -6847,6 +6898,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     for (j = old.attributes.length - 1; j >= 0; j--) {
       at = old.attributes[j];
       if (n.hasAttribute(at.name)) continue;
+      // (2.13.44 g-b3 ชื่อเรืองแสง: ตำแหน่งไล่สีที่ nmTick ตั้งไว้คงอยู่ ไม่กระตุกกลับตอนวาดใหม่)
+      if (at.name === 'style' && old.classList.contains('nm')) continue;
       if (at.name === 'class') { var m = marksKept('', old); if (m) { if (m !== at.value) old.setAttribute('class', m); continue; } }
       old.removeAttribute(at.name);
     }
@@ -7596,6 +7649,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     usePage();
     useShown(app);
     useSeenWatch(app);
+    nmShineOn();
   }
   /** Which tab of the tab bar on the screen is chosen (-1: none). */
   function tabIndex(root) {
@@ -7959,7 +8013,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** The first load did not come through (the network, or Google's side for a moment): it is tried again by itself. */
   VIEWS.offline = function () {
     return html`<div class="wrap page"><div class="start-head">${brand(true)}</div>
-      <div class="card pad-lg center"><h2 class="title">ยังเชื่อมต่อไม่ได้</h2><p class="muted mt0">เน็ตหรือระบบของ Google สะดุดชั่วคราว แอปจะลองใหม่ให้เองเรื่อย ๆ และทันทีที่เน็ตกลับมา</p>
+      <div class="card pad-lg center"><h2 class="title">ยังเชื่อมต่อไม่ได้</h2><p class="muted mt0">เน็ตหรือระบบสะดุดชั่วคราว แอปจะลองใหม่ให้เองเรื่อย ๆ และทันทีที่เน็ตกลับมา</p>
       <button class="btn" data-act="retry-boot">${icon('refresh')} ลองตอนนี้</button></div></div>`;
   };
 
@@ -8092,7 +8146,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       S.login = null;
       S.staff = { empId: id, pin: pin, name: ownName(e0), seen: Date.now(), idle: data && data.me && data.me.role === 'approver' ? IDLE_MS.short : IDLE_MS.long };
       LS.set(KEY.staff, S.staff);
-      applyHome(data);
+      // (2.13.44 g-b3 A4-7) คำตอบไม่มีข้อมูลหน้าแรก: PIN ถูกแล้ว อยู่หน้าน้อง บอกว่าระบบตอบผิดพลาดพร้อมปุ่มลองอีกครั้ง ไม่ค้างเงียบ
+      try { applyHome(data); } catch (err) { S.home = null; S.homeErr = BAD_ANSWER; S.pin = ''; if (S.view === 'staff') render(); return; }
       remember('home', data, homeTag(id, data));
       S.pin = '';
       if (S.view === 'staff') render();
@@ -8750,8 +8805,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (seq !== S.homeSeq) return null;
       S.homeLoad = null;
       if (!S.staff || S.staff.empId !== auth.empId) return null;
+      var was = S.home;
+      try { applyHome(data); } catch (err) {
+        // (2.13.44 g-b3 A4-7) คำตอบผิดรูป: หน้าเดิมคงไว้ (ถ้ามี) บอกว่าระบบตอบผิดพลาดพร้อมปุ่มลองอีกครั้ง ไม่ค้างเงียบ
+        S.home = was; S.homeErr = BAD_ANSWER;
+        if (S.view === 'staff') render();
+        if (!quiet && S.home) toast(BAD_ANSWER, 'bad');
+        return null;
+      }
       S.homeErr = '';
-      applyHome(data);
       remember('home', data, homeTag(auth.empId, data));
       useFresh();
       if (S.view === 'staff') softRender();
@@ -8953,7 +9015,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (pushGate() === 'tips') { S.wasLock = true; return tipsView(); }
     if (pushGate() === 'lock' && !((S.sub || S.tab) === 'team' && isApprover())) { S.wasLock = true; return lockView(); }
     // (2.13.23: เปิดแจ้งเตือนจากหน้าสอนแล้ว หน้าแรกเริ่มจากบนสุด ไม่ค้างตรงปุ่มที่เลื่อนลงไปกด)
-    if (S.wasLock) { S.wasLock = false; window.scrollTo(0, 0); }
+    if (S.wasLock) { S.wasLock = false; (window.scrollTo(0, 0), scrollNow = 0); }
     var me = h.me;
     var tab = S.sub || S.tab;
     var body = tab === 'history' ? historyView() : tab === 'order' ? orderView() : tab === 'leave' ? leaveView() : tab === 'slips' ? slipsView() : tab === 'team' ? (isApprover() ? teamApproveView() : teamView()) : tab === 'approve' ? approveView() : tab === 'friends' ? friendsView() : tab === 'ideas' ? ideasView() : tab === 'me' ? meView() : homeView();
@@ -9659,7 +9721,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.sub = 'order';
     S.odAt = 0;
     S.odQ = '';
-    window.scrollTo(0, 0);
+    (window.scrollTo(0, 0), scrollNow = 0);
     render();
     loadOrderList(true);
   }
@@ -11581,7 +11643,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         if (!e.network || over) { end(false, e); return; }
         lost = true;
         clearTimeout(timer);
-        toast('เน็ตสะดุด — กำลังตรวจว่าลงเวลาแล้วหรือยัง…');
+        toast((e.bad ? 'ระบบตอบผิดพลาด' : 'เน็ตสะดุด') + ' — กำลังตรวจว่าลงเวลาแล้วหรือยัง…');
         ask();
       });
       if (!before) timer = setTimeout(ask, HEDGE_MS);
@@ -12320,7 +12382,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** "ลืมรหัส": an email to the shop's Google account (Api.gs apiOwnerForgot_); then its code is asked for. Sent once (a change). */
   function ownerForgot(btn) {
     var sent = call('ownerForgot', {}, {}).catch(function (e) {
-      if (e.network) e.message = 'เน็ตสะดุด อีเมลอาจส่งไปแล้ว ดูอีเมลก่อน · กด "ลืมรหัส" อีกครั้งเพื่อใส่รหัสจากอีเมล';
+      if (e.network) e.message = (e.bad ? 'ระบบตอบผิดพลาด' : 'เน็ตสะดุด') + ' อีเมลอาจส่งไปแล้ว ดูอีเมลก่อน · กด "ลืมรหัส" อีกครั้งเพื่อใส่รหัสจากอีเมล';
       throw e;
     });
     run(btn, sent).then(function (d) {
@@ -14655,36 +14717,49 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var key = svg.getAttribute('data-c3') + '|' + h;
     if (!pzLegPics[key]) {
       var look = c3Look(svg);
+      var low = !el.classList.contains('me');
       pzLegPics[key] = Promise.all(PZ_LEG_AT.map(function (at) {
-        return C3.mod.still(look, { w: Math.round((h * 120) / 224), h: h, move: 'm-run', at: at, turn: 55, bleed: true, low: !el.classList.contains('me') });
+        return C3.mod.still(look, { w: Math.round((h * 120) / 224), h: h, move: 'm-run', at: at, turn: 55, bleed: true, low: low });
       }));
     }
-    pzLegPics[key].then(function (urls) {
-      if (!svg.isConnected || svg.querySelector('.pz-leg')) return;
-      // (ภาพยืนหายไประหว่างรอ: ขอใหม่ได้เมื่อขึ้นอีก)
-      if (!svg.classList.contains('c3-on')) { svg._legs = 0; return; }
-      var b = c3Bleed();
-      var left = urls.length;
-      urls.forEach(function (u, i) {
-        var im = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-        im.setAttribute('class', 'pz-leg l' + i);
-        im.setAttribute('x', String(-120 * b.side));
-        im.setAttribute('y', String(-24 - 224 * b.top));
-        im.setAttribute('width', String(120 * (1 + 2 * b.side)));
-        im.setAttribute('height', String(224 * (1 + b.top)));
-        im.onload = function () { if (!--left) svg.classList.add('pz-legs'); };
-        im.onerror = function () {
-          if (svg._legsNo) return;
-          svg._legsNo = 1;
-          svg.classList.remove('pz-legs');
-          Array.prototype.forEach.call(svg.querySelectorAll('.pz-leg'), function (x) { x.parentNode.removeChild(x); });
-          delete pzLegPics[key];
-          if (C3.mod && C3.mod.broken) C3.mod.broken(u);
-        };
-        im.setAttribute('href', u);
-        svg.appendChild(im);
-      });
-    }, function () { svg._legsNo = 1; /* โยกแบบเดิม */ });
+    // (2.13.44 g-b3 A4-6) ตัวรอภาพไม่จับตัวละครไว้ จำแค่ id แล้วหาตัวบนหน้าตอนภาพมา: ภาพที่รอเครื่องว่างนาน ตัวรอที่ต่อทุกครั้งที่เปิดลาน
+    // เคยจับลานที่ปิดแล้วไว้ทั้งลาน (วัดสามมิติ: เปิดลาน 3 ครั้ง โหนดค้าง 1,692 → 5,772 จนออกจากแท็บเพื่อน)
+    svg._legsKey = key;
+    var id = el.id;
+    pzLegPics[key].then(function (urls) { pzLegsPut(id, key, urls); }, function () { var x = pzLegsSvg(id, key); if (x) x._legsNo = 1; /* โยกแบบเดิม */ });
+  }
+  /** ตัวละครในลานที่รอภาพขาชุด key (ตัวที่อยู่บนหน้าตอนนี้) */
+  function pzLegsSvg(id, key) {
+    var el = id && document.getElementById(id);
+    var svg = el && el.querySelector('.pz-char svg.char-svg[data-c3]');
+    return svg && svg._legsKey === key ? svg : null;
+  }
+  function pzLegsPut(id, key, urls) {
+    var svg = pzLegsSvg(id, key);
+    if (!svg || svg.querySelector('.pz-leg')) return;
+    // (ภาพยืนหายไประหว่างรอ: ขอใหม่ได้เมื่อขึ้นอีก)
+    if (!svg.classList.contains('c3-on')) { svg._legs = 0; return; }
+    var b = c3Bleed();
+    var left = urls.length;
+    urls.forEach(function (u, i) {
+      var im = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+      im.setAttribute('class', 'pz-leg l' + i);
+      im.setAttribute('x', String(-120 * b.side));
+      im.setAttribute('y', String(-24 - 224 * b.top));
+      im.setAttribute('width', String(120 * (1 + 2 * b.side)));
+      im.setAttribute('height', String(224 * (1 + b.top)));
+      im.onload = function () { if (!--left) svg.classList.add('pz-legs'); };
+      im.onerror = function () {
+        if (svg._legsNo) return;
+        svg._legsNo = 1;
+        svg.classList.remove('pz-legs');
+        Array.prototype.forEach.call(svg.querySelectorAll('.pz-leg'), function (x) { x.parentNode.removeChild(x); });
+        delete pzLegPics[key];
+        if (C3.mod && C3.mod.broken) C3.mod.broken(u);
+      };
+      im.setAttribute('href', u);
+      svg.appendChild(im);
+    });
   }
   /** เดินเป็นท่าได้แล้ว: ภาพก้าวขึ้นครบ (สามมิติ) หรือเป็นภาพวาด (ไม่มีสามมิติ ภาพสามมิติไม่มา ภาพก้าวทำไม่ได้: โยกแบบเดิม)
    *  · ยังไม่พร้อม: ตัวยังไม่ขึ้น ภาพก้าวยังไม่มา หรือกำลังเล่นท่าบนเวทีสด */
@@ -17278,7 +17353,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** ไปหัวข้อบันทึกหน้างานในแท็บไอเดีย: จากแผ่นหลังลงเวลา (E3) และทางลัดในความคิดเห็น */
   function goDailyLog() {
     if (sheetState) closeSheet();
-    if (S.tab !== 'ideas') { S.tab = 'ideas'; S.sub = null; window.scrollTo(0, 0); render(); }
+    if (S.tab !== 'ideas') { S.tab = 'ideas'; S.sub = null; (window.scrollTo(0, 0), scrollNow = 0); render(); }
     setTimeout(function () { var card = $('.dl-card'); if (card) card.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 80);
   }
   function sendDaily(btn, none) {
@@ -18736,7 +18811,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var go = function () {
       return fn().catch(function (e) {
         // (2.13.41 g-b1) ส่งซ้ำด้วยรหัสร่างเดิม หลังบ้านไม่บันทึกซ้ำ: เน็ตหลุดจนลองครบแล้ว บอกให้กดอีกครั้งได้เลย (เดิมขึ้น "อาจบันทึกไปแล้ว ดูในรายการก่อน")
-        if (e.network && tries >= 3) e.message = 'เน็ตไม่ดี ส่งไม่สำเร็จ — กดอีกครั้งได้เลย ไม่ซ้ำกัน';
+        if (e.network && tries >= 3) e.message = (e.bad ? 'ระบบตอบผิดพลาด' : 'เน็ตไม่ดี') + ' ส่งไม่สำเร็จ — กดอีกครั้งได้เลย ไม่ซ้ำกัน';
         if (!(e.network || e.transient) || tries >= 3) throw e;
         tries++;
         return later(tries * 1500).then(whenOnline).then(go);
@@ -18805,7 +18880,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       lvCheck(d.level);
     }, function (e) {
       openFeedbackForm();
-      toast(e.network ? 'เน็ตไม่ดี ส่งไม่สำเร็จ — กด "ส่ง" อีกครั้งได้เลย ไม่ซ้ำกัน' : e.message, 'bad');
+      toast(e.network ? (e.bad ? 'ระบบตอบผิดพลาด' : 'เน็ตไม่ดี') + ' ส่งไม่สำเร็จ — กด "ส่ง" อีกครั้งได้เลย ไม่ซ้ำกัน' : e.message, 'bad');
     });
   }
   /** The app's version, the phone, and what went wrong lately: for a problem to be found quickly. */
@@ -19072,7 +19147,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
     // staff
     'tab': function (el) {
-      S.tab = el.dataset.tab; S.sub = null; window.scrollTo(0, 0); render();
+      S.tab = el.dataset.tab; S.sub = null; (window.scrollTo(0, 0), scrollNow = 0); render();
       if (S.tab === 'team') loadTeam('open');
       if (S.tab === 'approve' || (S.tab === 'team' && isApprover())) { loadLeaves('open'); loadPay(null, 'open'); }
       if (S.tab === 'friends') loadFriends();
@@ -19086,12 +19161,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if ((S.tab === 'home' || S.tab === 'leave' || S.tab === 'slips') && Date.now() - (S.homeAt || 0) > FRESH_MS) loadHome(true);
     },
     'open-history': function () {
-      S.sub = 'history'; window.scrollTo(0, 0); render();
+      S.sub = 'history'; (window.scrollTo(0, 0), scrollNow = 0); render();
       if (S.month) prefetchMonth(shiftMonth(S.month.period.key, -1));
     },
     // From ฉัน: the month's history, the slips, the leave; back comes to ฉัน.
     'me-go': function (el) {
-      S.sub = el.dataset.sub; window.scrollTo(0, 0); render();
+      S.sub = el.dataset.sub; (window.scrollTo(0, 0), scrollNow = 0); render();
       if (S.sub === 'history') { if (!S.month || S.month.period.key !== S.monthKey) loadMonth(S.monthKey); else prefetchMonth(shiftMonth(S.month.period.key, -1)); }
       if (S.sub === 'leave' && S.home && S.home.leave.calendar) prefetchCalendar(S.home.leave.calendar.month);
       if (S.sub === 'slips') prefetchSlip();
@@ -19997,13 +20072,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       p.then(function () { S.retrying = false; softRender(); });
     },
     // 2.13.31 ชุดต้อนรับ: การ์ดแนะนำ (ถัดไป ย้อน เริ่มใช้แอป) · การ์ดถาม (ตอบ ไว้ก่อน) · บัตรต้อนรับของเจ้าของร้าน
-    'tips-next': function () { tipAt++; render(); window.scrollTo(0, 0); },
-    'tips-back': function () { if (tipAt > 0) tipAt--; render(); window.scrollTo(0, 0); },
+    'tips-next': function () { tipAt++; render(); (window.scrollTo(0, 0), scrollNow = 0); },
+    'tips-back': function () { if (tipAt > 0) tipAt--; render(); (window.scrollTo(0, 0), scrollNow = 0); },
     'tips-done': function (el) {
       run(el, call('welcomeSeen', { k: 'tips' }, staffAuth())).then(function (d) {
         tipAt = 0;
         if (S.home) S.home.welcome = d.welcome;
-        render(); window.scrollTo(0, 0); lockRelease();
+        render(); (window.scrollTo(0, 0), scrollNow = 0); lockRelease();
       }, function () {
         // บันทึกไม่ได้ (เน็ตหลุด): ใช้แอปต่อได้ ลงเวลาต้องได้เสมอ · เข้าแอปครั้งหน้าการ์ดขึ้นอีก
         tipAt = 0;
@@ -20269,13 +20344,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
     // owner
     'owner-tab': function (el) {
-      S.ownerTab = el.dataset.tab; window.scrollTo(0, 0); render();
+      S.ownerTab = el.dataset.tab; (window.scrollTo(0, 0), scrollNow = 0); render();
       if (S.ownerTab === 'pay') loadPay(null, 'open');
       if (S.ownerTab === 'team') { loadTeam('open'); loadLeaves('open'); }
       if (S.ownerTab === 'staff') loadEmployees('open');
       if ((S.ownerTab === 'overview' || S.ownerTab === 'settings') && Date.now() - (S.ownerAt || 0) > FRESH_MS) loadOwner();
     },
-    'go-pay': function (el) { S.ownerTab = 'pay'; window.scrollTo(0, 0); render(); loadPay(el.dataset.key, 'open'); },
+    'go-pay': function (el) { S.ownerTab = 'pay'; (window.scrollTo(0, 0), scrollNow = 0); render(); loadPay(el.dataset.key, 'open'); },
     'owner-menu': function () {
       openSheet({ title: 'เจ้าของร้าน', body: html`<button class="menu-item" data-act="fb-inbox">${icon('chat')} ความคิดเห็นจากพนักงาน${S.ownerHome && S.ownerHome.feedback && S.ownerHome.feedback.fresh ? ' (ใหม่ ' + S.ownerHome.feedback.fresh + ')' : ''}</button><button class="menu-item" data-act="owner-leaves">${icon('leave')} คำขอลาและการลา</button><button class="menu-item" data-act="owner-refresh">${icon('refresh')} รีเฟรชข้อมูล</button><button class="menu-item danger" data-act="logout-owner">${icon('logout')} ออกจากระบบ</button>` });
     },
@@ -20555,18 +20630,22 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var barsMin = false;
   var scrollY0 = 0;
   var scrollQueued = false;
+  // (2.13.44 g-b3) ตำแหน่งเลื่อนล่าสุดที่ตัวฟังเลื่อนจำไว้: syncBars ไม่อ่าน window.scrollY เอง เพราะอ่านหลังวาดหน้าใหม่บังคับ
+  // ให้เครื่องจัดหน้าทั้งหน้าทันที (โปรไฟล์ a-4 ที่ CPU ช้า 4 เท่า: 785 จาก 1,023 ms ตอนสลับ 4 แท็บ)
+  var scrollNow = 0;
   function syncBars() {
     var bar = $('.topbar');
-    if (bar) bar.classList.toggle('scrolled', window.scrollY > 4);
+    if (bar) bar.classList.toggle('scrolled', scrollNow > 4);
     var tabs = $('.tabbar');
     if (tabs) tabs.classList.toggle('min', !!barsMin);
   }
   window.addEventListener('scroll', function () {
+    nmScrollAt = performance.now();
     if (scrollQueued) return;
     scrollQueued = true;
     requestAnimationFrame(function () {
       scrollQueued = false;
-      var y = Math.max(0, window.scrollY);
+      var y = scrollNow = Math.max(0, window.scrollY);
       var dy = y - scrollY0;
       var edge = y < 60 || y + window.innerHeight >= document.documentElement.scrollHeight - 24;
       if (edge) barsMin = false;
@@ -20584,11 +20663,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function tick() {
     var n = now();
     var p = parts(n);
+    // (2.13.44 g-b3) เขียนเฉพาะเมื่อข้อความเปลี่ยน: วันที่เปลี่ยนวันละครั้ง ไม่ต้องให้เครื่องจัดหน้าใหม่ทุกวินาที
     document.querySelectorAll('[data-clock]').forEach(function (el) {
-      if (el.dataset.clock === 'big') el.innerHTML = pad(p.hh) + ':' + pad(p.mi) + '<small>' + pad(p.ss) + '</small>';
-      else if (el.dataset.clock === 'hms') el.textContent = pad(p.hh) + ':' + pad(p.mi) + ':' + pad(p.ss);
-      else if (el.dataset.clock === 'day') el.textContent = thDateLong(ymdOf(n));
-      else el.textContent = thDateLong(ymdOf(n)) + (el.dataset.clock === 'date' && S.view !== 'kiosk' ? ' · ' + pad(p.hh) + ':' + pad(p.mi) + ' น.' : '');
+      var k = el.dataset.clock;
+      if (k === 'big') {
+        var h = pad(p.hh) + ':' + pad(p.mi) + '<small>' + pad(p.ss) + '</small>';
+        if (el._clock !== h) { el._clock = h; el.innerHTML = h; }
+        return;
+      }
+      var t = k === 'hms' ? pad(p.hh) + ':' + pad(p.mi) + ':' + pad(p.ss)
+        : k === 'day' ? thDateLong(ymdOf(n))
+        : thDateLong(ymdOf(n)) + (k === 'date' && S.view !== 'kiosk' ? ' · ' + pad(p.hh) + ':' + pad(p.mi) + ' น.' : '');
+      if (el.textContent !== t) el.textContent = t;
     });
   }
   setInterval(tick, 1000);
