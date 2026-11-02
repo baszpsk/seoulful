@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.45","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"3c7c6564e562"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.46","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"9e4604314e04"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -2217,6 +2217,7 @@ body.sb-on #toasts { z-index: 5001; }
 .bk-go { display: flex; flex-wrap: wrap; gap: 8px; }
 .bk-go .btn { flex: 1; flex-direction: column; gap: 2px; height: auto; min-height: 56px; padding: 8px 12px; white-space: normal; line-height: 1.25; }
 .bk-go .btn small { font-size: 12px; font-weight: 500; opacity: .85; }
+.bk-nw { white-space: nowrap; }
 .bk-go .bk-off { opacity: .6; box-shadow: none; }
 .bk-h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .bk-vs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 6px; }
@@ -15327,6 +15328,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       function ls(k, v) { try { if (v === undefined) return localStorage.getItem(STORE + k); localStorage.setItem(STORE + k, v); } catch (e) { return null; } }
       function load() { var s = null; try { s = JSON.parse(ls('sb-stats') || 'null'); } catch (e) { s = null; } s = s || {}; s.days = s.days || {}; return s; }
       function save(s) { var ks = Object.keys(s.days).sort(); while (ks.length > 14) delete s.days[ks.shift()]; ls('sb-stats', JSON.stringify(s)); }
+      // 2.13.46 รอบค้างจากเครื่อง: ตาเดินชุดเดิมเล่นซ้ำได้ครบ ยังไม่จบ และได้คะแนน ชิ้นที่วาง คอมโบตรงที่เก็บไว้ · ข้อมูลเสียหรือกติกาเปลี่ยนคืน null (เริ่มรอบใหม่ตามปกติ)
+      function revive(seed, opt, r) {
+        try {
+          if (!r || !Array.isArray(r.log) || !r.log.length || r.log.length >= C.MAX_LOG) return null;
+          var s = C.replay(seed, opt, r.log);
+          return s && !s.over && s.log.length === r.log.length && s.score === r.score && s.used === r.used && s.combo === r.combo ? s : null;
+        } catch (e) { return null; }
+      }
       function go(e, kf, op) { if (!e.animate) { if (e.parentNode) e.parentNode.removeChild(e); return null; } if (op && typeof op === 'object' && op.delay && !op.fill) op.fill = 'backwards'; var a = e.animate(kf, op); a.onfinish = function () { if (e.parentNode) e.parentNode.removeChild(e); }; return a; }
       function an(e, kf, op) { return e && e.animate ? e.animate(kf, op) : null; }
       function buzz(p) { try { if (root.navigator && navigator.vibrate) navigator.vibrate(p); } catch (e) { /* ไม่มีการสั่น */ } }
@@ -15641,12 +15650,27 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (gm) { game = gm; day = gm.day || day; if (gm.stats) { stats = gm.stats; stats.days = stats.days || {}; } }
           mode = game ? (game.n ? 'daily' : 'free') : m || mode;
           tmr.forEach(clearTimeout); tmr = []; fx.innerHTML = ''; fly.innerHTML = '';
-          st = game ? C.create(game.seed, { tools: game.tools | 0, endless: !!game.endless }) : C.create(mode === 'daily' ? 'd' + day : 'f' + Date.now().toString(36) + Math.floor(Math.random() * 1e6), { hammer: tl.hammer | 0, swap: tl.swap | 0, endless: mode !== 'daily' });
-          shown = 0; tool = ''; R.classList.remove('t-h', 't-s'); endEl.classList.remove('on'); msgOff(); tip.style.opacity = '';
+          // 2.13.46 รอบค้างในเครื่อง (game.resume จากแอป): เล่นซ้ำตาเดินเดิมจาก seed เดิมด้วยตัวช่วยที่มีตอนนี้ ได้กระดาน ชิ้นในมือ คะแนน คอมโบเดิม · ข้อมูลเสียหรือไม่ตรง = เริ่มรอบใหม่ตามปกติ
+          var back = game && game.resume ? revive(game.seed, { tools: game.tools | 0, endless: !!game.endless }, game.resume) : null;
+          if (game) game.resume = null;
+          st = back || (game ? C.create(game.seed, { tools: game.tools | 0, endless: !!game.endless }) : C.create(mode === 'daily' ? 'd' + day : 'f' + Date.now().toString(36) + Math.floor(Math.random() * 1e6), { hammer: tl.hammer | 0, swap: tl.swap | 0, endless: mode !== 'daily' }));
+          shown = 0; tool = ''; R.classList.remove('t-h', 't-s'); endEl.classList.remove('on'); msgOff(); tip.style.opacity = back ? 0 : '';
           var dt = day.split('-');
           q('.sb-mode').textContent = mode === 'daily' ? 'โจทย์ ' + (+dt[2]) + ' ' + TH[+dt[1] - 1] + (game && game.n ? ' · รอบ ' + game.n + '/5' : '') : 'เล่นเอง · ไม่จำกัดชิ้น';
-          odo.set(0); mood(''); drawAll();
+          odo.set(st.score); mood(''); drawAll();
+          if (back && st.stuck) stuck();
         }
+        // 2.13.46 (เจ้าของ 2 พ.ย. 2569 "อยากให้มันเล่นต่อได้ไม่ว่าจะปิดเครื่องหรือปิดแอพ"): เก็บรอบที่เล่นอยู่ในเครื่องทุกตา (วาง ค้อน เปลี่ยนชิ้น)
+        // และตอนแอปถูกพับหรือปิด ไม่ใช้เน็ต · o.keep(mode, รอบ|null) แอปเก็บแยกคนและโหมด · จบรอบแล้วล้างตอนขึ้นหน้าจบรอบ (keep(true))
+        function keep(clear) {
+          if (!o.keep || !st || (!clear && (st.over || shown))) return;
+          try { o.keep(mode, clear || !st.log.length ? null : { seed: st.seed, day: day, n: game ? game.n | 0 : 0, log: st.log, score: st.score, used: st.used, combo: st.combo }); } catch (e) { /* เครื่องเก็บไม่ได้ เล่นต่อได้ตามเดิม */ }
+        }
+        function away(e) {
+          if (!R.isConnected) { root.removeEventListener('pagehide', away); D.removeEventListener('visibilitychange', away); return; }
+          if (e.type === 'pagehide' || D.visibilityState === 'hidden') keep();
+        }
+        root.addEventListener('pagehide', away); D.addEventListener('visibilitychange', away);
         function msgOn(t, btn) { msg.innerHTML = t + (btn ? '<button type="button" class="sb-quit">' + btn + '</button>' : ''); msg.classList.add('on'); }
         function msgOff() { msg.classList.remove('on'); }
         function setTool(t) {
@@ -15731,6 +15755,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
             tmr.push(setTimeout(function () { word(st.why === 'done' ? 'ครบทุกชิ้นแล้ว!' : st.why === 'cap' ? 'จบรอบ' : 'ครัวเต็มแล้ว!', '', 0); }, res.lines.length ? 900 : 200));
             tmr.push(setTimeout(showEnd, res.lines.length ? 2100 : 1300));
           } else if (st.stuck) tmr.push(setTimeout(stuck, 600));
+          keep();
           return res;
         }
         // แถวแตก: ช่องแตกเป็นประกาย ไอร้อน แสงกวาด แล้วรวมเป็นจานบินไปที่คะแนน
@@ -15843,12 +15868,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           var hm = spawn('sb-hm', IC.ham), T2 = 'translate(' + (P(x) - 6) + 'px,' + (P(y) - 30) + 'px)';
           go(hm, [{ transform: T2 + ' rotate(-50deg) scale(1.4)', opacity: 0 }, { transform: T2 + ' rotate(20deg) scale(1.4)', opacity: 1, offset: .4 }, { transform: T2 + ' rotate(0) scale(1.3)', opacity: 0 }], { duration: 520, easing: 'ease-in', fill: 'both' });
           shake(5); sfx('hit'); bz(20);
-          drawTray(); tools();
+          drawTray(); tools(); keep();
           if (st.over) tmr.push(setTimeout(showEnd, 700)); else if (st.stuck) stuck(); else msgOff();
         }
         function doSwap(s) {
           if (!C.swap(st, s)) return;
-          setTool(''); drawTray(s); tools();
+          setTool(''); drawTray(s); tools(); keep();
           if (st.over) tmr.push(setTimeout(showEnd, 700)); else if (st.stuck) stuck(); else msgOff();
         }
         function fireworks() {
@@ -15894,7 +15919,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         }
         function showEnd() {
           if (shown) return;
-          shown = 1; setTool(''); msgOff();
+          shown = 1; setTool(''); msgOff(); keep(true);
           var sc = st.score, prev = stats.best || 0, dd = stats.days[day] || { best: 0, plays: 0 }, nb = sc > prev;
           if (mode === 'daily') { dd.plays++; dd.best = Math.max(dd.best, sc); stats.days[day] = dd; }
           stats.best = Math.max(prev, sc); stats.combo = Math.max(stats.combo || 0, st.maxCombo); stats.served = (stats.served || 0) + st.served.length; stats.plays = (stats.plays || 0) + 1;
@@ -15961,7 +15986,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           }
         };
       }
-      root.SeoulBlock = { mount: mount, dish: dishM };
+      root.SeoulBlock = { mount: mount, dish: dishM, revive: revive };
     })(window);
     var css = document.createElement('style');
     css.id = 'sb-css';
@@ -16030,12 +16055,33 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // รอบที่ยังส่งไม่ถึงเก็บผ่าน LS (ชื่อขึ้นต้นด้วย STORE แอปทดลองแยกจากแอปจริง) · เครื่องเก็บไม่ได้: LS ไม่พัง ส่งใหม่ได้จากหน้าจบรอบ
   function blockUnsent() { var x = LS.get(blockUnsentKey()); return x && x.seed ? x : null; }
   function blockKeep(un) { if (un) LS.set(blockUnsentKey(), un); else LS.del(blockUnsentKey()); }
+  // 2.13.46 รอบที่เล่นค้าง (ตาเดินของรอบ คะแนน ชิ้นที่วาง คอมโบ) เก็บในเครื่องแยกคนและโหมด ผ่าน LS (ชื่อขึ้นต้นด้วย STORE แอปทดลองแยกจากแอปจริง)
+  // · เปลี่ยนมือถือหรือล้างข้อมูลเว็บแล้วหาย · ข้อมูลเสีย = ไม่มีรอบค้าง เริ่มรอบใหม่ตามปกติ
+  function blockRunKey(who, mode) { return 'sb-run-' + who + '-' + (mode === 'daily' ? 'team' : 'free'); }
+  function blockRun(who, mode) { var x = LS.get(blockRunKey(who, mode)); return x && typeof x.seed === 'string' && Array.isArray(x.log) && x.log.length && typeof x.score === 'number' ? x : null; }
+  function blockRunSet(who, mode, r) { if (r) LS.set(blockRunKey(who, mode), r); else LS.del(blockRunKey(who, mode)); }
+  /** รอบค้างที่เล่นต่อได้กับรอบที่หลังบ้านให้ (blockStart g): เล่นให้ทีม = seed และรอบเดียวกัน (วันนี้ ยังไม่ได้ส่ง) · เล่นเอง = รอบเล่นเองที่ค้าง
+   *  · รอบทีมค้างข้ามวันหรือส่งไปแล้วไม่เล่นต่อ จึงไม่เกินวันละ 5 รอบและไม่ส่งซ้ำ */
+  function blockResumeOf(sv, g) {
+    if (!sv || !g) return null;
+    if (g.n) return sv.n === g.n && sv.seed === g.seed ? sv : null;
+    return !sv.n && /^f/.test(sv.seed) ? sv : null;
+  }
+  /** รอบจากหลังบ้านพร้อมรอบค้าง: เล่นต่อได้ = seed และตาเดินเดิม ตัวช่วยตามที่มีตอนนี้ · ไม่ได้ = ล้างรอบค้างของโหมดนั้น */
+  function blockWithRun(g) {
+    var mode = g.n ? 'daily' : 'free', sv = blockResumeOf(blockRun(block.me, mode), g);
+    if (sv) { g.seed = sv.seed; g.resume = sv; } else blockRunSet(block.me, mode, null);
+    return g;
+  }
   function blockBody() {
     var d = block.data;
     if (d.off) return html`<div id="block" class="bk"><section class="card bk-off"><b>คุณปิดครัวโซลฟูลไว้</b><span class="muted">ไม่อยู่ในทีม และไม่เห็นเกมในหน้าแรกกับหน้าเพื่อน</span><button class="btn primary" data-act="block-toggle">เปิดเล่น</button></section></div>`;
     var dt = d.day.split('-'), left = Math.max(0, d.daily.n - d.daily.played);
     var my = d.teams.filter(function (t) { return t.id === d.team; })[0];
     var un = blockUnsent();
+    // 2.13.46 รอบค้างในเครื่อง: ปุ่มเดิมบอกว่าเล่นต่อ (รอบทีมนับเฉพาะรอบวันนี้ที่ยังไม่ได้ส่ง)
+    var rt = blockRun(block.me, 'daily'), rf = blockRun(block.me, 'free');
+    if (rt && !(rt.n === d.daily.next && rt.day === d.day)) rt = null;
     return html`<div id="block" class="bk">
       ${d.closed ? html`<p class="bk-note">${icon('clock')} ครัวโซลฟูลพักช่วงร้านยุ่ง ${d.closed.from}–${d.closed.until} น. เล่นต่อหลังจากนั้นได้เลย</p>` : ''}
       ${un ? html`<div class="bk-unsent"><span class="grow"><b>รอบล่าสุดยังไม่ได้บันทึก</b><small>คะแนน ${bkN(un.score)} · ส่งใหม่ได้เลย</small></span><button class="btn sm primary" data-act="block-resend">ส่งใหม่</button></div>` : ''}
@@ -16043,8 +16089,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <span class="bk-art" aria-hidden="true">${raw(blockArt())}</span>
         <div class="bk-hero-tx"><span class="eyebrow">โจทย์วันนี้ ${+dt[2]} ${BLOCK_M[+dt[1] - 1]}</span><b>${left ? 'นับเข้าทีมได้อีก ' + left + ' จาก ' + d.daily.n + ' รอบ' : 'วันนี้นับเข้าทีมครบ ' + d.daily.n + ' รอบแล้ว'}</b><small>ทุกคนได้ชุดเดียวกัน · รอบละ ${d.pieces} ชิ้น</small></div>
         <div class="bk-dots">${d.daily.rounds.map(function (r) { return html`<i class="${r.score != null ? 'on' : ''}">${r.score != null ? bkN(r.score) : r.n}</i>`; })}</div>
-        <div class="bk-go">${left ? html`<button class="btn primary" data-act="block-play"><b>เล่นให้ทีม</b><small>โจทย์วันนี้ รอบ ${d.daily.next}/${d.daily.n} · เหลือ ${left} รอบวันนี้</small></button>` : html`<span class="btn bk-off"><b>เล่นให้ทีม</b><small>วันนี้ครบ ${d.daily.n} รอบแล้ว</small></span>`}<button class="btn ${left ? '' : 'primary'}" data-act="block-free"><b>เล่นเอง</b><small>ไม่จำกัดชิ้น · สถิติส่วนตัว</small></button></div>
-        <small class="muted bk-how">เล่นให้ทีม: ทุกคนได้โจทย์เดียวกัน ทีมใช้รอบที่ดีสุดของแต่ละวัน รวม 5 วันดีสุดของสัปดาห์ วันหยุดหรือวันลาไม่ทำให้ทีมเสียคะแนน ออกกลางรอบแล้วเริ่มโจทย์เดิมใหม่ได้<br>เล่นเอง: วางได้เรื่อย ๆ จนวางไม่ได้หรือกดจบรอบ นับแค่สถิติส่วนตัว</small>
+        <div class="bk-go">${left ? html`<button class="btn primary" data-act="block-play"><b>${rt ? 'เล่นให้ทีมต่อ' : 'เล่นให้ทีม'}</b><small>${rt ? html`<span class="bk-nw">รอบ ${rt.n}/${d.daily.n} ค้างไว้</span> · <span class="bk-nw">${bkN(rt.score)} คะแนน</span>` : html`<span class="bk-nw">โจทย์วันนี้ รอบ ${d.daily.next}/${d.daily.n}</span> · <span class="bk-nw">เหลือ ${left} รอบวันนี้</span>`}</small></button>` : html`<span class="btn bk-off"><b>เล่นให้ทีม</b><small>วันนี้ครบ ${d.daily.n} รอบแล้ว</small></span>`}<button class="btn ${left ? '' : 'primary'}" data-act="block-free"><b>${rf ? 'เล่นเองต่อ' : 'เล่นเอง'}</b><small>${rf ? html`<span class="bk-nw">รอบค้าง ${bkN(rf.score)} คะแนน</span> · <span class="bk-nw">วางแล้ว ${bkN(rf.used)} ชิ้น</span>` : html`<span class="bk-nw">ไม่จำกัดชิ้น</span> · <span class="bk-nw">สถิติส่วนตัว</span>`}</small></button></div>
+        <small class="muted bk-how">เล่นให้ทีม: ทุกคนได้โจทย์เดียวกัน ทีมใช้รอบที่ดีสุดของแต่ละวัน รวม 5 วันดีสุดของสัปดาห์ วันหยุดหรือวันลาไม่ทำให้ทีมเสียคะแนน ออกกลางรอบหรือปิดแอป กลับมากดปุ่มเดิมเล่นต่อรอบเดิมได้<br>เล่นเอง: วางได้เรื่อย ๆ จนวางไม่ได้หรือกดจบรอบ นับแค่สถิติส่วนตัว อยากเริ่มรอบใหม่กดจบรอบ</small>
         <small class="muted bk-gift">${d.coins && d.coins.got ? 'ได้ ' + d.coins.week + ' เหรียญของสัปดาห์นี้แล้ว' : 'เล่นโจทย์วันนี้อย่างน้อย 1 รอบในสัปดาห์ ได้ ' + ((d.coins && d.coins.week) || 10) + ' เหรียญ'} · เล่นเกม 3 รอบแรกของวันลุ้นของพิเศษจากเกม</small>
       </section>
       <section class="card bk-teams">
@@ -16069,7 +16115,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     block.busy = true;
     run(el, call('blockStart', free ? { free: true } : {}, staffAuth())).then(function (g) {
       block.busy = false;
-      blockShow(g);
+      blockShow(blockWithRun(g));
     }, function () { block.busy = false; });
   }
   function blockShow(g) {
@@ -16080,7 +16126,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     block.host.hidden = false;
     document.body.classList.add('sb-on');
     if (block.ui) { block.ui.start(null, g); block.ui.fit(); return; }
-    var me = blockMe(d);
+    var me = blockMe(d), who = block.me;
     block.ui = SB.mount(block.host, {
       game: g, date: g.day, stats: g.stats,
       // ตัวน้องของคนเล่นในชุดที่ซื้อไว้ เป็นตัวสามมิติแบบหน้าอื่น (เจ้าของ 1 พ.ย. 2569 "ทำไมตนละครเป็นตัวเก่า") · ภาพสามมิติทำทีหลังเอง กระดานไม่รอ
@@ -16092,7 +16138,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       cheer: (d.figs || []).map(function (id) { return FIG_ART(id); }).filter(Boolean),
       // บล็อกวัตถุดิบสามมิติ: ภาพนิ่งใน 3d/i/ มีเฉพาะเว็บของร้านและเดโม หน้าที่ไม่มีใช้ภาพวาดเดิม
       art: c3Base() ? c3Base() + 'i/' : '', ver: CODE_VERSION,
-      onEnd: blockSend, onAgain: blockAgain, onClose: blockHide
+      onEnd: blockSend, onAgain: blockAgain, onClose: blockHide,
+      // 2.13.46 รอบที่เล่นอยู่เก็บในเครื่องของคนนี้ (ผูกคนตอนเปิดเกม คนอื่นเข้าเครื่องนี้ไม่ทับกัน)
+      keep: function (mode, r) { blockRunSet(who, mode, r); }
     });
     block.host.sb = block.ui; // ตัวคุมหน้าจอเกม (dev/block-ui-check.js ใช้จบรอบ)
   }
@@ -16111,6 +16159,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     block.busy = true;
     call('blockStart', mode === 'free' ? { free: true } : {}, staffAuth()).then(function (g) {
       block.busy = false;
+      blockWithRun(g);
       g.stats = blockStats(block.data);
       block.g = g;
       block.ui.start(null, g);
