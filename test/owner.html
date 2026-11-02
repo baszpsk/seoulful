@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.49","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"8261a4d22eba"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.50","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"63c5681ae4b9"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -1779,7 +1779,9 @@ html.i3-wait-sh-t-wood .th-t-wood :is(.rm-row, .sh-row)::after, html.i3-wait-sh-
 .wc { text-align: center; }
 .wc-top { padding: 2px 0 6px; }
 .wc-boxes { display: flex; justify-content: center; gap: 6px; height: 92px; margin-bottom: 6px; }
-.wc-box { width: 76px; height: 88px; animation: wc-drop .7s var(--spring) both, wc-wiggle 2.8s ease-in-out infinite; animation-delay: calc(var(--i) * .12s), calc(1.2s + var(--i) * .35s); }
+/* (2.13.50 g-k6) ท่าตกอยู่ที่กล่อง ท่าส่ายอยู่ที่ชั้นใน .wc-wig ไม่ซ้อนบน transform ตัวเดียวกัน · จังหวะและหน้าตาเท่าเดิม */
+.wc-box { width: 76px; height: 88px; animation: wc-drop .7s var(--spring) both; animation-delay: calc(var(--i) * .12s); }
+.wc-wig { display: block; width: 100%; height: 100%; animation: wc-wiggle 2.8s ease-in-out infinite; animation-delay: calc(1.2s + var(--i) * .35s); }
 .wc-box svg { width: 100% !important; height: 100% !important; }
 @keyframes wc-drop { 0% { transform: translateY(-70px) scale(.5); opacity: 0; } 100% { transform: none; opacity: 1; } }
 @keyframes wc-wiggle { 0%, 78%, 100% { transform: rotate(0); } 82% { transform: rotate(-7deg); } 86% { transform: rotate(7deg); } 90% { transform: rotate(-4deg); } 94% { transform: rotate(2deg); } }
@@ -1804,7 +1806,7 @@ html.i3-wait-sh-t-wood .th-t-wood :is(.rm-row, .sh-row)::after, html.i3-wait-sh-
 .wc-card span { font-size: 13px; color: var(--muted); }
 .wc-card-box { flex: none; width: 42px; height: 48px; animation: wc-wiggle 2.8s ease-in-out infinite; }
 .wc-card-box svg { width: 100% !important; height: 100% !important; }
-@media (prefers-reduced-motion: reduce) { .wc-box, .wc-card-box, .wc-pet-big, .wc-hearts i { animation: none !important; } .wc-hearts i { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .wc-box, .wc-wig, .wc-card-box, .wc-pet-big, .wc-hearts i { animation: none !important; } .wc-hearts i { opacity: 0; } }
 /* ---- 2.13.31 ชุดต้อนรับ: การ์ดแนะนำ 3 ใบ การ์ดถาม การ์ดไม่มีผู้อนุมัติ บัตรต้อนรับของเจ้าของร้าน ---- */
 .tips-page { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; padding-top: max(18px, env(safe-area-inset-top)); padding-bottom: max(18px, env(safe-area-inset-bottom)); }
 .tips { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 460px; margin: 0 auto; }
@@ -2349,6 +2351,17 @@ body.sb-on #toasts { z-index: 5001; }
 .fr-run .rn-run img:nth-child(4) { animation-delay: -.1s; }
 .fr-run .rn-poses .rn-up { animation: rn-on-up 2.8s step-end infinite; }
 .fr-run .rn-poses .rn-dn { animation: rn-on-dn 2.8s step-end infinite; }
+/* (2.13.50 g-k6) การ์ดพ้นจอ (rn-still จาก runCardWatch): ทุกท่าในฉากหยุดตรงที่อยู่ เห็นอีกครั้งขยับต่อพร้อมกันในจังหวะเดิม */
+.fr-run.rn-still .rn-world,
+.fr-run.rn-still .rn-g,
+.fr-run.rn-still .rn-h,
+.fr-run.rn-still .rn-b,
+.fr-run.rn-still .rn-sh,
+.fr-run.rn-still .fr-run-art b,
+.fr-run.rn-still .rn-run,
+.fr-run.rn-still .rn-run img,
+.fr-run.rn-still .rn-poses .rn-up,
+.fr-run.rn-still .rn-poses .rn-dn { animation-play-state: paused; }
 /* The run's card in 3D: the course's cake ground (its cream on top, its sponge below), a jelly hurdle,
    a peppermint (games.py), once come; each its size on the card the course's measures above allow for. */
 html.i3-rn-ground .fr-run .rn-g { height: 56px; border: 0; background: var(--i3-rn-ground) 0 0 / 26px 26px repeat-x, linear-gradient(#f8d3df, #f3b9cc); background-position: 0 0, 0 26px; background-size: 26px 26px, 100% 100%; }
@@ -3773,7 +3786,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         (jw.body || '') +
         (bk.front || '') +
         (ARMS[mv] ? ALT[ARMS[mv]](top.sleeve, skin, sk[1]) : '') +
-        '<g class="cp-armR cp-hold"><g class="cp-item">' + hand + '</g>' + (PROP[mv] || '').replace(/SKIN/g, skin) + '</g>' +
+        // (2.13.50 g-k6) แขนถือของใส่เฉพาะตัวที่มีของในมือหรือของประกอบท่า: กลุ่มว่างไม่มีอะไรให้เห็น แต่ท่าแขนที่วิ่งบนกลุ่มว่าง
+        // ทำให้เครื่องต้องคิดภาพใหม่ทุกเฟรม (วัดเดโมแท็บเพื่อน) · ตัวที่ถือของยังขยับตามเดิม
+        (hand || PROP[mv] ? '<g class="cp-armR cp-hold"><g class="cp-item">' + hand + '</g>' + (PROP[mv] || '').replace(/SKIN/g, skin) + '</g>' : '') +
         // head: ears, face, cheeks, the fringe on top
         '<g class="cp-head">' +
         '<circle cx="25" cy="62" r="6" fill="' + skin + '"/><circle cx="95" cy="62" r="6" fill="' + skin + '"/>' +
@@ -6644,7 +6659,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // (g-b3c) ชื่อที่พ้นจอไม่ไล่สี: ตัวเฝ้าจอดูแค่ชื่อเรืองแสงไม่กี่ชื่อ ตั้งแค่ธงในตัวชื่อ ไม่แตะหน้า
     if (!nmIo && window.IntersectionObserver) nmIo = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target._nmOff = !e.isIntersecting; }); });
     if (nmIo) for (var i = 0; i < list.length; i++) if (nmWatch.indexOf(list[i]) < 0) { nmWatch.push(list[i]); nmIo.observe(list[i]); }
-    if (!nmTimer) nmTimer = setInterval(nmTick, 66);
+    // (2.13.50 g-k6) ขั้นละ 83 มิลลิวินาที (ราว 12 ครั้งต่อวินาที จากเดิม 15) ความเร็วไล่สีเท่าเดิม: วัดในหน้าเดียวสลับ 6 รอบ แท็บเพื่อนบนสุด CPU ช้า 4 เท่า
+    // ทั้งแท็บ 785 → 689 ms ต่อวินาที (สองชื่อ 459 → 363) · ขั้นสีกว้างขึ้นราวหนึ่งในสี่ (ชื่อกว้าง 33 px เลื่อน 1.8 → 2.3 px ต่อขั้น)
+    if (!nmTimer) nmTimer = setInterval(nmTick, 83);
   }
   function nmTick() {
     // (ชื่อที่หลุดจากหน้าแล้ว: เลิกเฝ้า ไม่จับโหนดเก่าไว้)
@@ -8040,6 +8057,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     glideLenses();
     runCardPics();
     bksWatch();
+    runCardWatch();
     mvfRun();
     if (S.view === 'kiosk' && S.k.step === 'confirm') attachKioskCamera();
     if (S.view === 'kiosk' && S.k.step === 'names') drawLiveQr();
@@ -13490,7 +13508,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="wc-gift">${icon('gift')}<span>กล่องสุ่มฟรี ${st.boxes} กล่อง รอเปิดที่ห้องของฉัน</span></div>${st.coins ? html`<div class="wc-gift"><span class="coin"></span><span>เหรียญ ${st.coins} ซื้อของแต่งตัวหรือกล่องเพิ่มได้</span></div>` : ''}</div>`;
     }
     return html`<div class="wc">
-      <div class="wc-top"><div class="wc-boxes">${[0, 1, 2].slice(0, st.boxes).map(function (i) { return html`<span class="wc-box" style="--i:${i}">${raw(boxArt('s1'))}</span>`; })}</div>
+      <div class="wc-top"><div class="wc-boxes">${[0, 1, 2].slice(0, st.boxes).map(function (i) { return html`<span class="wc-box" style="--i:${i}"><span class="wc-wig">${raw(boxArt('s1'))}</span></span>`; })}</div>
         <h2>ยินดีต้อนรับสู่โซลฟูล์!</h2>
         <p>กล่องสุ่มฟรี ${st.boxes} กล่อง · กล่องที่ ${st.boxes} ได้น้องหายากขึ้นไปแน่นอน</p>
         ${st.coins ? html`<p class="wc-back"><span class="coin"></span> และเหรียญ ${st.coins} จากระดับและภารกิจที่ทำมาก่อนหน้านี้</p>` : ''}</div>
@@ -17340,6 +17358,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (RUN_CARD.key !== key) { RUN_CARD.key = key; RUN_CARD.sp = runSprites(look); }
     else runPoses(RUN_CARD.sp);
     return RUN_CARD.sp;
+  }
+  // (2.13.50 g-k6) การ์ดวิ่งฝ่าด่านพ้นจอ: หยุดทุกท่าในฉาก ไม่ให้เครื่องขยับฉากที่ไม่มีใครเห็น · ตัวเฝ้าจอตัวเดียว ตั้งแค่คลาสของการ์ด
+  // (การ์ดที่หลุดจากหน้าเพราะวาดใหม่: เลิกเฝ้าในครั้งถัดไปที่ตัวเฝ้าแจ้ง ไม่จับโหนดเก่าไว้ · แอปอยู่เบื้องหลังเบราว์เซอร์ไม่วาดเฟรม ท่าหยุดเอง)
+  var RN_IO = null;
+  function runCardWatch() {
+    var c = document.querySelector('.fr-run');
+    if (!c || c._rnW || !window.IntersectionObserver) return;
+    if (!RN_IO) RN_IO = new IntersectionObserver(function (es) { es.forEach(function (e) { if (!e.target.isConnected) { RN_IO.unobserve(e.target); return; } e.target.classList.toggle('rn-still', !e.isIntersecting); }); });
+    c._rnW = 1;
+    RN_IO.observe(c);
   }
   function runCardPics() {
     var art = RUN_CARD.sp && document.querySelector('.fr-run-art');
