@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.48","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"14f9cebcc4e7"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.49","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"8261a4d22eba"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -908,6 +908,17 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .dl-fx b { display: block; font-size: 14px; font-weight: 600; }
 .dl-fx small { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.4; }
 .dl-fx .btn { flex: none; }
+/* 2.13.49 ประชุมทีมวันอังคาร */
+.mt-row { margin-top: 10px; }
+.mt-timer .mt-step { display: block; font-size: 17px; margin-top: 2px; }
+.mt-timer .mt-clock { font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mt-timer .mt-clock.over { font-size: 20px; color: var(--bad); }
+.mt-say { margin: 8px 0 0; }
+.mt-part.on { border-color: var(--warn); box-shadow: 0 0 0 1px var(--warn); }
+.mt-list { margin: 0; padding-left: 18px; line-height: 1.6; font-size: 14px; }
+.dl-fxpick { margin-top: 12px; }
+.dl-fxpick > span { display: block; margin-bottom: 6px; }
+.dl-fxpick .chip { padding: 8px 12px; font-size: 14px; }
 .dl-fx-card { padding: 12px 16px; border-top: 1px solid var(--line); }
 .dl-fx-card:first-child { border-top: 0; }
 .dl-fx-card .t { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-weight: 600; }
@@ -2005,9 +2016,9 @@ html.i3-pz-shop-day .pz-art.day .pz3-shop.pz-d, html.i3-pz-shop-lit .pz-art.lit 
 .run-row .medal { width: 24px; flex: none; display: grid; place-items: center; font-size: 18px; }
 .run-row .medal img.u3 { width: 30px; height: 30px; margin: -3px; }
 .pz-calm svg { width: 16px; height: 16px; flex: none; }
-.dl-news { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 12px; padding: 10px 12px; border: 0; border-radius: var(--r-md); background: var(--ok-soft); color: var(--ok); font: inherit; font-size: 13px; text-align: left; }
-.dl-news > span { flex: 1; min-width: 0; }
-.dl-news svg { width: 18px; height: 18px; flex: none; }
+.dl-news, .mt-row { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 12px; padding: 10px 12px; border: 0; border-radius: var(--r-md); background: var(--ok-soft); color: var(--ok); font: inherit; font-size: 13px; text-align: left; }
+.dl-news > span, .mt-row > span { flex: 1; min-width: 0; }
+.dl-news svg, .mt-row svg { width: 18px; height: 18px; flex: none; }
 @media (prefers-reduced-motion: reduce) { .champ-card .champ-row.me .champ-emo { animation: none; } }
 .ideas-rank { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--inset); font-weight: 700; font-size: 13px; }
 .ideas-rank.r1 { background: linear-gradient(135deg, #fde68a, #f5b301); color: #5b3d00; }
@@ -12652,6 +12663,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${pushCard()}
       ${teamUseCard(o.team)}
       ${morningCard(o.morning)}
+      ${meetCard(o.meet)}
       ${pinLocksCard(o.pinLocks)}
       ${turnoverCard(o.turnover)}${yearEndWarnCard(o.yearEnd)}
       ${dailyOwnerCard(o.daily)}
@@ -17406,6 +17418,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${d.lead ? (d.sentToday ? html`<div class="dl-done"><span class="pill ok">${icon('check')} ส่งสรุปวันนี้แล้ว</span>${d.streak >= 2 ? html`<span class="pill gold">${icon('spark')} ส่งครบ ${d.streak} วันติด</span>` : ''}</div>` : html`<button class="btn primary block" style="margin-top:12px" data-act="dl-form" data-date="${d.today}">${icon('note')} ส่งสรุปวันนี้</button>`) : ''}
       ${dlTiles()}
       ${dlFixingList(d)}
+      ${meetRow(d.meet)}
       ${news.length ? html`<button class="dl-news" data-act="dl-mine">${icon('check')}<span>เจ้าของร้านดูเรื่องที่คุณบันทึกแล้ว ${news.length} เรื่อง · ขอบคุณที่บอกนะ</span>${icon('right')}</button>` : ''}
       <div class="fb-foot"><span>${icon('team')}<span>${team.today ? 'วันนี้ทีมบันทึก ' + team.today + ' เรื่อง' : 'วันนี้ยังไม่มีใครบันทึก บอกเป็นคนแรกเลย'}${team.fixed && !(S.home && S.home.level) ? html`<br>เดือนนี้ร้านแก้แล้ว ${team.fixed} เรื่อง` : ''}</span></span>${(d.mine || []).length ? html`<button class="fb-mine-btn" data-act="dl-mine">บันทึกของฉัน${mineToday ? ' ' + mineToday : ''}${news.length ? html`<i class="dot" aria-label="เจ้าของร้านดูแล้ว"></i>` : ''}${icon('right')}</button>` : ''}</div>
     </section>`;
@@ -17666,7 +17679,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var list = (d && d.fixing) || [];
     if (!list.length) return '';
     return html`<div class="dl-fixing"><span class="eyebrow">ร้านกำลังแก้ · เจออีกบอกได้เลย</span>${list.map(function (t) {
-      return html`<div class="dl-fx">${icon('tool')}<div class="grow"><b>${dlThingName(t)}</b>${t.ownerNote ? html`<small>ร้าน: ${t.ownerNote}</small>` : html`<small>ตั้งแต่${dlDay(t.since)}</small>`}</div>${t.today ? html`<span class="pill ok">${icon('check')} บอกแล้ววันนี้</span>` : html`<button class="btn sm tap" data-act="dl-again" data-key="${t.key}">วันนี้เจออีก</button>`}</div>`;
+      return html`<div class="dl-fx">${icon('tool')}<div class="grow"><b>${dlThingName(t)}</b>${t.ownerNote ? html`<small>ร้าน: ${t.ownerNote}</small>` : html`<small>ตั้งแต่${dlDay(t.since)}</small>`}${t.by || t.due ? html`<small>${t.by ? 'ดูแลโดย ' + t.by : ''}${t.by && t.due ? ' · ' : ''}${t.due ? 'ตั้งใจเสร็จ ' + dlDay(t.due) : ''}</small>` : ''}</div>${t.today ? html`<span class="pill ok">${icon('check')} บอกแล้ววันนี้</span>` : html`<button class="btn sm tap" data-act="dl-again" data-key="${t.key}">วันนี้เจออีก</button>`}</div>`;
     })}</div>`;
   }
   /** "Happened again today": the thing, what the owner means to do, and a few words if there are any. */
@@ -18674,6 +18687,116 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!m) return;
     openSheet({ title: 'รายงานเมื่อวาน · ' + thDateLong(m.date), wide: true, body: morningBody(m) });
   }
+  // ---- ประชุมทีมวันอังคาร (2.13.49 g-k5 · Daily.gs meetView_ meetHome_) ----------------------------------
+  // หัวข้อจากบันทึกหน้างานของสัปดาห์ ไม่มีชื่อคนบันทึก · บท 25 นาทีพร้อมตัวจับเวลา (เวลาอยู่ในเครื่อง ไม่บันทึกหลังบ้าน) · ไม่มีช่องพิมพ์
+  var MEET_STEPS = [
+    [3, 'เปิดด้วยเรื่องดี', 'อ่านคำชมของลูกค้า แล้วชวนขอบคุณเพื่อนที่ช่วยกันสัปดาห์นี้'],
+    [7, 'เรื่องที่ร้านกำลังแก้', 'คนดูแลแต่ละเรื่องเล่าสั้น ๆ ว่าถึงไหนแล้ว ยังเจออยู่ไหม อยากให้ใครช่วยอะไร'],
+    [10, 'เรื่องที่ทีมเจอบ่อย', 'วนให้ทุกคนได้พูดคนละเรื่อง เรื่องเล็กก็เล่าได้ คุยกันที่ต้นเหตุ ไม่ต้องบอกว่าใครทำ'],
+    [5, 'ตกลงกันก่อนแยกย้าย', 'แต่ละเรื่องได้คนดูแลและวันที่ตั้งใจเสร็จ แล้วนัดเล่าผลกันอังคารหน้า'],
+  ];
+  var MT = { step: 0, left: MEET_STEPS[0][0] * 60, run: false, at: 0, timer: 0 };
+  var MEET_LAST = null; // การ์ดล่าสุดของเจ้าของร้าน แผ่นประชุมใช้ข้อมูลชุดเดียวกัน ไม่โหลดเพิ่ม
+  var dlFx = null; // แผ่นกำลังแก้: คนดูแลและวันที่ตั้งใจเสร็จที่แตะเลือก
+  function meetData() { return S.view === 'owner' ? MEET_LAST : (dlHome() || {}).meet; }
+  /** หัวข้อหนึ่งบรรทัด เช่น "ของหมด · หมูสามชั้น · 3 ครั้ง 3 วัน" */
+  function meetLine(x) {
+    var what = x.menu || x.detail || '';
+    return (DL_SHORT[x.topic] || x.label) + (what ? ' · ' + what : '') + (x.n ? ' · ' + x.n + ' ครั้ง' + (x.days > 1 ? ' ' + x.days + ' วัน' : '') : '');
+  }
+  function meetBits(a) {
+    var b = [];
+    if (a.fixing.length) b.push('กำลังแก้ ' + a.fixing.length);
+    if (a.top.length) b.push('ทีมเจอบ่อย ' + (a.top.length + (a.more || 0)));
+    if (a.good.length) b.push('ลูกค้าชม ' + a.good.length);
+    if (a.fixed.length) b.push('แก้แล้ว ' + a.fixed.length);
+    return b;
+  }
+  /** หน้าแรกของเจ้าของร้าน ต่อจากรายงานเมื่อวาน: ครั้งถัดไป หรือยังไม่เริ่ม (ไม่แจ้งใคร) */
+  function meetCard(m) {
+    MEET_LAST = m;
+    if (!m) return '';
+    var a = m.agenda;
+    var bits = meetBits(a);
+    return html`<button class="card pad-lg mt-card" data-act="meet-open" style="width:100%;text-align:left">
+      <div class="card-h"><span class="eyebrow">ประชุมทีม · ${m.started ? (m.today ? 'วันนี้' : dlDay(m.on)) : 'ยังไม่เริ่ม'}</span></div>
+      <p style="margin:4px 0 0"><b>${m.started ? 'ก่อนเปิดร้าน ' + m.min + ' นาที · ' + (a.total ? 'บันทึกสัปดาห์นี้ ' + a.total + ' เรื่อง' : 'สัปดาห์นี้ยังไม่มีบันทึก') : 'เริ่มเองเมื่อน้องเริ่มใช้แอป'}</b></p>
+      ${bits.length ? html`<p class="small" style="margin:6px 0 0">${mrBits(bits)}</p>` : ''}
+      <p class="small muted" style="margin:8px 0 0">${m.started ? 'แตะดูหัวข้อ บท และจับเวลา' : 'ตอนนี้ยังไม่แจ้งใคร · แตะดูหัวข้อตัวอย่างจากบันทึกสัปดาห์นี้'}</p>
+    </button>`;
+  }
+  /** แถวในการ์ดบันทึกหน้างานของน้อง: วันก่อนประชุมและวันประชุม */
+  function meetRow(m) {
+    if (!m) return '';
+    return html`<button class="mt-row" data-act="meet-open">${icon('team')}<span><b>${m.today ? 'วันนี้' : 'พรุ่งนี้'}ประชุมทีมก่อนเปิดร้าน ${m.min} นาที</b><br>ทุกคนได้เล่าคนละเรื่อง อยากให้ร้านดีขึ้นตรงไหน บันทึกไว้ก่อนได้เลย</span>${icon('right')}</button>`;
+  }
+  function mmss(s) { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+  function meetLeft() { return MT.run ? MT.left - (Date.now() - MT.at) / 1000 : MT.left; }
+  /** แผ่นประชุม: ตัวจับเวลาของขั้นนี้ แล้วบท 4 ขั้นพร้อมหัวข้อของแต่ละขั้น */
+  function meetBody(m) {
+    var a = m.agenda;
+    var st = MEET_STEPS[MT.step];
+    var own = S.view === 'owner';
+    var list = function (xs, one) {
+      return xs.length ? html`<ul class="mt-list">${xs.map(function (x) { return html`<li>${one ? one(x) : meetLine(x)}</li>`; })}</ul>` : '';
+    };
+    var none = function (t) { return html`<p class="small muted mt0">${t}</p>`; };
+    var parts = [
+      list(a.good) || none('สัปดาห์นี้ยังไม่มีบันทึกลูกค้าชม ชวนเล่าเรื่องดีที่เจอ'),
+      list(a.fixing, function (x) { return html`${meetLine(x)}${x.plan ? html`<br><span class="muted">ร้าน: ${x.plan}</span>` : ''}<br><span class="muted">${x.by ? 'ดูแลโดย ' + x.by : 'ยังไม่มีคนดูแล'}${x.due ? ' · ตั้งใจเสร็จ ' + dlDay(x.due) : ''}${x.again ? ' · เจออีก ' + x.again + ' ครั้ง' : ''}</span>`; }) || none('ตอนนี้ไม่มีเรื่องที่ร้านกำลังแก้'),
+      a.top.length ? html`${list(a.top)}${a.more ? none('และอีก ' + a.more + ' เรื่อง') : ''}` : none('สัปดาห์นี้ยังไม่มีเรื่องที่ต้องแก้ ชวนทุกคนเล่าสิ่งที่เจอ'),
+      html`${list(a.fixed, function (x) { return 'แก้แล้ว: ' + meetLine(x) + (x.plan ? ' · ' + x.plan : ''); })}${none(own ? 'เรื่องที่ตกลงกัน กด กำลังแก้ ในบันทึกหน้างาน แล้วแตะเลือกคนดูแลและวันที่ตั้งใจเสร็จ' : 'เรื่องที่ตกลงกันจะขึ้นในการ์ด ร้านกำลังแก้ พร้อมคนดูแล')}${own ? html`<button class="btn sm" data-act="dl-inbox">${icon('note')} เปิดบันทึกหน้างาน</button>` : ''}`,
+    ];
+    var left = meetLeft();
+    return html`<div class="stack mt-sheet">
+      <p class="small muted mt0">${m.today ? 'วันนี้' : dlDay(m.on)} ก่อนเปิดร้าน ${m.min} นาที · หัวข้อจากบันทึกหน้างาน ${thShort(a.from)} – ${thShort(a.on)} รวม ${a.total} เรื่อง ไม่มีชื่อคนบันทึก</p>
+      <section class="card mt-timer"><div class="row" style="justify-content:space-between;align-items:center;gap:10px"><div class="grow"><span class="eyebrow">ขั้น ${MT.step + 1}/${MEET_STEPS.length} · ${st[0]} นาที</span><b class="mt-step">${st[1]}</b></div><b class="mt-clock${left <= 0 ? ' over' : ''}" id="mt-clock">${left > 0 ? mmss(left) : 'หมดเวลา'}</b></div>
+        <p class="small mt-say">${st[2]}</p>
+        <div class="row" style="gap:8px;margin-top:10px"><button class="btn primary sm" data-act="meet-go">${MT.run ? 'พัก' : MT.left < st[0] * 60 ? 'จับเวลาต่อ' : 'เริ่มจับเวลา'}</button><button class="btn sm" data-act="meet-next">${MT.step < MEET_STEPS.length - 1 ? 'ขั้นถัดไป' : 'เริ่มใหม่'}</button></div></section>
+      ${MEET_STEPS.map(function (s, i) {
+        return html`<section class="card mt-part${i === MT.step ? ' on' : ''}"><div class="card-h"><span class="eyebrow">${i + 1}. ${s[1]} · ${s[0]} นาที</span></div>${parts[i]}</section>`;
+      })}
+      <p class="small muted mt0">ไม่มีประชุมรายวัน · คุยตัวต่อตัวเดือนละครั้ง · เรื่องใหม่ระหว่างสัปดาห์ บันทึกหน้างานได้ทุกวัน</p>
+    </div>`;
+  }
+  function openMeet() {
+    var m = meetData();
+    if (!m) return;
+    openSheet({ title: 'ประชุมทีม · ' + (m.today ? 'วันนี้' : thDateLong(m.on)), wide: true, body: meetBody(m) });
+    meetTick();
+  }
+  /** เวลาบนจอเดินทุกวินาทีเฉพาะตอนจับเวลาและแผ่นเปิดอยู่ · ปิดแผ่นแล้วพักเอง เวลาที่เหลือจำไว้ */
+  function meetTick() {
+    clearInterval(MT.timer);
+    MT.timer = 0;
+    if (!MT.run) return;
+    MT.timer = setInterval(function () {
+      var el = $('#mt-clock');
+      if (!el) { MT.left = meetLeft(); MT.run = false; clearInterval(MT.timer); MT.timer = 0; return; }
+      var s = meetLeft();
+      el.textContent = s > 0 ? mmss(s) : 'หมดเวลา';
+      el.classList.toggle('over', s <= 0);
+    }, 1000);
+  }
+  function meetGo() {
+    if (MT.run) { MT.left = meetLeft(); MT.run = false; }
+    else { MT.at = Date.now(); MT.run = true; }
+    openMeet();
+  }
+  function meetStep() {
+    MT.step = MT.step < MEET_STEPS.length - 1 ? MT.step + 1 : 0;
+    MT.left = MEET_STEPS[MT.step][0] * 60;
+    MT.at = Date.now();
+    if (!MT.step) MT.run = false;
+    openMeet();
+  }
+  function dlPickFx(el) {
+    if (!dlFx) return;
+    dlFx[el.dataset.k] = el.dataset.v || '';
+    var box = el.closest('.chips');
+    if (box) Array.prototype.forEach.call(box.querySelectorAll('.chip'), function (b) { b.setAttribute('aria-pressed', b === el ? 'true' : 'false'); });
+  }
+  // ---- จบประชุมทีม ----
   function dailyOwnerCard(o) {
     if (!o) return '';
     var counts = Object.keys(o.counts || {}).sort(function (a, b) { return o.counts[b] - o.counts[a]; });
@@ -18884,6 +19007,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var ids = (t.ids || []).join(',');
       return html`<div class="dl-fx-card"><div class="t">${icon(DL_ICON[t.topic] || 'chat')}<span>${dlThingName(t)}</span></div>
         <div class="s">เริ่มแก้${dlDay(t.since)}${t.ownerNote ? ' · ' + t.ownerNote : ''}</div>
+        ${t.by || t.due ? html`<div class="s">${t.by ? 'ดูแลโดย ' + t.by : 'ยังไม่กำหนดคนดูแล'}${t.due ? ' · ตั้งใจเสร็จ ' + dlDay(t.due) + (t.due < workDate() ? ' · เลยวันที่ตั้งไว้' : '') : ''}</div>` : ''}
         <div class="s">${t.again ? html`<span class="still">ยังเกิดอยู่ · เจออีก ${t.again} ครั้ง ล่าสุด${dlDay(t.lastAgain)}</span>` : html`<span class="quiet">ยังไม่มีใครเจออีก</span>`}${t.quiet >= 3 ? html` · <span class="quiet">ไม่เกิดมา ${t.quiet} วันแล้ว</span>` : ''}</div>
         <div class="acts" style="display:flex;gap:8px;margin-top:8px"><button class="btn sm" data-act="dl-fix" data-ids="${ids}">${icon('check')} แก้แล้ว</button><button class="btn sm ghost" data-act="dl-mark" data-ids="${ids}" data-status="unfix">เลิกแก้</button></div></div>`;
     })}</section>`;
@@ -18928,7 +19052,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   /** Set out to fix: the team sees it, and what the owner means to do; "happened again" from then on. */
   function askDailyFixing(ids) {
-    openSheet({ title: 'เริ่มแก้เรื่องนี้', body: html`<p class="small muted mt0">ทีมจะเห็นในแอปว่าร้านกำลังแก้ ถ้ายังเกิดอยู่ พนักงานกด "วันนี้เจออีก" ได้ทันที ไม่ต้องพิมพ์ใหม่ (ได้ 1 แต้ม) แอปนับให้ว่ายังเกิดกี่ครั้ง จะได้รู้ว่าวิธีแก้ได้ผลไหม</p><label class="field"><span>บอกทีมว่าจะแก้อย่างไร (ไม่บังคับ)</span><textarea class="input" id="dl-note" maxlength="300" placeholder="เช่น พรุ่งนี้สั่งหมูเพิ่มเป็นวันละ 5 กก."></textarea></label>`,
+    // 2.13.49 คนดูแลและวันที่ตั้งใจเสร็จ: แตะเลือก ไม่มีช่องพิมพ์เพิ่ม (dlFx ไปกับ dl-mark)
+    var people = (dlList && dlList.people) || [];
+    var next = (dlList && dlList.meetNext) || '';
+    var today = workDate();
+    dlFx = { by: '', due: '' };
+    var chip = function (k, v, label) { return html`<button type="button" class="chip" data-act="dl-pickfx" data-k="${k}" data-v="${v}" aria-pressed="${v === '' ? 'true' : 'false'}">${label}</button>`; };
+    var dues = [['', 'ยังไม่กำหนด'], [addDays(today, 3), 'ภายใน 3 วัน']].concat(next ? [[next, 'ก่อนประชุมทีม ' + dlDay(next)]] : []).concat([[addDays(today, 14), 'ภายใน 2 สัปดาห์']]);
+    openSheet({ title: 'เริ่มแก้เรื่องนี้', body: html`<p class="small muted mt0">ทีมจะเห็นในแอปว่าร้านกำลังแก้ ถ้ายังเกิดอยู่ พนักงานกด "วันนี้เจออีก" ได้ทันที ไม่ต้องพิมพ์ใหม่ (ได้ 1 แต้ม) แอปนับให้ว่ายังเกิดกี่ครั้ง จะได้รู้ว่าวิธีแก้ได้ผลไหม</p><label class="field"><span>บอกทีมว่าจะแก้อย่างไร (ไม่บังคับ)</span><textarea class="input" id="dl-note" maxlength="300" placeholder="เช่น พรุ่งนี้สั่งหมูเพิ่มเป็นวันละ 5 กก."></textarea></label>
+      <div class="dl-fxpick"><span class="small"><b>คนดูแล</b> (ไม่บังคับ)</span><div class="chips">${chip('by', '', 'ยังไม่กำหนด')}${chip('by', 'owner', 'เจ้าของร้าน')}${people.map(function (p) { return chip('by', p.id, p.name); })}</div></div>
+      <div class="dl-fxpick"><span class="small"><b>ตั้งใจเสร็จ</b> (ไม่บังคับ)</span><div class="chips">${dues.map(function (d) { return chip('due', d[0], d[1]); })}</div></div>
+      <p class="small muted">ทีมเห็นคนดูแลและวันที่ตั้งใจเสร็จในการ์ด ร้านกำลังแก้ และในหัวข้อประชุมทีม</p>`,
       foot: html`<button class="btn" data-act="dl-inbox">ยกเลิก</button><button class="btn primary" data-act="dl-mark" data-ids="${ids}" data-status="fixing">${icon('tool')} กำลังแก้</button>` });
   }
   /** Marked fixed: a word for the people who noted it, if the owner wants to say how. */
@@ -18948,6 +19082,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var note = $('#dl-note');
     var data = { ids: String(el.dataset.ids || '').split(',').filter(String), status: el.dataset.status };
     if (note) data.note = note.value;
+    if (data.status === 'fixing' && dlFx) { data.by = dlFx.by; data.due = dlFx.due; }
     run(el, call('dailyMark', data, ownerAuth())).then(function (d) {
       toast(d.notice, 'ok');
       openDailyInbox();
@@ -20364,6 +20499,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     'dl-inbox': function () { openDailyInbox(); },
     'mr-open': function () { openMorning(); },
+    'meet-open': function () { openMeet(); },
+    'meet-go': function () { meetGo(); },
+    'meet-next': function () { meetStep(); },
+    'dl-pickfx': function (el) { dlPickFx(el); },
     'dl-fix': function (el) { askDailyFix(el.dataset.ids); },
     'dl-fixing': function (el) { askDailyFixing(el.dataset.ids); },
     'dl-again': function (el) { openDailyAgain(el.dataset.key); },
