@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.46","page":"","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"d5991ac16a20"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.47","page":"","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"588ef64aec9d"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -2197,19 +2197,77 @@ html.c3 .shop-char, html.c3 .rm-char { touch-action: pan-y; }
 #sb-host { position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: 5000; max-width: 480px; margin: 0 auto; background: #1c140e; }
 #sb-host[hidden] { display: none; }
 body.sb-on #toasts { z-index: 5001; }
-.bk-art, .fr-block-art, .q-blk { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; align-content: center; }
-.bk-art i, .fr-block-art i, .q-blk i { display: block; aspect-ratio: 1; border-radius: 28%; background: linear-gradient(160deg, var(--c1), var(--c2)); box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .16), inset 0 2px 0 rgba(255, 255, 255, .5); }
-.bk-art .b0, .fr-block-art .b0, .q-blk .b0 { --c1: #f7deb4; --c2: #d5a565; }
-.bk-art .b1, .fr-block-art .b1, .q-blk .b1 { --c1: #ff7d6d; --c2: #d9372b; }
-.bk-art .b3, .fr-block-art .b3, .q-blk .b3 { --c1: #94dc87; --c2: #3fa447; }
-.bk-art .b4, .fr-block-art .b4, .q-blk .b4 { --c1: #ffe36e; --c2: #efb200; }
-.fr-block-art { flex: none; width: 58px; height: 58px; padding: 9px; border-radius: 18px; background: #3b2a1f; animation: bk-bob 3.2s ease-in-out infinite; }
-.quest.blk { margin-top: 14px; }
-.quest .q-gem.q-blk { padding: 7px; background: #3b2a1f; }
+/* 2.13.46 การ์ดและปุ่มเข้าครัวโซลฟูลเป็นฉากวนแบบตัวอย่างเกมวิ่ง (.bks · bksScene): ตัวน้อง (ภาพวิ่งชุดเดียวกับการ์ดวิ่งฝ่าด่าน) วิ่งผ่านครัว
+   เก็บวัตถุดิบ 4 ชิ้น (กระโดดเก็บชิ้นลอย) ประกาย คอมโบ เสิร์ฟอาหาร อาหารลอย · ขยับด้วย transform และ opacity เท่านั้น (เครื่องวาดแยกจากงานหลักของหน้า)
+   · ของที่ขยับพร้อมกันรวมเป็นกลุ่มเดียว ท่าต่อฉาก 14 (มีภาพสามมิติ 17): ทุกครั้งที่หน้าวาดใหม่ เครื่องต้องคิดทุกท่าที่เล่นอยู่ (วัดหน้าเพื่อนตอน 36 ท่า เวลาวาดเพิ่ม 85 ms/วินาที)
+   · ขยับเฉพาะตอนเห็นบนจอ (bksSync เติม .on) · เครื่องที่ตั้งลดการเคลื่อนไหวเห็นภาพนิ่งจังหวะคอมโบ · ฉาก 160×100 ย่อขยายด้วย --k · รอบละ 4.8 วินาที */
+.bks { --k: 1; position: relative; flex: none; display: block; overflow: hidden; pointer-events: none; isolation: isolate; background: radial-gradient(70% 60% at 24% 6%, rgba(255, 246, 220, .95), transparent 70%), linear-gradient(180deg, #ffe2b4, #ffc590 64%, #f6a46c); }
+.bks i, .bks b, .bks em { position: absolute; display: block; font-style: normal; }
+.bks svg { display: block; width: 100%; height: 100%; }
+.bks:not(.on) * { animation-play-state: paused !important; }
+.bks-r { --k: .76; width: 122px; height: 76px; }
+.bks-c { width: 160px; height: 100px; }
+.bks-h { --k: 1.2; height: 120px; }
+.bks-bg { left: 0; top: 0; width: calc(100% / var(--k) + 80px); height: 100px; transform: scale(var(--k)); transform-origin: 0 0; }
+.bks-st { left: 0; top: 0; width: 160px; height: 100px; transform: scale(var(--k)); transform-origin: 0 0; }
+.bks-h .bks-st { left: calc(50% - 80px * var(--k)); }
+.bks-wall { left: 0; top: 4px; width: 100%; height: 64px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='64'%3E%3Crect y='34' width='80' height='5' fill='%23c98a52'/%3E%3Crect y='39' width='80' height='2' fill='%23000' fill-opacity='.08'/%3E%3Crect x='8' y='18' width='13' height='16' rx='3' fill='%23fff8ee' stroke='%23e4b48a'/%3E%3Crect x='7' y='15' width='15' height='4' rx='2' fill='%23e2553a'/%3E%3Crect x='27' y='23' width='10' height='11' rx='3' fill='%23ffe08a' stroke='%23e4b48a'/%3E%3Cpath d='M60 0v13' stroke='%239a6a42' stroke-width='1.5'/%3E%3Ccircle cx='60' cy='19' r='6' fill='none' stroke='%239a6a42' stroke-width='2'/%3E%3Cpath d='M0 52h80M20 41v23M60 41v23' stroke='%23fff' stroke-opacity='.4'/%3E%3C/svg%3E") 0 0 / 80px 64px repeat-x; animation: bks-wall 3.2s linear infinite; }
+.bks-fl { left: 0; top: 78px; width: 100%; height: 24px; background: linear-gradient(#fff4e4 0 3px, #d8874e 3px 4px, transparent 4px), repeating-linear-gradient(90deg, #f6cc9f 0 12px, #ecb383 12px 24px); animation: bks-fl .36s linear infinite; }
+.bks-lns { left: 100%; top: 0; width: 200px; height: 100px; animation: bks-ln 1.6s linear infinite; }
+.bks-lns i { left: 0; top: 18px; width: 22px; height: 2.5px; border-radius: 2px; background: rgba(255, 255, 255, .9); }
+.bks-lns i:nth-child(2) { left: 70px; top: 50px; width: 30px; }
+.bks-lns i:nth-child(3) { left: 140px; top: 68px; width: 16px; }
+.bks-fds { left: 0; top: 0; width: 160px; height: 60px; animation: bks-fd 1.2s ease-in-out infinite alternate; }
+.bks-fd { left: 98px; top: 6px; width: 30px; height: 26px; transform: rotate(-6deg); }
+.bks-fd.f2 { left: 134px; top: 36px; width: 22px; height: 19px; transform: rotate(8deg); }
+.bks-tws { left: 0; top: 0; width: 160px; height: 100px; animation: bks-tw 1.6s ease-in-out infinite; }
+.bks-tws i { left: 70px; top: 10px; width: 10px; height: 10px; background: #fff7b0; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); }
+.bks-tws i:nth-child(2) { left: 120px; top: 62px; width: 8px; height: 8px; background: #ff9ad5; }
+.bks-tws i:nth-child(3) { left: 148px; top: 14px; background: #fff; }
+.bks-sh { left: 27px; top: 75px; width: 28px; height: 6px; border-radius: 50%; background: rgba(120, 50, 20, .22); }
+.bks-me { left: 26px; top: 22px; width: 30px; height: 56px; animation: bks-hop 4.8s infinite; }
+.bks .rn-drawn, .bks .rn-poses, .bks .rn-run { position: absolute; inset: 0; display: block; }
+.bks .rn-drawn { transform-origin: 50% 100%; animation: bks-wob .36s ease-in-out infinite alternate; }
+.bks .rn-drawn .char-svg { width: 100%; height: 100%; overflow: visible; }
+.bks .rn-poses { opacity: 0; }
+.bks-me.c3-run .rn-poses { opacity: 1; }
+.bks-me.c3-run .rn-drawn { opacity: 0; animation: none; }
+.bks .rn-poses img { position: absolute; max-width: none; opacity: .001; }
+.bks-me.c3-run .rn-run img { animation-name: rn-leg; animation-duration: .4s; animation-timing-function: step-end; animation-iteration-count: infinite; }
+.bks-me.c3-run .rn-run img:nth-child(2) { animation-delay: -.3s; }
+.bks-me.c3-run .rn-run img:nth-child(3) { animation-delay: -.2s; }
+.bks-me.c3-run .rn-run img:nth-child(4) { animation-delay: -.1s; }
+.bks-burst { left: 8px; top: 17px; width: 40px; height: 40px; background: radial-gradient(closest-side, #fff 25%, rgba(255, 236, 140, .95) 45%, rgba(255, 160, 60, 0)); clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); opacity: .85; animation: bks-burst 4.8s ease-out infinite; }
+.bks-it { left: 168px; top: 50px; width: 20px; height: 20px; opacity: 0; animation: bks-fly 4.8s linear -.48s infinite; }
+.bks-it.i1, .bks-it.i3 { top: 28px; }
+.bks-it.i1 { animation-delay: -4.32s; }
+.bks-it.i2 { animation-delay: -3.48s; opacity: 1; transform: translateX(-114px); }
+.bks-it.i3 { animation-delay: -2.64s; }
+.bks-tile { left: 0; top: 0; width: 20px; height: 20px; padding: 3px; border-radius: 6px; background: linear-gradient(160deg, var(--c1), var(--c2)); box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .16), inset 0 2px 0 rgba(255, 255, 255, .55), 0 3px 5px rgba(120, 50, 10, .25); }
+.bks-it.k0 { --c1: #f7deb4; --c2: #d5a565; }
+.bks-it.k1 { --c1: #ff7d6d; --c2: #d9372b; }
+.bks-it.k2 { --c1: #94dc87; --c2: #3fa447; }
+.bks-it.k3 { --c1: #ffe36e; --c2: #efb200; }
+.bks-dish { left: 96px; top: 50px; width: 36px; height: 31px; animation: bks-dish 4.8s infinite; }
+.bks-cb { left: 58px; top: 9px; width: 100px; text-align: center; white-space: nowrap; font-size: 17px; font-weight: 900; line-height: 1.1; color: #fff; text-shadow: 0 2px 0 #db2777, 0 4px 0 #7e22ce, 0 0 10px rgba(255, 120, 220, .9); transform-origin: 50% 15%; animation: bks-cb 4.8s infinite; }
+.bks-cb small { display: block; font-size: 22px; color: #fff36b; text-shadow: 0 2px 0 #ea580c, 0 4px 0 #9a3412, 0 0 12px rgba(255, 196, 60, .95); }
+@keyframes bks-wall { to { transform: translateX(-80px); } }
+@keyframes bks-fl { to { transform: translateX(-24px); } }
+@keyframes bks-ln { from { transform: translateX(10px); } to { transform: translateX(-640px); } }
+@keyframes bks-fd { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+@keyframes bks-tw { 0%, 100% { opacity: .15; } 50% { opacity: 1; } }
+@keyframes bks-hop { 0%, 35%, 45%, 70%, 80%, 100% { transform: translateY(0); animation-timing-function: cubic-bezier(.25, .8, .4, 1); } 40%, 75% { transform: translateY(-20px); animation-timing-function: cubic-bezier(.6, 0, .75, .2); } }
+@keyframes bks-wob { from { transform: rotate(-5deg); } to { transform: rotate(5deg) translateY(-2px); } }
+@keyframes bks-fly { 0% { transform: translateX(0) rotate(-12deg) scale(1); opacity: 0; } 4% { opacity: 1; } 30% { transform: translateX(-124px) rotate(10deg) scale(1); opacity: 1; } 34%, 100% { transform: translateX(-126px) rotate(10deg) scale(1.7); opacity: 0; } }
+@keyframes bks-burst { 0%, 19.5% { transform: scale(.2) rotate(0); opacity: 0; } 20% { transform: scale(.3) rotate(0); opacity: 1; } 27%, 39.5% { transform: scale(1.6) rotate(60deg); opacity: 0; } 40% { transform: scale(.3) rotate(0); opacity: 1; } 47%, 57% { transform: scale(1.6) rotate(60deg); opacity: 0; } 57.5% { transform: scale(.3) rotate(0); opacity: 1; } 64.5%, 74.5% { transform: scale(1.6) rotate(60deg); opacity: 0; } 75% { transform: scale(.3) rotate(0); opacity: 1; } 82%, 100% { transform: scale(1.6) rotate(60deg); opacity: 0; } }
+@keyframes bks-dish { 0%, 79% { transform: translateY(34px) scale(.4); opacity: 0; } 84% { transform: translateY(-8px) scale(1.18); opacity: 1; } 87% { transform: translateY(0) scale(.96); opacity: 1; } 90% { transform: translateY(-3px) scale(1.02); opacity: 1; } 96% { transform: translateY(-2px) scale(1); opacity: 1; } 99%, 100% { transform: translateY(-14px) scale(.9); opacity: 0; } }
+@keyframes bks-cb { 0%, 77% { transform: scale(0) rotate(-14deg); opacity: 0; } 81% { transform: scale(1.28) rotate(5deg); opacity: 1; } 84% { transform: scale(.94) rotate(-3deg); opacity: 1; } 87% { transform: scale(1.04) rotate(1deg); opacity: 1; } 95% { transform: scale(1) rotate(0); opacity: 1; } 100% { transform: scale(1.3); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .bks * { animation: none !important; } .bks .rn-run img:first-child { opacity: 1; } }
+.quest.blk { margin-top: 14px; padding: 0 12px 0 0; overflow: hidden; }
 .bk { display: grid; gap: 12px; }
 .bk-hero { position: relative; display: grid; gap: 8px; padding: 16px; border-radius: 22px; overflow: hidden; background: radial-gradient(120% 70% at 10% 0, rgba(255, 206, 140, .65), transparent 60%), linear-gradient(160deg, #fff4e6, #ffe2cf); }
-.bk-hero .bk-art { position: absolute; top: 14px; right: 14px; width: 66px; height: 66px; padding: 9px; border-radius: 18px; background: #3b2a1f; animation: bk-bob 3.2s ease-in-out infinite; }
-.bk-hero-tx { display: grid; gap: 2px; padding-right: 84px; }
+.bk-hero .bks { margin: -16px -16px 2px; }
+.bk-hero-tx { display: grid; gap: 2px; }
 .bk-hero-tx b { font-size: 18px; }
 .bk-dots { display: flex; gap: 6px; }
 .bk-dots i { flex: 1; display: grid; place-items: center; height: 30px; border-radius: 10px; background: rgba(92, 68, 36, .1); color: #8a6b4a; font-size: 12px; font-style: normal; font-weight: 800; }
@@ -2243,14 +2301,12 @@ body.sb-on #toasts { z-index: 5001; }
 .bk-unsent .grow { display: grid; }
 .bk-note { display: flex; align-items: center; gap: 6px; margin: 0; padding: 8px 12px; border-radius: 12px; background: #fef3c7; font-size: 13px; }
 .bk-note svg { width: 15px; height: 15px; }
-.fr-block { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px; border: 0; text-align: left; font: inherit; color: inherit; }
+.fr-block { display: flex; align-items: center; gap: 12px; width: 100%; padding: 0 12px 0 0; overflow: hidden; border: 0; text-align: left; font: inherit; color: inherit; }
 .fr-block-tx { display: grid; gap: 2px; flex: 1; min-width: 0; }
 .fr-block-tx b { font-size: 15px; }
 .fr-block-tx span { font-size: 12.5px; color: var(--ink-2); }
 .fr-block > svg { flex: none; width: 16px; height: 16px; color: var(--muted); }
 .bk-wait { padding: 40px 0; text-align: center; }
-@keyframes bk-bob { 0%, 100% { transform: rotate(6deg) translateY(0); } 50% { transform: rotate(1deg) translateY(-5px); } }
-@media (prefers-reduced-motion: reduce) { .bk-hero .bk-art, .fr-block-art { animation: none; } }
 /* ---- วิ่งฝ่าด่าน ---- */
 /* The run's card (#215): the course passing at one speed (its cake ground, a jelly hurdle, a rolling
    peppermint), one's character running on it in its 3D pictures from the run (side on, its four steps),
@@ -6796,16 +6852,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       </div>`);
     stamp($('#sheet-body'));
     nmShineOn();
+    // (2.13.46 ตัวเฝ้าฉากเฉพาะแผ่นที่มีฉากครัวโซลฟูล: แผ่นอื่น เช่น แผ่นสแกนลงเวลา ไม่สั่งงานของการ์ด)
+    if ($('#sheet-body .bks')) bksWatch();
     if (root.querySelector('.sheet-f')) stamp(root.querySelector('.sheet-f'));
     document.body.classList.add('noscroll');
     // (it slides from the frame after this one, however long making it took: still till then and after)
-    requestAnimationFrame(function () { root.classList.add('open'); busyFor(swap ? QUIET.swap : QUIET.up); });
+    requestAnimationFrame(function () { root.classList.add('open'); busyFor(swap ? QUIET.swap : QUIET.up); bksSync(); });
     stripsBack({});
     glideLenses();
     var first = root.querySelector('[autofocus]');
     if (first) setTimeout(function () { first.focus(); }, 260);
   }
-  function setSheetBody(body) { var b = $('#sheet-body'); if (b) { var at = stripsAt(); redraw(b, String(body)); stripsBack(at); glideLenses(); countUp(); nmShineOn(); } }
+  function setSheetBody(body) { var b = $('#sheet-body'); if (b) { var at = stripsAt(); redraw(b, String(body)); stripsBack(at); glideLenses(); countUp(); nmShineOn(); if (b.querySelector('.bks')) bksWatch(); } }
   // (its foot the same way: a button the same stays, its 3D coin with it, never made anew a moment)
   function setSheetFoot(foot) { var f = $('.sheet-f'); if (f) redraw(f, String(foot)); }
   // ---- drawn anew in place (#216) ------------------------------------------------
@@ -6968,6 +7026,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (o) { busyFor(QUIET.down); requestAnimationFrame(function () { busyFor(QUIET.down); }); }
     root.classList.add('closing');
     root.classList.remove('open');
+    bksSync();
     document.body.classList.remove('noscroll');
     // Once it is down (not a set while: it starts sliding only after what this tap does, however long that
     // takes), what it held goes, and the numbers under it count. #227: taken away mid-slide, it stopped.
@@ -7262,6 +7321,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var began = 0;
       var look = function () {
         if (done || sc.handedOff) return;
+        // (2.13.46 ระหว่างกล้องอ่าน QR งานภาพสามมิติทุกชนิดรอ ต่อทุกรอบที่อ่าน หมดเองไม่เกิน 1.5 วินาทีหลังแผ่นปิด: ภาพที่วาดตอนนั้นแย่งเครื่อง
+        //  มือถือช้าอ่าน QR จอไม่ทันจน QR หมดอายุ)
+        if (C3.mod && C3.mod.calm) C3.mod.calm(1500);
         if (!video.videoWidth || (HOOKS.scanPaused && HOOKS.scanPaused())) {
           // A camera that opened but shows no picture: the photo way too, while it keeps trying.
           if (!video.videoWidth && began && Date.now() - began > 5000) noCamera();
@@ -7966,6 +8028,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (S.sub === 'order' && $('#od-cats')) { odSpySet(S.odAt || 0, true); odSpy(); }
     glideLenses();
     runCardPics();
+    bksWatch();
     mvfRun();
     if (S.view === 'kiosk' && S.k.step === 'confirm') attachKioskCamera();
     if (S.view === 'kiosk' && S.k.step === 'names') drawLiveQr();
@@ -15996,21 +16059,163 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return BLOCK_UI;
   }
   function bkN(n) { return Number(n || 0).toLocaleString('en-US'); }
-  /** ชิ้นวัตถุดิบสี่ชิ้น: ภาพเล็กของเกมที่วาดด้วยหน้าเว็บ ไม่ต้องโหลดโค้ดเกม */
-  function blockArt() { return '<i class="b0"></i><i class="b3"></i><i class="b1"></i><i class="b4"></i>'; }
+  // ---- 2.13.46 การ์ดและปุ่มเข้าครัวโซลฟูลเป็นฉากวนแบบตัวอย่างเกมวิ่ง (เจ้าของร้านถาม 1 พ.ย. 2569 "ครัวโซลฟูลควรเป็นกราฟฟิกdemoเคลื่อนไหวแบบเหมือนเกมวิ่งไหม
+  // ดูดึงดูดให้น่าเล่นกว่าไหม ทำให้ดูน่าเล่นที่สุด"): ตัวน้อง (ภาพวิ่งชุดเดียวกับการ์ดวิ่งฝ่าด่าน ยังไม่มีภาพสามมิติใช้ภาพวาดตัวปัจจุบัน) วิ่งผ่านครัว
+  // เก็บวัตถุดิบ 4 ชิ้น ประกาย คอมโบ เสิร์ฟอาหาร อาหารลอยเด้ง · วาดด้วยหน้าเว็บ ไม่โหลดโค้ดเกม · v: r แถวหน้าแรก c การ์ดหน้าเพื่อน h หน้าแรกของเกม
+  var BKS_ING = [
+    // ต็อก
+    '<rect x="3" y="5" width="18" height="6" rx="3"/><rect x="4" y="13" width="16" height="6" rx="3"/>',
+    // พริก
+    '<path d="M5.5 8.5c3.5-2.6 8.6-2.2 10.6.6 2.4 3.3 1.3 8.4-2.6 10.6-2.6 1.5-5.6.6-4.5-1.5 1.6-2.9 1.5-5.8-.9-7.4-1-.7-1.9-1.3-2.6-2.3z"/><path d="M14 7.6c.5-2 2.2-3.2 4.2-3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>',
+    // ต้นหอม
+    '<rect x="10" y="9" width="4" height="12" rx="2"/><path d="M12 10C9 8 8 5 9 2.5M12 10c3-2 4-5 3-7.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>',
+    // ชีส
+    '<path d="M3 16.5 16 7.5l5 4v7H3z"/><circle cx="9" cy="15.2" r="1.7" fill="#efb200"/><circle cx="15.2" cy="13.6" r="1.2" fill="#efb200"/><circle cx="17.5" cy="17" r="1" fill="#efb200"/>',
+  ].map(function (g) { return '<svg viewBox="0 0 24 24" fill="#fff" fill-opacity=".95">' + g + '</svg>'; });
+  // ต็อกบกกีในชาม และคิมบับบนจาน
+  var BKS_DISH = '<svg viewBox="0 0 40 34"><ellipse cx="20" cy="31" rx="15" ry="2.6" fill="#7a3d1c" fill-opacity=".18"/><path d="M3 14h34c0 9-7.6 16-17 16S3 23 3 14z" fill="#fff6ea"/><path d="M3 14h34c-.4 2-1 3.8-2 5.4H5c-1-1.6-1.6-3.4-2-5.4z" fill="#3fa9c9"/><ellipse cx="20" cy="14" rx="17" ry="4.6" fill="#e2482b"/><g fill="#fff3df"><rect x="9" y="10.6" width="9" height="3.6" rx="1.8"/><rect x="20" y="12" width="9" height="3.6" rx="1.8" transform="rotate(-14 24 14)"/><rect x="14" y="13.4" width="8" height="3.4" rx="1.7"/></g><circle cx="29" cy="12.6" r="2.4" fill="#ffd34d"/><path d="M12 12.4l3-2.4M24 10.6l2.6 1" stroke="#4c9f45" stroke-width="1.4" stroke-linecap="round"/></svg>';
+  var BKS_DISH2 = '<svg viewBox="0 0 40 34"><ellipse cx="20" cy="27" rx="18" ry="5" fill="#fff" stroke="#e8d5c0"/><g stroke="#1f2a1c" stroke-width="2.2" fill="#fffaf0"><circle cx="11" cy="19" r="6"/><circle cx="22" cy="17" r="6"/><circle cx="31" cy="21" r="5.4"/></g><circle cx="11" cy="19" r="2.2" fill="#f59e0b"/><circle cx="22" cy="17" r="2.2" fill="#ef4444"/><circle cx="31" cy="21" r="2" fill="#22c55e"/></svg>';
+  function bksMe() { return (S.home && S.home.level && S.home.level.look) || {}; }
+  function bksScene(look, v) {
+    look = Object.assign({}, look || bksMe(), { p: '' });
+    // (ตัวน้องในฉากการ์ดหน้าเพื่อนและหน้าแรกของเกมเป็นภาพวิ่งสามมิติท่าเดียวกับการ์ดวิ่งฝ่าด่าน ขอทีหลังที่ bksAsk ไม่ขอตอนวาดหน้า
+    //  · แถวหน้าแรก (v 'r') คือหน้าลงเวลา: ตัวในฉากเป็นภาพวาดตัวปัจจุบันตลอด ไม่ขอภาพสามมิติเลย (data-rk ว่าง bksNeed ข้าม) เพราะทางที่ขอ
+    //  ภาพวิ่งทีหลังเมื่อฉากอยู่บนจอ 2 วินาที เดโมตรวจสลับกับสาขาหลัก 8 คู่ ตัวละครหน้าแรกเป็นสามมิติตอนใส่ภาระยังช้ากว่า 0.94 วิ และเดิมภาพยืน
+    //  สามมิติของตัวในฉากนี้วาดตอนกล้องอ่าน QR จอในร้าน ขั้นสแกนช้า 1.2–5.9 วิ QR หมดอายุ 2 ใน 8 รอบ · ระหว่างแผ่นสแกนลงเวลาเปิด งานภาพสามมิติทุกชนิดรอ (scanShopQr))
+    var rk = v === 'r' ? '' : runKey(look, '');
+    if (rk) BKS.looks[rk] = look;
+    var it = '';
+    for (var k = 0; k < 4; k++) it += '<i class="bks-it i' + k + ' k' + k + '"><i class="bks-tile">' + BKS_ING[k] + '</i></i>';
+    return '<span class="bks bks-' + v + '" aria-hidden="true">' +
+      '<i class="bks-bg"><i class="bks-wall"></i><i class="bks-fl"></i><i class="bks-lns"><i></i><i></i><i></i></i></i>' +
+      '<i class="bks-st"><i class="bks-fds"><i class="bks-fd f1">' + BKS_DISH + '</i><i class="bks-fd f2">' + BKS_DISH2 + '</i></i>' +
+      '<i class="bks-tws"><i></i><i></i><i></i></i><i class="bks-sh"></i>' +
+      '<b class="bks-me" data-rk="' + rk.replace(/&/g, '&amp;').replace(/"/g, '&quot;') + '"><span class="rn-drawn">' + (v === 'r' ? charOf(look).replace(/ data-c3="[^"]*"/, '') : charOf(look)) + '</span><span class="rn-poses"><span class="rn-run">' +
+      RN_CARD_RUN.map(function (r) { return '<img data-rn="' + r + '" alt="">'; }).join('') +
+      '</span></span><i class="bks-burst"></i></b>' +
+      it + '<i class="bks-dish">' + BKS_DISH + '</i><em class="bks-cb">คอมโบ<small>x4</small></em></i></span>';
+  }
   /** ครัวโซลฟูลในหน้าเพื่อน: รอบนับเข้าทีมที่เหลือวันนี้ ทีมของฉัน · คนที่ปิดเกมไม่เห็นการ์ดนี้ (เปิดกลับที่ ฉัน) */
   function blockCard(l) {
     var b = l && l.block;
     if (b && b.off) return '';
     var my = b && (b.teams || []).filter(function (x) { return x.id === b.team; })[0];
-    return html`<button class="card fr-block" data-act="block-open"><span class="fr-block-art" aria-hidden="true">${raw(blockArt())}</span>
+    return html`<button class="card fr-block" data-act="block-open">${raw(bksScene(l && l.look, 'c'))}
       <span class="fr-block-tx"><b>ครัวโซลฟูล</b><span>${!b ? 'ต่อบล็อกวัตถุดิบ แข่งเป็นทีมรายสัปดาห์' : (b.left ? 'โจทย์วันนี้นับเข้าทีมได้อีก ' + b.left + ' รอบ' : 'วันนี้นับเข้าทีมครบแล้ว · เล่นเองได้') + (my ? ' · ' + my.name : '')}</span></span>${icon('right')}</button>`;
   }
   /** ครัวโซลฟูลบนหน้าแรกต่อจากภารกิจทีม: รอบที่เหลือวันนี้ คะแนนสองทีม · แตะแล้วเปิดเกม · คนที่ปิดเกมไม่เห็นแถวนี้ */
   function blockRow(b) {
     if (!b || b.off) return '';
-    return html`<button class="quest blk" data-act="block-open"><span class="q-gem q-blk" aria-hidden="true">${raw(blockArt())}</span><span class="grow"><b>ครัวโซลฟูล${b.left ? ' · เหลือ ' + b.left + ' รอบนับเข้าทีม' : ' · วันนี้นับเข้าทีมครบแล้ว'}</b><span>${(b.teams || []).map(function (x) { return x.name + ' ' + bkN(x.score); }).join(' · ')}${b.team ? '' : ' · เปิดเกมแล้วเข้าทีม'}</span></span>${icon('right')}</button>`;
+    return html`<button class="quest blk" data-act="block-open">${raw(bksScene(bksMe(), 'r'))}<span class="grow"><b>ครัวโซลฟูล${b.left ? ' · เหลือ ' + b.left + ' รอบนับเข้าทีม' : ' · วันนี้นับเข้าทีมครบแล้ว'}</b><span>${(b.teams || []).map(function (x) { return x.name + ' ' + bkN(x.score); }).join(' · ')}${b.team ? '' : ' · เปิดเกมแล้วเข้าทีม'}</span></span>${icon('right')}</button>`;
   }
+  // ---- bks: ฉากการ์ดครัวโซลฟูลขยับเฉพาะตอนเห็นบนจอ (2.13.46) ----
+  // หยุด (ไม่วาด) เมื่อการ์ดพ้นจอ แอปอยู่เบื้องหลัง เข้าจอเล่นแล้ว หรือมีแผ่นทับ (ฉากในแผ่นที่เปิดอยู่ขยับได้) · เครื่องที่ตั้งลดการเคลื่อนไหวนิ่งเสมอ
+  // · เริ่มขยับหลังตัวละครและสัตว์ที่เห็นบนจอเป็นภาพสามมิติครบ (bksWait3d)
+  // bksWatch หลังวาดหน้าและแผ่น · bksSync เมื่อสถานะเปลี่ยน · การ์ดที่หลุดจากหน้าเลิกเฝ้า ไม่ค้างในหน่วยความจำ
+  var BKS = { io: null, els: [], looks: {}, got: {}, t: 0, busy: false, w: 0 };
+  function bksLive(el) { return MOTION && bksShown(el); }
+  /** ฉากอยู่บนจอให้เห็นและไม่มีแผ่นทับ (ไม่นับการตั้งลดการเคลื่อนไหว: ภาพวิ่งยังขอ ฉากนิ่งก็เป็นสามมิติ) */
+  function bksShown(el) {
+    if (!el.isConnected || el._bksIn === false || document.hidden) return false;
+    if (document.body.classList.contains('sb-on')) return false;
+    var root = el.closest('#sheet-root');
+    if (root) return root.classList.contains('open') && !root.classList.contains('closing');
+    return !document.querySelector('#sheet-root.open');
+  }
+  // (2.13.47 ฉากเริ่มขยับหลังภาพสามมิติบนจอขึ้นครบ: ตัวละครและสัตว์ที่เห็นบนจอในหน้าเดียวกับฉาก (หน้าหลักหรือแผ่น) เป็นภาพสามมิติแล้ว
+  //  หรือรอเกิน 15 วินาทีนับจากฉากเห็นบนจอครั้งแรก · ระหว่างรอฉากนิ่งและไม่ขอภาพวิ่ง ดูใหม่ทุก 1 วินาที · ไม่นับตัวในฉากเองและเวทีสดของร้านหรือห้อง
+  //  · เดิมฉากแถวหน้าแรกขยับทันทีที่เปิดหน้า แย่งเครื่องกับตัวละครหน้าแรกที่กำลังเป็นสามมิติ เดโมตรวจตอนใส่ภาระช้ากว่าสาขาหลัก 0.68 วิ)
+  var BKS_WAIT = 'svg.char-svg[data-c3]:not(.c3-on):not(.c3-under), svg[data-c3o]:not(.c3o-on)';
+  function bksWait3d(el) {
+    if (C3.state !== 1 && C3.state !== 2 && !(C3.state === 0 && c3Can())) return false;
+    var now = Date.now();
+    if (el._bksAt == null) el._bksAt = now;
+    if (now - el._bksAt > 15000) return false;
+    var l = (el.closest('#sheet-root') || document.querySelector('main') || document.body).querySelectorAll(BKS_WAIT);
+    for (var i = 0; i < l.length; i++) {
+      if (l[i].closest('.bks, .shop-char, .rm-char')) continue;
+      var r = l[i].getBoundingClientRect();
+      if (r.width && r.bottom > 0 && r.top < innerHeight) return true;
+    }
+    return false;
+  }
+  function bksSync() {
+    BKS.els = BKS.els.filter(function (el) {
+      if (el.isConnected) return true;
+      if (BKS.io) BKS.io.unobserve(el);
+      return false;
+    });
+    var wait = false;
+    BKS.els.forEach(function (el) {
+      var w = bksShown(el) && bksWait3d(el);
+      if (w) wait = true;
+      el.classList.toggle('on', !w && bksLive(el));
+    });
+    clearTimeout(BKS.w);
+    BKS.w = wait ? setTimeout(bksSync, 1000) : 0;
+    bksPlan();
+  }
+  function bksWatch() {
+    var list = document.querySelectorAll('.bks');
+    for (var i = 0; i < list.length; i++) {
+      if (BKS.els.indexOf(list[i]) >= 0) continue;
+      if (!BKS.io && window.IntersectionObserver) BKS.io = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target._bksIn = e.isIntersecting; }); bksSync(); });
+      BKS.els.push(list[i]);
+      if (BKS.io) { list[i]._bksIn = false; BKS.io.observe(list[i]); }
+      bksPut(list[i]);
+    }
+    bksSync();
+  }
+  // (2.13.46 ภาพวิ่งสามมิติของตัวน้องในฉากไม่แย่งคิวภาพหลัก: วาดหน้าไม่ขอภาพ · ขอเฉพาะท่าวิ่ง 4 จังหวะ ทีละภาพ ต่อท้ายคิวภาพสามมิติ (low)
+  //  เมื่อฉากอยู่บนจอต่อเนื่อง 2 วินาทีโดยไม่มีแผ่นทับ ภาพถัดไปขอเมื่อภาพก่อนมาแล้วและฉากยังอยู่บนจอ · เดิมแถวหน้าแรกขอผ่านการ์ดวิ่งฝ่าด่าน
+  //  ครบ 8 ท่าตั้งแต่วาดหน้าแม้มีแผ่นทับ ท่ายืนแซงหัวคิว (first) ท่าอื่นอยู่ก่อนภาพที่ขอทีหลังในคิวเดียวกัน แย่งคิวกับตัวละครหน้าแรกและสัตว์เลี้ยง
+  //  ของชุดต้อนรับ: เดโมตรวจสลับกับสาขาหลัก 8 คู่ ชุดต้อนรับจนสัตว์หมุนช้ากว่าทุกคู่ ตัวละครหน้าแรกเป็นสามมิติตอนใส่ภาระซีพียูช้าขึ้นราว 1.8 วิ · ใช้กับการ์ดหน้าเพื่อนและหน้าแรกของเกม แถวหน้าแรกไม่ขอ ดู bksScene)
+  var BKS_AT = { run0: 125, run1: 375, run2: 625, run3: 875 };
+  /** ท่าวิ่งของตัวนี้ที่ยังไม่ได้ขอ */
+  function bksTodo(rk) {
+    var got = BKS.got[rk] || {};
+    return RN_CARD_RUN.filter(function (p) { return !(p in got); })[0];
+  }
+  /** ตัวในฉากที่อยู่บนจอและยังขาดภาพวิ่ง */
+  function bksNeed() {
+    for (var i = 0; i < BKS.els.length; i++) {
+      var me = bksShown(BKS.els[i]) && !bksWait3d(BKS.els[i]) && BKS.els[i].querySelector('.bks-me'), rk = me && me.getAttribute('data-rk');
+      if (rk && BKS.looks[rk] && bksTodo(rk)) return me;
+    }
+    return null;
+  }
+  function bksPlan() {
+    if (!bksNeed()) { clearTimeout(BKS.t); BKS.t = 0; return; }
+    if (!BKS.t && !BKS.busy) BKS.t = setTimeout(bksAsk, 2000);
+  }
+  function bksAsk() {
+    BKS.t = 0;
+    var me = bksNeed();
+    if (!me || BKS.busy) return;
+    // (ระบบสามมิติกำลังโหลด: ดูใหม่ทุก 2 วินาที · ยังไม่เริ่มหรือโหลดไม่ได้: คงภาพวาด รอสถานะของฉากเปลี่ยนครั้งหน้า)
+    if (C3.state !== 2 || !C3.mod || !C3.mod.still) { if (C3.state === 1) BKS.t = setTimeout(bksAsk, 2000); return; }
+    var rk = me.getAttribute('data-rk'), look = BKS.looks[rk], pose = bksTodo(rk);
+    var got = BKS.got[rk] || (BKS.got[rk] = {});
+    // (ภาพของเดโมที่ทำไว้ก่อน ใช้ทันทีไม่ต้องวาด)
+    var made = KEPT3.mem[runKey(look, pose)];
+    if (made) { got[pose] = { src: made.u }; bksPut(); bksAsk(); return; }
+    BKS.busy = true;
+    C3.mod.still(look, { w: 42, h: 78, move: 'm-run', at: BKS_AT[pose], turn: 55, bleed: true, low: true }).then(function (u) { got[pose] = { src: u }; }, function () { got[pose] = null; }).then(function () {
+      BKS.busy = false;
+      bksPut();
+      if (bksNeed()) bksAsk();
+    });
+  }
+  /** ภาพวิ่งที่มาแล้วใส่ฉาก (scene: ฉากเดียว · ไม่ระบุ: ทุกฉากที่เฝ้า) ครบ 4 ท่าแล้วสลับจากภาพวาด */
+  function bksPut(scene) {
+    if (!C3.mod || !C3.mod.bleed) return;
+    (scene ? [scene] : BKS.els).forEach(function (el) {
+      var me = el.querySelector('.bks-me'), got = me && BKS.got[me.getAttribute('data-rk')];
+      if (got) runCardPicsIn(me, got);
+    });
+  }
+  document.addEventListener('visibilitychange', bksSync);
+  // ---- bks จบ ----
   function openBlock() {
     var me = S.staff ? S.staff.empId : '';
     if (!block || block.me !== me) { blockDrop(); block = { me: me, data: null }; }
@@ -16020,7 +16225,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** คนอื่นเข้าใช้เครื่องนี้: หน้าจอเกมของคนก่อนไม่ค้าง */
   function blockDrop() {
     if (block && block.host && block.host.parentNode) block.host.parentNode.removeChild(block.host);
-    document.body.classList.remove('sb-on');
+    document.body.classList.remove('sb-on'); bksSync();
     block = null;
   }
   function blockLoad() {
@@ -16086,7 +16291,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${d.closed ? html`<p class="bk-note">${icon('clock')} ครัวโซลฟูลพักช่วงร้านยุ่ง ${d.closed.from}–${d.closed.until} น. เล่นต่อหลังจากนั้นได้เลย</p>` : ''}
       ${un ? html`<div class="bk-unsent"><span class="grow"><b>รอบล่าสุดยังไม่ได้บันทึก</b><small>คะแนน ${bkN(un.score)} · ส่งใหม่ได้เลย</small></span><button class="btn sm primary" data-act="block-resend">ส่งใหม่</button></div>` : ''}
       <section class="bk-hero">
-        <span class="bk-art" aria-hidden="true">${raw(blockArt())}</span>
+        ${raw(bksScene(bksMe(), 'h'))}
         <div class="bk-hero-tx"><span class="eyebrow">โจทย์วันนี้ ${+dt[2]} ${BLOCK_M[+dt[1] - 1]}</span><b>${left ? 'นับเข้าทีมได้อีก ' + left + ' จาก ' + d.daily.n + ' รอบ' : 'วันนี้นับเข้าทีมครบ ' + d.daily.n + ' รอบแล้ว'}</b><small>ทุกคนได้ชุดเดียวกัน · รอบละ ${d.pieces} ชิ้น</small></div>
         <div class="bk-dots">${d.daily.rounds.map(function (r) { return html`<i class="${r.score != null ? 'on' : ''}">${r.score != null ? bkN(r.score) : r.n}</i>`; })}</div>
         <div class="bk-go">${left ? html`<button class="btn primary" data-act="block-play"><b>${rt ? 'เล่นให้ทีมต่อ' : 'เล่นให้ทีม'}</b><small>${rt ? html`<span class="bk-nw">รอบ ${rt.n}/${d.daily.n} ค้างไว้</span> · <span class="bk-nw">${bkN(rt.score)} คะแนน</span>` : html`<span class="bk-nw">โจทย์วันนี้ รอบ ${d.daily.next}/${d.daily.n}</span> · <span class="bk-nw">เหลือ ${left} รอบวันนี้</span>`}</small></button>` : html`<span class="btn bk-off"><b>เล่นให้ทีม</b><small>วันนี้ครบ ${d.daily.n} รอบแล้ว</small></span>`}<button class="btn ${left ? '' : 'primary'}" data-act="block-free"><b>${rf ? 'เล่นเองต่อ' : 'เล่นเอง'}</b><small>${rf ? html`<span class="bk-nw">รอบค้าง ${bkN(rf.score)} คะแนน</span> · <span class="bk-nw">วางแล้ว ${bkN(rf.used)} ชิ้น</span>` : html`<span class="bk-nw">ไม่จำกัดชิ้น</span> · <span class="bk-nw">สถิติส่วนตัว</span>`}</small></button></div>
@@ -16124,7 +16329,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     block.g = g;
     if (!block.host) { block.host = document.createElement('div'); block.host.id = 'sb-host'; document.body.appendChild(block.host); }
     block.host.hidden = false;
-    document.body.classList.add('sb-on');
+    document.body.classList.add('sb-on'); bksSync();
     if (block.ui) { block.ui.start(null, g); block.ui.fit(); return; }
     var me = blockMe(d), who = block.me;
     block.ui = SB.mount(block.host, {
@@ -16167,7 +16372,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function blockHide() {
     if (block && block.host) block.host.hidden = true;
-    document.body.classList.remove('sb-on');
+    document.body.classList.remove('sb-on'); bksSync();
     if (block && block.data && $('#block')) setSheetBody(blockBody());
   }
   function blockSend(res) {
@@ -17125,17 +17330,21 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function runCardPics() {
     var art = RUN_CARD.sp && document.querySelector('.fr-run-art');
-    if (!art || !C3.mod || !C3.mod.bleed) return;
-    var sp = RUN_CARD.sp, b = C3.mod.bleed, all = true;
-    var keys = RN_CARD_RUN.concat(['up', 'down']);
-    for (var i = 0; i < keys.length; i++) {
-      var im = art.querySelector('img[data-rn="' + keys[i] + '"]');
-      if (!im) return;
-      if (!sp[keys[i]]) { all = false; continue; }
-      if (im.getAttribute('src') !== sp[keys[i]].src) {
+    if (art && C3.mod && C3.mod.bleed) runCardPicsIn(art, RUN_CARD.sp);
+  }
+  /** ภาพวิ่งที่มาแล้วใส่ช่องภาพของการ์ด ครบทุกช่องแล้วสลับจากภาพวาด (sp ท่า › ภาพ: การ์ดวิ่งฝ่าด่าน RUN_CARD.sp · ฉากครัวโซลฟูล BKS.got) */
+  function runCardPicsIn(art, sp) {
+    var b = C3.mod.bleed, all = true;
+    // (2.13.46 ใส่ตามช่องภาพที่การ์ดมี: การ์ดวิ่งฝ่าด่านมีท่าวิ่ง ขึ้น ลง · ฉากครัวโซลฟูลมีแค่ท่าวิ่ง 4 จังหวะ)
+    var ims = art.querySelectorAll('img[data-rn]');
+    if (!ims.length) return;
+    for (var i = 0; i < ims.length; i++) {
+      var im = ims[i], k = im.getAttribute('data-rn');
+      if (!sp[k]) { all = false; continue; }
+      if (im.getAttribute('src') !== sp[k].src) {
         // (made past its frame, as the run draws them: laid as far past the character's box)
         im.style.cssText = 'left:' + (-30 * b.side) + 'px;top:' + (-56 * b.top) + 'px;width:' + 30 * (1 + 2 * b.side) + 'px;height:' + 56 * (1 + b.top) + 'px';
-        im.src = sp[keys[i]].src;
+        im.src = sp[k].src;
       }
     }
     // (all of them come: they show, the drawn one goes; c3-…: kept as the page is drawn anew)
