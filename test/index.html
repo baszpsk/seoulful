@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.55","page":"","e3":"3af8ce6d","edge":true,"test":true,"store":"test.","build":"0b978a0f5abf"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.56","page":"","e3":"5816def0","edge":true,"test":true,"store":"test.","build":"2934958337f4"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -5096,8 +5096,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var cur = host.querySelector('svg.char-svg[data-c3]');
       if (cur) { cur.classList.remove('c3-under'); cur.classList.add('c3-late'); }
     };
-    // (a move it loops: from its start only if it is another)
-    var again = function () { if (loop && s.move !== c3Move(svg)) s.play(c3Move(svg), true); };
+    // (a move it loops: from its start only if it is another) · ที่ที่ไม่วนท่า (แท็บของถือ หมวก …): ท่าที่วนอยู่เล่นจบรอบนี้
+    // แล้วยืน (2.13.56: ร้านเปิดที่แท็บท่าทาง ภาพใหญ่จึงวนท่าค้างไปทุกแท็บ ตัวน้องไม่ได้ยืนให้เห็นของที่ลองถือ)
+    var again = function () {
+      var m = c3Move(svg);
+      if (loop) { if (s.move === m) s.loop = true; else s.play(m, true); }
+      else s.loop = false;
+    };
     if (s && s.host === host) { s.set(look).then(shown, drawn); c3Pet(s); again(); return; }
     // The page drawn anew around the same one's character (a compliment given, the room's pictures come,
     // a look tried on): the same stage moved into the new box, drawn there before the page is painted
