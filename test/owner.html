@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.53","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"f8fcc8c04253"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.54","page":"owner","e3":"7e2af3f9","edge":true,"test":true,"store":"test.","build":"47d8c9abfe9c"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -916,6 +916,11 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .mt-say { margin: 8px 0 0; }
 .mt-part.on { border-color: var(--warn); box-shadow: 0 0 0 1px var(--warn); }
 .mt-list { margin: 0; padding-left: 18px; line-height: 1.6; font-size: 14px; }
+.mt-open { display: block; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.mt-talk { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.mt-talk .chips { margin-top: 8px; }
+.mt-talk .chip { padding: 8px 12px; font-size: 14px; font-weight: 600; }
+.mt-talk .chip[disabled] { opacity: .7; }
 .dl-fxpick { margin-top: 12px; }
 .dl-fxpick > span { display: block; margin-bottom: 6px; }
 .dl-fxpick .chip { padding: 8px 12px; font-size: 14px; }
@@ -3160,6 +3165,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // (มือถือจำ PIN มีหมดอายุ 25 ต.ค. 2569: ผู้อนุมัติและเจ้าของร้านไม่ได้ใช้ 30 นาที น้องไม่ได้เปิดแอป 30 วัน
   // ใส่ PIN ใหม่ · การแจ้งเตือนในมือถือยังอยู่)
   var IDLE_MS = { short: 30 * 60000, long: 30 * 86400000 };
+  // (2.13.54 g-k10 · เจ้าของร้านตอบ "85 ok ไม่มีใครใช้คอมฉัน" 3 พ.ย. 2569) หน้าเจ้าของร้านที่ติ๊ก จำไว้ในเครื่องนี้ จำรหัส 30 วันนับจาก
+  // ใส่รหัสครั้งล่าสุด (keep: ใช้แอปไม่ยืด ออกจากหน้าไม่ทำให้หมด) · ไม่ติ๊ก = ไม่เก็บในเครื่อง แบบเดิม · กดออกหรือรหัสใช้ไม่ได้ ลืมทันที
+  // (logoutOwner) · เครื่องที่จำไว้ก่อนรุ่นนี้ (ไม่มี keep) หมดแบบเดิม 30 นาทีจนใส่รหัสครั้งถัดไป
+  var OWNER_KEEP_MS = 30 * 86400000;
+  function ownerSession(pin, keep) {
+    var now = Date.now();
+    return keep ? { pin: pin, seen: now, idle: OWNER_KEEP_MS, keep: true } : { pin: pin, seen: now, idle: IDLE_MS.short };
+  }
   function liveSession(key) {
     var v = LS.get(key);
     if (!v || !v.seen || Date.now() - v.seen <= (v.idle || IDLE_MS.long)) return v;
@@ -8179,7 +8192,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="wrap"><div class="topbar"><div class="wrap" style="padding:0"><button class="icon-btn" data-act="back-start" aria-label="กลับ">${icon('left')}</button>${brand()}<span style="width:40px"></span></div></div>
       <div class="pin-wrap">${ownerSeal('margin:0 auto;width:56px;height:56px')}<div class="hello" style="font-size:24px;margin-top:12px">เจ้าของร้าน</div><div class="muted small">ใส่รหัสเจ้าของร้าน${B.testOwnerPin ? ' · แอปทดลอง: ' + B.testOwnerPin : ''}</div>
       ${pinPad(0, S.pin, S.pinErr)}
-      <label class="remember"><input type="checkbox" id="remember-owner" ${S.keepOwner === false ? '' : 'checked'}> จำไว้ในเครื่องนี้</label>
+      <label class="remember"><input type="checkbox" id="remember-owner" ${S.keepOwner === false ? '' : 'checked'}> จำไว้ในเครื่องนี้ 30 วัน</label>
       <div class="foot-links" style="padding:18px 0 0"><button class="link" data-act="owner-forgot">ลืมรหัส</button></div></div></div>`;
   };
   /**
@@ -8963,7 +8976,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var now = Date.now();
     if (force !== true && now - touchedAt < 15000) return;
     touchedAt = now;
-    if (S.owner && LS.get(KEY.owner)) { S.owner.seen = now; S.owner.idle = IDLE_MS.short; LS.set(KEY.owner, S.owner); }
+    if (S.owner && !S.owner.keep && LS.get(KEY.owner)) { S.owner.seen = now; S.owner.idle = IDLE_MS.short; LS.set(KEY.owner, S.owner); }
     if (S.staff && LS.get(KEY.staff)) { S.staff.seen = now; S.staff.idle = isApprover() ? IDLE_MS.short : IDLE_MS.long; LS.set(KEY.staff, S.staff); }
   }
   document.addEventListener('visibilitychange', function () {
@@ -9907,11 +9920,25 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // (ฟังที่ document แบบ capture: รวมแผ่นที่เลื่อนในตัว เช่น หน้ารับของ)
   // 2.13.27 k-demo: จำเวลาเลื่อนแยกตามกล่อง นับเฉพาะกล่องที่ปุ่มอยู่ข้างใน (หน้าหรือแผ่น) และไม่นับตอนแอปพาไปหมวดเอง
   // (แถบหมวดเลื่อนตามเองราว 1 วิหลังหน้าผ่านหัวหมวด เคยกินแตะ 'สั่งเพิ่ม' ในรายการทั้งที่จอนิ่งแล้ว)
-  document.addEventListener('scroll', function (e) { if (!S.odGoing) odScrolled.set(e.target, Date.now()); }, { passive: true, capture: true });
+  // 2.13.54 g-k10: นับเฉพาะการเลื่อนที่นิ้วหรือล้อเมาส์พาไป (ตอนลาก และตอนจอไหลต่อหลังปล่อยนิ้วโดยไม่ขาดช่วง) · การเลื่อนที่ไม่มีนิ้ว
+  // (แอปพาไปหมวดที่เลื่อนนานเกิน 800 ms ในเครื่องที่ยุ่ง เบราว์เซอร์เลื่อนตามช่องพิมพ์) ไม่มีอะไรให้นิ้วหยุด จึงไม่กินแตะ
+  // (เดโม 3 พ.ย. 2569: หน้าที่แอปพาไปหมวดเลื่อนครั้งสุดท้ายตรงกับนิ้วแตะ สั่งเพิ่ม ของปีกบนไก่ หลังแตะหมวดเกิน 800 ms แตะจึงหายเงียบ)
+  var odFingerAt = 0;
+  function odFinger() { odFingerAt = Date.now(); }
+  document.addEventListener('touchmove', odFinger, { passive: true, capture: true });
+  document.addEventListener('wheel', odFinger, { passive: true, capture: true });
+  document.addEventListener('scroll', function (e) {
+    var now = Date.now();
+    if (S.odGoing || now - odFingerAt > 300) return;
+    odFingerAt = now;
+    odScrolled.set(e.target, now);
+  }, { passive: true, capture: true });
   document.addEventListener('pointerdown', function (e) {
     odDownAt = Date.now();
     odDownMoving = false;
     for (var n = e.target; n && !odDownMoving; n = n.parentNode) odDownMoving = odDownAt - (odScrolled.get(n) || 0) < 120;
+    // นิ้วแตะลงใหม่: การเลื่อนต่อจากนี้นับเมื่อนิ้วลากใหม่ (แตะหมวดแล้วแอปพาไป ไม่ต่อสายจากที่ปัดไว้ก่อน)
+    odFingerAt = 0;
   }, true);
   // 2.13.27 k-items2: ไม่นับแค่คลิกของนิ้วที่แตะลงตอนจอเลื่อนครั้งนั้น คลิกจบแล้วล้าง และหมดอายุใน 1 วิ
   // (เดิมค่าค้างไปกันคลิกถัดไปที่ไม่มีนิ้วแตะลงของตัวเอง เช่น แป้นพิมพ์ ตัวช่วยอ่านจอ จนแตะแถวหน้ารับของแล้วรายละเอียดไม่เปิด)
@@ -12456,7 +12483,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function ownerIn(pin, d, keep) {
     S.pinBusy = false;
     S.login = null;
-    S.owner = { pin: pin, seen: Date.now(), idle: IDLE_MS.short };
+    S.owner = ownerSession(pin, keep);
     if (keep) { LS.set(KEY.owner, S.owner); remember('owner', d); }
     S.ownerHome = d;
     S.ownerAt = Date.now();
@@ -12675,7 +12702,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${pushCard()}
       ${teamUseCard(o.team)}
       ${morningCard(o.morning)}
-      ${meetCard(o.meet)}
+      ${meetCard(o.meet, o.talk)}
       ${pinLocksCard(o.pinLocks)}
       ${turnoverCard(o.turnover)}${yearEndWarnCard(o.yearEnd)}
       ${dailyOwnerCard(o.daily)}
@@ -18833,17 +18860,29 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return b;
   }
   /** หน้าแรกของเจ้าของร้าน ต่อจากรายงานเมื่อวาน: ครั้งถัดไป หรือยังไม่เริ่ม (ไม่แจ้งใคร) */
-  function meetCard(m) {
+  function meetCard(m, t) {
     MEET_LAST = m;
     if (!m) return '';
     var a = m.agenda;
     var bits = meetBits(a);
-    return html`<button class="card pad-lg mt-card" data-act="meet-open" style="width:100%;text-align:left">
+    return html`<section class="card pad-lg mt-card"><button class="mt-open" data-act="meet-open">
       <div class="card-h"><span class="eyebrow">ประชุมทีม · ${m.started ? (m.today ? 'วันนี้' : dlDay(m.on)) : 'ยังไม่เริ่ม'}</span></div>
       <p style="margin:4px 0 0"><b>${m.started ? 'ก่อนเปิดร้าน ' + m.min + ' นาที · ' + (a.total ? 'บันทึกสัปดาห์นี้ ' + a.total + ' เรื่อง' : 'สัปดาห์นี้ยังไม่มีบันทึก') : 'เริ่มเองเมื่อน้องเริ่มใช้แอป'}</b></p>
       ${bits.length ? html`<p class="small" style="margin:6px 0 0">${mrBits(bits)}</p>` : ''}
       <p class="small muted" style="margin:8px 0 0">${m.started ? 'แตะดูหัวข้อ บท และจับเวลา' : 'ตอนนี้ยังไม่แจ้งใคร · แตะดูหัวข้อตัวอย่างจากบันทึกสัปดาห์นี้'}</p>
-    </button>`;
+    </button>${talkPart(t)}</section>`;
+  }
+  // (2.13.54 g-k10 · เจ้าของร้านตอบ "84 ok" 3 พ.ย. 2569) คุยตัวต่อตัวเดือนนี้: ชื่อคนที่ทำงานอยู่ แตะเมื่อคุยแล้ว แตะซ้ำยกเลิก ไม่มีช่องพิมพ์
+  // · เห็นเฉพาะหน้าเจ้าของร้าน (Daily.gs talkView_ ส่งในช่อง talk ของหน้าเจ้าของร้านเท่านั้น แยกจากข้อมูลประชุม) · ชื่อที่กำลังบันทึกขึ้น กำลังบันทึก… จนหลังบ้านตอบ
+  var TALK_BUSY = {};
+  function talkPart(t) {
+    if (!t || !t.of) return '';
+    return html`<div class="mt-talk"><div class="row" style="justify-content:space-between;align-items:baseline;gap:8px"><span class="eyebrow">คุยตัวต่อตัว · ${monthName(t.month)}</span><b class="small">คุยแล้ว ${t.done}/${t.of} คน</b></div>
+      <div class="chips" role="group" aria-label="คุยตัวต่อตัวเดือนนี้">${t.people.map(function (p) {
+        var busy = !!TALK_BUSY[p.id];
+        return html`<button class="chip" data-act="meet-talk" data-id="${p.id}" aria-pressed="${p.done ? 'true' : 'false'}"${busy ? ' disabled' : ''}>${busy ? 'กำลังบันทึก…' : (p.done ? '✓ ' : '') + p.name}</button>`;
+      })}</div>
+      <p class="small muted" style="margin:8px 0 0">แตะชื่อเมื่อคุยแล้ว แตะอีกครั้งเพื่อยกเลิก · นับใหม่ทุกเดือน · น้องไม่เห็นส่วนนี้</p></div>`;
   }
   /** แถวในการ์ดบันทึกหน้างานของน้อง: วันก่อนประชุมและวันประชุม */
   function meetRow(m) {
@@ -18915,6 +18954,26 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     dlFx[el.dataset.k] = el.dataset.v || '';
     var box = el.closest('.chips');
     if (box) Array.prototype.forEach.call(box.querySelectorAll('.chip'), function (b) { b.setAttribute('aria-pressed', b === el ? 'true' : 'false'); });
+  }
+  /**
+   * แตะชื่อในการ์ดประชุม: ชื่อนั้นขึ้น กำลังบันทึก… ทันที ติ๊กหรือยกเลิกขึ้นเมื่อหลังบ้านบันทึกสำเร็จ · ล้ม: บอกเหตุ ชื่อกลับเหมือนเดิม
+   * แตะใหม่ได้ · ส่งค่าที่ต้องการ (done) ไม่ใช่สลับ กดซ้ำระหว่างรอไม่ส่งซ้ำ
+   */
+  function meetTalkTap(el) {
+    var t = S.ownerHome && S.ownerHome.talk;
+    var id = el.dataset.id;
+    var p = t ? t.people.filter(function (x) { return x.id === id; })[0] : null;
+    if (!p || TALK_BUSY[id]) return;
+    TALK_BUSY[id] = true;
+    el.textContent = 'กำลังบันทึก…';
+    run(el, call('meetTalk', { empId: id, done: !p.done }, ownerAuth())).then(function (d) {
+      delete TALK_BUSY[id];
+      if (S.ownerHome && d && d.talk) { S.ownerHome.talk = d.talk; ownerChanged(); }
+      softRender();
+    }, function () {
+      delete TALK_BUSY[id];
+      softRender();
+    });
   }
   // ---- จบประชุมทีม ----
   function dailyOwnerCard(o) {
@@ -20623,6 +20682,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'meet-go': function () { meetGo(); },
     'meet-next': function () { meetStep(); },
     'dl-pickfx': function (el) { dlPickFx(el); },
+    'meet-talk': function (el) { meetTalkTap(el); },
     'dl-fix': function (el) { askDailyFix(el.dataset.ids); },
     'dl-fixing': function (el) { askDailyFixing(el.dataset.ids); },
     'dl-again': function (el) { openDailyAgain(el.dataset.key); },
@@ -21012,8 +21072,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (!/^\d{8,12}$/.test(a)) { toast('รหัสใหม่ต้องเป็นตัวเลข 8–12 หลัก', 'bad'); return; }
       if (a !== b) { toast('รหัสสองช่องไม่ตรงกัน ใส่ใหม่อีกครั้ง', 'bad'); return; }
       run(el, call('settingsSave', { values: { ownerPin: a } }, ownerAuth())).then(function (d) {
-        S.owner = { pin: a, seen: Date.now(), idle: IDLE_MS.short };
-        if (LS.get(KEY.owner)) LS.set(KEY.owner, S.owner);
+        S.owner = ownerSession(a, !!LS.get(KEY.owner));
+        if (S.owner.keep) LS.set(KEY.owner, S.owner);
         ownerChanged(d);
         render(); toast('ตั้งรหัสใหม่แล้ว · ใช้รหัสนี้เข้าหน้าเจ้าของร้านครั้งต่อไป', 'ok');
       }, function () {});
@@ -21025,7 +21085,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var values = {};
       el.dataset.keys.split(',').forEach(function (k) { var i = document.querySelector('[data-s="' + k + '"]'); if (i) values[k] = i.value; });
       run(el, call('settingsSave', { values: values }, ownerAuth())).then(function (d) {
-        if (values.ownerPin && !/^••••/.test(values.ownerPin)) { S.owner = { pin: values.ownerPin, seen: Date.now(), idle: IDLE_MS.short }; if (LS.get(KEY.owner)) LS.set(KEY.owner, S.owner); }
+        if (values.ownerPin && !/^••••/.test(values.ownerPin)) { S.owner = ownerSession(values.ownerPin, !!LS.get(KEY.owner)); if (S.owner.keep) LS.set(KEY.owner, S.owner); }
         ownerChanged(d);
         render(); toast(d.notice, 'ok');
       }, function () {});
