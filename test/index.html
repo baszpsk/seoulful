@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.56","page":"","e3":"5816def0","edge":true,"test":true,"store":"test.","build":"2934958337f4"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.57","page":"","e3":"0a65f7f3","edge":true,"test":true,"store":"test.","build":"1ac0912d54be"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -13557,7 +13557,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
 
   // ---- the shop (Levels.gs): coins are the points, spent on things everyone sees ----
-  var shop = null; // {data, mode: 'char' (the character) or 'av' (round the name), slot, tryId}
+  var shop = null; // {data, mode: 'char' (the character) or 'av' (round the name), slot, tries: {หมวด: ชิ้นที่ลองในหมวดนั้น}}
   // What the character wears in a slot until something else is chosen (Levels.gs: the free ones).
   // How tall each step is (z-1 to z-5), in cm: a woman's body and a man's (dev/3d, measured).
   var TALL_CM = { f: [146, 152, 157, 162, 168], m: [158, 164, 169, 175, 180] };
@@ -13575,10 +13575,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var SHOP_SLOTS = { char: ['m', 'p', 'f', 'h', 'r', 'c', 'u', 'l', 'k', 'a', 'e', 'j', 'w', 'x', 's', 'g', 'z'], av: ['h', 'f', 'b'], room: ['t', 'd'] };
   function openShop(mode, slot) {
     shop = mineOnly(shop);
-    if (!shop || !shop.data) shop = { data: null, mode: 'char', slot: 'm', tryId: null, tryKit: null, viewer: staffId() };
+    if (!shop || !shop.data) shop = { data: null, mode: 'char', slot: 'm', tries: {}, tryKit: null, viewer: staffId() };
     if (mode && mode !== shop.mode) { shop.mode = mode; shop.slot = SHOP_SLOTS[mode][0]; }
     if (slot && SHOP_SLOTS[shop.mode].indexOf(slot) >= 0) shop.slot = slot;
-    shop.tryId = null;
+    shop.tries = {};
     shop.tryKit = null;
     openSheet({ title: 'แต่งตัว', body: shop.data ? shopBody() : html`<div id="shop" aria-busy="true"><div class="skel" style="height:220px"></div><div class="skel" style="height:260px;margin-top:12px"></div></div>`, foot: shopFoot() });
     var mine = shop;
@@ -13611,11 +13611,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** How long something is still sold: 'เหลือ 3 วัน', or 'วันสุดท้าย' on its last day. */
   function leftWords(until) { var n = daysBetween(workDate(), until); return n <= 0 ? 'วันสุดท้าย' : 'เหลือ ' + (n + 1) + ' วัน'; }
   function shopItem(id) { return ((shop && shop.data && shop.data.items) || []).filter(function (x) { return x.id === id; })[0] || null; }
-  /** What they would look like: what they wear, with the thing (or the whole outfit) they are trying on in its place. */
+  // ลองได้หมวดละชิ้นพร้อมกัน ข้ามแท็บแล้วของที่ลองยังอยู่ (2.13.57 · เจ้าของร้านถาม 3 พ.ย. 2569 "เวลาทำท่าอยู่จะใส่ของถือไม่ได้หรอบักรึป่าว
+  // ถ้าใช่ดูอย่างอื่นหาวิธีป้องกันด้วย": 2.13.56 ลองได้ทีละชิ้นและกดแท็บแล้วล้าง ลองท่าแล้วไปลองตะหลิว ท่าหาย) · ปุ่มท้าย (ยกเลิก ซื้อ ใส่ ถอด)
+  // เป็นของชิ้นที่ลองในแท็บที่เปิด ทำทีละชิ้นเหมือนเดิม
+  /** ชิ้นที่ลองในหมวดของแท็บที่เปิด หรือ null */
+  function shopTry() { var id = shop && shop.tries && shop.tries[shop.slot]; return (id && shopItem(id)) || null; }
+  function shopTrying() { return !!(shop && shop.tries && Object.keys(shop.tries).length); }
+  /** What they would look like: what they wear, with the things (or the whole outfit) they are trying on in their places. */
   function shopLook() {
     var look = Object.assign({}, (shop.data && shop.data.look) || {});
-    var t = shop.tryId && shopItem(shop.tryId);
-    if (t) look[t.slot] = t.id;
+    Object.keys(shop.tries || {}).forEach(function (k) { var t = shopItem(shop.tries[k]); if (t) look[t.slot] = t.id; });
     var kit = shopKit(shop.tryKit);
     if (kit) kit.items.concat([kit.move]).forEach(function (id) { var it = shopItem(id); if (it) look[it.slot] = id; });
     return look;
@@ -13637,7 +13642,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var d = shop.data;
     var me = S.home.me;
     var look = shopLook();
-    var t = shop.tryId && shopItem(shop.tryId);
+    var t = shopTry();
     var names = (d.levels || []).map(function (x) { return x[1]; });
     var mode = SHOP_SLOTS[shop.mode] ? shop.mode : 'char';
     var char = mode === 'char';
@@ -13647,7 +13652,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // Worn: on, or (the character's) the free one in a slot nothing else was chosen for, or the room's first look.
     var worn = function (x) {
       if (x.have === 'on') return true;
-      if (shop.tryId || shop.tryKit) return false;
+      if ((shop.tries || {})[x.slot] || shop.tryKit) return false;
       if (char) return !look[x.slot] && charDefault(x.slot, look) === x.id;
       return room && x.slot === 't' && !look.t && x.id === 't-wood';
     };
@@ -13680,7 +13685,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // The thing of the week (sold this week only), with the next one to look forward to.
     var wk = d.items.filter(function (x) { return x.week && x.until; })[0];
     var nextWk = (d.soon || []).filter(function (x) { return x.week; })[0];
-    var weekly = wk && slots.indexOf(wk.slot) >= 0 ? html`<button class="shop-week ${shop.tryId === wk.id ? 'on' : ''}" data-act="shop-week" data-id="${wk.id}" data-slot="${wk.slot}">
+    var weekly = wk && slots.indexOf(wk.slot) >= 0 ? html`<button class="shop-week ${(shop.tries || {})[wk.slot] === wk.id ? 'on' : ''}" data-act="shop-week" data-id="${wk.id}" data-slot="${wk.slot}">
         <span class="sw-tag">${icon('spark')} ของประจำสัปดาห์</span><b>${wk.name}</b><span class="sw-left">${icon('clock')} ${leftWords(wk.until)}${wk.have ? ' · มีแล้ว' : ' · ' + wk.coins + ' เหรียญ'}</span>
         ${nextWk ? html`<small>สัปดาห์หน้า: ${nextWk.name}</small>` : ''}</button>` : '';
     var soon = (d.soon || []).filter(function (x) { return x.slot === shop.slot; });
@@ -13689,14 +13694,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (char) i3Want('ui-stand');
     var stage = char ? html`<div class="shop-top stage"><div class="shop-char">${raw(charOf(look, shop.slot === 'm' || kit ? 'loop' : ''))}${chFx(look)}${look.p ? html`<span class="shop-pet pet-box">${raw(PET_ART(look.p, look))}</span>` : ''}</div><div class="shop-info">${info}</div>${chips}</div>`
       : room ? html`<div class="shop-top stage room-prev th-${look.t || 't-wood'}"><div class="rp-scene"><i class="rm-wall"></i><i class="rm-floor"></i><div class="rp-cab"><span>${raw(FIG_ART('egg'))}</span><span class="${deco ? 'rp-try' : ''}">${raw(deco ? DECO_ART(deco) : DECO_ART('d-plant'))}</span><span>${raw(FIG_ART('mochi'))}</span></div><div class="rp-char">${raw(charOf(look))}</div></div><div class="shop-info">${info}</div>${chips}</div>`
-      : html`<div class="shop-top">${avatar(me, 'xl' + (shop.tryId || shop.tryKit ? ' av-try' : ''), [d.lv, d.crown ? 1 : 0, look])}${info}</div>${chips}`;
+      : html`<div class="shop-top">${avatar(me, 'xl' + (shopTrying() || shop.tryKit ? ' av-try' : ''), [d.lv, d.crown ? 1 : 0, look])}${info}</div>${chips}`;
     var modes = [['char', 'user', 'ตัวละคร'], ['av', 'spark', 'รูปและชื่อ'], ['room', 'home', 'ห้อง']];
     return html`<div id="shop"><div class="seg shop-modes" role="tablist">${modes.map(function (m) { return html`<button aria-pressed="${mode === m[0]}" data-act="shop-mode" data-mode="${m[0]}">${icon(m[1])} ${m[2]}</button>`; })}</div>
       ${stage}
       ${weekly}
       <div class="shop-grid ${room ? 'room' : ''}">${d.items.filter(function (x) { return x.slot === shop.slot; }).map(function (x) {
         var locked = !x.have && (d.lv < x.from || !!x.set || !!x.kit || !!x.prize || !!x.game);
-        var state = worn(x) ? 'on' : shop.tryId === x.id ? 'trying' : locked ? 'locked' : '';
+        var state = worn(x) ? 'on' : (shop.tries || {})[x.slot] === x.id ? 'trying' : locked ? 'locked' : '';
         var mini = {};
         Object.keys(look).forEach(function (k) { mini[k] = look[k]; });
         mini[x.slot] = x.id;
@@ -13725,7 +13730,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var missing = kitMissing(kit);
       return html`<button class="btn" data-act="shop-kit" data-id="${kit.id}">ยกเลิก</button>${missing.length ? html`<button class="btn primary" disabled>ยังขาดอีก ${missing.length} ชิ้น</button>` : html`<button class="btn primary" data-act="shop-wear-kit" data-id="${kit.id}">${icon('spark')} ใส่ทั้งเซ็ต</button>`}`;
     }
-    var t = shop && shop.tryId && shopItem(shop.tryId);
+    var t = shopTry();
     if (!t) return html`<button class="btn primary" data-act="sheet-close">เสร็จแล้ว</button>`;
     var d = shop.data;
     var cancel = html`<button class="btn" data-act="shop-try" data-id="${t.id}">ยกเลิก</button>`;
@@ -13759,7 +13764,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var before = {};
     ((shop.data && shop.data.kits) || []).forEach(function (k) { before[k.id] = k.got; });
     shop.data = d.shop;
-    shop.tryId = null;
+    // (ของที่ลองยังอยู่หลังซื้อ ใส่ หรือถอด ปุ่มของชิ้นนั้นเปลี่ยนเป็นใส่หรือถอดทันที 2.13.57 · เดิมล้างแล้วปุ่มหายจนแตะการ์ดใหม่)
     shop.tryKit = null;
     var made = (d.shop.kits || []).filter(function (k) { return k.got >= k.items.length && before[k.id] != null && before[k.id] < k.items.length; })[0];
     if (made) { shop.slot = 'm'; shop.tryKit = made.id; }
@@ -20423,7 +20428,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // the day's notes
     'lv-open': function () { openLevel(); },
     'shop-open': function () { openShop(); },
-    'shop-slot': function (el) { shop.slot = el.dataset.slot; shop.tryId = null; shop.tryKit = null; shopRedraw(); },
+    'shop-slot': function (el) { shop.slot = el.dataset.slot; shop.tryKit = null; shopRedraw(); },
     // Who made the 3D characters' parts, were any of them someone else's (CC BY: named, with the licence).
     'c3-credits': function () {
       var man = (C3.mod && C3.mod.manifest) || {};
@@ -20433,17 +20438,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       openSheet({ title: 'ที่มาของตัวละครสามมิติ', body: html`<p class="small muted mt0">ตัวละครและของแต่งตัวส่วนใหญ่ทำเองในแอป เป็นของร้าน · ชิ้นต่อไปนี้เป็นผลงานของผู้สร้างตามชื่อ ใช้ตามสัญญาอนุญาต CC BY โดยปรับสีและขนาดให้เข้ากับแอป</p>
         <div class="list">${list.map(function (c) { return html`<div class="row between" style="padding:8px 0;border-bottom:1px solid var(--line)"><div><b>${names[c.id] || c.id}</b><div class="small muted">${c.name} · โดย ${c.author}</div></div>${c.url ? html`<a class="small" href="${c.url}" target="_blank" rel="noopener">${c.license}</a>` : html`<span class="small">${c.license}</span>`}</div>`; })}</div>` });
     },
-    'shop-mode': function (el) { shop.mode = el.dataset.mode; shop.slot = SHOP_SLOTS[shop.mode][0]; shop.tryId = null; shop.tryKit = null; shopRedraw(); },
+    'shop-mode': function (el) { shop.mode = el.dataset.mode; shop.slot = SHOP_SLOTS[shop.mode][0]; shop.tries = {}; shop.tryKit = null; shopRedraw(); },
     'shop-room': function () { closeSheet(); setTimeout(function () { openShelf({ tab: 'room' }); setTimeout(function () { if (shelf && shelf.data && !shelf.arrange && $('#shelf')) roomArrange(); }, 500); }, 230); },
-    'shop-kit': function (el) { shop.tryKit = shop.tryKit === el.dataset.id ? null : el.dataset.id; shop.tryId = null; shopRedraw(); var b = $('#sheet-body'); if (b && shop.tryKit) b.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' }); },
+    'shop-kit': function (el) { shop.tryKit = shop.tryKit === el.dataset.id ? null : el.dataset.id; shopRedraw(); var b = $('#sheet-body'); if (b && shop.tryKit) b.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' }); },
     'shop-wear-kit': function (el) { run(el, call('shopWearKit', { kit: el.dataset.id }, staffAuth())).then(shopDone, function () {}); },
     'char-open': function () { openShop('char'); },
     'char-go': function (el) { charGo(el); buzz(8); moveSfx(el); },
     'quest-open': function () { openQuest(); },
     'sales-open': function () { openSales(); },
     'sales-owner': function () { openSalesOwner(); },
-    'shop-week': function (el) { shop.slot = el.dataset.slot; shop.tryId = el.dataset.id; shop.tryKit = null; shopRedraw(); var b = $('#sheet-body'); if (b) b.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' }); },
-    'shop-try': function (el) { shop.tryId = shop.tryId === el.dataset.id ? null : el.dataset.id; shop.tryKit = null; shopRedraw(); },
+    'shop-week': function (el) { shop.slot = el.dataset.slot; shop.tries[el.dataset.slot] = el.dataset.id; shop.tryKit = null; shopRedraw(); var b = $('#sheet-body'); if (b) b.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' }); },
+    'shop-try': function (el) { var id = el.dataset.id, it = shopItem(id), k = it ? it.slot : shop.slot; if (shop.tries[k] === id) delete shop.tries[k]; else shop.tries[k] = id; shop.tryKit = null; shopRedraw(); },
     'shop-buy': function (el) { run(el, call('shopBuy', { item: el.dataset.id }, staffAuth())).then(shopDone, function () {}); },
     'shop-wear': function (el) { run(el, call('shopWear', { item: el.dataset.id, on: el.dataset.on === 'true' }, staffAuth())).then(shopDone, function () {}); },
     'shelf-open': function () { openShelf(); },
@@ -20567,12 +20572,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (!need) return;
       toast('ต้องมีท่า' + need[1] + 'ก่อน ลองดูได้เลย', 'ok');
       closeSheet();
-      setTimeout(function () { openShop('char', 'm'); shop.tryId = need[0]; if (shop.data) shopRedraw(); }, 230);
+      setTimeout(function () { openShop('char', 'm'); shop.tries.m = need[0]; if (shop.data) shopRedraw(); }, 230);
     },
     'game-find': function (el) {
       var id = el.dataset.id;
       closeSheet();
-      setTimeout(function () { openShop('av', 'b'); shop.tryId = id; if (shop.data) shopRedraw(); }, 230);
+      setTimeout(function () { openShop('av', 'b'); shop.tries.b = id; if (shop.data) shopRedraw(); }, 230);
     },
     'pet-go': function (el) { petGo(el.closest('.pet-box') || el, +el.dataset.love || 1); buzz(6); },
     'sh-char-go': function (el) { charGo(el); buzz(8); },
