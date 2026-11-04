@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.57","page":"","e3":"0a65f7f3","edge":true,"test":true,"store":"test.","build":"1ac0912d54be"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.58","page":"","e3":"84e10917","edge":true,"test":true,"store":"test.","build":"09e3224f4dcc"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -7135,10 +7135,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     btn.classList.toggle('loading', !!on);
     btn.disabled = !!on;
   }
-  function run(btn, promise, okMsg) {
+  // (after: บันทึกสำเร็จแล้ววาดต่อก่อนปุ่มกลับมากดได้ ปุ่มที่หน้าวาดใหม่แล้วเป็นไปตามหน้า ไม่คืนซ้ำ · ร้านแต่งตัว 2.13.58: ปุ่ม
+  // ใส่ ถอด ซื้อ ขึ้นกำลังบันทึกจนปุ่มใหม่ขึ้น เดิมปุ่มเดิมกลับมากดได้แวบหนึ่งก่อนเปลี่ยน ผู้ตรวจวัดบนแอปทดลอง 17–29 ms)
+  function run(btn, promise, okMsg, after) {
     spin(btn, true);
     return promise.then(function (v) {
-      spin(btn, false);
+      if (after) { try { after(v); } finally { if (btn && btn.classList.contains('loading')) spin(btn, false); } }
+      else spin(btn, false);
       if (okMsg) toast(typeof okMsg === 'function' ? okMsg(v) : okMsg, 'ok');
       return v;
     }, function (e) {
@@ -20441,7 +20444,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'shop-mode': function (el) { shop.mode = el.dataset.mode; shop.slot = SHOP_SLOTS[shop.mode][0]; shop.tries = {}; shop.tryKit = null; shopRedraw(); },
     'shop-room': function () { closeSheet(); setTimeout(function () { openShelf({ tab: 'room' }); setTimeout(function () { if (shelf && shelf.data && !shelf.arrange && $('#shelf')) roomArrange(); }, 500); }, 230); },
     'shop-kit': function (el) { shop.tryKit = shop.tryKit === el.dataset.id ? null : el.dataset.id; shopRedraw(); var b = $('#sheet-body'); if (b && shop.tryKit) b.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' }); },
-    'shop-wear-kit': function (el) { run(el, call('shopWearKit', { kit: el.dataset.id }, staffAuth())).then(shopDone, function () {}); },
+    'shop-wear-kit': function (el) { run(el, call('shopWearKit', { kit: el.dataset.id }, staffAuth()), null, shopDone).catch(function () {}); },
     'char-open': function () { openShop('char'); },
     'char-go': function (el) { charGo(el); buzz(8); moveSfx(el); },
     'quest-open': function () { openQuest(); },
@@ -20449,8 +20452,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'sales-owner': function () { openSalesOwner(); },
     'shop-week': function (el) { shop.slot = el.dataset.slot; shop.tries[el.dataset.slot] = el.dataset.id; shop.tryKit = null; shopRedraw(); var b = $('#sheet-body'); if (b) b.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' }); },
     'shop-try': function (el) { var id = el.dataset.id, it = shopItem(id), k = it ? it.slot : shop.slot; if (shop.tries[k] === id) delete shop.tries[k]; else shop.tries[k] = id; shop.tryKit = null; shopRedraw(); },
-    'shop-buy': function (el) { run(el, call('shopBuy', { item: el.dataset.id }, staffAuth())).then(shopDone, function () {}); },
-    'shop-wear': function (el) { run(el, call('shopWear', { item: el.dataset.id, on: el.dataset.on === 'true' }, staffAuth())).then(shopDone, function () {}); },
+    'shop-buy': function (el) { run(el, call('shopBuy', { item: el.dataset.id }, staffAuth()), null, shopDone).catch(function () {}); },
+    'shop-wear': function (el) { run(el, call('shopWear', { item: el.dataset.id, on: el.dataset.on === 'true' }, staffAuth()), null, shopDone).catch(function () {}); },
     'shelf-open': function () { openShelf(); },
     'shelf-box': function () { closeSheet(); setTimeout(function () { openShelf({ box: true }); }, 230); },
     'wc-open': function () { openWelcome(); },
