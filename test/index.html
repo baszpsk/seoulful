@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.62","page":"","e3":"5cf01e3d","edge":true,"test":true,"store":"test.","build":"1ccd6e11d49d"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.63","page":"","e3":"d122bde1","edge":true,"test":true,"store":"test.","build":"29a950caef24"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -2239,6 +2239,9 @@ html.c3 .shop-char, html.c3 .rm-char { touch-action: pan-y; }
 #sb-host { position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: 5000; max-width: 480px; margin: 0 auto; background: #1c140e; }
 #sb-host[hidden] { display: none; }
 body.sb-on #toasts { z-index: 5001; }
+/* (2.13.63) เกมเปิดเต็มจอ (จอกว้างไม่เกิน 480 px กรอบเกมทับทั้งจอ): แอนิเมชันของหน้าข้างหลังพักไว้ เครื่องไม่ต้องคิดภาพที่ไม่มีใครเห็นทุกเฟรม ปิดเกมแล้วขยับต่อจากเดิม
+   และไม่วาดหน้าข้างหลังเลย (ซ่อนไว้ใต้เกม) เฟรมของเอฟเฟกต์เบาลง · (วัด CPU÷4 หน้าเกมนิ่งในเดโม 28.7 → 59 fps · ข้างหลังขยับอยู่ 46 จาก 58 ตัว เช่น สัตว์เลี้ยง ตัวละครเพื่อน การ์ดวิ่ง เมฆ) */
+@media (max-width: 480px) { body.sb-on #app, body.sb-on #sheet-root { visibility: hidden; } body.sb-on #app *, body.sb-on #app *::before, body.sb-on #app *::after, body.sb-on #sheet-root *, body.sb-on #sheet-root *::before, body.sb-on #sheet-root *::after { animation-play-state: paused !important; } }
 /* 2.13.53 การ์ดและปุ่มเข้าครัวโซลฟูล์เป็นตัวอย่างเกมจริงที่เล่นวนเอง (.bks · bksScene วาดกระดานเปิด · SeoulBlock.demo เล่นต่อ): กระดาน 8×8 ช่อง .sb-c
    สีและไอคอนวัตถุดิบ ภาพบล็อกสามมิติ (.b3) ชุดเดียวกับจอเล่น ชิ้นในถาด คะแนน แต้มลอย คอมโบ เมนูที่เสิร์ฟ · ไม่มีตัวน้องในการ์ด
    · ขยับด้วย transform และ opacity จากตัวอย่างเท่านั้น ไม่มีท่า CSS ที่เล่นเอง · เล่นเฉพาะตอนเห็นบนจอ (bksSync เติม .on) · ลดการเคลื่อนไหวเห็นกระดานเปิดนิ่ง */
@@ -2312,10 +2315,12 @@ body.sb-on #toasts { z-index: 5001; }
 .bk-mem.me small { font-weight: 800; }
 .bk-tools, .bk-stats, .bk-last, .bk-off { display: grid; gap: 4px; }
 .bk-tools .btn, .bk-off .btn { justify-self: start; margin-top: 4px; }
-.bk-st { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
-.bk-st div { display: grid; padding: 8px; border-radius: 12px; background: rgba(92, 68, 36, .06); }
-.bk-st b { font-size: 18px; }
-.bk-st small { color: var(--muted); font-size: 11.5px; }
+.bk-st, .bk-sf { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
+/* สถิติเล่นเองแบบไฟเป็นแถวแยกสองช่องใต้ตารางหกช่อง ไม่เหลือช่องโหว่ท้ายตาราง (2.13.63) */
+.bk-sf { grid-template-columns: repeat(2, 1fr); }
+.bk-st div, .bk-sf div { display: grid; padding: 8px; border-radius: 12px; background: rgba(92, 68, 36, .06); }
+.bk-st b, .bk-sf b { font-size: 18px; }
+.bk-st small, .bk-sf small { color: var(--muted); font-size: 11.5px; }
 .bk-lt { display: flex; flex-wrap: wrap; gap: 8px; }
 .bk-lt span { padding: 2px 10px; border-radius: 99px; background: rgba(92, 68, 36, .08); font-weight: 700; }
 .bk-lt span.me { background: #ffe2cf; }
@@ -2328,6 +2333,15 @@ body.sb-on #toasts { z-index: 5001; }
 .fr-block-tx b { font-size: 15px; }
 .fr-block-tx span { font-size: 12.5px; color: var(--ink-2); }
 .fr-block > svg { flex: none; width: 16px; height: 16px; color: var(--muted); }
+/* 2.13.63 ข่าวสถิติใหม่ในเล่นเอง (หน้าเพื่อน) */
+.fr-recs { display: grid; gap: 10px; padding: 12px; }
+.fr-rec { display: flex; align-items: center; gap: 10px; }
+.fr-rec .grow { display: grid; gap: 2px; min-width: 0; }
+.fr-rec b { font-size: 14px; }
+.fr-rec small { font-size: 12.5px; color: var(--ink-2); }
+.fr-rec-ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #fff1e6; }
+.fr-rec-ic svg { width: 15px; height: 18px; }
+.fr-rec .btn { flex: none; }
 .bk-wait { padding: 40px 0; text-align: center; }
 /* ---- วิ่งฝ่าด่าน ---- */
 /* The run's card (#215): the course passing at one speed (its cake ground, a jelly hurdle, a rolling
@@ -6679,6 +6693,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // (วัด a-4 แท็บเพื่อนอยู่เฉย CPU ช้า 4 เท่า: สองชื่อกิน 688 จาก 998 ms ต่อวินาที · CSS steps ไม่ช่วย เครื่องยังคิดทุกเฟรม)
   // ความเร็วไล่สีเท่าเดิม · แอปอยู่เบื้องหลังหรือตั้งลดภาพเคลื่อนไหวไม่ไล่
   var NM_SEL = '.nm.lv4, .nm.lv5, .nm.lv6', nmTimer = 0, nmIo = null, nmWatch = [], nmScrollAt = 0;
+  // (2.13.63) เกมเปิดทับทั้งจอ: เงื่อนไขเดียวกับ CSS @media (max-width: 480px) ของ body.sb-on (กรอบเกมกว้างไม่เกิน 480 px)
+  var SB_MQ = window.matchMedia ? window.matchMedia('(max-width: 480px)') : null;
+  function sbCovers() { return !!(SB_MQ && SB_MQ.matches) && document.body.classList.contains('sb-on'); }
   function nmShineOn() {
     if (!MOTION) return;
     var list = document.querySelectorAll(NM_SEL);
@@ -6691,6 +6708,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!nmTimer) nmTimer = setInterval(nmTick, 83);
   }
   function nmTick() {
+    if (sbCovers()) return; // (2.13.63) เกมเปิดทับทั้งจอ ชื่อข้างหลังไม่มีใครเห็น (ก่อนค้นทั้งหน้า)
     // (ชื่อที่หลุดจากหน้าแล้ว: เลิกเฝ้า ไม่จับโหนดเก่าไว้)
     for (var w = nmWatch.length - 1; w >= 0; w--) if (!nmWatch[w].isConnected) { nmIo.unobserve(nmWatch[w]); nmWatch.splice(w, 1); }
     var list = document.querySelectorAll(NM_SEL);
@@ -8112,7 +8130,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var greet = function (n) {
         var c = $('.me-char');
         if (!c || S.view !== 'staff' || S.tab !== 'home') return;
-        if ($('#sheet-root .sheet') && n < 150) { setTimeout(function () { greet(n + 1); }, 400); return; }
+        // n1 (6 พ.ย. 2569) แผ่นยังเปิดครบ 60 วินาที ไม่ทักทาย: เดิมทักใต้แผ่นที่ไม่มีใครเห็น และเวทีสามมิติชั่วคราวของตัวนี้
+        // แย่งเวทีของร้านแต่งตัวกลางการลาก ตัวละครในร้านหายไปครู่หนึ่งแล้วหันกลับหน้าตรง
+        if ($('#sheet-root .sheet')) { if (n < 150) setTimeout(function () { greet(n + 1); }, 400); return; }
         charGo(c);
       };
       setTimeout(function () { greet(0); }, 700);
@@ -9536,7 +9556,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <button class="card fr-plaza" data-act="plaza-open"><span class="fr-plaza-art">${raw(PLAZA_ART(pzSky(), ''))}</span>
         <span class="fr-plaza-tx"><b>ลานโซลฟูล์</b><span>${n ? 'มีคนเล่นด้วย ' + n + ' ครั้ง · ไปเล่นตอบ' : 'เดินเล่น ทักทาย ไฮไฟว์ ปาหมอนใส่เพื่อน'}</span></span>${icon('right')}</button>
       ${thanksCard()}
-      ${blockCard(l)}
+      ${blockCard(l)}${blockNews(l)}
       ${runCard(l)}
     </div>`;
   }
@@ -15268,19 +15288,63 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         for (var i = 1; i < out.length; i++) if (out[i].s > 23 && (out[i - 1].s > 23 || (i < 3 && out[0].s > 23))) for (var j = i + 1; j < out.length; j++) if (out[j].s < 24) { var t = out[i]; out[i] = out[j]; out[j] = t; break; }
         return out;
       }
+      // 2.13.63 ไฟแรงขึ้น (เจ้าของตอบ "okทุกข้อ" 5 พ.ย. 2569 ข้อ 1): เล่นเองรอบใหม่ (seed ขึ้นต้น f2| = รุ่นกติกา 2) ทุก FIRE.every ชิ้นที่วาง ไฟแรงขึ้น 1 ระดับ
+      // · ชิ้นมาเป็นชุดละ FIRE.every ชิ้นต่อระดับ FIRE.mix[ระดับ-1] = [เล็ก, กลาง, ใหญ่, ชิ้นใหญ่ที่เป็น 3×3] (เกินตารางใช้แถวท้าย) ชิ้นเล็กน้อยลง ชิ้นใหญ่มากขึ้น
+      // · ตั้งแต่ระดับ FIRE.from ทุก FIRE.burn[ระดับ-1] ชิ้นที่วาง (นับทั้งรอบ) มีช่องไหม้ (ค่า BURNT บนกระดาน) โผล่ 1 ช่อง ติดของที่วางอยู่ ไม่ทำให้แถวหรือคอลัมน์เต็ม
+      //   ช่องไหม้ไม่นับในสูตรเมนู หายเมื่อเคลียร์แถวหรือคอลัมน์ที่มันอยู่ (หรือค้อน) · ตำแหน่งคิดจาก seed กับจำนวนชิ้นที่วาง ทุกเครื่องได้ช่องเดียวกัน
+      // · seed เดิม (d| และ f|) กติกาเดิมทุกข้อ รอบที่บันทึกหรือค้างในเครื่องก่อนรุ่นนี้เล่นซ้ำได้คะแนนเดิม · ค่าจูนจากจำลอง g-k18 (สเปก 5 พ.ย. 2569)
+      var BURNT = 6, FIRE_SEED = /^f2\|/;
+      var FIRE = { every: 20, from: 3, mix: [[7, 8, 5, 0], [4, 8, 8, 0], [0, 8, 12, 1], [0, 6, 14, 2], [0, 6, 14, 2], [0, 6, 14, 3], [0, 6, 14, 4], [0, 6, 14, 4]], burn: [0, 0, 4, 3, 2, 2, 2, 2] };
+      var SMQ = [[0], [1, 2], [3, 4, 5, 6], [1, 2], [3, 4, 5, 6]], MDQ = [[7, 8], [9], [10, 11, 12, 13], [14, 15, 16, 17], [18, 19], [20, 21, 22, 23]], BGQ = [[24, 25], [27, 28, 29, 30], [31, 32]];
+      function fireBag(r, lv) {
+        var m = FIRE.mix[Math.min(lv, FIRE.mix.length) - 1], b = [], i;
+        for (i = 0; i < m[0]; i++) b.push(pick(r, SMQ[i % 5]));
+        for (i = 0; i < m[1]; i++) b.push(pick(r, MDQ[i % 6]));
+        for (i = 0; i < m[2]; i++) b.push(i < m[3] ? 26 : pick(r, BGQ[(i - m[3]) % 3]));
+        return shuf(b, r);
+      }
+      // ชุดที่ k (ระดับ k+1) จาก seed เดิม ทุกเครื่องได้ลำดับเดียวกัน · ชิ้นใหญ่ไม่ติดกันเท่าที่มีชิ้นอื่นให้สลับ · 3 ชิ้นแรกของรอบมีชิ้นใหญ่ไม่เกิน 1
+      function fireDeal(seed, k) {
+        var r = rng(seed + '|F' + k), b = fireBag(r, k + 1), out = [], ks = [], i, j, t;
+        for (i = 0; i < b.length; i++) { if (!ks.length) ks = shuf([0, 1, 2, 3, 4, 5], r); out.push({ s: b[i], k: ks.pop() }); }
+        for (i = 1; i < out.length; i++) if (out[i].s > 23 && (out[i - 1].s > 23 || (!k && i < 3 && out[0].s > 23))) for (j = i + 1; j < out.length; j++) if (out[j].s < 24) { t = out[i]; out[i] = out[j]; out[j] = t; break; }
+        return out;
+      }
+      // ช่องไหม้ 1 ช่อง: ช่องว่างที่ติดของบนกระดาน 4 ทิศ และไม่ทำให้แถวหรือคอลัมน์เต็ม · ไม่มีช่องแบบนั้น (เช่นครัวเกลี้ยง) ไม่โผล่ · คืนเลขช่องหรือ -1
+      function burn(st) {
+        var b = st.b, ok = [], i, j, x, y, rf, cf;
+        for (i = 0; i < N; i++) {
+          if (b[i] >= 0) continue;
+          x = i % W; y = (i - x) / W;
+          if (!((x > 0 && b[i - 1] >= 0) || (x < W - 1 && b[i + 1] >= 0) || (y > 0 && b[i - W] >= 0) || (y < W - 1 && b[i + W] >= 0))) continue;
+          for (rf = 0, cf = 0, j = 0; j < W; j++) { if (b[y * W + j] >= 0) rf++; if (b[j * W + x] >= 0) cf++; }
+          if (rf < W - 1 && cf < W - 1) ok.push(i);
+        }
+        if (!ok.length) return -1;
+        i = ok[hash(st.seed + '|b|' + st.used) % ok.length];
+        b[i] = BURNT; st.burnt++;
+        return i;
+      }
+      // หลังวางแต่ละชิ้น (กติกา 2): ระดับไฟ = 1 + ชิ้นที่วาง ÷ FIRE.every ปัดลง · up = ไฟเพิ่งแรงขึ้นตานี้ · burn = ช่องไหม้ที่เพิ่งโผล่ (-1 ไม่มี)
+      function fireStep(st) {
+        var lv = 1 + Math.floor(st.used / FIRE.every), up = lv > st.fire, e = lv >= FIRE.from ? FIRE.burn[Math.min(lv, FIRE.burn.length) - 1] : 0;
+        st.fire = lv;
+        return { up: up, burn: e && st.used % e === 0 ? burn(st) : -1 };
+      }
       // opt.endless = เล่นเอง: ชิ้นไม่มีเพดาน (n = Infinity) เติมทีละ 30 ชิ้นด้วย more() · ชิ้นไม่หมด จบเมื่อวางไม่ได้หรือกดจบรอบ
       function create(seed, opt) {
         opt = opt || {};
-        var n = opt.endless ? Infinity : opt.pieces || PIECES, ro = rng(seed + '|o'), od = [], b = new Int8Array(N);
+        var n = opt.endless ? Infinity : opt.pieces || PIECES, ro = rng(seed + '|o'), od = [], b = new Int8Array(N), fire = !!opt.endless && FIRE_SEED.test(String(seed));
         b.fill(-1);
         // ออเดอร์มาครบ 7 เมนูทุก 7 ใบ ไม่ซ้ำกันภายใน 2 ใบ
         while (od.length < 84) { var bg = shuf([0, 1, 2, 3, 4, 5, 6], ro), l1 = od[od.length - 1], l2 = od[od.length - 2]; for (var t = 0; t < 7 && (bg[0] === l1 || bg[0] === l2 || bg[1] === l1); t++) bg.push(bg.shift()); od.push.apply(od, bg); }
-        var p = deal(rng(seed), opt.endless ? PIECES : n);
+        var p = fire ? fireDeal(String(seed), 0) : deal(rng(seed), opt.endless ? PIECES : n);
         return {
           seed: String(seed), n: n, endless: !!opt.endless, b: b, p: p, sp: deal(rng(seed + '|s'), 22, true), si: 0,
           hand: [p[0], p[1], p[2]], qi: 3, od: od, ord: [0, 1], oi: 2,
           score: 0, combo: 0, maxCombo: 0, lines: 0, served: [], used: 0,
-          tools: { h: opt.hammer | 0, s: opt.swap | 0, a: opt.tools | 0 }, toolsUsed: 0, over: false, stuck: false, why: '', log: []
+          tools: { h: opt.hammer | 0, s: opt.swap | 0, a: opt.tools | 0 }, toolsUsed: 0, over: false, stuck: false, why: '', log: [],
+          rule: fire ? 2 : 1, fire: fire ? 1 : 0, burnt: 0, burnGone: 0
         };
       }
       function fits(b, s, x, y) {
@@ -15305,7 +15369,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       // เล่นเอง: เติมชิ้นช่วงละ 30 จาก seed เดิม (ช่วงที่ k) ทุกเครื่องได้ลำดับเดียวกัน ให้มีชิ้นถัดไปเสมอ · ชิ้นใหญ่ไม่ติดกันข้ามช่วง
       function more(st) {
         while (st.endless && st.qi + 1 >= st.p.length) {
-          var nx = deal(rng(st.seed + '|' + st.p.length / PIECES), PIECES), last = st.p[st.p.length - 1];
+          var nx = st.fire ? fireDeal(st.seed, st.p.length / FIRE.every) : deal(rng(st.seed + '|' + st.p.length / PIECES), PIECES), last = st.p[st.p.length - 1];
           if (nx[0].s > 23 && last.s > 23) for (var j = 1; j < nx.length; j++) if (nx[j].s < 24) { var t = nx[0]; nx[0] = nx[j]; nx[j] = t; break; }
           st.p.push.apply(st.p, nx);
         }
@@ -15316,12 +15380,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       function place(st, slot, x, y, quick) {
         var pc = st.hand[slot];
         if (st.over || !pc || !fits(st.b, pc.s, x, y)) return null;
-        var b = st.b, sh = SHAPES[pc.s], cells = [], lines = [], served = [], took = [0, 0], gone = [], was = {}, i, j, c, r;
+        var b = st.b, sh = SHAPES[pc.s], cells = [], lines = [], served = [], took = [0, 0], gone = [], was = {}, bg = 0, fx = null, i, j, c, r;
         for (i = 0; i < sh.n; i++) { c = (y + sh.c[i][1]) * W + x + sh.c[i][0]; b[c] = pc.k; cells.push(c); }
         for (r = 0; r < W; r++) { for (j = 0; j < W && b[r * W + j] >= 0; j++); if (j === W) lines.push([0, r]); }
         for (c = 0; c < W; c++) { for (j = 0; j < W && b[j * W + c] >= 0; j++); if (j === W) lines.push([1, c]); }
         for (i = 0; i < lines.length; i++) {
-          var cnt = [0, 0, 0, 0, 0, 0], pick = -1;
+          var cnt = [0, 0, 0, 0, 0, 0, 0], pick = -1;
           for (j = 0; j < W; j++) cnt[b[at(lines[i], j)]]++;
           for (var o = 0; o < 2; o++) {
             var m = st.od[st.ord[o]];
@@ -15330,7 +15394,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (pick >= 0) { took[pick] = 1; served.push({ o: pick, m: st.od[st.ord[pick]], line: lines[i] }); }
         }
         for (i = 0; i < lines.length; i++) for (j = 0; j < W; j++) { c = at(lines[i], j); if (!(c in was)) { was[c] = b[c]; gone.push(c); } }
-        for (i = 0; i < gone.length; i++) b[gone[i]] = -1;
+        for (i = 0; i < gone.length; i++) { if (b[gone[i]] === BURNT) { st.burnt--; st.burnGone++; bg++; } b[gone[i]] = -1; }
         var k = lines.length, empty = k > 0, op = 0;
         if (k) for (i = 0; i < N; i++) if (b[i] >= 0) { empty = false; break; }
         st.combo = k ? Math.min(st.combo + 1, 8) : Math.max(st.combo - 1, 0);
@@ -15348,10 +15412,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         more(st);
         st.hand[slot] = st.qi < st.n ? st.p[st.qi++] : null;
         st.used++;
+        if (st.fire) fx = fireStep(st);
         st.log.push([slot, x, y]);
         if (!quick) check(st);
         cap(st);
-        return { cells: cells, k: pc.k, lines: lines, gone: gone, was: was, served: served, gain: gain, mult: mult, combo: st.combo, perfect: empty, n: sh.n };
+        return { cells: cells, k: pc.k, lines: lines, gone: gone, was: was, served: served, gain: gain, mult: mult, combo: st.combo, perfect: empty, n: sh.n, fire: st.fire, fireUp: !!(fx && fx.up), burn: fx ? fx.burn : -1, burnGone: bg };
       }
       // ค้อน: ทุบช่องที่แตะกับช่องติดกัน 4 ทิศ (รูปบวก)
       function hammer(st, x, y) {
@@ -15362,7 +15427,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (cx >= 0 && cy >= 0 && cx < W && cy < W && st.b[cy * W + cx] >= 0) hit.push([cy * W + cx, st.b[cy * W + cx]]);
         }
         if (!hit.length) return null;
-        for (i = 0; i < hit.length; i++) st.b[hit[i][0]] = -1;
+        for (i = 0; i < hit.length; i++) { if (hit[i][1] === BURNT) { st.burnt--; st.burnGone++; } st.b[hit[i][0]] = -1; }
         if (st.tools.h > 0) st.tools.h--; else st.tools.a--;
         st.toolsUsed++; st.log.push(['h', x, y]); check(st); cap(st);
         return hit;
@@ -15416,7 +15481,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         end(st);
         return st;
       }
-      var api = { W: W, MAX_LOG: MAX_LOG, PIECES: PIECES, ING: ING, MENUS: MENUS, SHAPES: SHAPES, rng: rng, create: create, fits: fits, anyFit: anyFit, canPlay: canPlay, check: check, place: place, hammer: hammer, swap: swap, end: end, clone: clone, replay: replay, verify: verify };
+      var api = { W: W, MAX_LOG: MAX_LOG, PIECES: PIECES, FIRE: FIRE, BURNT: BURNT, fireDeal: fireDeal, ING: ING, MENUS: MENUS, SHAPES: SHAPES, rng: rng, create: create, fits: fits, anyFit: anyFit, canPlay: canPlay, check: check, place: place, hammer: hammer, swap: swap, end: end, clone: clone, replay: replay, verify: verify };
       return api;
     })();
     /* ครัวโซลฟูล์ · หน้าจอเกม (ต้องมี SBCore) · SeoulBlock.mount(el, opts) คืนตัวคุม
@@ -15491,7 +15556,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           return s && !s.over && s.log.length === r.log.length && s.score === r.score && s.used === r.used && s.combo === r.combo ? s : null;
         } catch (e) { return null; }
       }
-      function go(e, kf, op) { if (!e.animate) { if (e.parentNode) e.parentNode.removeChild(e); return null; } if (op && typeof op === 'object' && op.delay && !op.fill) op.fill = 'backwards'; var a = e.animate(kf, op); a.onfinish = function () { if (e.parentNode) e.parentNode.removeChild(e); }; return a; }
+      // ลดการเคลื่อนไหว (2.13.63): ไม่ขยับเลย · ชิ้นที่มีข้อความ (คะแนน คำชม ป้ายไฟ ชื่อเมนู) ขึ้นนิ่งตามเวลาเดิมแล้วหาย ชิ้นอื่นไม่ขึ้น
+      function go(e, kf, op) { if (RM && e.animate && /\S/.test(e.textContent) && e.parentNode) { var ms = op && typeof op === 'object' ? (op.duration || 0) + (op.delay || 0) : +op || 0, k1 = kf[1] || kf[0]; e.style.transform = k1.transform || ''; e.style.opacity = 1; setTimeout(function () { if (e.parentNode) e.parentNode.removeChild(e); }, ms); return null; } if (!e.animate || RM) { if (e.parentNode) e.parentNode.removeChild(e); return null; } if (op && typeof op === 'object' && op.delay && !op.fill) op.fill = 'backwards'; var a = e.animate(kf, op); a.onfinish = function () { if (e.parentNode) e.parentNode.removeChild(e); }; return a; }
       function an(e, kf, op) { return e && e.animate ? e.animate(kf, op) : null; }
       function buzz(p) { try { if (root.navigator && navigator.vibrate) navigator.vibrate(p); } catch (e) { /* ไม่มีการสั่น */ } }
       var STM = '<path class="sb-steam" d="M15 9c-2-3 2-4 0-7M24 8c-2-3 2-4 0-7M33 9c-2-3 2-4 0-7" stroke="#fff" stroke-opacity=".75" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
@@ -15500,6 +15566,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       function dw(inner) {
         var st = '', body = inner.replace(/<path class="sb-steam"[^>]*\/>/g, function (s) { st += s.replace(' class="sb-steam"', ''); return ''; });
         return '<i class="sb-dw"><svg viewBox="0 0 48 40" aria-hidden="true">' + body + '</svg>' + (st ? '<svg class="sb-stv" viewBox="0 0 48 40" aria-hidden="true">' + st + '</svg>' : '') + '</i>';
+      }
+      // (2.13.63) จานที่บินตอนเคลียร์และเสิร์ฟ: รูปจานเป็นภาพเดียว (img) แทนรูปวาดหลายสิบชิ้น เครื่องจัดหน้าชิ้นเดียว ภาพเท่าเดิม ไอยังขยับเหมือนเดิม
+      //  (วัด CPU÷4 เฟรมหลังเคลียร์ 3 แถว จัดหน้า 93 → 40 ms เมื่อไม่มีรูปวาดจาน) · ภาพเดิมจำไว้ จานแบบเดิมครั้งหน้าไม่ต้องอ่านรูปใหม่
+      var DWI = {};
+      function dwImg(html) {
+        if (DWI[html]) return DWI[html];
+        var m = /^<i class="sb-dw"><svg viewBox="0 0 48 40" aria-hidden="true">([\s\S]*?)<\/svg>/.exec(html);
+        if (!m) return html;
+        return (DWI[html] = '<i class="sb-dw"><img alt="" src="data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 40">' + m[1] + '</svg>') + '">' + html.slice(m[0].length));
       }
       function dishSvg(sauce, ks) {
         var t = '';
@@ -15548,6 +15623,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var kcss = '';
       function iconSvg(k) { return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff" fill-opacity=".94" stroke="' + DK[k] + '" stroke-opacity=".5" stroke-width="1.1" stroke-linejoin="round">' + ICON[k] + '</svg>'; }
       for (var k = 0; k < 6; k++) kcss += '.sb .k' + k + ',.bks .k' + k + '{--c1:' + C1[k] + ';--c2:' + C2[k] + ';--i:url("data:image/svg+xml,' + encodeURIComponent(iconSvg(k)) + '")}';
+      // 2.13.63 ช่องไหม้ (ค่า 6 บนกระดาน): ไล่สีน้ำตาลดำ ไม่ใช้รูป ทับภาพบล็อกสามมิติด้วย
+      kcss += '.sb .sb-c.f.k6,.sb.b3 .sb-c.f.k6,.bks .sb-c.f.k6,.bks.b3 .sb-c.f.k6{background:radial-gradient(circle at 40% 35%,#6b5b52,#2a201b 70%);box-shadow:inset 0 0 0 2px #1a120e}';
       // ตัวเลขคะแนนวิ่งทีละหลัก (เลื่อนแถบตัวเลขด้วย transform)
       function Odo(el) {
         var ds = [], cur = 0, tk = 0;
@@ -15753,6 +15830,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         R.appendChild(cv);
         // ไอคอนแปลงเป็นบิตแมปครั้งเดียว วาดซ้ำทุกเฟรมเร็วกว่าวาด SVG ใหม่
         for (var k3 = 0; k3 < 6; k3++) (function (k) { var im = new Image(); IMG[k] = im; im.onload = function () { var b = document.createElement('canvas'); b.width = b.height = 96; b.getContext('2d').drawImage(im, 0, 0, 96, 96); b.complete = true; IMG[k] = b; }; im.src = 'data:image/svg+xml,' + encodeURIComponent(iconSvg(k).replace('<svg ', '<svg width="48" height="48" ')); })(k3);
+        // 2.13.63 เหรียญทองวาดลงบิตแมปครั้งเดียวตอนเปิดเกม (ภาพเท่านั้น ไม่ใช่เหรียญในแอป) ไม่สร้างไล่สีทุกเฟรม
+        var COIN = D.createElement('canvas');
+        if (g2) (function (x, n) { COIN.width = COIN.height = n; var r = n / 2, gr = x.createRadialGradient(r * .7, r * .7, 1, r, r, r); gr.addColorStop(0, '#fff6c8'); gr.addColorStop(.6, '#ffd23f'); gr.addColorStop(1, '#c98a00'); x.fillStyle = gr; x.beginPath(); x.arc(r, r, r - 1, 0, 6.283); x.fill(); })(COIN.getContext('2d'), Math.round(22 * dpr));
         // บล็อกสามมิติ (ภาพนิ่งทำครั้งเดียวด้วย Blender: dev/3d/blocks.py แล้ว dev/3d/blocks.js · o.art = โฟลเดอร์ภาพ)
         // โหลดครบ 6 ภาพแล้วจึงใช้แทนภาพวาด ระหว่างโหลดหรือหน้าที่ไม่มีภาพ (สคริปต์ Google) ใช้ภาพวาดเดิม
         var PIC = [], npic = 0;
@@ -15783,13 +15863,83 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         function cvFit() { var r = R.getBoundingClientRect(); cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); cv.style.width = r.width + 'px'; cv.style.height = r.height + 'px'; decoClip(); }
         // ตำแหน่งชิ้นหลักอ่านครั้งเดียวต่อเฟรม ก่อนเขียนหน้าเว็บ
         function geo() { if (!gc) { gc = { bd: rel(bd), sc: rel(scEl), heat: rel(heat), R: rel(R) }; requestAnimationFrame(function () { gc = null; }); } return gc; }
-        function emit(p) { if (RM || !g2 || parts.length > 360) return; p.t0 = performance.now() + (p.dl || 0); parts.push(p); if (!pr) pr = requestAnimationFrame(tick); }
+        // (2.13.63) เศษบล็อกที่ค่าไม่ใช่วัตถุดิบ 0–5 (เช่นช่องไหม้ 6) ไม่วาด กันภาพที่ไม่มีทำให้อนุภาคหยุดทั้งรอบ
+        // (2.13.63) เอฟเฟกต์ปรับตามเครื่อง: วัดเวลาเฟรมตอนอนุภาควิ่ง ค่ากลาง 8 เฟรมเกิน 20 ms ลดลงทีละขั้นจนลื่น
+        //  3 เต็ม · 2 อนุภาคครึ่งหนึ่ง (เศษบล็อกและเหรียญครบ) · 1 อนุภาคหนึ่งในสี่ (เศษบล็อกและเหรียญครึ่ง) ไม่มีแสง (วาบ คลื่น ไฟเต็มจอ) ไม่สั่น · 0 ไม่มีอนุภาค (เหลือคำ จาน คะแนน)
+        //  ลื่นต่อเนื่องราว 1 วินาทีขึ้นทีละขั้น แต่ไม่เกินขั้นที่เคยช้าในการเปิดเกมครั้งนี้ (ไม่แกว่งขึ้นลง) · จำขั้นไว้ในเครื่อง เปิดครั้งหน้าไม่กระตุกซ้ำ · เครื่องเร็วคงเต็ม · ลดการเคลื่อนไหวปิดหมดเหมือนเดิม
+        var fq0 = ls('sb-fxq'), fxq = /^[0-3]$/.test(fq0 || '') ? +fq0 : 3, fxSet = null, fxCap = 3, fxLast = 0, fxW = [], fxGood = 0, fxN = 0;
+        function fxQ() { return fxSet != null ? fxSet : fxq; }
+        function fxSee(dt) {
+          if (fxSet != null) return;
+          fxW.push(dt); if (fxW.length < 8) return;
+          var m = fxW.slice().sort(function (a, b) { return a - b; })[4];
+          fxW = [];
+          if (m > 20 && fxq > 0) {
+            fxCap = fxq - 1;
+            fxq--; fxGood = 0; ls('sb-fxq', fxq);
+            for (var i = parts.length - 1; i >= 0; i -= 2) if (parts[i].ty !== 'bk') parts.splice(i, 1); // ลดทันที: อนุภาคที่วิ่งอยู่เหลือครึ่งหนึ่ง (เว้นเศษบล็อก)
+          } else if (m <= 17.5 && fxq < fxCap) { if (++fxGood >= 8) { fxq++; fxGood = 0; ls('sb-fxq', fxq); } }
+          else fxGood = 0;
+        }
+        // ขั้น 0 ไม่มีอนุภาคให้วัด: ช่วงเอฟเฟกต์นับเวลาเฟรมเองราว 72 เฟรม ลื่นต่อเนื่องจึงลองขั้น 1 (ลองแล้วช้าอีก ไม่ลองซ้ำจนเปิดเกมใหม่)
+        var fxP = 0;
+        function probe() {
+          if (fxP || fxSet != null || fxq >= fxCap) return;
+          var n = 0, t0 = 0; fxP = 1;
+          requestAnimationFrame(function f(t) { if (paused || ++n > 72 || fxq) { fxP = 0; return; } if (t0 && t - t0 < 200) fxSee(t - t0); t0 = t; requestAnimationFrame(f); });
+        }
+        // (2.13.63) รูปทรงอนุภาคสร้างครั้งเดียว (Path2D) ไม่สร้างเส้นใหม่ทุกเฟรม · ไอร้อนและควันใช้ภาพวงไล่สีที่วาดไว้ครั้งเดียว (ภาพเท่าเดิม)
+        var PS = {}, P2 = !!root.Path2D;
+        function pRR(w, r) {
+          var k = 'r' + w + '|' + r;
+          if (!PS[k]) { var p = new Path2D(), x = -w / 2; p.moveTo(x + r, x); p.arcTo(x + w, x, x + w, x + w, r); p.arcTo(x + w, x + w, x, x + w, r); p.arcTo(x, x + w, x, x, r); p.arcTo(x, x, x + w, x, r); p.closePath(); PS[k] = p; }
+          return PS[k];
+        }
+        function pStar(z) {
+          var k = 's' + z;
+          if (!PS[k]) { var p = new Path2D(); for (var i = 0; i < 8; i++) { var a = i * .785, d = i % 2 ? z * .3 : z; p.lineTo(Math.cos(a) * d, Math.sin(a) * d); } p.closePath(); PS[k] = p; }
+          return PS[k];
+        }
+        function pDot() { if (!PS.o) { PS.o = new Path2D(); PS.o.arc(0, 0, 1, 0, 6.283); } return PS.o; }
+        function puff(dark) {
+          var k = dark ? 'pd' : 'pw';
+          if (!PS[k]) {
+            var b = D.createElement('canvas'), z = 96;
+            b.width = b.height = z * 2;
+            var x = b.getContext('2d'), rg = x.createRadialGradient(z, z, 0, z, z, z);
+            rg.addColorStop(0, dark ? 'rgba(70,60,55,.85)' : 'rgba(255,255,255,.9)'); rg.addColorStop(1, dark ? 'rgba(70,60,55,0)' : 'rgba(255,255,255,0)');
+            x.fillStyle = rg; x.fillRect(0, 0, z * 2, z * 2); PS[k] = b;
+          }
+          return PS[k];
+        }
+        // อุ่นรูปทรงและภาพไอตอนเครื่องว่าง เอฟเฟกต์ครั้งแรกไม่ต้องสร้างกลางเฟรม
+        if (P2 && !RM) (root.requestIdleCallback || function (f) { return setTimeout(f, 300); })(function () { puff(0); puff(1); pDot(); pStar(8); pRR(10, 3); });
+        // งานที่วัดตำแหน่งบนจอ (ท่าตัวน้อง) ทำหลังเฟรมนี้ขึ้นจอ ไม่บังคับเครื่องจัดหน้าใหม่กลางงานเอฟเฟกต์
+        function afterPaint(f) { var s0 = st; requestAnimationFrame(function () { tmr.push(setTimeout(function () { if (st === s0 && !paused) f(); }, 0)); }); }
+        // หลังเฟรมถัดไปขึ้นจอ ทำต่อเมื่อยังเป็นรอบเดิมและหน้าจบรอบยังอยู่ · ไม่ขึ้นกับการพักเกม (พักพอดีตอนจบรอบ ตัวน้องกับภาพจานยังขึ้นครบ)
+        function endNext(f, el) { var s0 = st; requestAnimationFrame(function () { setTimeout(function () { if (st === s0 && el.isConnected) f(); }, 0); }); }
+        // (2.13.63) อนุภาคทุกชนิดมีช่องครบชุดเดียวกันเรียงเหมือนกัน ตัววาดอ่านค่าแบบเดียวทุกเฟรม ไม่ต้องสร้างตัวเลขทิ้ง
+        // (เดิมแต่ละชนิดมีช่องไม่เท่ากัน เครื่องสร้างขยะทุกเฟรมจนเก็บขยะนานเกินเฟรมบนมือถือช้า)
+        function Pt(p) {
+          this.ty = p.ty; this.c = p.c || ''; this.st = p.st ? 1 : 0; this.k = p.k | 0;
+          this.x = +p.x || 0; this.y = +p.y || 0; this.dx = +p.dx || 0; this.dy = +p.dy || 0; this.vx = +p.vx || 0; this.rot = +p.rot || 0; this.r = +p.r || 0; this.z = +p.z || 0;
+          this.cx = +p.cx || 0; this.cy = +p.cy || 0; this.tx = +p.tx || 0; this.ty2 = +p.ty2 || 0; this.d = +p.d || 1; this.t0 = 0;
+        }
+        function emit(p) {
+          if (RM || !g2 || parts.length > 360 || (p.ty === 'bk' && !C1[p.k])) return;
+          var q2 = fxQ(); // ขั้นเอฟเฟกต์: 2 อนุภาคเหลือครึ่ง (เศษบล็อก เหรียญครบ) 1 เหลือหนึ่งในสี่ (เศษบล็อก เหรียญครึ่ง) 0 ไม่มี
+          if (q2 < 3) { if (!q2) { probe(); return; } var kp = p.ty === 'bk' || p.ty === 'coin' ? (q2 > 1 ? 1 : 2) : q2 > 1 ? 2 : 4; if (fxN++ % kp) return; }
+          var n = new Pt(p); n.t0 = performance.now() + (+p.dl || 0); parts.push(n); if (!pr) pr = requestAnimationFrame(tick);
+        }
         function rr(x, y, w, hh, r) { g2.beginPath(); g2.moveTo(x + r, y); g2.arcTo(x + w, y, x + w, y + hh, r); g2.arcTo(x + w, y + hh, x, y + hh, r); g2.arcTo(x, y + hh, x, y, r); g2.arcTo(x, y, x + w, y, r); g2.closePath(); }
         function star(z) { g2.beginPath(); for (var i = 0; i < 8; i++) { var a = i * .785, d = i % 2 ? z * .3 : z; g2.lineTo(Math.cos(a) * d, Math.sin(a) * d); } g2.closePath(); }
         function tick(now) {
           pr = 0; if (paused) return;
           var c = g2, i, p, t, e, z, a;
+          if (fxLast && now - fxLast < 200) fxSee(now - fxLast); fxLast = now; // (2.13.63) วัดเวลาเฟรมตอนอนุภาควิ่ง
           c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cv.width, cv.height);
+          // (2.13.63) รูปทรงที่ใช้ซ้ำหยิบครั้งเดียวต่อเฟรม ไม่ต่อชื่อรูปทรงใหม่ทุกอนุภาค (ลดขยะหน่วยความจำ)
+          var qr = P2 ? pRR(cs, cs * .26) : null, q10 = P2 ? pRR(10, 3) : null, lz = 0, lst = null, sz;
           for (i = parts.length - 1; i >= 0; i--) {
             p = parts[i]; t = (now - p.t0) / p.d;
             if (t >= 1) { parts.splice(i, 1); continue; }
@@ -15805,24 +15955,26 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
                 c.fillStyle = gr; rr(-cs / 2, -cs / 2, cs, cs, cs * .26); c.fill();
                 if (IMG[p.k].complete) c.drawImage(IMG[p.k], -cs * .32, -cs * .32, cs * .64, cs * .64);
               }
-              if (!pre && t < .22) { c.globalAlpha = 1 - t / .22; c.fillStyle = '#fffbe8'; rr(-cs / 2, -cs / 2, cs, cs, cs * .26); c.fill(); }
-            } else if (p.ty === 'stm') { // ไอร้อนลอยขึ้น
+              if (!pre && t < .22) { c.globalAlpha = 1 - t / .22; c.fillStyle = '#fffbe8'; if (P2) c.fill(qr); else { rr(-cs / 2, -cs / 2, cs, cs, cs * .26); c.fill(); } }
+            } else if (p.ty === 'stm' || p.ty === 'smk') { // ไอร้อนลอยขึ้น · smk ควันเทาของช่องไหม้ (2.13.63)
               e = 1 - (1 - t) * (1 - t); z = cs * .55 * (.4 + 1.2 * e);
               c.globalAlpha = t < .25 ? t * 3.2 : .8 * (1 - (t - .25) / .75); c.translate(p.x, p.y - 50 * e);
-              var rg = c.createRadialGradient(0, 0, 0, 0, 0, z); rg.addColorStop(0, 'rgba(255,255,255,.9)'); rg.addColorStop(1, 'rgba(255,255,255,0)');
-              c.fillStyle = rg; c.fillRect(-z, -z, z * 2, z * 2);
+              c.drawImage(puff(p.ty === 'smk'), -z, -z, z * 2, z * 2);
             } else if (p.ty === 'cf') { // กระดาษสีร่วง
               c.translate(p.x + p.dx * t, p.y + p.dy * (t * .4 + t * t * .6)); c.rotate(p.r * t); c.fillStyle = p.c; c.fillRect(-4, -6.5, 8, 13);
             } else if (p.ty === 'em') { // ถ่านไฟลอยจากหม้อ
               e = 1 - (1 - t) * (1 - t); c.globalAlpha = 1 - t; c.translate(p.x + p.dx * e, p.y + p.dy * e);
-              c.fillStyle = 'rgba(255,122,26,.35)'; c.beginPath(); c.arc(0, 0, 7 * (1 - t) + 1, 0, 6.283); c.fill();
-              c.fillStyle = '#ffb640'; c.beginPath(); c.arc(0, 0, 3 * (1 - t) + .6, 0, 6.283); c.fill();
+              if (P2) { z = 7 * (1 - t) + 1; a = 3 * (1 - t) + .6; c.scale(z, z); c.fillStyle = 'rgba(255,122,26,.35)'; c.fill(pDot()); c.scale(a / z, a / z); c.fillStyle = '#ffb640'; c.fill(pDot()); }
+              else { c.fillStyle = 'rgba(255,122,26,.35)'; c.beginPath(); c.arc(0, 0, 7 * (1 - t) + 1, 0, 6.283); c.fill(); c.fillStyle = '#ffb640'; c.beginPath(); c.arc(0, 0, 3 * (1 - t) + .6, 0, 6.283); c.fill(); }
+            } else if (p.ty === 'coin') { // เหรียญทองบินโค้งเข้าคะแนน (2.13.63)
+              e = t * t * (3 - 2 * t); a = 1 - e; z = 1 - .35 * e;
+              c.globalAlpha = t > .85 ? (1 - t) / .15 : 1; c.translate(a * a * p.x + 2 * a * e * p.cx + e * e * p.tx, a * a * p.y + 2 * a * e * p.cy + e * e * p.ty2);
+              c.drawImage(COIN, -11 * z, -11 * z, 22 * z, 22 * z);
             } else { // ประกาย (sp) และพลุ (bs)
               if (p.ty === 'bs') { e = t < .55 ? 1 - Math.pow(1 - t / .55, 2) : 1 + (t - .55) * .44; z = t < .55 ? .4 + 1.27 * t : 1.1 * (1 - (t - .55) / .45); c.globalAlpha = t < .55 ? 1 : 1 - (t - .55) / .45; c.translate(p.x + p.dx * e, p.y + p.dy * e + (t > .55 ? (t - .55) * 42 : 0)); }
               else { e = 1 - Math.pow(1 - t, 3); z = 1 - e; c.globalAlpha = 1 - t * .5; c.translate(p.x + p.dx * e, p.y + p.dy * e); c.rotate((p.r || 0) * e); }
               c.scale(z, z); c.fillStyle = p.c;
-              if (p.st) star(p.z || 8); else rr(-5, -5, 10, 10, 3);
-              c.fill();
+              if (P2) { if (p.st) { sz = p.z || 8; if (sz !== lz) { lz = sz; lst = pStar(sz); } c.fill(lst); } else c.fill(q10); } else { if (p.st) star(p.z || 8); else rr(-5, -5, 10, 10, 3); c.fill(); }
             }
           }
           c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1;
@@ -15915,7 +16067,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         }
         function drawOrd(o2, fresh) {
           var m = M[st.od[st.ord[o2]]], c = ords[o2];
-          c.innerHTML = '<i class="sb-dm">' + dishM(st.od[st.ord[o2]]) + '</i><div class="sb-ot"><b>' + m.sh + '</b><span>' + m.need.map(function (n, k) { return n ? '<i class="sb-ki k' + k + '"></i>' + n : ''; }).join('') + '</span></div><em>+' + m.pts + '</em>';
+          c.innerHTML = '<i class="sb-dm">' + dwImg(dishM(st.od[st.ord[o2]])) + '</i><div class="sb-ot"><b>' + m.sh + '</b><span>' + m.need.map(function (n, k) { return n ? '<i class="sb-ki k' + k + '"></i>' + n : ''; }).join('') + '</span></div><em>+' + m.pts + '</em>';
           if (fresh && !RM) an(c, [{ transform: 'translateY(-16px) scale(.85)', opacity: 0 }, { transform: 'scale(1.06)', opacity: 1, offset: .6 }, { transform: 'none', opacity: 1 }], { duration: 480, easing: 'cubic-bezier(.3,1.3,.5,1)' });
         }
         function heatUp(up) {
@@ -15934,7 +16086,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         function tools() {
           [['h', (st.tools.h | 0) + (st.tools.a | 0)], ['s', (st.tools.s | 0) + (st.tools.a | 0)]].forEach(function (t) { var b = q('.sb-tool[data-t="' + t[0] + '"]'); b.querySelector('em').textContent = t[1]; b.classList.toggle('off', !t[1]); });
         }
-        function best() { var dd = stats.days[day]; q('.sb-sc small').textContent = 'สถิติ ' + fmt(stats.best) + (mode === 'daily' && dd ? ' · วันนี้ ' + fmt(dd.best) : ''); }
+        // 2.13.63 เล่นเองแบบไฟ: ระดับไฟและชิ้นที่เหลือจนไฟแรงขึ้นข้างคะแนน กับสถิติของแบบไฟ
+        function best() {
+          var dd = stats.days[day], sm = q('.sb-sc small');
+          if (st && st.rule === 2) { sm.innerHTML = '<b class="sb-fv">ไฟ ' + st.fire + ' · อีก ' + (C.FIRE.every - st.used % C.FIRE.every) + ' ชิ้น</b> · สถิติ ' + fmt(stats.fbest); return; }
+          sm.textContent = 'สถิติ ' + fmt(stats.best) + (mode === 'daily' && dd ? ' · วันนี้ ' + fmt(dd.best) : '');
+        }
         function drawAll() {
           for (var i = 0; i < 64; i++) cells[i].className = st.b[i] < 0 ? 'sb-c' : 'sb-c f k' + st.b[i];
           drawTray(); drawOrd(0); drawOrd(1); heatUp(); left(); tools(); best();
@@ -15948,10 +16105,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           // 2.13.46 รอบค้างในเครื่อง (game.resume จากแอป): เล่นซ้ำตาเดินเดิมจาก seed เดิมด้วยตัวช่วยที่มีตอนนี้ ได้กระดาน ชิ้นในมือ คะแนน คอมโบเดิม · ข้อมูลเสียหรือไม่ตรง = เริ่มรอบใหม่ตามปกติ
           var back = game && game.resume ? revive(game.seed, { tools: game.tools | 0, endless: !!game.endless }, game.resume) : null;
           if (game) game.resume = null;
-          st = back || (game ? C.create(game.seed, { tools: game.tools | 0, endless: !!game.endless }) : C.create(mode === 'daily' ? 'd' + day : 'f' + Date.now().toString(36) + Math.floor(Math.random() * 1e6), { hammer: tl.hammer | 0, swap: tl.swap | 0, endless: mode !== 'daily' }));
+          st = back || (game ? C.create(game.seed, { tools: game.tools | 0, endless: !!game.endless }) : C.create(mode === 'daily' ? 'd' + day : 'f2|' + day + '|' + Date.now().toString(36) + Math.floor(Math.random() * 1e6), { hammer: tl.hammer | 0, swap: tl.swap | 0, endless: mode !== 'daily' }));
           shown = 0; tool = ''; R.classList.remove('t-h', 't-s'); endEl.classList.remove('on'); msgOff(); tip.style.opacity = back ? 0 : '';
           var dt = day.split('-');
-          q('.sb-mode').textContent = mode === 'daily' ? 'โจทย์ ' + (+dt[2]) + ' ' + TH[+dt[1] - 1] + (game && game.n ? ' · รอบ ' + game.n + '/5' : '') : 'เล่นเอง · ไม่จำกัดชิ้น';
+          q('.sb-mode').textContent = mode === 'daily' ? 'โจทย์ ' + (+dt[2]) + ' ' + TH[+dt[1] - 1] + (game && game.n ? ' · รอบ ' + game.n + '/5' : '') : st.rule === 2 ? 'เล่นเอง · ไฟแรงขึ้นทุก ' + C.FIRE.every + ' ชิ้น' : 'เล่นเอง · ไม่จำกัดชิ้น';
           odo.set(st.score); mood(''); drawAll();
           if (back && st.stuck) stuck();
         }
@@ -16045,7 +16202,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (res.lines.length) tmr.push(setTimeout(function () { boom(res, x, y); }, 140));
           else odo.to(st.score, 400);
           heatUp(res.lines.length > 0); left(); drawTray(s); tools();
-          for (i = 0; i < res.served.length; i++) (function (o2) { tmr.push(setTimeout(function () { drawOrd(o2, true); }, 1500)); })(res.served[i].o);
+          // 2.13.63 เล่นเองแบบไฟ: ช่องไหม้โผล่หลังแถวแตก · ไฟแรงขึ้นมีฉากไฟ · ป้ายไฟข้างคะแนน
+          if (res.burn >= 0) tmr.push(setTimeout(function () { burnt(res.burn); }, res.lines.length ? 420 : 160));
+          if (res.fireUp) tmr.push(setTimeout(function () { fireUp(res.fire); }, res.lines.length ? 700 : 200));
+          if (st.rule === 2) best();
+          // (2.13.63) จบรอบแล้วไม่วาดออเดอร์ใหม่ใต้หน้าจบรอบ: งานเปล่าที่ทับเอฟเฟกต์หน้าจบ · เล่นอีกรอบวาดใหม่ทั้งหมดอยู่แล้ว
+          for (i = 0; i < res.served.length; i++) (function (o2) { tmr.push(setTimeout(function () { if (!shown) drawOrd(o2, true); }, 1500)); })(res.served[i].o);
           if (st.over) {
             tmr.push(setTimeout(function () { word(st.why === 'done' ? 'ครบทุกชิ้นแล้ว!' : st.why === 'cap' ? 'จบรอบ' : 'ครัวเต็มแล้ว!', '', 0); }, res.lines.length ? 900 : 200));
             tmr.push(setTimeout(showEnd, res.lines.length ? 2100 : 1300));
@@ -16056,12 +16218,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         // แถวแตก: ช่องแตกเป็นประกาย ไอร้อน แสงกวาด แล้วรวมเป็นจานบินไปที่คะแนน
         function boom(res, x0, y0) {
           var b0 = geo().bd, n = res.gone.length, per = RM ? 0 : Math.max(2, Math.min(4, Math.floor(80 / n))), i, j, L = res.lines, k = L.length;
-          for (i = 0; i < n; i++) if (st.b[res.gone[i]] < 0) cells[res.gone[i]].className = 'sb-c';
+          for (i = 0; i < n; i++) if (st.b[res.gone[i]] < 0 || st.b[res.gone[i]] === C.BURNT) cells[res.gone[i]].className = 'sb-c'; // (2.13.63 ช่องที่ไหม้ซ้ำตรงช่องที่แตก ขึ้นทีหลังพร้อมควัน)
           for (i = 0; i < n; i++) {
-            var c = res.gone[i], x = c % W, y = (c / W) | 0, kk = res.was[c], dl = (Math.abs(x - x0) + Math.abs(y - y0)) * 22;
+            var c = res.gone[i], x = c % W, y = (c / W) | 0, kk = res.was[c], dl = (Math.abs(x - x0) + Math.abs(y - y0)) * 22, ash = !C1[kk];
             if (RM) continue;
-            emit({ ty: 'bk', x: b0.x + P(x), y: b0.y + P(y), k: kk, vx: (Math.random() - .5) * 26, rot: (Math.random() - .5) * 1.8, d: 520, dl: dl });
-            for (j = 0; j < per; j++) { var a = Math.random() * 6.283, r = 24 + Math.random() * 50; emit({ ty: 'sp', st: !j, x: b0.x + P(x) + cs / 2, y: b0.y + P(y) + cs / 2, dx: Math.cos(a) * r, dy: Math.sin(a) * r - 16, r: r / 10, c: j ? C1[kk] : '#fff6c8', d: 520 + Math.random() * 260, dl: dl }); }
+            // 2.13.63 ช่องไหม้ (ค่า 6) แตกเป็นควันเทาแทนเศษบล็อก
+            if (ash) emit({ ty: 'smk', x: b0.x + P(x) + cs / 2, y: b0.y + P(y) + cs / 2, d: 900, dl: dl });
+            else emit({ ty: 'bk', x: b0.x + P(x), y: b0.y + P(y), k: kk, vx: (Math.random() - .5) * 26, rot: (Math.random() - .5) * 1.8, d: 520, dl: dl });
+            for (j = 0; j < per; j++) { var a = Math.random() * 6.283, r = 24 + Math.random() * 50; emit({ ty: 'sp', st: !j, x: b0.x + P(x) + cs / 2, y: b0.y + P(y) + cs / 2, dx: Math.cos(a) * r, dy: Math.sin(a) * r - 16, r: r / 10, c: j ? (ash ? '#8d7f76' : C1[kk]) : '#fff6c8', d: 520 + Math.random() * 260, dl: dl }); }
           }
           for (i = 0; i < k; i++) {
             var col = L[i][0], ix = L[i][1], bw = col ? cs : 8 * cs + 7 * g, bh = col ? 8 * cs + 7 * g : cs, bx = col ? P(ix) : pad, by = col ? pad : P(ix), bm = spawn('sb-beam');
@@ -16079,7 +16243,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (res.perfect) big = 'ครัวเกลี้ยง!';
           if (big || cb >= 2) word(big || 'คอมโบ ' + cb + '!', big && cb >= 2 ? 'คอมโบ ' + cb : '', Math.max(cb, k));
           if (cb >= 2) glowUp(cb);
-          if (k >= 2 || cb >= 3) shake(Math.min(7, 2 + k + cb * .6));
+          // 2.13.63 ทุกการเคลียร์มีวาบแสงกลางช่องที่แตกและสั่น (เดิมสั่นเฉพาะหลายแถว)
+          lf(res.gone);
+          shake(k >= 2 || cb >= 3 ? Math.min(7, 2 + k + cb * .6) : 2);
           // คอมโบไล่ระดับ ยิ่งสูงยิ่งอลัง (เจ้าของ 1 พ.ย. 2569): 2 คำเด้งมีประกาย · 3 คลื่นแสงรอบกระดาน อนุภาคหลากสี · 4 ขึ้นไป จอวาบ ดาวพุ่งเต็มจอ ตัวคูณใหญ่กลางจอ ตัวน้องเต้นท่าพิเศษ
           var lv = Math.max(cb, k);
           if (lv >= 2) sparkle(lv);
@@ -16087,7 +16253,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (cb >= 4) mega(res.mult);
           // เคลียร์หลายแถวหรือกระดานหมด: ฉากฉลอง
           if (k >= 2 || res.perfect) party(res.perfect ? 3 : k >= 3 ? 2 : 1);
-          if (cb >= 4) mood('party', 2000); else if (res.served.length) mood('joy', 1700); else if (cb >= 2 || k >= 2) mood('dance', 1500);
+          // (2.13.63) ท่าตัวน้องเริ่มหลังเฟรมเอฟเฟกต์ขึ้นจอ: ตัวละครวัดตำแหน่งตัวเอง ถ้าเริ่มตอนนี้เครื่องต้องจัดหน้าทั้งเกมใหม่ทันที (วัด CPU÷4 งานเดียว 176 ms จัดหน้า 105 ms)
+          afterPaint(function () { if (cb >= 4) mood('party', 2000); else if (res.served.length) mood('joy', 1700); else if (cb >= 2 || k >= 2) mood('dance', 1500); });
           if (res.served.length) sfx('serve');
           // สั่นยาวและแรงขึ้นตามระดับ (Android) · iPhone เคาะแล้วตอนปล่อยนิ้ว (hap ใน onUp)
           sfx('clear', cb); bz(lv >= 4 ? [45, 30, 70, 30, 100] : lv === 3 ? [32, 30, 48, 30, 64] : lv === 2 ? [24, 36, 40] : 18);
@@ -16096,16 +16263,22 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           var b = geo().bd, s = geo().sc, col = L[0], ix = L[1], mid = pad + 4 * cs + 3.5 * g;
           var x = b.x + (col ? P(ix) + cs / 2 : mid), y = b.y + (col ? mid : P(ix) + cs / 2), big = !!sv2, cnt = [0, 0, 0, 0, 0, 0], ks = [], j;
           if (big) x = Math.max(116, Math.min(b.W - 116, x));
-          for (j = 0; j < W; j++) cnt[res.was[col ? j * W + ix : ix * W + j]]++;
+          for (j = 0; j < W; j++) { var v = res.was[col ? j * W + ix : ix * W + j]; if (C1[v]) cnt[v]++; } // (2.13.63) ช่องไหม้ไม่ใช่วัตถุดิบบนจาน
           for (j = 0; j < 3; j++) { var mx = cnt.indexOf(Math.max.apply(null, cnt)); if (cnt[mx] > 0) { ks.push(mx); cnt[mx] = 0; } }
-          var e = spawn('sb-dish' + (big ? ' big' : ''), (big ? dishM(sv2.m) : dishSvg('#f3e2c4', ks)) + (big ? '<b>' + M[sv2.m].name + '</b><em>เสิร์ฟ! +' + M[sv2.m].pts + '</em>' : ''), fly);
           var T0 = 'translate(' + x + 'px,' + y + 'px)', T1 = 'translate(' + (s.x + 46) + 'px,' + (s.y + 30) + 'px)', dl = 150 + i * 150;
-          var a = go(e, big ? [{ transform: T0 + ' scale(.2)', opacity: 0 }, { transform: T0 + ' translateY(-34px) scale(1.25)', opacity: 1, offset: .16 }, { transform: T0 + ' translateY(-42px) scale(1)', opacity: 1, offset: .62 }, { transform: T1 + ' scale(.22)', opacity: .3 }]
-            : [{ transform: T0 + ' scale(.3)', opacity: 0 }, { transform: T0 + ' translateY(-16px) scale(.75)', opacity: 1, offset: .3 }, { transform: T1 + ' scale(.22)', opacity: .4 }], { duration: big ? 1900 : 950, delay: dl, easing: 'cubic-bezier(.45,0,.4,1)', fill: 'both' });
-          if (a) a.addEventListener('finish', scoreHit); else scoreHit();
+          // 2.13.63 จานสร้างตอนเริ่มบิน (หน่วงตามแถวอยู่แล้ว) ไม่สร้างทุกจานในเฟรมที่แถวแตก ซึ่งหนักสุดบนมือถือช้า · จบรอบไปแล้วไม่บินทับหน้าจบรอบ
+          tmr.push(setTimeout(function () {
+            if (shown) return;
+            var e = spawn('sb-dish' + (big ? ' big' : ''), dwImg(big ? dishM(sv2.m) : dishSvg('#f3e2c4', ks)) + (big ? '<b>' + M[sv2.m].name + '</b><em>เสิร์ฟ! +' + M[sv2.m].pts + '</em>' : ''), fly);
+            var a = go(e, big ? [{ transform: T0 + ' scale(.2)', opacity: 0 }, { transform: T0 + ' translateY(-34px) scale(1.25)', opacity: 1, offset: .16 }, { transform: T0 + ' translateY(-42px) scale(1)', opacity: 1, offset: .62 }, { transform: T1 + ' scale(.22)', opacity: .3 }]
+              : [{ transform: T0 + ' scale(.3)', opacity: 0 }, { transform: T0 + ' translateY(-16px) scale(.75)', opacity: 1, offset: .3 }, { transform: T1 + ' scale(.22)', opacity: .4 }], { duration: big ? 1900 : 950, easing: 'cubic-bezier(.45,0,.4,1)', fill: 'both' });
+            if (a) a.addEventListener('finish', scoreHit); else scoreHit();
+          }, dl));
           if (big) tmr.push(setTimeout(function () { burst(x, y - 44, 16, fly); }, dl + 260));
+          // 2.13.63 เสิร์ฟ: เหรียญทอง 8 เม็ดต่อจานบินโค้งเข้าคะแนน (ภาพเท่านั้น ไม่ใช่เหรียญในแอป)
+          if (big) for (j = 0; j < 8; j++) emit({ ty: 'coin', x: x + (Math.random() - .5) * 40, y: y - 30, cx: x + (Math.random() - .5) * 160, cy: y - 160 - Math.random() * 80, tx: s.x + 40, ty2: s.y + 16, d: 700 + j * 40, dl: dl + 350 + j * 45 });
         }
-        function scoreHit() { odo.to(st.score, 520); an(scEl, [{ transform: 'scale(1)' }, { transform: 'scale(1.12)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'ease-out' }); }
+        function scoreHit() { odo.to(st.score, 520); if (!RM) an(scEl, [{ transform: 'scale(1)' }, { transform: 'scale(1.12)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'ease-out' }); }
         function burst(x, y, n, par, cols) {
           for (var i = 0; i < n; i++) { var a = i / n * 6.283 + Math.random() * .3, r = 40 + Math.random() * 42; emit({ ty: 'bs', st: !(i % 3), x: x, y: y, dx: Math.cos(a) * r, dy: Math.sin(a) * r, c: (cols || C1)[i % 6], d: 950 + Math.random() * 300 }); }
         }
@@ -16114,8 +16287,32 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           var T = 'translate(' + (b.x + b.w / 2) + 'px,' + (b.y + b.h * .42) + 'px) translate(-50%,-50%)';
           go(e, [{ transform: T + ' scale(' + .3 * s + ') rotate(-12deg)', opacity: 0 }, { transform: T + ' scale(' + 1.2 * s + ') rotate(4deg)', opacity: 1, offset: .22 }, { transform: T + ' scale(' + s + ') rotate(0)', opacity: 1, offset: .7 }, { transform: T + ' translateY(-30px) scale(' + s + ')', opacity: 0 }], { duration: 1200, easing: 'ease-out', fill: 'both' });
         }
-        function glowUp(cb) { if (RM) return; an(glow, [{ opacity: 0 }, { opacity: Math.min(1, .45 + cb * .1), offset: .2 }, { opacity: 0 }], { duration: 950, easing: 'ease-out' }); }
-        function shake(a) { if (RM) return; an(bd, [{ transform: 'none' }, { transform: 'translate(' + -a + 'px,' + a / 2 + 'px)' }, { transform: 'translate(' + a + 'px,' + -a / 2 + 'px)' }, { transform: 'translate(' + -a / 2 + 'px,0)' }, { transform: 'none' }], { duration: 320 }); }
+        function glowUp(cb) { if (RM || fxQ() < 2) return; an(glow, [{ opacity: 0 }, { opacity: Math.min(1, .45 + cb * .1), offset: .2 }, { opacity: 0 }], { duration: 950, easing: 'ease-out' }); }
+        // 2.13.63 วาบแสงกลมกลางช่องที่เคลียร์ 300 มิลลิวินาที (ชิ้นเดียว · ลดการเคลื่อนไหวไม่ขึ้น)
+        function lf(gone) {
+          if (RM || !gone.length || fxQ() < 2) return;
+          var x = 0, y = 0, i;
+          for (i = 0; i < gone.length; i++) { x += P(gone[i] % W) + cs / 2; y += P((gone[i] / W) | 0) + cs / 2; }
+          x /= gone.length; y /= gone.length;
+          go(spawn('sb-lf'), [{ transform: 'translate(' + x + 'px,' + y + 'px) scale(.3)', opacity: .95 }, { transform: 'translate(' + x + 'px,' + y + 'px) scale(1.5)', opacity: 0 }], { duration: 300, easing: 'ease-out', fill: 'both' });
+        }
+        // 2.13.63 ช่องไหม้โผล่ (หลังแถวแตก) มีควันเทา 1 ก้อน · ช่องถูกเคลียร์ไปก่อนแล้วไม่ขึ้น
+        function burnt(c) {
+          if (st.b[c] !== C.BURNT) return;
+          cells[c].className = 'sb-c f k6';
+          var b0 = geo().bd;
+          emit({ ty: 'smk', x: b0.x + P(c % W) + cs / 2, y: b0.y + P((c / W) | 0) + cs / 2, d: 900 });
+        }
+        // 2.13.63 ไฟแรงขึ้น: ไฟไล่สีจากล่างเต็มจอ 0.9 วิ ป้าย "ไฟแรงขึ้น! ระดับ N" 1.2 วิ ถ่านไฟ 24 ดวง สั่นสั้น (Android) · ลดการเคลื่อนไหว: ป้ายนิ่งอย่างเดียว
+        function fireUp(lv) {
+          go(spawn('sb-fu', 'ไฟแรงขึ้น! ระดับ ' + lv, fly), [{ transform: 'scale(.6)', opacity: 0 }, { transform: 'scale(1.15)', opacity: 1, offset: .25 }, { transform: 'scale(1)', opacity: 1, offset: .8 }, { transform: 'scale(1)', opacity: 0 }], { duration: 1200, fill: 'both' });
+          sfx('serve'); bz([20, 30, 40]);
+          if (RM) return;
+          if (fxQ() > 1) go(spawn('sb-fire', '', fly), [{ transform: 'translateY(35%) scaleY(.5)', opacity: 0 }, { transform: 'translateY(0) scaleY(1)', opacity: 1, offset: .3 }, { transform: 'translateY(-6%) scaleY(1.08)', opacity: .8, offset: .6 }, { transform: 'translateY(-10%) scaleY(1.1)', opacity: 0 }], { duration: 900, easing: 'ease-out', fill: 'both' });
+          var r = geo().R;
+          for (var i = 0; i < 24; i++) emit({ ty: 'em', x: Math.random() * r.w, y: r.h - Math.random() * 120, dx: (Math.random() - .5) * 60, dy: -260 - Math.random() * 300, d: 900 + Math.random() * 500, dl: Math.random() * 300 });
+        }
+        function shake(a) { if (RM || fxQ() < 2) return; an(bd, [{ transform: 'none' }, { transform: 'translate(' + -a + 'px,' + a / 2 + 'px)' }, { transform: 'translate(' + a + 'px,' + -a / 2 + 'px)' }, { transform: 'translate(' + -a / 2 + 'px,0)' }, { transform: 'none' }], { duration: 320 }); }
         // ประกายทองรอบคำคอมโบ (คอมโบ 2 ขึ้นไป)
         function sparkle(lv) {
           if (RM) return;
@@ -16126,7 +16323,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         // คลื่นแสงสองระลอกรอบกระดาน และอนุภาคหลากสีพุ่งออกจากขอบกระดาน (คอมโบ 3 ขึ้นไป)
         function wave(lv) {
           if (RM) return;
-          for (var i = 0; i < 2; i++) go(spawn('sb-wave' + (lv >= 4 ? ' l4' : '')), [{ transform: 'scale(.97)', opacity: 0 }, { transform: 'scale(1)', opacity: 1, offset: .2 }, { transform: 'scale(1.12)', opacity: 0 }], { duration: 700, delay: i * 200, easing: 'ease-out', fill: 'both' });
+          if (fxQ() > 1) for (var i = 0; i < 2; i++) go(spawn('sb-wave' + (lv >= 4 ? ' l4' : '')), [{ transform: 'scale(.97)', opacity: 0 }, { transform: 'scale(1)', opacity: 1, offset: .2 }, { transform: 'scale(1.12)', opacity: 0 }], { duration: 700, delay: i * 200, easing: 'ease-out', fill: 'both' });
           var b = geo().bd, n = lv >= 4 ? 28 : 20;
           for (i = 0; i < n; i++) {
             var sd = i % 4, u = Math.random(), px = sd < 2 ? b.x + u * b.w : sd === 2 ? b.x : b.x + b.w, py = sd === 0 ? b.y : sd === 1 ? b.y + b.h : b.y + u * b.h;
@@ -16137,7 +16334,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         // คอมโบ 4 ขึ้นไป: จอวาบ ดาวพุ่งจากกลางกระดานไปทั่วจอ ตัวคูณใหญ่กลางจอ
         function mega(mult) {
           if (RM) return;
-          an(flash, [{ opacity: 0 }, { opacity: .8, offset: .15 }, { opacity: 0 }], { duration: 420, easing: 'ease-out' });
+          if (fxQ() > 1) an(flash, [{ opacity: 0 }, { opacity: .8, offset: .15 }, { opacity: 0 }], { duration: 420, easing: 'ease-out' });
           var r = geo().R, b = geo().bd, cx = b.x + b.w / 2, cy = b.y + b.h / 2;
           for (var i = 0; i < 26; i++) { var a = i / 26 * 6.283 + Math.random() * .2, d = Math.max(r.w, r.h) * (.45 + Math.random() * .25); emit({ ty: 'bs', st: 1, z: 11, x: cx, y: cy, dx: Math.cos(a) * d, dy: Math.sin(a) * d, c: RB[i % 6], d: 900 + Math.random() * 300 }); }
           var e = spawn('sb-mul', '×' + mult, fly), T = 'translate(' + cx + 'px,' + (b.y + b.h * .74) + 'px) translate(-50%,-50%)';
@@ -16149,7 +16346,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           var r = geo().R;
           for (var i = 0; i <= n; i++) (function (i) { tmr.push(setTimeout(function () { burst(r.w * (.2 + Math.random() * .6), r.h * (.15 + Math.random() * .25), 12, fly, i % 2 ? RB : null); }, 120 + i * 240)); })(i);
           for (i = 0; i < 10 + n * 10; i++) emit({ ty: 'cf', x: Math.random() * r.w, y: -20, dx: (Math.random() - .5) * 120, dy: r.h + 40, r: 6 + Math.random() * 9, c: RB[i % 6], d: 1700 + Math.random() * 1200, dl: Math.random() * 500 });
-          if (n >= 3) an(flash, [{ opacity: 0 }, { opacity: .6, offset: .2 }, { opacity: 0 }], { duration: 500, easing: 'ease-out' });
+          if (n >= 3 && fxQ() > 1) an(flash, [{ opacity: 0 }, { opacity: .6, offset: .2 }, { opacity: 0 }], { duration: 500, easing: 'ease-out' });
         }
         function doHammer(c) {
           var x = c % W, y = (c / W) | 0, hit = C.hammer(st, x, y), i;
@@ -16158,7 +16355,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           for (i = 0; i < hit.length; i++) {
             var cc = hit[i][0], T = 'translate(' + P(cc % W) + 'px,' + P((cc / W) | 0) + 'px)';
             cells[cc].className = 'sb-c';
-            if (!RM) go(spawn('sb-bk k' + hit[i][1]), [{ transform: T, opacity: 1 }, { transform: T + ' translateY(30px) rotate(' + (i * 50 - 100) + 'deg) scale(.2)', opacity: 0 }], { duration: 500, easing: 'ease-in', fill: 'both' });
+            // 2.13.63 ช่องไหม้ทุบแล้วเป็นควัน (ไม่มีภาพบล็อก)
+            if (!C1[hit[i][1]]) emit({ ty: 'smk', x: geo().bd.x + P(cc % W) + cs / 2, y: geo().bd.y + P((cc / W) | 0) + cs / 2, d: 900 });
+            else if (!RM) go(spawn('sb-bk k' + hit[i][1]), [{ transform: T, opacity: 1 }, { transform: T + ' translateY(30px) rotate(' + (i * 50 - 100) + 'deg) scale(.2)', opacity: 0 }], { duration: 500, easing: 'ease-in', fill: 'both' });
           }
           var hm = spawn('sb-hm', IC.ham), T2 = 'translate(' + (P(x) - 6) + 'px,' + (P(y) - 30) + 'px)';
           go(hm, [{ transform: T2 + ' rotate(-50deg) scale(1.4)', opacity: 0 }, { transform: T2 + ' rotate(20deg) scale(1.4)', opacity: 1, offset: .4 }, { transform: T2 + ' rotate(0) scale(1.3)', opacity: 0 }], { duration: 520, easing: 'ease-in', fill: 'both' });
@@ -16215,28 +16414,43 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         function showEnd() {
           if (shown) return;
           shown = 1; setTool(''); msgOff(); keep(true);
-          var sc = st.score, prev = stats.best || 0, dd = stats.days[day] || { best: 0, plays: 0 }, nb = sc > prev;
+          // 2.13.63 ป้ายลอยของชิ้นสุดท้าย (เสิร์ฟ คอมโบ ไฟแรงขึ้น) ที่ยังค้าง เอาออกก่อน ไม่ให้ทับคะแนนหน้าจบรอบ
+          [].forEach.call(fly.querySelectorAll('.sb-fu,.sb-fire,.sb-word,.sb-dish,.sb-mul'), function (e) { if (e.parentNode) e.parentNode.removeChild(e); });
+          // 2.13.63 เล่นเองแบบไฟ (กติกา 2): สถิติใหม่เทียบเฉพาะรอบแบบไฟ (stats.fbest) และไฟถึง stats.recFire ตรงกับหลังบ้าน (apiBlockSend_)
+          var fr = st.rule === 2, rf = stats.recFire || 2, sc = st.score, prev = (fr ? stats.fbest : stats.best) || 0, dd = stats.days[day] || { best: 0, plays: 0 }, low = fr && st.fire < rf, nb = sc > prev && !low;
           if (mode === 'daily') { dd.plays++; dd.best = Math.max(dd.best, sc); stats.days[day] = dd; }
-          stats.best = Math.max(prev, sc); stats.combo = Math.max(stats.combo || 0, st.maxCombo); stats.served = (stats.served || 0) + st.served.length; stats.plays = (stats.plays || 0) + 1;
+          if (fr) { stats.fbest = Math.max(stats.fbest || 0, sc); stats.fire = Math.max(stats.fire || 0, st.fire); }
+          stats.best = Math.max(stats.best || 0, sc); stats.combo = Math.max(stats.combo || 0, st.maxCombo); stats.served = (stats.served || 0) + st.served.length; stats.plays = (stats.plays || 0) + 1;
           if (!o.stats) save(stats);
           var res = { mode: mode, day: day, seed: st.seed, score: sc, used: st.used, lines: st.lines, maxCombo: st.maxCombo, served: st.served.slice(), toolsUsed: st.toolsUsed, why: st.why, log: st.log.slice(), newBest: nb };
           var cnt = {}, team;
           st.served.forEach(function (m) { cnt[m] = (cnt[m] || 0) + 1; });
-          var dishes = Object.keys(cnt).map(function (m) { return '<i>' + dishM(+m) + (cnt[m] > 1 ? '<b>×' + cnt[m] + '</b>' : '') + '</i>'; }).join('') || '<span>ยังไม่ได้เสิร์ฟ ลองวางวัตถุดิบตามออเดอร์ให้อยู่แถวเดียวกัน</span>';
+          var ds = Object.keys(cnt).map(function (m) { return '<i>' + dwImg(dishM(+m)) + (cnt[m] > 1 ? '<b>×' + cnt[m] + '</b>' : '') + '</i>'; }).join(''), dishes = ds ? '' : '<span>ยังไม่ได้เสิร์ฟ ลองวางวัตถุดิบตามออเดอร์ให้อยู่แถวเดียวกัน</span>';
           team = o.onEnd ? 'กำลังบันทึกรอบนี้…' : mode !== 'daily' ? 'เล่นเองไม่นับเข้าทีม สถิติส่วนตัวยังนับ' : dd.plays <= 5 ? 'นับเข้าทีมแล้ว ' + dd.plays + '/5 รอบวันนี้ · ทีมใช้รอบดีสุดของวัน' : 'วันนี้นับเข้าทีมครบ 5 รอบแล้ว เล่นต่อเก็บสถิติได้';
           endEl.innerHTML = '<div class="sb-ep"><div class="sb-et">' + (st.why === 'done' ? 'ครบทุกชิ้นแล้ว!' : st.why === 'full' ? 'ครัวเต็มแล้ว!' : st.why === 'cap' ? 'รอบนี้ยาวมาก จบรอบให้แล้ว' : 'จบรอบ') + '</div>' +
-            '<div class="sb-chef sb-ec' + (o.avatar ? '' : ' own') + '"><div class="sb-av"></div></div><div class="sb-es"><b class="sb-odo"></b></div>' +
-            '<div class="sb-eb' + (nb ? ' nb' : '') + '">' + (nb ? 'สถิติใหม่!' : sc === prev ? 'เท่าสถิติเดิม! อีกนิดเดียว' : 'อีก ' + fmt(prev - sc + 1) + ' คะแนนจะทำลายสถิติ') + '</div>' +
+            '<div class="sb-chef sb-ec' + (o.avatar ? '' : ' own') + '"><div class="sb-av"></div></div><div class="sb-es"><b class="sb-odo"></b></div>' + (fr ? '<div class="sb-ef">' + FLAME + '<span>ไฟถึงระดับ ' + st.fire + '</span></div>' : '') +
+            '<div class="sb-eb' + (nb ? ' nb' : '') + '">' + (nb ? 'สถิติใหม่!' : low && sc > prev ? 'ไฟถึงระดับ ' + rf + ' จึงนับเป็นสถิติใหม่' : sc === prev ? 'เท่าสถิติเดิม! อีกนิดเดียว' : 'อีก ' + fmt(prev - sc + 1) + ' คะแนนจะทำลายสถิติ') + '</div>' +
             '<div class="sb-e3"><div><b>' + st.maxCombo + '</b><span>คอมโบสูงสุด</span></div><div><b>' + st.served.length + '</b><span>เมนูที่เสิร์ฟ</span></div><div><b>' + st.lines + '</b><span>แถวที่เคลียร์</span></div></div>' +
-            '<div class="sb-ed">' + dishes + '</div><p class="sb-er">สถิติส่วนตัว ' + fmt(stats.best) + (mode === 'daily' ? ' · วันนี้ดีสุด ' + fmt(dd.best) : '') + '</p><p class="sb-em">' + team + '</p>' +
+            '<div class="sb-ed">' + dishes + '</div><p class="sb-er">' + (fr ? 'สถิติเล่นเองแบบไฟ ' + fmt(stats.fbest) + ' · ไฟสูงสุด ระดับ ' + stats.fire : 'สถิติส่วนตัว ' + fmt(stats.best)) + (mode === 'daily' ? ' · วันนี้ดีสุด ' + fmt(dd.best) : '') + '</p><p class="sb-em">' + team + '</p>' +
             '<div class="sb-eg"><button class="sb-out" type="button">ออกจากเกม</button><button class="sb-again" type="button">เล่นอีกรอบ</button></div><button class="sb-alt" type="button">' + (mode === 'daily' ? 'เล่นเอง' : 'เล่นให้ทีม') + '</button></div>';
           endEl.classList.add('on');
           if (o.onEnd) send(res);
           var ec = endEl.querySelector('.sb-ec'), od = Odo(endEl.querySelector('.sb-odo'));
-          avIn(ec, 'idle');
-          od.set(0); mood(nb ? 'joy' : 'sad', 0, ec); mood(nb ? 'joy' : 'sad');
+          od.set(0); mood(nb ? 'joy' : 'sad');
+          // 2.13.63 หน้าจบรอบขึ้นจอเป็นช่วง ไม่ให้เฟรมเดียวหนักเกินบนมือถือช้า: เฟรมแรกการ์ดกับคะแนน · ช่วงสองตัวน้องกับภาพจาน (ช่องจองขนาดไว้แล้ว
+          // ไม่ขยับ) · ช่วงสามท่าของตัวน้อง (การเริ่มท่าวัดตำแหน่งตัวน้อง บังคับจัดหน้า) · ตอนนั้นการ์ดยังเลื่อนขึ้นจากล่าง จึงไม่เห็นต่าง
+          endNext(function () {
+            avIn(ec, 'idle');
+            // ภาพจานขึ้นเฟรมถัดจากตัวน้อง ไม่วาดสองอย่างในเฟรมเดียว (เฟรมนี้หนักสุดของหน้าจบรอบบนมือถือช้า)
+            endNext(function () {
+              if (ds) endEl.querySelector('.sb-ed').innerHTML = ds;
+              endNext(function () { mood(nb ? 'joy' : 'sad', 0, ec); }, ec);
+            }, ec);
+          }, ec);
           tmr.push(setTimeout(function () { od.to(sc, 1200); }, 380));
           if (nb) { tmr.push(setTimeout(fireworks, 520)); sfx('win'); } else sfx('end');
+          // 2.13.63 สถิติใหม่เล่นเองแบบไฟ: ตัวน้องกระโดด 3 ครั้ง (พร้อมพลุและหน้าดีใจเดิม)
+          if (nb && fr && !RM) an(ec, [{ transform: 'none' }, { transform: 'translateY(-28px)', offset: .17 }, { transform: 'none', offset: .33 }, { transform: 'translateY(-28px)', offset: .5 }, { transform: 'none', offset: .67 }, { transform: 'translateY(-28px)', offset: .83 }, { transform: 'none' }], { duration: 1050, delay: 600, easing: 'ease-in-out' });
         }
         // เล่นอีกรอบ: แอปขอรอบใหม่จากหลังบ้านก่อน (o.onAgain) แล้วเรียก start เอง
         function again(m) { if (o.onAgain) o.onAgain(m); else start(m); }
@@ -16267,7 +16481,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         sndBtn(); vibBtn(); start(mode); fit();
         return {
           get st() { return st; },
-          start: start, drop: doPlace, fit: fit, pause: function () { paused = 1; },
+          start: start, drop: doPlace, fit: fit,
+          // (2.13.63) ขั้นเอฟเฟกต์ (ตัวตรวจ dev/block-ui-check.js): fx() อ่าน · fx(0..3) บังคับ · fx(null) กลับไปปรับตามเครื่อง · fx(-1) ปรับตามเครื่องโดยเริ่มเต็มใหม่
+          fx: function (n) {
+            if (n === -1) { fxSet = null; fxq = fxCap = 3; fxGood = 0; fxW = []; ls('sb-fxq', 3); }
+            else if (arguments.length) fxSet = n == null ? null : Math.max(0, Math.min(3, n | 0));
+            return { q: fxQ(), auto: fxq, cap: fxCap };
+          },
+          // ปิดจอเกม: หยุดอนุภาคและล้างแคนวาส ไม่วาดอะไรตอนจอเกมซ่อน · เปิดใหม่ start ตั้งให้วาดต่อ
+          pause: function () {
+            paused = 1; parts.length = 0; fxLast = 0; fxW = [];
+            if (pr) { cancelAnimationFrame(pr); pr = 0; }
+            if (g2) { g2.setTransform(1, 0, 0, 1, 0, 0); g2.clearRect(0, 0, cv.width, cv.height); }
+          },
           finish: function () { C.end(st); showEnd(); },
           setStats: function (s) { stats = s; s.days = s.days || {}; save(s); best(); },
           load: function (d) {
@@ -16285,7 +16511,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     })(window);
     var css = document.createElement('style');
     css.id = 'sb-css';
-    css.textContent = "/* ครัวโซลฟูล์ · หน้าตา (ขยับด้วย transform และ opacity เท่านั้น) */\n.sb{--cs:40px;--g:3px;--t1:#2a1f17;--t2:#85786b;--cd:rgba(255,255,255,.74);--cdl:rgba(92,68,36,.12);position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:6px;height:100%;padding:6px 14px calc(8px + env(safe-area-inset-bottom));overflow:hidden;font-family:var(--font,system-ui,sans-serif);color:var(--t1);background:radial-gradient(120% 60% at 15% 0,rgba(255,206,140,.55),transparent 60%),radial-gradient(80% 50% at 100% 35%,rgba(255,168,140,.32),transparent 60%),var(--bg,#f2eee7);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}\n.sb,.sb *{box-sizing:border-box}\n.sb button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cursor:pointer}\n.sb svg{display:block}\n.sb.th-autumn{background:radial-gradient(120% 60% at 15% 0,rgba(255,180,100,.6),transparent 60%),radial-gradient(80% 50% at 100% 40%,rgba(226,110,60,.26),transparent 60%),#f4ece0}\n.sb.th-loy,.sb.th-xmas{--t1:#fff8ec;--t2:rgba(255,244,228,.72);--cd:rgba(255,255,255,.13);--cdl:rgba(255,255,255,.16)}\n.sb.th-loy{background:radial-gradient(90% 50% at 80% 0,rgba(255,190,90,.35),transparent 60%),linear-gradient(180deg,#0f1c42,#1d3470 60%,#2a4f8f)}\n.sb.th-xmas{background:radial-gradient(90% 50% at 20% 0,rgba(255,120,110,.3),transparent 60%),linear-gradient(180deg,#0f3326,#1b5038)}\n.sb-top,.sb-hud,.sb-ords,.sb-bd,.sb-tray,.sb-bar{position:relative;z-index:1;flex:none}\n.sb-deco{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}\n.sb-deco i{position:absolute;top:0;opacity:.5;will-change:transform}\n.sb-deco i.dn{animation:sbDn 20s linear infinite}\n.sb-deco i.up{animation:sbUp 20s linear infinite}\n.sb-deco i.fl{top:auto;bottom:6px;width:42px;opacity:.9;animation:sbBob 5s ease-in-out infinite}\n.sb-deco svg{width:100%;height:auto}\n@keyframes sbDn{from{transform:translateY(-10vh) rotate(0)}to{transform:translateY(105vh) rotate(300deg)}}\n@keyframes sbUp{from{transform:translateY(105vh)}to{transform:translateY(-12vh)}}\n@keyframes sbBob{50%{transform:translate(16px,-5px) rotate(4deg)}}\n.sb-glow{position:absolute;inset:0;z-index:20;pointer-events:none;opacity:0;will-change:opacity;background:linear-gradient(90deg,rgba(255,110,20,.9),rgba(255,150,40,0) 13%,rgba(255,150,40,0) 87%,rgba(255,110,20,.9)),linear-gradient(180deg,rgba(255,110,20,.9),rgba(255,150,40,0) 9%,rgba(255,150,40,0) 91%,rgba(255,110,20,.9))}\n.sb-top{display:flex;align-items:center;gap:8px;height:42px}\n.sb-x,.sb-snd,.sb-vib{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-x svg,.sb-snd svg,.sb-vib svg{width:20px;height:20px}\n.sb-snd,.sb-vib{color:var(--t2)}\n.sb-snd.on,.sb-vib.on{color:#e0702a}\n.sb-ttl{flex:1;min-width:0;line-height:1.3}\n.sb-ttl b{display:block;font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-ttl span{display:block;font-size:12.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-left{flex:none;min-width:64px;padding:3px 8px;border-radius:14px;text-align:center;line-height:1.2;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-left b{display:block;font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}\n.sb-left span{font-size:10.5px;color:var(--t2)}\n.sb-fin{flex:none;min-width:64px;padding:3px 10px;border-radius:14px;text-align:center;line-height:1.2;color:#24170e;background:#ffd36b;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}\n.sb-fin b{display:block;font-size:15px;font-weight:800}\n.sb-fin span{font-size:10.5px;font-weight:600}\n.sb-fin[hidden],.sb-left[hidden]{display:none}\n.sb.low .sb-left b{color:#e0482f}\n.sb-hud{display:flex;align-items:flex-end;gap:10px;height:104px}\n.sb-chef{position:relative;flex:none;width:62px;height:104px}\n.sb-chef svg{position:absolute;left:-2px;bottom:-10px;width:66px;height:123px;overflow:visible}\n.sb-av{position:absolute;inset:0;transform-origin:50% 100%}\n.sb-sc{flex:1;min-width:0;padding-bottom:8px;line-height:1.2;transform-origin:20% 70%}\n.sb-sc>span,.sb-sc small{display:block;font-size:12.5px;color:var(--t2)}\n.sb-sc small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-odo{display:flex;height:1em;overflow:hidden;font-size:40px;font-weight:800;line-height:1;letter-spacing:-.5px;font-variant-numeric:tabular-nums}\n.sb-d{display:block;height:1em;overflow:hidden}\n.sb-d>span{display:block;transition:transform .5s cubic-bezier(.3,1.25,.5,1);will-change:transform}\n.sb-heat{flex:none;width:84px;padding-bottom:6px;text-align:center;line-height:1.2}\n.sb-pot{position:relative;width:56px;height:52px;margin:0 auto}\n.sb-pot>svg{position:absolute;left:0;top:0;width:56px;height:40px}\n.sb-fl{position:absolute;left:12px;bottom:-4px;width:32px;height:38px;transform-origin:50% 100%;transition:transform .45s cubic-bezier(.3,1.5,.5,1),opacity .3s}\n.sb-fl svg{width:100%;height:100%;transform-origin:50% 100%;animation:sbFlick .5s ease-in-out infinite alternate}\n@keyframes sbFlick{from{transform:scale(1,1)}to{transform:scale(.9,1.12)}}\n.sb-heat.hot .sb-pot::after{content:\"\";position:absolute;left:-14px;right:-14px;bottom:-16px;height:46px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,150,40,.7),transparent);animation:sbPulse .6s ease-in-out infinite alternate}\n.sb-heat b{display:block;font-size:20px;font-weight:800;color:#e0552f}\n.sb-heat span{display:block;font-size:11px;color:var(--t2)}\n.sb-ords{display:grid;grid-template-columns:1fr 1fr;gap:8px;height:58px}\n.sb-ord{display:flex;align-items:center;gap:5px;min-width:0;padding:5px 7px;border-radius:16px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 6px 14px -10px rgba(60,30,10,.4);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-ord.hit{transform:scale(1.05);box-shadow:inset 0 0 0 2px #ffb020,0 0 16px rgba(255,170,40,.7)}\n.sb-dm{flex:none;width:40px}\n.sb-dm svg{width:40px;height:34px}\n.sb-ot{flex:1;min-width:0;line-height:1.3}\n.sb-ot b{display:block;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-ot span{display:flex;align-items:center;gap:1px;font-size:12.5px;font-weight:800}\n.sb-ki{display:inline-block;width:17px;height:17px;margin-left:3px;border-radius:5px;background:var(--i) center/82% no-repeat,linear-gradient(var(--c1),var(--c2))}\n.sb-ki:first-child{margin-left:0}\n.sb-ord em{flex:none;padding:2px 6px;border-radius:99px;font-style:normal;font-size:11.5px;font-weight:800;color:#b4410f;background:#ffe9cf}\n.sb-bd{align-self:center;will-change:transform}\n.sb-grid{display:grid;grid-template-columns:repeat(8,var(--cs));grid-auto-rows:var(--cs);gap:var(--g);padding:6px;border-radius:20px;background:linear-gradient(180deg,#34428f,#1a2052);box-shadow:inset 0 2px 0 rgba(255,255,255,.16),inset 0 0 0 2px rgba(150,175,255,.24),0 16px 30px -14px rgba(20,20,70,.7)}\n.sb-c{position:relative;display:block;border-radius:calc(var(--cs)*.26);background:rgba(170,190,255,.11);box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}\n.sb-c.f,.sb-bk{background:var(--i) center/64% no-repeat,linear-gradient(var(--c1),var(--c2));box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 2px 3px rgba(0,0,0,.28)}\n.sb-c.gh{background:linear-gradient(var(--c1),var(--c2));opacity:.5;box-shadow:none}\n.sb-c.ln::after{content:\"\";position:absolute;inset:-1px;border-radius:inherit;box-shadow:0 0 0 2px #fff4b8,0 0 14px 3px rgba(255,205,70,.9);animation:sbPulse .55s ease-in-out infinite alternate}\n@keyframes sbPulse{from{opacity:.4}to{opacity:1}}\n.sb-fx,.sb-fly{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}\n.sb-fly{z-index:60}\n.sb-cv{position:absolute;left:0;top:0;z-index:58;pointer-events:none}\n.sb-fx>*,.sb-fly>*{position:absolute;left:0;top:0;will-change:transform,opacity}\n.sb-bk{width:var(--cs);height:var(--cs);border-radius:calc(var(--cs)*.26)}\n.sb-beam{border-radius:12px;background:linear-gradient(90deg,rgba(255,250,220,0),rgba(255,250,220,.95),rgba(255,250,220,0))}\n.sb-ring{width:60px;height:20px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.85)}\n.sb-pts{width:60px;text-align:center;white-space:nowrap;font-size:21px;font-weight:900;color:#fff;text-shadow:0 2px 0 rgba(120,50,0,.55),0 0 10px rgba(255,170,40,.95)}\n.sb-pts small{margin-left:2px;font-size:13px;color:#ffe08a}\n.sb-word{white-space:nowrap;text-align:center;font-size:36px;font-weight:900;line-height:1.15;color:#fff;text-shadow:0 3px 0 #c2410c,0 5px 0 #8a2a07}\n.sb-word small{display:block;font-size:19px;color:#ffe08a}\n.sb-dish{display:flex;flex-direction:column;align-items:center;width:100px;margin:-34px 0 0 -50px}\n.sb-dish svg{width:70px;height:58px}\n.sb-dish.big{width:232px;margin:-56px 0 0 -116px}\n.sb-dish.big svg{width:104px;height:86px}\n.sb-dish b{margin-top:2px;padding:5px 14px;border-radius:99px;white-space:nowrap;font-size:16px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ff9a4a,#e0480f);box-shadow:0 8px 16px -6px rgba(180,60,0,.7),inset 0 1px 0 rgba(255,255,255,.4)}\n.sb-dish em{margin-top:3px;font-style:normal;font-size:18px;font-weight:900;color:#fff4c2;text-shadow:0 2px 0 rgba(120,40,0,.6)}\n.sb-hm,.sb-hm svg{width:36px;height:36px}\n.sb-dw{position:relative;display:block;font-style:normal}\n.sb .sb-stv{position:absolute;left:0;top:0;pointer-events:none;animation:sbStm 1.6s ease-in-out infinite alternate}\n@keyframes sbStm{0%{transform:translateY(5%);opacity:.3}100%{transform:translateY(-7%);opacity:1}}\n.sb-tip{position:absolute;left:7%;right:7%;top:27%;text-align:center;font-size:13.5px;line-height:1.6;color:rgba(255,248,236,.8);pointer-events:none;transition:opacity .4s}\n.sb-tip b{display:block;margin-bottom:6px;font-size:18px;color:#fff}\n.sb-tray{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;height:104px}\n.sb-slot{display:grid;place-items:center;min-width:0;border-radius:20px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 8px 18px -12px rgba(60,30,10,.4);transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .25s}\n.sb-slot.lift{opacity:.25;transform:scale(.9)}\n.sb-slot.no .sb-pc{opacity:.32}\n.sb-pc{position:relative}\n.sb-pc .sb-c{position:absolute}\n.sb.t-s .sb-slot{animation:sbWig .45s ease-in-out infinite alternate}\n@keyframes sbWig{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}\n.sb-drag{position:absolute;left:0;top:0;z-index:50;pointer-events:none;will-change:transform}\n.sb-drag .sb-c{box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 10px 16px rgba(0,0,0,.3)}\n.sb-bar{display:flex;align-items:center;gap:8px;height:46px}\n.sb-tool{display:flex;align-items:center;gap:5px;height:42px;padding:0 10px 0 8px;border-radius:99px;font-size:13.5px;font-weight:700;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-tool svg{width:24px;height:24px}\n.sb-tool em{min-width:20px;height:20px;padding:0 5px;border-radius:99px;font-style:normal;font-size:12px;line-height:20px;text-align:center;color:#fff;background:#e0552f}\n.sb-tool.off{opacity:.38}\n.sb-tool.off em{background:#9a8f84}\n.sb.t-h .sb-tool[data-t=h],.sb.t-s .sb-tool[data-t=s]{transform:scale(1.07);box-shadow:inset 0 0 0 2px #ffb020,0 0 14px rgba(255,170,40,.6)}\n.sb-next{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;color:var(--t2)}\n.sb-next i{display:grid;place-items:center;width:52px;height:42px;border-radius:12px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-msg{position:absolute;left:16px;right:16px;bottom:168px;z-index:30;padding:12px 14px;border-radius:18px;text-align:center;font-size:14px;line-height:1.45;color:#fff;background:rgba(32,22,14,.93);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s,transform .35s cubic-bezier(.3,1.4,.5,1)}\n.sb-msg.on{opacity:1;transform:none;pointer-events:auto}\n.sb-msg b{display:block;font-size:16px}\n.sb .sb-quit{display:block;height:38px;margin:8px auto 0;padding:0 22px;border-radius:99px;font-weight:800;color:#24170e;background:#fff}\n.sb .sb-goon{display:block;height:34px;margin:8px auto 0;padding:0 20px;border-radius:99px;font-weight:700;color:#fff;background:rgba(255,255,255,.2)}\n.sb-end{position:absolute;inset:0;z-index:40;display:flex;align-items:flex-end;background:rgba(24,14,6,.5);opacity:0;pointer-events:none;transition:opacity .35s}\n.sb-end.on{opacity:1;pointer-events:auto}\n.sb-ep{width:100%;padding:16px 18px calc(16px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;text-align:center;color:#2a1f17;background:var(--surface,#fffdf9);transform:translateY(100%);transition:transform .55s cubic-bezier(.22,1,.36,1)}\n.sb-end.on .sb-ep{transform:none}\n.sb-et{font-size:20px;font-weight:800}\n.sb .sb-ec{width:92px;height:142px;margin:0 auto}\n.sb .sb-ec svg{left:0;bottom:-12px;width:92px;height:172px}\n.sb-es{display:flex;justify-content:center}\n.sb-es .sb-odo{font-size:54px;color:#e0552f}\n.sb-eb{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:99px;font-size:14px;font-weight:700;color:#6b5b4b;background:#f4ece1}\n.sb-eb.nb{font-size:16px;color:#fff;background:linear-gradient(90deg,#ffcf4a,#ff8a3d);animation:sbBeat 1s ease-in-out infinite}\n.sb-e3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 8px}\n.sb-e3 div{padding:8px 4px;border-radius:14px;line-height:1.25;background:#f7f1e8}\n.sb-e3 b{display:block;font-size:22px;font-weight:800}\n.sb-e3 span{font-size:12px;color:#85786b}\n.sb-ed{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px;min-height:40px;font-size:12.5px;color:#85786b}\n.sb-ed i{position:relative}\n.sb-ed svg{width:44px;height:37px}\n.sb-ed b{position:absolute;right:-4px;bottom:-2px;padding:0 5px;border-radius:99px;font-size:11px;font-weight:800;color:#fff;background:#e0552f}\n.sb-er,.sb-em{margin:6px 0 0;font-size:13px;color:#6b5b4b}\n.sb-ep .sb-em{font-weight:700;color:#2d6a4d}\n.sb .sb-find{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:10px 14px;border-radius:18px;text-align:left;background:linear-gradient(135deg,#fff6d8,#ffe3ee);box-shadow:0 10px 22px -12px rgba(224,85,47,.6);animation:sbFind .75s cubic-bezier(.2,1.5,.4,1) both}\n.sb .sb-find.rare{background:linear-gradient(135deg,#efe6ff,#dcf5ff)}\n.sb .sb-find>i{flex:0 0 56px;height:56px;display:grid;place-items:center;font-style:normal;font-size:36px;animation:sbFindI 1.4s ease-in-out .75s 2}\n.sb .sb-find>i svg,.sb .sb-find>i img{width:56px;height:56px}\n.sb .sb-find b{display:block;font-size:16px;font-weight:800;color:#c2410c}\n.sb .sb-find.rare b{color:#7c3aed}\n.sb .sb-find small{display:block;margin-top:2px;font-size:13px;color:#6b5b4b}\n@keyframes sbFind{0%{opacity:0;transform:translateY(18px) scale(.6)}60%{opacity:1;transform:translateY(-4px) scale(1.06)}100%{opacity:1;transform:none}}\n@keyframes sbFindI{0%,100%{transform:none}50%{transform:rotate(-10deg) scale(1.15)}}\n@media (prefers-reduced-motion:reduce){.sb .sb-find,.sb .sb-find>i{animation:none}}\n.sb .sb-top{z-index:41}.sb .sb-x{position:relative;z-index:41}\n.sb .sb-find .sb-try{margin-left:auto;flex:none;border:0;border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;font-weight:700;background:#7c3aed;color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.35)}.sb .sb-again{display:block;width:100%;height:56px;margin-top:12px;border-radius:99px;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ffa24a,#e0552f);box-shadow:0 12px 24px -10px rgba(224,85,47,.8),inset 0 1px 0 rgba(255,255,255,.4);animation:sbBeat 1.3s ease-in-out infinite}\n.sb .sb-alt{display:block;width:100%;height:44px;margin-top:6px;font-size:14.5px;font-weight:700;color:#85786b}\n@keyframes sbBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}\n.sb.short .sb-hud{height:66px}\n.sb.short .sb-chef{width:40px;height:66px}\n.sb.short .sb-chef svg{width:42px;height:78px;bottom:-6px}\n.sb.short .sb-odo{font-size:30px}\n/* ตัวละคร: ขยับเบา ๆ ตลอด เต้นตอนคอมโบ ดีใจตอนเสิร์ฟ เสียดายตอนจบรอบ */\n.sb-chef.own .sb-joy,.sb-chef.own .sb-sad{opacity:0}\n.sb-chef.own.joy .sb-joy,.sb-chef.own.sad .sb-sad{opacity:1}\n.sb-chef.own.joy .cp-eyes,.sb-chef.own.joy .cp-mouth,.sb-chef.own.sad .cp-mouth{opacity:0}\n.sb-chef .sb-av{animation:sbIdle 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armL{animation:sbSwL 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armR{animation:sbSwR 2.8s ease-in-out infinite}\n.sb-chef.own .cp-eyes{transform-origin:60px 63px;animation:sbBlink 4.2s infinite}\n.sb-chef.dance .sb-av{animation:sbHop .46s ease-in-out infinite}\n.sb-chef.own.dance .cp-armL{animation:sbDL .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-armR{animation:sbDR .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-head{animation:sbNod .46s ease-in-out infinite}\n.sb-chef.joy .sb-av{animation:sbJump .62s ease-in-out infinite}\n.sb-chef.own.joy .cp-armL{animation:sbUpL .31s ease-in-out infinite alternate}\n.sb-chef.own.joy .cp-armR{animation:sbUpR .31s ease-in-out infinite alternate}\n.sb-chef.sad .sb-av{animation:sbSad 2.6s ease-in-out infinite}\n.sb-chef.own.sad .cp-head{animation:none;transform:translateY(4px) rotate(-6deg)}\n.sb-chef.own.sad .cp-armL,.sb-chef.own.sad .cp-armR{animation:none}\n.sb-chef.own.sad .sb-tear{animation:sbTear 1.5s ease-in infinite}\n@keyframes sbIdle{50%{transform:translateY(-2.5px)}}\n@keyframes sbSwL{50%{transform:rotate(6deg)}}\n@keyframes sbSwR{50%{transform:rotate(-6deg)}}\n@keyframes sbBlink{0%,92%,100%{transform:none}95%{transform:scaleY(.1)}}\n@keyframes sbHop{0%,50%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-12px) rotate(-7deg)}75%{transform:translateY(-12px) rotate(7deg)}}\n@keyframes sbDL{from{transform:rotate(30deg)}to{transform:rotate(150deg)}}\n@keyframes sbDR{from{transform:rotate(-150deg)}to{transform:rotate(-30deg)}}\n@keyframes sbNod{50%{transform:rotate(9deg)}}\n@keyframes sbJump{0%,100%{transform:translateY(0) scale(1)}15%{transform:translateY(2px) scale(1.06,.92)}50%{transform:translateY(-22px) scale(.96,1.05)}}\n@keyframes sbUpL{from{transform:rotate(135deg)}to{transform:rotate(165deg)}}\n@keyframes sbUpR{from{transform:rotate(-135deg)}to{transform:rotate(-165deg)}}\n@keyframes sbSad{50%{transform:translateY(3px) rotate(-1.5deg)}}\n@keyframes sbTear{0%{transform:translateY(0);opacity:0}25%{opacity:1}100%{transform:translateY(12px);opacity:0}}\n/* เครื่องที่ตั้งลดการเคลื่อนไหว: เหลือแบบเบา */\n@media (prefers-reduced-motion:reduce){.sb *,.sb *::after{animation:none!important;transition-duration:.01ms!important}}\n.sb .sb-cheer{flex:1;display:flex;justify-content:center;align-items:flex-end;gap:2px;min-width:0;height:46px;pointer-events:none}.sb .sb-cheer i{display:block;width:30px;height:36px;transform-origin:50% 100%;animation:sb-cheer 2.6s ease-in-out infinite}.sb .sb-cheer i:nth-child(2){animation-delay:-.9s}.sb .sb-cheer i:nth-child(3){animation-delay:-1.7s}.sb .sb-cheer svg{width:100%;height:100%;overflow:visible}@keyframes sb-cheer{0%,100%{transform:none}40%{transform:translateY(-3px) rotate(-4deg)}70%{transform:translateY(0) rotate(3deg)}}.sb.rm .sb-cheer i{animation:none}.sb .sb-em.wait{opacity:.7}.sb .sb-em.ok{color:#15803d}.sb .sb-em.bad{color:#b91c1c}.sb .sb-resend{margin-left:8px;padding:4px 12px;border:0;border-radius:99px;background:#b91c1c;color:#fff;font:inherit;font-weight:800}.sb button:disabled{opacity:.55}/* 2.13.39 ปุ่มสั่น บล็อกสามมิติ คอมโบไล่ระดับ ปุ่มออก */.sb-hp{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}.sb.b3 .sb-c.f,.sb.b3 .sb-bk{background:var(--b3) center/100% no-repeat;box-shadow:none}.sb.b3 .sb-c.gh{background:var(--b3) center/100% no-repeat;opacity:.45}.sb.b3 .sb-ki{background:var(--b3) center/100% no-repeat}.sb.b3 .sb-drag .sb-c{box-shadow:none}.sb.b3 .sb-drag .sb-pc{filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))}.sb-flash{position:absolute;inset:0;z-index:55;pointer-events:none;opacity:0;will-change:opacity;background:radial-gradient(circle at 50% 50%,#fff,rgba(255,248,214,.85) 40%,rgba(255,214,120,.35) 75%,rgba(255,200,80,0))}.sb-word.l2{color:#fff8dc;text-shadow:0 3px 0 #ea580c,0 6px 0 #9a3412,0 0 18px rgba(255,196,60,.95)}.sb-word.l3{color:#fff;text-shadow:0 3px 0 #db2777,0 6px 0 #7e22ce,0 0 22px rgba(255,120,220,.95)}.sb-word.l4{color:#fff;text-shadow:0 3px 0 #ef4444,0 6px 0 #6d28d9,0 0 24px rgba(110,200,255,1),0 0 42px rgba(255,214,60,.9)}.sb-fx>.sb-wave{width:100%;height:100%;border-radius:20px;box-shadow:0 0 0 3px #fff,0 0 16px 6px #ff5fd2,0 0 34px 12px rgba(70,200,255,.7)}.sb-fx>.sb-wave.l4{box-shadow:0 0 0 3px #fff,0 0 18px 8px #ffd23f,0 0 40px 16px rgba(255,80,160,.75)}.sb-mul{white-space:nowrap;font-size:88px;font-weight:900;line-height:1;color:#fff;text-shadow:0 4px 0 #ef4444,0 8px 0 #6d28d9,0 0 30px rgba(255,214,60,1)}.sb-chef.party .sb-av{animation:sbParty .9s cubic-bezier(.3,1.3,.5,1) infinite}@keyframes sbParty{0%{transform:none}30%{transform:translateY(-18px) rotate(-14deg) scale(1.08)}60%{transform:translateY(-24px) rotate(190deg) scale(1.12)}85%{transform:translateY(-6px) rotate(350deg)}100%{transform:rotate(360deg)}}.sb .sb-eg{display:grid;grid-template-columns:1fr 1.7fr;gap:10px;margin-top:12px}.sb .sb-eg .sb-again{margin-top:0}.sb .sb-out{height:56px;border-radius:99px;font-size:17px;font-weight:800;color:#4a3626;background:#f3e9dd;box-shadow:inset 0 0 0 1.5px rgba(92,68,36,.22)}";
+    css.textContent = "/* ครัวโซลฟูล์ · หน้าตา (ขยับด้วย transform และ opacity เท่านั้น) */\n.sb{--cs:40px;--g:3px;--t1:#2a1f17;--t2:#85786b;--cd:rgba(255,255,255,.74);--cdl:rgba(92,68,36,.12);position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:6px;height:100%;padding:6px 14px calc(8px + env(safe-area-inset-bottom));overflow:hidden;font-family:var(--font,system-ui,sans-serif);color:var(--t1);background:radial-gradient(120% 60% at 15% 0,rgba(255,206,140,.55),transparent 60%),radial-gradient(80% 50% at 100% 35%,rgba(255,168,140,.32),transparent 60%),var(--bg,#f2eee7);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}\n.sb,.sb *{box-sizing:border-box}\n.sb button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cursor:pointer}\n.sb svg{display:block}\n.sb.th-autumn{background:radial-gradient(120% 60% at 15% 0,rgba(255,180,100,.6),transparent 60%),radial-gradient(80% 50% at 100% 40%,rgba(226,110,60,.26),transparent 60%),#f4ece0}\n.sb.th-loy,.sb.th-xmas{--t1:#fff8ec;--t2:rgba(255,244,228,.72);--cd:rgba(255,255,255,.13);--cdl:rgba(255,255,255,.16)}\n.sb.th-loy{background:radial-gradient(90% 50% at 80% 0,rgba(255,190,90,.35),transparent 60%),linear-gradient(180deg,#0f1c42,#1d3470 60%,#2a4f8f)}\n.sb.th-xmas{background:radial-gradient(90% 50% at 20% 0,rgba(255,120,110,.3),transparent 60%),linear-gradient(180deg,#0f3326,#1b5038)}\n.sb-top,.sb-hud,.sb-ords,.sb-bd,.sb-tray,.sb-bar{position:relative;z-index:1;flex:none}\n.sb-deco{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}\n.sb-deco i{position:absolute;top:0;opacity:.5;will-change:transform}\n.sb-deco i.dn{animation:sbDn 20s linear infinite}\n.sb-deco i.up{animation:sbUp 20s linear infinite}\n.sb-deco i.fl{top:auto;bottom:6px;width:42px;opacity:.9;animation:sbBob 5s ease-in-out infinite}\n.sb-deco svg{width:100%;height:auto}\n@keyframes sbDn{from{transform:translateY(-10vh) rotate(0)}to{transform:translateY(105vh) rotate(300deg)}}\n@keyframes sbUp{from{transform:translateY(105vh)}to{transform:translateY(-12vh)}}\n@keyframes sbBob{50%{transform:translate(16px,-5px) rotate(4deg)}}\n.sb-glow{position:absolute;inset:0;z-index:20;pointer-events:none;opacity:0;will-change:opacity;background:linear-gradient(90deg,rgba(255,110,20,.9),rgba(255,150,40,0) 13%,rgba(255,150,40,0) 87%,rgba(255,110,20,.9)),linear-gradient(180deg,rgba(255,110,20,.9),rgba(255,150,40,0) 9%,rgba(255,150,40,0) 91%,rgba(255,110,20,.9))}\n.sb-top{display:flex;align-items:center;gap:8px;height:42px}\n.sb-x,.sb-snd,.sb-vib{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-x svg,.sb-snd svg,.sb-vib svg{width:20px;height:20px}\n.sb-snd,.sb-vib{color:var(--t2)}\n.sb-snd.on,.sb-vib.on{color:#e0702a}\n.sb-ttl{flex:1;min-width:0;line-height:1.3}\n.sb-ttl b{display:block;font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-ttl span{display:block;font-size:12.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-left{flex:none;min-width:64px;padding:3px 8px;border-radius:14px;text-align:center;line-height:1.2;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-left b{display:block;font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}\n.sb-left span{font-size:10.5px;color:var(--t2)}\n.sb-fin{flex:none;min-width:64px;padding:3px 10px;border-radius:14px;text-align:center;line-height:1.2;color:#24170e;background:#ffd36b;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}\n.sb-fin b{display:block;font-size:15px;font-weight:800}\n.sb-fin span{font-size:10.5px;font-weight:600}\n.sb-fin[hidden],.sb-left[hidden]{display:none}\n.sb.low .sb-left b{color:#e0482f}\n.sb-hud{display:flex;align-items:flex-end;gap:10px;height:104px}\n.sb-chef{position:relative;flex:none;width:62px;height:104px}\n.sb-chef svg{position:absolute;left:-2px;bottom:-10px;width:66px;height:123px;overflow:visible}\n.sb-av{position:absolute;inset:0;transform-origin:50% 100%}\n.sb-sc{flex:1;min-width:0;padding-bottom:8px;line-height:1.2;transform-origin:20% 70%}\n.sb-sc>span,.sb-sc small{display:block;font-size:12.5px;color:var(--t2)}\n.sb-sc small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-odo{display:flex;height:1em;overflow:hidden;font-size:40px;font-weight:800;line-height:1;letter-spacing:-.5px;font-variant-numeric:tabular-nums}\n.sb-d{display:block;height:1em;overflow:hidden}\n.sb-d>span{display:block;transition:transform .5s cubic-bezier(.3,1.25,.5,1);will-change:transform}\n.sb-heat{flex:none;width:84px;padding-bottom:6px;text-align:center;line-height:1.2}\n.sb-pot{position:relative;width:56px;height:52px;margin:0 auto}\n.sb-pot>svg{position:absolute;left:0;top:0;width:56px;height:40px}\n.sb-fl{position:absolute;left:12px;bottom:-4px;width:32px;height:38px;transform-origin:50% 100%;transition:transform .45s cubic-bezier(.3,1.5,.5,1),opacity .3s}\n.sb-fl svg{width:100%;height:100%;transform-origin:50% 100%;animation:sbFlick .5s ease-in-out infinite alternate}\n@keyframes sbFlick{from{transform:scale(1,1)}to{transform:scale(.9,1.12)}}\n.sb-heat.hot .sb-pot::after{content:\"\";position:absolute;left:-14px;right:-14px;bottom:-16px;height:46px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,150,40,.7),transparent);animation:sbPulse .6s ease-in-out infinite alternate}\n.sb-heat b{display:block;font-size:20px;font-weight:800;color:#e0552f}\n.sb-heat span{display:block;font-size:11px;color:var(--t2)}\n.sb-ords{display:grid;grid-template-columns:1fr 1fr;gap:8px;height:58px}\n.sb-ord{display:flex;align-items:center;gap:5px;min-width:0;padding:5px 7px;border-radius:16px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 6px 14px -10px rgba(60,30,10,.4);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-ord.hit{transform:scale(1.05);box-shadow:inset 0 0 0 2px #ffb020,0 0 16px rgba(255,170,40,.7)}\n.sb-dm{flex:none;width:40px}\n.sb-dm svg,.sb-dm .sb-dw>img{width:40px;height:34px}\n.sb-dm .sb-dw>img{display:block}\n.sb-ot{flex:1;min-width:0;line-height:1.3}\n.sb-ot b{display:block;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-ot span{display:flex;align-items:center;gap:1px;font-size:12.5px;font-weight:800}\n.sb-ki{display:inline-block;width:17px;height:17px;margin-left:3px;border-radius:5px;background:var(--i) center/82% no-repeat,linear-gradient(var(--c1),var(--c2))}\n.sb-ki:first-child{margin-left:0}\n.sb-ord em{flex:none;padding:2px 6px;border-radius:99px;font-style:normal;font-size:11.5px;font-weight:800;color:#b4410f;background:#ffe9cf}\n.sb-bd{align-self:center;will-change:transform}\n.sb-grid{display:grid;grid-template-columns:repeat(8,var(--cs));grid-auto-rows:var(--cs);gap:var(--g);padding:6px;border-radius:20px;background:linear-gradient(180deg,#34428f,#1a2052);box-shadow:inset 0 2px 0 rgba(255,255,255,.16),inset 0 0 0 2px rgba(150,175,255,.24),0 16px 30px -14px rgba(20,20,70,.7)}\n.sb-c{position:relative;display:block;border-radius:calc(var(--cs)*.26);background:rgba(170,190,255,.11);box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}\n.sb-c.f,.sb-bk{background:var(--i) center/64% no-repeat,linear-gradient(var(--c1),var(--c2));box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 2px 3px rgba(0,0,0,.28)}\n.sb-c.gh{background:linear-gradient(var(--c1),var(--c2));opacity:.5;box-shadow:none}\n.sb-c.ln::after{content:\"\";position:absolute;inset:-1px;border-radius:inherit;box-shadow:0 0 0 2px #fff4b8,0 0 14px 3px rgba(255,205,70,.9);animation:sbPulse .55s ease-in-out infinite alternate}\n@keyframes sbPulse{from{opacity:.4}to{opacity:1}}\n.sb-fx,.sb-fly{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}\n.sb-fly{z-index:60}\n.sb-cv{position:absolute;left:0;top:0;z-index:58;pointer-events:none}\n.sb-fx>*,.sb-fly>*{position:absolute;left:0;top:0;will-change:transform,opacity}\n.sb-bk{width:var(--cs);height:var(--cs);border-radius:calc(var(--cs)*.26)}\n.sb-beam{border-radius:12px;background:linear-gradient(90deg,rgba(255,250,220,0),rgba(255,250,220,.95),rgba(255,250,220,0))}\n.sb-ring{width:60px;height:20px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.85)}\n.sb-pts{width:60px;text-align:center;white-space:nowrap;font-size:21px;font-weight:900;color:#fff;text-shadow:0 2px 0 rgba(120,50,0,.55),0 0 10px rgba(255,170,40,.95)}\n.sb-pts small{margin-left:2px;font-size:13px;color:#ffe08a}\n.sb-word{white-space:nowrap;text-align:center;font-size:36px;font-weight:900;line-height:1.15;color:#fff;text-shadow:0 3px 0 #c2410c,0 5px 0 #8a2a07}\n.sb-word small{display:block;font-size:19px;color:#ffe08a}\n.sb-dish{display:flex;flex-direction:column;align-items:center;width:100px;margin:-34px 0 0 -50px}\n.sb-dish svg,.sb-dish img{width:70px;height:58px}\n.sb-dish img{display:block}\n.sb-dish.big{width:232px;margin:-56px 0 0 -116px}\n.sb-dish.big svg,.sb-dish.big img{width:104px;height:86px}\n.sb-dish b{margin-top:2px;padding:5px 14px;border-radius:99px;white-space:nowrap;font-size:16px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ff9a4a,#e0480f);box-shadow:0 8px 16px -6px rgba(180,60,0,.7),inset 0 1px 0 rgba(255,255,255,.4)}\n.sb-dish em{margin-top:3px;font-style:normal;font-size:18px;font-weight:900;color:#fff4c2;text-shadow:0 2px 0 rgba(120,40,0,.6)}\n.sb-hm,.sb-hm svg{width:36px;height:36px}\n.sb-dw{position:relative;display:block;font-style:normal}\n.sb .sb-stv{position:absolute;left:0;top:0;pointer-events:none;animation:sbStm 1.6s ease-in-out infinite alternate}\n@keyframes sbStm{0%{transform:translateY(5%);opacity:.3}100%{transform:translateY(-7%);opacity:1}}\n.sb-tip{position:absolute;left:7%;right:7%;top:27%;text-align:center;font-size:13.5px;line-height:1.6;color:rgba(255,248,236,.8);pointer-events:none;transition:opacity .4s}\n.sb-tip b{display:block;margin-bottom:6px;font-size:18px;color:#fff}\n.sb-tray{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;height:104px}\n.sb-slot{display:grid;place-items:center;min-width:0;border-radius:20px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 8px 18px -12px rgba(60,30,10,.4);transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .25s}\n.sb-slot.lift{opacity:.25;transform:scale(.9)}\n.sb-slot.no .sb-pc{opacity:.32}\n.sb-pc{position:relative}\n.sb-pc .sb-c{position:absolute}\n.sb.t-s .sb-slot{animation:sbWig .45s ease-in-out infinite alternate}\n@keyframes sbWig{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}\n.sb-drag{position:absolute;left:0;top:0;z-index:50;pointer-events:none;will-change:transform}\n.sb-drag .sb-c{box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 10px 16px rgba(0,0,0,.3)}\n.sb-bar{display:flex;align-items:center;gap:8px;height:46px}\n.sb-tool{display:flex;align-items:center;gap:5px;height:42px;padding:0 10px 0 8px;border-radius:99px;font-size:13.5px;font-weight:700;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-tool svg{width:24px;height:24px}\n.sb-tool em{min-width:20px;height:20px;padding:0 5px;border-radius:99px;font-style:normal;font-size:12px;line-height:20px;text-align:center;color:#fff;background:#e0552f}\n.sb-tool.off{opacity:.38}\n.sb-tool.off em{background:#9a8f84}\n.sb.t-h .sb-tool[data-t=h],.sb.t-s .sb-tool[data-t=s]{transform:scale(1.07);box-shadow:inset 0 0 0 2px #ffb020,0 0 14px rgba(255,170,40,.6)}\n.sb-next{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;color:var(--t2)}\n.sb-next i{display:grid;place-items:center;width:52px;height:42px;border-radius:12px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-msg{position:absolute;left:16px;right:16px;bottom:168px;z-index:30;padding:12px 14px;border-radius:18px;text-align:center;font-size:14px;line-height:1.45;color:#fff;background:rgba(32,22,14,.93);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s,transform .35s cubic-bezier(.3,1.4,.5,1)}\n.sb-msg.on{opacity:1;transform:none;pointer-events:auto}\n.sb-msg b{display:block;font-size:16px}\n.sb .sb-quit{display:block;height:38px;margin:8px auto 0;padding:0 22px;border-radius:99px;font-weight:800;color:#24170e;background:#fff}\n.sb .sb-goon{display:block;height:34px;margin:8px auto 0;padding:0 20px;border-radius:99px;font-weight:700;color:#fff;background:rgba(255,255,255,.2)}\n.sb-end{position:absolute;inset:0;z-index:40;display:flex;align-items:flex-end;background:rgba(24,14,6,.5);opacity:0;pointer-events:none;transition:opacity .35s}\n.sb-end.on{opacity:1;pointer-events:auto}\n.sb-ep{width:100%;padding:16px 18px calc(16px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;text-align:center;color:#2a1f17;background:var(--surface,#fffdf9);transform:translateY(100%);transition:transform .55s cubic-bezier(.22,1,.36,1)}\n.sb-end.on .sb-ep{transform:none}\n.sb-et{font-size:20px;font-weight:800}\n.sb .sb-ec{width:92px;height:142px;margin:0 auto}\n.sb .sb-ec svg{left:0;bottom:-12px;width:92px;height:172px}\n.sb-es{display:flex;justify-content:center}\n.sb-es .sb-odo{font-size:54px;color:#e0552f}\n.sb-eb{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:99px;font-size:14px;font-weight:700;color:#6b5b4b;background:#f4ece1}\n.sb-eb.nb{font-size:16px;color:#fff;background:linear-gradient(90deg,#ffcf4a,#ff8a3d);animation:sbBeat 1s ease-in-out infinite}\n.sb-e3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 8px}\n.sb-e3 div{padding:8px 4px;border-radius:14px;line-height:1.25;background:#f7f1e8}\n.sb-e3 b{display:block;font-size:22px;font-weight:800}\n.sb-e3 span{font-size:12px;color:#85786b}\n.sb-ed{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px;min-height:40px;font-size:12.5px;color:#85786b}\n.sb-ed i{position:relative}\n.sb-ed svg,.sb-ed .sb-dw>img{width:44px;height:37px}\n.sb-ed .sb-dw>img{display:block}\n.sb-ed b{position:absolute;right:-4px;bottom:-2px;padding:0 5px;border-radius:99px;font-size:11px;font-weight:800;color:#fff;background:#e0552f}\n.sb-er,.sb-em{margin:6px 0 0;font-size:13px;color:#6b5b4b}\n.sb-ep .sb-em{font-weight:700;color:#2d6a4d}\n.sb .sb-find{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:10px 14px;border-radius:18px;text-align:left;background:linear-gradient(135deg,#fff6d8,#ffe3ee);box-shadow:0 10px 22px -12px rgba(224,85,47,.6);animation:sbFind .75s cubic-bezier(.2,1.5,.4,1) both}\n.sb .sb-find.rare{background:linear-gradient(135deg,#efe6ff,#dcf5ff)}\n.sb .sb-find>i{flex:0 0 56px;height:56px;display:grid;place-items:center;font-style:normal;font-size:36px;animation:sbFindI 1.4s ease-in-out .75s 2}\n.sb .sb-find>i svg,.sb .sb-find>i img{width:56px;height:56px}\n.sb .sb-find b{display:block;font-size:16px;font-weight:800;color:#c2410c}\n.sb .sb-find.rare b{color:#7c3aed}\n.sb .sb-find small{display:block;margin-top:2px;font-size:13px;color:#6b5b4b}\n@keyframes sbFind{0%{opacity:0;transform:translateY(18px) scale(.6)}60%{opacity:1;transform:translateY(-4px) scale(1.06)}100%{opacity:1;transform:none}}\n@keyframes sbFindI{0%,100%{transform:none}50%{transform:rotate(-10deg) scale(1.15)}}\n@media (prefers-reduced-motion:reduce){.sb .sb-find,.sb .sb-find>i{animation:none}}\n.sb .sb-top{z-index:41}.sb .sb-x{position:relative;z-index:41}\n.sb .sb-find .sb-try{margin-left:auto;flex:none;border:0;border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;font-weight:700;background:#7c3aed;color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.35)}.sb .sb-again{display:block;width:100%;height:56px;margin-top:12px;border-radius:99px;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ffa24a,#e0552f);box-shadow:0 12px 24px -10px rgba(224,85,47,.8),inset 0 1px 0 rgba(255,255,255,.4);animation:sbBeat 1.3s ease-in-out infinite}\n.sb .sb-alt{display:block;width:100%;height:44px;margin-top:6px;font-size:14.5px;font-weight:700;color:#85786b}\n@keyframes sbBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}\n.sb.short .sb-hud{height:66px}\n.sb.short .sb-chef{width:40px;height:66px}\n.sb.short .sb-chef svg{width:42px;height:78px;bottom:-6px}\n.sb.short .sb-odo{font-size:30px}\n/* ตัวละคร: ขยับเบา ๆ ตลอด เต้นตอนคอมโบ ดีใจตอนเสิร์ฟ เสียดายตอนจบรอบ */\n.sb-chef.own .sb-joy,.sb-chef.own .sb-sad{opacity:0}\n.sb-chef.own.joy .sb-joy,.sb-chef.own.sad .sb-sad{opacity:1}\n.sb-chef.own.joy .cp-eyes,.sb-chef.own.joy .cp-mouth,.sb-chef.own.sad .cp-mouth{opacity:0}\n.sb-chef .sb-av{animation:sbIdle 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armL{animation:sbSwL 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armR{animation:sbSwR 2.8s ease-in-out infinite}\n.sb-chef.own .cp-eyes{transform-origin:60px 63px;animation:sbBlink 4.2s infinite}\n.sb-chef.dance .sb-av{animation:sbHop .46s ease-in-out infinite}\n.sb-chef.own.dance .cp-armL{animation:sbDL .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-armR{animation:sbDR .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-head{animation:sbNod .46s ease-in-out infinite}\n.sb-chef.joy .sb-av{animation:sbJump .62s ease-in-out infinite}\n.sb-chef.own.joy .cp-armL{animation:sbUpL .31s ease-in-out infinite alternate}\n.sb-chef.own.joy .cp-armR{animation:sbUpR .31s ease-in-out infinite alternate}\n.sb-chef.sad .sb-av{animation:sbSad 2.6s ease-in-out infinite}\n.sb-chef.own.sad .cp-head{animation:none;transform:translateY(4px) rotate(-6deg)}\n.sb-chef.own.sad .cp-armL,.sb-chef.own.sad .cp-armR{animation:none}\n.sb-chef.own.sad .sb-tear{animation:sbTear 1.5s ease-in infinite}\n@keyframes sbIdle{50%{transform:translateY(-2.5px)}}\n@keyframes sbSwL{50%{transform:rotate(6deg)}}\n@keyframes sbSwR{50%{transform:rotate(-6deg)}}\n@keyframes sbBlink{0%,92%,100%{transform:none}95%{transform:scaleY(.1)}}\n@keyframes sbHop{0%,50%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-12px) rotate(-7deg)}75%{transform:translateY(-12px) rotate(7deg)}}\n@keyframes sbDL{from{transform:rotate(30deg)}to{transform:rotate(150deg)}}\n@keyframes sbDR{from{transform:rotate(-150deg)}to{transform:rotate(-30deg)}}\n@keyframes sbNod{50%{transform:rotate(9deg)}}\n@keyframes sbJump{0%,100%{transform:translateY(0) scale(1)}15%{transform:translateY(2px) scale(1.06,.92)}50%{transform:translateY(-22px) scale(.96,1.05)}}\n@keyframes sbUpL{from{transform:rotate(135deg)}to{transform:rotate(165deg)}}\n@keyframes sbUpR{from{transform:rotate(-135deg)}to{transform:rotate(-165deg)}}\n@keyframes sbSad{50%{transform:translateY(3px) rotate(-1.5deg)}}\n@keyframes sbTear{0%{transform:translateY(0);opacity:0}25%{opacity:1}100%{transform:translateY(12px);opacity:0}}\n/* เครื่องที่ตั้งลดการเคลื่อนไหว: เหลือแบบเบา */\n@media (prefers-reduced-motion:reduce){.sb *,.sb *::after{animation:none!important;transition-duration:.01ms!important}}\n.sb .sb-cheer{flex:1;display:flex;justify-content:center;align-items:flex-end;gap:2px;min-width:0;height:46px;pointer-events:none}.sb .sb-cheer i{display:block;width:30px;height:36px;transform-origin:50% 100%;animation:sb-cheer 2.6s ease-in-out infinite}.sb .sb-cheer i:nth-child(2){animation-delay:-.9s}.sb .sb-cheer i:nth-child(3){animation-delay:-1.7s}.sb .sb-cheer svg{width:100%;height:100%;overflow:visible}@keyframes sb-cheer{0%,100%{transform:none}40%{transform:translateY(-3px) rotate(-4deg)}70%{transform:translateY(0) rotate(3deg)}}.sb.rm .sb-cheer i{animation:none}.sb .sb-em.wait{opacity:.7}.sb .sb-em.ok{color:#15803d}.sb .sb-em.bad{color:#b91c1c}.sb .sb-resend{margin-left:8px;padding:4px 12px;border:0;border-radius:99px;background:#b91c1c;color:#fff;font:inherit;font-weight:800}.sb button:disabled{opacity:.55}/* 2.13.39 ปุ่มสั่น บล็อกสามมิติ คอมโบไล่ระดับ ปุ่มออก */.sb-hp{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}.sb.b3 .sb-c.f,.sb.b3 .sb-bk{background:var(--b3) center/100% no-repeat;box-shadow:none}.sb.b3 .sb-c.gh{background:var(--b3) center/100% no-repeat;opacity:.45}.sb.b3 .sb-ki{background:var(--b3) center/100% no-repeat}.sb.b3 .sb-drag .sb-c{box-shadow:none}.sb.b3 .sb-drag .sb-pc{filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))}.sb-flash{position:absolute;inset:0;z-index:55;pointer-events:none;opacity:0;will-change:opacity;background:radial-gradient(circle at 50% 50%,#fff,rgba(255,248,214,.85) 40%,rgba(255,214,120,.35) 75%,rgba(255,200,80,0))}.sb-word.l2{color:#fff8dc;text-shadow:0 3px 0 #ea580c,0 6px 0 #9a3412,0 0 18px rgba(255,196,60,.95)}.sb-word.l3{color:#fff;text-shadow:0 3px 0 #db2777,0 6px 0 #7e22ce,0 0 22px rgba(255,120,220,.95)}.sb-word.l4{color:#fff;text-shadow:0 3px 0 #ef4444,0 6px 0 #6d28d9,0 0 24px rgba(110,200,255,1),0 0 42px rgba(255,214,60,.9)}.sb-fx>.sb-wave{width:100%;height:100%;border-radius:20px;box-shadow:0 0 0 3px #fff,0 0 16px 6px #ff5fd2,0 0 34px 12px rgba(70,200,255,.7)}.sb-fx>.sb-wave.l4{box-shadow:0 0 0 3px #fff,0 0 18px 8px #ffd23f,0 0 40px 16px rgba(255,80,160,.75)}.sb-mul{white-space:nowrap;font-size:88px;font-weight:900;line-height:1;color:#fff;text-shadow:0 4px 0 #ef4444,0 8px 0 #6d28d9,0 0 30px rgba(255,214,60,1)}.sb-chef.party .sb-av{animation:sbParty .9s cubic-bezier(.3,1.3,.5,1) infinite}@keyframes sbParty{0%{transform:none}30%{transform:translateY(-18px) rotate(-14deg) scale(1.08)}60%{transform:translateY(-24px) rotate(190deg) scale(1.12)}85%{transform:translateY(-6px) rotate(350deg)}100%{transform:rotate(360deg)}}.sb .sb-eg{display:grid;grid-template-columns:1fr 1.7fr;gap:10px;margin-top:12px}.sb .sb-eg .sb-again{margin-top:0}.sb .sb-out{height:56px;border-radius:99px;font-size:17px;font-weight:800;color:#4a3626;background:#f3e9dd;box-shadow:inset 0 0 0 1.5px rgba(92,68,36,.22)}\n.sb-fx>.sb-lf{width:220px;height:220px;margin:-110px 0 0 -110px;border-radius:50%;background:radial-gradient(circle,rgba(255,250,220,.95),rgba(255,200,80,.5) 40%,rgba(255,160,40,0) 70%)}\n.sb-fly>.sb-fire{width:100%;height:100%;transform-origin:50% 100%;background:linear-gradient(to top,rgba(255,70,0,.9),rgba(255,150,0,.55) 35%,rgba(255,200,60,.15) 65%,rgba(255,200,60,0) 85%)}\n.sb-fly>.sb-fu{left:50%;top:38%;width:280px;margin-left:-140px;text-align:center;white-space:nowrap;font-size:30px;font-weight:900;color:#fff;text-shadow:0 2px 0 #b3261e,0 0 12px #ff8a00}\n.sb-sc .sb-fv{font-weight:800;color:#ff8a3d}\n.sb-ef{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px;font-size:14px;font-weight:800;color:#e8742a}\n.sb-ef svg{width:15px;height:18px}\n.sb.rm *,.sb.rm *::before,.sb.rm *::after{animation:none!important;transition:none!important}";
     document.head.appendChild(css);
     BLOCK_UI = window.SeoulBlock;
     return BLOCK_UI;
@@ -16328,6 +16554,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<button class="card fr-block" data-act="block-open">${raw(bksScene('c'))}
       <span class="fr-block-tx"><b>ครัวโซลฟูล์</b><span>${!b ? 'ต่อบล็อกวัตถุดิบ แข่งเป็นทีมรายสัปดาห์' : (b.left ? 'โจทย์วันนี้นับเข้าทีมได้อีก ' + b.left + ' รอบ' : 'วันนี้นับเข้าทีมครบแล้ว · เล่นเองได้') + (my ? ' · ' + my.name : '')}</span></span>${icon('right')}</button>`;
   }
+  /** 2.13.63 ข่าวสถิติใหม่ในเล่นเองบนหน้าเพื่อน (ภายใน 24 ชม. คนละข่าว ไม่เกิน 3 ข่าว เรียงตามเวลา ไม่มีอันดับ) · ปุ่มไฮไฟว์ใช้ทางเดิมของลาน (plazaPlay)
+   *  · ของตัวเองบอกจำนวนเพื่อนที่ไฮไฟว์ · คนที่ปิดเกมไม่เห็น */
+  function blockNews(l) {
+    var b = l && l.block;
+    if (!b || b.off || (!(b.recs || []).length && !b.mine)) return '';
+    return html`<section class="card fr-recs">${b.mine ? html`<div class="fr-rec me"><i class="fr-rec-ic">${raw(bkFlame())}</i><span class="grow"><b>สถิติใหม่ของคุณ${b.mine.fans ? ' · เพื่อนไฮไฟว์ ' + b.mine.fans + ' คน' : ''}</b><small>เล่นเอง ${bkN(b.mine.score)} แต้ม ไฟระดับ ${b.mine.fire}</small></span></div>` : ''}${(b.recs || []).map(function (r) { return html`<div class="fr-rec"><i class="fr-rec-ic">${raw(bkFlame())}</i><span class="grow"><b>${r.name}ทำสถิติใหม่ในเล่นเอง</b><small>${bkN(r.score)} แต้ม ไฟระดับ ${r.fire}</small></span><button class="btn sm${r.hi5 ? '' : ' primary'}" data-act="block-hi5" data-id="${r.id}" ${r.hi5 ? 'disabled' : ''}>${r.hi5 ? 'ไฮไฟว์แล้ว' : 'ไฮไฟว์'}</button></div>`; })}</section>`;
+  }
+  function bkFlame() { return '<svg viewBox="0 0 40 48" aria-hidden="true"><path d="M20 2c4 10 14 14 14 28a14 14 0 0 1-28 0c0-8 5-12 8-18 1 6 4 8 6 9-1-7 0-13 0-19z" fill="#ff6a1a"/><path d="M20 18c3 6 8 9 8 16a8 8 0 0 1-16 0c0-5 3-7 5-11 0 3 2 5 3 5 0-4 0-7 0-10z" fill="#ffd23f"/></svg>'; }
   /** ครัวโซลฟูล์บนหน้าแรกต่อจากภารกิจทีม: รอบที่เหลือวันนี้ คะแนนสองทีม · แตะแล้วเปิดเกม · คนที่ปิดเกมไม่เห็นแถวนี้ */
   function blockRow(b) {
     if (!b || b.off) return '';
@@ -16432,7 +16666,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function blockSet(d) {
     block.data = d;
     // ข่าวเกมบนหน้าแรกและหน้าเพื่อนตามทันที (เห็นตอนวาดหน้าครั้งถัดไป)
-    if (S.home && S.home.level) S.home.level.block = d.off ? { off: true } : { off: false, left: Math.max(0, d.daily.n - d.daily.played), team: d.team, teams: d.teams.map(function (t) { return { id: t.id, name: t.name, score: t.score }; }) };
+    if (S.home && S.home.level) S.home.level.block = d.off ? { off: true } : { off: false, left: Math.max(0, d.daily.n - d.daily.played), team: d.team, teams: d.teams.map(function (t) { return { id: t.id, name: t.name, score: t.score }; }), recs: d.news ? d.news.recs : [], mine: d.news ? d.news.mine : null };
   }
   function blockMe(d) {
     var me = null;
@@ -16442,7 +16676,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function blockStats(d) {
     var days = {};
     days[d.day] = { best: d.stats.today, plays: d.daily.played };
-    return { best: d.stats.best, combo: d.stats.combo, days: days };
+    return { best: d.stats.best, fbest: d.stats.fbest || 0, fire: d.stats.fire || 0, recFire: d.recFire || 2, combo: d.stats.combo, days: days };
+  }
+  /** 2.13.63 คำอธิบายตัวช่วยและแต้มทีมจากการบอกปัญหา (ค่าจากหลังบ้าน d.told) · ก่อนเริ่มสูตรใหม่บอกล่วงหน้า */
+  function blockToldWords(d) {
+    var t = d.told, a = 'บอกปัญหาในบันทึก 1 เรื่อง ได้ตัวช่วย 1 ชิ้น';
+    if (!t) return a;
+    if (t.on) return a + ' และ ' + bkN(t.pts) + ' แต้มให้ทีม (วันละไม่เกิน ' + t.max + ' เรื่อง) · เรื่องที่เจ้าของกดแก้แล้ว ได้อีก ' + bkN(t.fix);
+    var f = t.from.split('-');
+    return a + ' · ตั้งแต่สัปดาห์ ' + (+f[2]) + ' ' + BLOCK_M[+f[1] - 1] + ' ได้ ' + bkN(t.pts) + ' แต้มให้ทีมด้วย (วันละไม่เกิน ' + t.max + ' เรื่อง) เรื่องที่เจ้าของกดแก้แล้ว ได้อีก ' + bkN(t.fix);
   }
   function blockLeftWords(ms) {
     var h = Math.max(0, Math.floor(ms / 3600000)), dd = Math.floor(h / 24);
@@ -16488,7 +16730,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="bk-hero-tx"><span class="eyebrow">โจทย์วันนี้ ${+dt[2]} ${BLOCK_M[+dt[1] - 1]}</span><b>${left ? 'นับเข้าทีมได้อีก ' + left + ' จาก ' + d.daily.n + ' รอบ' : 'วันนี้นับเข้าทีมครบ ' + d.daily.n + ' รอบแล้ว'}</b><small>ทุกคนได้ชุดเดียวกัน · รอบละ ${d.pieces} ชิ้น</small></div>
         <div class="bk-dots">${d.daily.rounds.map(function (r) { return html`<i class="${r.score != null ? 'on' : ''}">${r.score != null ? bkN(r.score) : r.n}</i>`; })}</div>
         <div class="bk-go">${left ? html`<button class="btn primary" data-act="block-play"><b>${rt ? 'เล่นให้ทีมต่อ' : 'เล่นให้ทีม'}</b><small>${rt ? html`<span class="bk-nw">รอบ ${rt.n}/${d.daily.n} ค้างไว้</span> · <span class="bk-nw">${bkN(rt.score)} คะแนน</span>` : html`<span class="bk-nw">โจทย์วันนี้ รอบ ${d.daily.next}/${d.daily.n}</span> · <span class="bk-nw">เหลือ ${left} รอบวันนี้</span>`}</small></button>` : html`<span class="btn bk-off"><b>เล่นให้ทีม</b><small>วันนี้ครบ ${d.daily.n} รอบแล้ว</small></span>`}<button class="btn ${left ? '' : 'primary'}" data-act="block-free"><b>${rf ? 'เล่นเองต่อ' : 'เล่นเอง'}</b><small>${rf ? html`<span class="bk-nw">รอบค้าง ${bkN(rf.score)} คะแนน</span> · <span class="bk-nw">วางแล้ว ${bkN(rf.used)} ชิ้น</span>` : html`<span class="bk-nw">ไม่จำกัดชิ้น</span> · <span class="bk-nw">สถิติส่วนตัว</span>`}</small></button></div>
-        <small class="muted bk-how">เล่นให้ทีม: ทุกคนได้โจทย์เดียวกัน ทีมใช้รอบที่ดีสุดของแต่ละวัน รวม 5 วันดีสุดของสัปดาห์ วันหยุดหรือวันลาไม่ทำให้ทีมเสียคะแนน ออกกลางรอบหรือปิดแอป กลับมากดปุ่มเดิมเล่นต่อรอบเดิมได้<br>เล่นเอง: วางได้เรื่อย ๆ จนวางไม่ได้หรือกดจบรอบ นับแค่สถิติส่วนตัว อยากเริ่มรอบใหม่กดจบรอบ</small>
+        <small class="muted bk-how">เล่นให้ทีม: ทุกคนได้โจทย์เดียวกัน ทีมใช้รอบที่ดีสุดของแต่ละวัน รวม 5 วันดีสุดของสัปดาห์ วันหยุดหรือวันลาไม่ทำให้ทีมเสียคะแนน ออกกลางรอบหรือปิดแอป กลับมากดปุ่มเดิมเล่นต่อรอบเดิมได้<br>เล่นเอง: วางได้เรื่อย ๆ จนวางไม่ได้หรือกดจบรอบ ไฟแรงขึ้นทุก 20 ชิ้น ชิ้นใหญ่ขึ้น ตั้งแต่ไฟระดับ 3 มีช่องไหม้โผล่ เคลียร์แถวหรือใช้ค้อนเอาออก นับแค่สถิติส่วนตัว อยากเริ่มรอบใหม่กดจบรอบ</small>
         <small class="muted bk-gift">${d.coins && d.coins.got ? 'ได้ ' + d.coins.week + ' เหรียญของสัปดาห์นี้แล้ว' : 'เล่นโจทย์วันนี้อย่างน้อย 1 รอบในสัปดาห์ ได้ ' + ((d.coins && d.coins.week) || 10) + ' เหรียญ'} · เล่นเกม 3 รอบแรกของวันลุ้นของพิเศษจากเกม</small>
       </section>
       <section class="card bk-teams">
@@ -16496,8 +16738,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="bk-vs">${d.teams.map(function (t) { return html`<div class="bk-team ${t.id === d.team ? 'me' : ''}"><b>${t.name}</b><strong>${bkN(t.score)}</strong><small class="muted">คะแนนเฉลี่ยต่อคน · ${t.people} คน</small><div class="bk-mems">${t.members.map(function (m, i) { return html`<span class="bk-mem ${m.me ? 'me' : ''}" data-id="${t.id + '-' + i}"><i class="bk-ch" data-mv="${mvfPick(m.look)}">${raw(charOf(m.look))}</i><small>${m.me ? 'ฉัน' : m.name}</small></span>`; })}</div></div>`; })}</div>
         <small class="muted">จบสัปดาห์ ทีมที่คะแนนเฉลี่ยสูงกว่าได้กล่องสุ่มทุกคน คนละ 1 กล่อง · เสมอได้ทั้งสองทีม</small>
       </section>
-      <section class="card bk-tools"><b>ตัวช่วยที่มีวันนี้ ${d.tools.left} ชิ้น</b><span>บอกปัญหาในบันทึก 1 เรื่อง ได้ตัวช่วย 1 ชิ้น</span><small class="muted">ใช้เป็นค้อนทุบช่อง หรือเปลี่ยนชิ้นในมือ</small><button class="btn sm" data-act="block-note">ไปเขียนบันทึก</button></section>
-      <section class="card bk-stats"><b>สถิติส่วนตัว</b><div class="bk-st">${[[d.stats.best, 'ดีสุด'], [d.stats.today, 'วันนี้ดีสุด'], [d.stats.rounds, 'รอบที่เล่น'], [d.stats.combo, 'คอมโบสูงสุด'], [d.stats.served, 'เมนูที่เสิร์ฟ'], [d.stats.lines, 'แถวที่เคลียร์']].map(function (x) { return html`<div><b>${bkN(x[0])}</b><small>${x[1]}</small></div>`; })}</div></section>
+      <section class="card bk-tools"><b>ตัวช่วยที่มีวันนี้ ${d.tools.left} ชิ้น</b><span>${blockToldWords(d)}</span>${d.myParts && d.told && d.told.on ? html`<small class="muted">สัปดาห์นี้คุณบอกปัญหา ${d.myParts.told} เรื่อง · เจ้าของแก้แล้ว ${d.myParts.fixed} เรื่อง</small>` : ''}<small class="muted">ใช้เป็นค้อนทุบช่อง หรือเปลี่ยนชิ้นในมือ</small><button class="btn sm" data-act="block-note">ไปเขียนบันทึก</button></section>
+      <section class="card bk-stats"><b>สถิติส่วนตัว</b><div class="bk-st">${[[d.stats.best, 'ดีสุด'], [d.stats.today, 'วันนี้ดีสุด'], [d.stats.rounds, 'รอบที่เล่น'], [d.stats.combo, 'คอมโบสูงสุด'], [d.stats.served, 'เมนูที่เสิร์ฟ'], [d.stats.lines, 'แถวที่เคลียร์']].map(function (x) { return html`<div><b>${bkN(x[0])}</b><small>${x[1]}</small></div>`; })}</div><div class="bk-sf">${[[bkN(d.stats.fbest), 'เล่นเองแบบไฟดีสุด'], ['ระดับ ' + (d.stats.fire || 0), 'ไฟสูงสุด']].map(function (x) { return html`<div><b>${x[0]}</b><small>${x[1]}</small></div>`; })}</div></section>
       ${d.last ? blockLast(d) : ''}
     </div>`;
   }
@@ -16565,6 +16807,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function blockHide() {
     if (block && block.host) block.host.hidden = true;
+    if (block && block.ui) block.ui.pause();
     document.body.classList.remove('sb-on'); bksSync();
     if (block && block.data && $('#block')) setSheetBody(blockBody());
   }
@@ -16582,7 +16825,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       blockSet(r.game);
       if ($('#block') && block.host && block.host.hidden) setSheetBody(blockBody());
       var x = r.result;
-      var tx = 'บันทึกแล้ว · ' + (x.late ? 'รอบนี้ข้ามวัน เก็บเป็นสถิติส่วนตัว' : x.n ? 'นับเข้าทีม ' + x.n + '/' + r.game.daily.n + ' รอบวันนี้' + (x.dayBest ? ' · วันนี้ดีสุด ' + bkN(x.dayBest) : '') : 'เล่นเองนับแค่สถิติส่วนตัว') + (x.coins ? ' · ได้ ' + x.coins + ' เหรียญประจำสัปดาห์' : '');
+      var tx = 'บันทึกแล้ว · ' + (x.late ? 'รอบนี้ข้ามวัน เก็บเป็นสถิติส่วนตัว' : x.n ? 'นับเข้าทีม ' + x.n + '/' + r.game.daily.n + ' รอบวันนี้' + (x.dayBest ? ' · วันนี้ดีสุด ' + bkN(x.dayBest) : '') : (x.best && x.rule === 2 ? 'สถิติใหม่ เพื่อนเห็นในหน้าเพื่อน' : 'เล่นเองนับแค่สถิติส่วนตัว')) + (x.coins ? ' · ได้ ' + x.coins + ' เหรียญประจำสัปดาห์' : '');
       if (!r.drop) return tx;
       // ได้ของพิเศษจากเกม: ร้านค้ารู้ทันที หน้าจบรอบขึ้นการ์ด (ข้อความเดียวกับการ์ดของวิ่งฝ่าด่าน gameFind)
       var it = shopItem(r.drop.id);
@@ -18035,11 +18278,22 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (S.view !== 'staff' || !h || h.slipOnly) return '';
     // 2.13.31 ชุดต้อนรับ: การ์ดแนะนำ 3 ใบขึ้นก่อนหน้าสอนเปิดแจ้งเตือนและแผ่นที่ขึ้นเอง ทีละอย่าง ไม่ซ้อนกัน
     if (tipsDue(h)) return 'tips';
-    if (PUSH.cant) return '';
+    if (pushCantKept()) return '';
     var st = pushState();
     if (st === 'wait') return Date.now() - (S.holdFrom || (S.holdFrom = Date.now())) < 8000 ? 'hold' : '';
     if (st === 'off' || st === 'home' || st === 'blocked' || (st === 'none' && inAppBrowser())) return 'lock';
     return '';
+  }
+  /** n1 (6 พ.ย. 2569) ที่จดในเครื่องว่าบอกร้านแล้ว ต่อคนต่อเหตุ ('fail' = เปิดไม่สำเร็จ 2 ครั้งทั้งที่อนุญาตแล้ว) */
+  function pushCantKey() { return 'seoulful.pushCant.' + (S.view === 'owner' ? 'OWNER' : S.staff ? S.staff.empId : ''); }
+  /**
+   * n1 (6 พ.ย. 2569) มือถือเครื่องนี้รับแจ้งเตือนไม่ได้ (2.13.23) จำข้ามการเปิดแอปเมื่อบอกร้านแล้ว (ร้านส่ง LINE แทน):
+   * เดิมจำแค่ระหว่างเปิดแอป เปิดใหม่ถูกล็อกให้ลองใหม่ทุกครั้ง · ยังกดเปิดแจ้งเตือนได้ เปิดสำเร็จแล้วลืม
+   * · ปิดสิทธิ์แจ้งเตือนในเครื่องภายหลัง (ไม่ใช่อนุญาตแล้ว) กลับไปหน้าสอนวิธีเปิดคืนตามเดิม
+   */
+  function pushCantKept() {
+    if (!PUSH.cant && !HOOKS.push && window.Notification && Notification.permission === 'granted' && LS.get(pushCantKey()) === 'fail') PUSH.cant = true;
+    return !!PUSH.cant;
   }
   /** แผ่นที่ขึ้นเอง (ระดับ ภารกิจ เล่นกับเพื่อน ต้อนรับ) · 2.13.23 ขึ้นหลังเปิดแจ้งเตือนแล้ว และไม่ทับแผ่นที่เปิดอยู่ */
   function sheetChecks() {
@@ -18064,8 +18318,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var own = S.view === 'owner';
     if (own ? !S.ownerHome : S.view !== 'staff' || !S.staff || !S.home || S.home.slipOnly) return;
     var st = pushState();
-    var why = PUSH.cant ? 'fail' : st === 'old' ? 'old' : st === 'none' && !inAppBrowser() ? 'none' : '';
-    var k = 'seoulful.pushCant.' + (own ? 'OWNER' : S.staff.empId);
+    var why = pushCantKept() ? 'fail' : st === 'old' ? 'old' : st === 'none' && !inAppBrowser() ? 'none' : '';
+    var k = pushCantKey();
     if (!why || LS.get(k) === why) return;
     LS.set(k, why);
     call('pushCant', { why: why, device: deviceName() }, own ? ownerAuth() : staffAuth()).catch(function () { LS.set(k, ''); });
@@ -18403,6 +18657,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       spin(btn, false);
       PUSH.checked = true;
       PUSH.renew = false;
+      // n1 (6 พ.ย. 2569) เปิดได้แล้ว: ลืมว่ามือถือเครื่องนี้รับแจ้งเตือนไม่ได้ (หลังบ้านลบที่จดไว้แล้วใน apiPushOn_)
+      PUSH.cant = false;
+      PUSH.fails = 0;
+      if (S.view === 'owner' || S.staff) LS.del(pushCantKey());
       var b = myBell();
       if (b) b.phones = d.on;
       if (S.view === 'owner') ownerChanged(); else if (S.home && S.staff) remember('home', S.home, homeTag(S.staff.empId, S.home));
@@ -18412,10 +18670,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       sfx('ding');
     }, function (e) {
       spin(btn, false);
-      render();
-      toast(e.message || 'เปิดแจ้งเตือนไม่สำเร็จ ลองอีกครั้ง', e.quiet ? '' : 'bad');
       // (2.13.23: อนุญาตแล้วแต่เปิดไม่สำเร็จ 2 ครั้ง = มือถือเครื่องนี้รับแจ้งเตือนไม่ได้ ใช้แอปได้ตามปกติ ร้านส่ง LINE แทน)
-      if (!e.quiet && !HOOKS.push && window.Notification && Notification.permission === 'granted' && (PUSH.fails = (PUSH.fails || 0) + 1) >= 2) { PUSH.cant = true; render(); }
+      // · n1 (6 พ.ย. 2569) เน็ตสะดุดไม่นับว่ามือถือรับไม่ได้ · บอกร้านแล้วจำในเครื่อง เปิดแอปใหม่ไม่ล็อกซ้ำ (pushCantKept)
+      var cant = !e.quiet && !e.network && !HOOKS.push && window.Notification && Notification.permission === 'granted' && (PUSH.fails = (PUSH.fails || 0) + 1) >= 2;
+      if (cant) PUSH.cant = true;
+      render();
+      // n1 (6 พ.ย. 2569) ข้อความของเบราว์เซอร์เป็นภาษาอังกฤษ (เช่น "Registration failed - permission denied"): บอกเป็นภาษาไทยว่าทำอะไรต่อได้
+      var msg = /[\u0E00-\u0E7F]/.test((e && e.message) || '') ? e.message : cant ? 'มือถือเครื่องนี้รับแจ้งเตือนไม่ได้ ใช้แอปต่อได้ตามปกติ' : 'เปิดแจ้งเตือนไม่สำเร็จ กดเปิดอีกครั้งได้เลย';
+      toast(msg, e.quiet ? '' : 'bad');
     });
   }
   /**
@@ -20926,6 +21188,20 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     'block-toggle': function (el) { askBlockOff(el); },
     'block-note': function () { closeSheet(); tab('ideas'); },
+    // 2.13.63 ไฮไฟว์ข่าวสถิติใหม่ (ทางเดิมของลาน plazaPlay): ขึ้น "กำลังบันทึก" ทันทีที่กด เป็น "ไฮไฟว์แล้ว" เมื่อบันทึกสำเร็จ · ล้มแล้วบอกเหตุ กดใหม่ได้
+    'block-hi5': function (el) {
+      if (el.disabled) return;
+      var was = el.textContent;
+      el.disabled = true; el.textContent = 'กำลังบันทึก…';
+      call('plazaPlay', { to: el.dataset.id, kind: 'hi5' }, staffAuth()).then(function (r) {
+        el.textContent = 'ไฮไฟว์แล้ว'; el.classList.remove('primary');
+        if (S.home && r.level) { S.home.level = r.level; softRender(); }
+        toast(r.notice, 'ok');
+      }, function (e) {
+        el.disabled = false; el.textContent = was; toast(e.message, 'bad');
+        if (e.code === 'AUTH' && S.view === 'staff') logoutStaff();
+      });
+    },
     // A teasing play without its move: the move tried on in the shop.
     'pz-need': function (el) {
       var need = plaza && plaza.data && (plaza.data.needs || {})[el.dataset.kind];
