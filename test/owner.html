@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.60","page":"owner","e3":"cec8ee94","edge":true,"test":true,"store":"test.","build":"e12c5742df11"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.62","page":"owner","e3":"5cf01e3d","edge":true,"test":true,"store":"test.","build":"26fc79421072"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -923,6 +923,13 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .mt-talk .chip[disabled] { opacity: .7; }
 /* 2.13.60 หัวหน้านำประชุม: คำถามนำ วนถามทีละคน สรุปแตะเลือก และสรุปบนหน้าเจ้าของร้าน */
 .mt-ask { margin: 0 0 8px; padding-left: 18px; font-size: 13.5px; line-height: 1.55; color: var(--muted); }
+/* คำถามประชุมชุดใหม่ (g-meetq): กติกาวง ประโยคพาวงของคนนำ ข้อความคำชมให้คนนำอ่าน แนวทางคุยตัวต่อตัวของหัวหน้า */
+.mt-rules .mt-list { font-weight: 600; }
+.mt-steer { margin-top: 10px; padding: 10px 12px; border-radius: var(--r-md); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); }
+.mt-steer .mt-list { margin-top: 4px; font-size: 13.5px; }
+.mt-said { color: var(--ink-2); }
+.mt-guide .mt-list { font-size: 13.5px; }
+.mt-guide .mt-list li + li { margin-top: 4px; }
 .ms-round { margin-top: 8px; }
 .ms-round .chip, .ms-item .chip { padding: 7px 11px; font-size: 13.5px; }
 .ms-item { display: grid; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
@@ -930,6 +937,15 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .ms-item .chips { gap: 6px; }
 .mt-sum .pill { margin-right: 4px; vertical-align: 1px; }
 .mt-wait { color: var(--warn); }
+/* 2.13.62 ของที่ทำครบแล้วไม่กินที่หน้าแรก: ส่งสรุปแล้ว คุยตัวต่อตัวครบ เหลือบรรทัดเดียว แตะขยายแก้ได้ · ป้ายเรื่องที่ยังรอเจ้าของร้านตัดสิน */
+.mt-one { display: flex; align-items: center; gap: 8px; color: var(--ok); }
+.mt-one > span { flex: 1; min-width: 0; }
+.mt-one svg { width: 18px; height: 18px; flex: none; }
+.mt-done > summary { list-style: none; cursor: pointer; }
+.mt-done > summary::-webkit-details-marker { display: none; }
+.mt-done[open] > summary { margin-bottom: 8px; }
+.mt-done[open] > summary svg:last-child { transform: rotate(90deg); }
+.mt-waitp { margin-left: 2px; color: var(--warn); }
 .dl-fxpick { margin-top: 12px; }
 .dl-fxpick > span { display: block; margin-bottom: 6px; }
 .dl-fxpick .chip { padding: 8px 12px; font-size: 14px; }
@@ -15616,7 +15632,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       function demo(el, o) {
         var cells = [].slice.call(el.querySelectorAll('.bks-grid > .sb-c')), grid = el.querySelector('.bks-grid'), fx = el.querySelector('.bks-fx'), sc = el.querySelector('.bks-sc b'), tray = el.querySelector('.bks-tray');
         var all = el.classList.contains('bks-h'), ts = all ? 8 : el.classList.contains('bks-c') ? 6 : 5, gap = o.gap || 1500;
-        var st = null, nx = null, n = 0, t = 0, on = false, due = 0, late = 0, till = 0;
+        var st = null, nx = null, n = 0, t = 0, on = false, due = 0, late = 0, till = 0, held = [];
         kcssOn();
         // (ภาพบล็อกสามมิติชุดเดียวกับจอเล่น: โหลดครบ 6 ภาพแล้วใช้แทนภาพวาด · ไม่มีภาพหรือโหลดไม่ขึ้น คงภาพวาด
         //  · o.art เป็นฟังก์ชันได้ ถามใหม่ทุกครั้งที่ตั้งตาถัดไปจนได้ที่อยู่ กันกรณีที่อยู่ภาพสามมิติมาหลังการ์ดขึ้น)
@@ -15643,9 +15659,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           var sl = pop == null ? null : tray.children[all ? pop : 0];
           if (sl && sl.firstChild) an(sl.firstChild, [{ transform: 'translateY(8px) scale(.2)', opacity: 0 }, { transform: 'scale(1.12)', opacity: 1, offset: .6 }, { transform: 'none', opacity: 1 }], { duration: 380, easing: 'cubic-bezier(.3,1.4,.5,1)' });
         }
-        function later(f, ms) { till = Math.max(till, Date.now() + ms); setTimeout(f, ms); }
+        // (หยุดแล้ว เช่นแผ่นเริ่มเลื่อนทับการ์ด: งานที่ถึงเวลาของตาที่กำลังเล่น ชิ้นลงกระดาน แต้มลอย ถาดใหม่ แถวแตก เก็บไว้ทำตอนเล่นต่อ
+        //  ไม่วาดอะไรระหว่างหยุด · เดโมล้ม 5 พ.ย. 2569 วาดใหม่ 21 ms หลังแผ่นเริ่มเลื่อน)
+        function later(f, ms) { till = Math.max(till, Date.now() + ms); setTimeout(function () { if (on) f(); else held.push(f); }, ms); }
         function drop(e) { if (e.parentNode) e.parentNode.removeChild(e); }
-        function fly(e, kf, op) { if (!e.parentNode) fx.appendChild(e); var a = an(e, kf, op); if (a) a.onfinish = function () { drop(e); }; else drop(e); }
+        function fly(e, kf, op) { if (!e.parentNode) fx.appendChild(e); var a = an(e, kf, op); if (a) a.onfinish = function () { if (on) drop(e); else held.push(function () { drop(e); }); }; else drop(e); }
         function mid(c) { var e = cells[c]; return { x: e.offsetLeft + e.offsetWidth / 2, y: e.offsetTop + e.offsetHeight / 2 }; }
         function pin(e, p) { e.style.left = p.x.toFixed(1) + 'px'; e.style.top = p.y.toFixed(1) + 'px'; return e; }
         function move(m) {
@@ -15706,6 +15724,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (now - due > 150) { late++; plan(late > 2 ? 4000 : 1200); return; }
           late = 0;
           if (o.ok && !o.ok()) { plan(1000); return; }
+          if (held.length) { var hs = held; held = []; for (var i = 0; i < hs.length; i++) hs[i](); now = Date.now(); }
           if (now < till) { plan(till - now + 60); return; }
           if (n >= o.n || !nx) { again(); return; }
           move(nx); n++;
@@ -18869,29 +18888,78 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // หัวหน้าผลัดกันนำ เจ้าของร้านไม่เข้า: การ์ดหัวหน้าที่ถึงคิวบนหน้าแรก (Daily.gs meetLeadCard_) มีตัวจับเวลา วาระ 4 ขั้นพร้อมคำถามนำ
   // วนถามทีละคน (จำในเครื่อง ไม่บันทึก) และสรุปแตะเลือกส่งถึงหน้าเจ้าของร้าน (apiMeetSum_) · หน้าเจ้าของร้านเห็นสรุป เรื่องที่ถึงตัวคน
   // และหัวข้ออ่านอย่างเดียว · หน้าน้องเห็นหัวข้อกับคำถามนำอ่านอย่างเดียว · คุยตัวต่อตัว: หัวหน้ากับทีม น้องเห็นคำถามล่วงหน้า
+  // · คำถามทุกการประชุมชุดใหม่ (g-meetq · เจ้าของร้านตอบ "8 ok" และ "10 ok" 5 พ.ย. 2569): จับ 3 ปัญหา ไม่ทำตามที่วางไว้ ไม่พอใจกันแต่ไม่กล้าพูด
+  //   และบ่นเยอะ · เรื่องงานคุยในวง เรื่องตัวคนคุยตัวต่อตัว · เล่าปัญหาพร้อมทางแก้ที่อยากลอง 1 อย่าง · คำถามที่ต้องใช้ข้อมูลอีกฝั่ง แอปเตรียมให้
+  //   หรือถามฝั่งนั้นตรง ๆ (คำชมให้คนนำอ่าน แล้วถามฝั่งหน้าร้าน) · เวลาเท่าเดิม: ทีม 25 นาที ตัวต่อตัวราว 10 นาที เจ้าของร้านกับหัวหน้าราว 15 นาที
+  // วาระ 4 ขั้น [นาที, ชื่อขั้น, บทคนนำ (เห็นเฉพาะคนนำ), คำถามนำ (ทุกคนเห็น)] · ชุดใหม่ 3 5 12 5 รวม 25 นาทีเท่าเดิม
   var MEET_STEPS = [
-    [3, 'เปิดด้วยเรื่องดี', 'อ่านคำชมของลูกค้า แล้วชวนขอบคุณเพื่อนที่ช่วยกันสัปดาห์นี้', ['สัปดาห์นี้ลูกค้าชมอะไรบ้าง', 'อยากขอบคุณใคร เรื่องไหน']],
-    [7, 'เรื่องที่ร้านกำลังแก้', 'คนดูแลแต่ละเรื่องเล่าสั้น ๆ ว่าถึงไหนแล้ว', ['ถึงไหนแล้ว ยังเจออยู่ไหม', 'ติดอะไร อยากให้ใครช่วยอะไร', 'ยังเสร็จทันวันที่ตั้งใจไหม']],
-    [10, 'เรื่องที่ทีมเจอบ่อย', 'วนถามทีละคน คนละเรื่อง เรื่องเล็กก็เล่าได้ คุยกันที่ต้นเหตุ ไม่ต้องบอกว่าใครทำ', ['สัปดาห์นี้เจออะไรที่ทำให้งานช้าหรือติด', 'คิดว่าต้นเหตุคืออะไร', 'ลองแก้แบบไหนดี']],
-    [5, 'ตกลงกันก่อนแยกย้าย', 'แต่ละเรื่องได้คนดูแลและวันเสร็จ เรื่องที่ทีมตัดสินเองไม่ได้ส่งให้เจ้าของร้าน', ['เรื่องไหนลงมือก่อน', 'ใครดูแล เสร็จวันไหน', 'เรื่องไหนต้องให้เจ้าของร้านตัดสิน']],
+    [3, 'เรื่องดี', 'อ่านคำชมของลูกค้าจากรายการ แล้วถามฝั่งหน้าร้านว่ามีอีกไหม (ไม่มีบันทึกเลย ถามฝั่งหน้าร้านทันที) · คุณขอบคุณก่อน 1 คน เรื่องที่เห็นจริง และขอบคุณคนที่เล่าปัญหาในสัปดาห์ด้วย แล้วชวนอีก 2–3 คน', ['สัปดาห์นี้ลูกค้าชม …', 'ฝั่งหน้าร้าน มีลูกค้าชมเมนูไหนอีกไหม', 'อยากขอบคุณใคร เรื่องไหน']],
+    [5, 'ทบทวนสิ่งที่ตกลงไว้', 'ถามคนดูแลทีละเรื่องว่าได้ตามที่ตั้งใจไว้ไหม แล้วถามทุกคนว่าที่ตกลงกันไว้ข้อไหนทำตามยาก ถามว่าเพราะอะไร ไม่ถามว่าใครไม่ทำ', ['เรื่องนี้ตั้งใจไว้ว่า … ตอนนี้ได้ตามนั้นไหม', 'ติดอะไร อยากให้ใครช่วยอะไร', 'ยังเสร็จทันวันที่ตั้งใจไหม', 'ที่ตกลงกันไว้ มีข้อไหนทำตามยาก เพราะอะไร']],
+    [12, 'วนคนละเรื่อง', 'วนถามทีละคน คนละเรื่อง คนละราว 1.5 นาที เล่าพร้อมทางแก้ที่อยากลอง 1 อย่าง เรื่องเล็กก็เล่าได้ คุยกันที่ต้นเหตุ ไม่ต้องบอกว่าใครทำ · ท้ายขั้นถามทั้งครัวและหน้าร้าน', ['สัปดาห์นี้เจออะไรที่ทำให้งานช้า ติด หรือไม่ได้ตามที่วางไว้', 'คิดว่าต้นเหตุคืออะไร', 'อยากลองแก้แบบไหน 1 อย่าง', 'ครัวกับหน้าร้าน ส่งงานกันตรงไหนสะดุดบ้าง']],
+    [5, 'ตกลงก่อนแยกย้าย', 'แต่ละเรื่องได้คนดูแล วันเสร็จ และวิธีดูว่าได้ผล เช่น บันทึกหน้างานเรื่องนี้ลดลง · เรื่องที่ทีมตัดสินเองไม่ได้ส่งให้เจ้าของร้าน · ปิดด้วยชวนคนที่มีเรื่องอยากคุยตัวต่อตัว', ['เรื่องไหนลงมือก่อน', 'ใครดูแล เสร็จวันไหน', 'สัปดาห์หน้าเราจะรู้ได้ยังไงว่าได้ผล', 'เรื่องไหนต้องให้เจ้าของร้านตัดสิน', 'ใครมีเรื่องอยากคุยตัวต่อตัว บอกหัวหน้าหลังประชุมได้เลย']],
+  ];
+  // กติกาวง: คนนำอ่านตอนเปิด ราว 30 วินาที · ขึ้นบนหัวแผ่นประชุมทุกแผ่น (คนนำ น้อง เจ้าของร้าน)
+  // (ข้อ 3 เขียน "ถึงเจ้าของร้าน" ไม่ใช่ "คนเดียว": รายการบันทึกหน้างานเปิดได้ด้วยรหัสเจ้าของร้านเท่านั้น และเรื่องที่มีชื่อคนหรือคำเรียกตำแหน่ง
+  //  ถึงเจ้าของร้านคนเดียว แต่เรื่องที่ไม่มีชื่อขึ้นวาระที่หัวหน้าเห็นต้นข้อความ · เช็กโค้ด g-meetq ข้อ ง9)
+  var MEET_RULES = ['วันนี้คุยกันเรื่องงาน ไม่พูดถึงตัวคน', 'ใครเล่าปัญหา บอกทางแก้ที่อยากลองด้วย 1 อย่าง', 'เรื่องเกี่ยวกับเพื่อนหรือหัวหน้า คุยตัวต่อตัว หรือบันทึกหน้างานถึงเจ้าของร้าน'];
+  // ประโยคพาวงในการ์ดคนนำเท่านั้น ไม่ขึ้นหน้าน้อง [เมื่อ, ประโยค, ทำ (ไม่ใช่ประโยคพูด)]
+  var MEET_STEER = [
+    ['มีคนพูดถึงตัวคน', 'ขอบคุณที่บอกนะ เรื่องตัวคนขอคุยตัวต่อตัว ตอนนี้ขอคุยว่าเกิดอะไรขึ้นกับงาน'],
+    ['มีคนบ่นยาว', 'ขอบคุณที่เล่า อยากลองแก้แบบไหน 1 อย่าง'],
+    ['มีคนพูดนาน', 'ขอให้เพื่อนอีกคนได้พูดก่อน แล้วค่อยกลับมาเรื่องนี้'],
+    ['เรื่องซ้ำกับที่ร้านกำลังแก้', 'เรื่องนี้ร้านกำลังแก้อยู่ ขอเก็บแค่ว่าเจออีกตอนไหน'],
+    ['ไม่มีใครพูด', 'เล่าเรื่องที่คุณพลาดสัปดาห์นี้ก่อน 1 เรื่อง', true],
   ];
   var MT = { step: 0, left: MEET_STEPS[0][0] * 60, run: false, at: 0, timer: 0 };
   var MEET_LAST = null; // การ์ดล่าสุดของเจ้าของร้าน แผ่นประชุมใช้ข้อมูลชุดเดียวกัน ไม่โหลดเพิ่ม
   var dlFx = null; // แผ่นกำลังแก้: คนดูแลและวันที่ตั้งใจเสร็จที่แตะเลือก
-  // สรุปของหัวหน้า: pick[key] = {m: ok|wait, by, due, wait} และคนที่ได้พูดแล้ว spoke[id] จำในเครื่องของประชุม on จนปิดแอป
+  // สรุปของหัวหน้า: pick[key] = {m: ok|wait, by, due, wait} และคนที่ได้พูดแล้ว spoke[id] ของประชุม on (2.13.62 จำในเครื่องด้วย
+  //  ปิดแผ่นหรือปิดแอปแล้วเปิดใหม่ยังอยู่ · n = จำนวนคนที่ได้พูดจากฉบับที่ส่งจนแตะชื่อ · base = เวลาที่ส่งของฉบับที่เริ่มแก้)
   var MS = { on: '', pick: {}, spoke: {} };
   var MEET_WAIT = [['money', 'เงิน'], ['buy', 'ซื้อของ'], ['rule', 'กติกา'], ['other', 'เรื่องอื่น']];
-  // คุยตัวต่อตัว: 5 คำถาม (หัวหน้ากับน้อง เดือนละครั้ง น้องเห็นล่วงหน้า) และ 4 หัวข้อ (เจ้าของร้านกับหัวหน้า)
-  var TALK_Q = ['เดือนนี้งานไหนที่ทำได้ดี หรือภูมิใจ', 'อะไรทำให้งานช้าหรือติดบ้าง', 'อยากให้ใครช่วยเรื่องไหน', 'อยากเรียนหรือลองทำอะไรเพิ่ม', 'ตกลงกัน 1 อย่างที่จะลองก่อนคุยครั้งหน้า'];
-  var TALK_LEAD = ['ทีมติดอะไรอยู่ ช่วยกันแก้ตรงไหนได้', 'เรื่องที่รอเจ้าของร้านตัดสิน', 'หัวหน้าเองติดอะไร อยากให้เจ้าของร้านช่วยอะไร', 'ตกลงกัน 1 อย่างก่อนคุยครั้งหน้า'];
+  // คุยตัวต่อตัว: คำถาม (หัวหน้ากับน้อง เดือนละครั้ง ราว 10 นาที น้องเห็นล่วงหน้า) · แนวทางของหัวหน้า (น้องไม่เห็น) · หัวข้อ (เจ้าของร้านกับหัวหน้า ราว 15 นาที)
+  // คำถาม 6 ข้อ ไม่ใช่ 7 ตามข้อเสนอ: เวลาคงราว 10 นาที จึงรวม "อยากให้หัวหน้าช่วยหรือทำอะไรต่างจากเดิม" กับ "อยากเรียนหรือลองทำอะไรเพิ่ม"
+  // เป็นข้อเดียว (เรื่องเรียนไม่ใช่ 3 ปัญหา) · ข้อละราว 1–2 นาที ถามครบทุกข้อ ไม่ให้เลือกข้าม เพื่อให้ข้อ 3 4 5 ที่จับ 3 ปัญหาถูกถามทุกครั้ง
+  var TALK_Q = ['อยากคุยเรื่องอะไรก่อน', 'เดือนนี้งานไหนที่ทำได้ดี หรือภูมิใจ', 'อะไรทำให้งานช้า ติด หรือทำตามที่ร้านวางไว้ได้ยาก', 'ทำงานกับเพื่อนช่วงนี้เป็นยังไง มีอะไรอึดอัดใจไหม', 'อยากให้หัวหน้าช่วย สอน หรือทำอะไรต่างจากเดิม', 'ตกลงกัน 1 อย่างที่จะลองก่อนคุยครั้งหน้า'];
+  var TALK_PACE = 'ถามครบทุกข้อ ข้อละราว 1–2 นาที · น้องมีเรื่องในข้อ 1 คุยเรื่องนั้นก่อน ข้ออื่นถามสั้นลง';
+  var TALK_GUIDE = [
+    'ให้น้องพูดก่อน หัวหน้าฟังมากกว่าพูด',
+    'เรื่องที่น้องเล่าถึงเพื่อน ไม่ยกต่อในประชุม ไม่บอกเพื่อนว่าใครเล่า · ถ้าต้องแก้ ช่วยคุยกับอีกคนเป็นเรื่องงาน หรือเล่าให้เจ้าของร้านตอนคุยกับเจ้าของร้าน',
+    'เรื่องที่น้องยังทำไม่ตรงที่ตกลง พูดตอนท้ายหลังฟังน้องแล้ว แบบ เห็น–ผล–ขอ เช่น “เมื่อวานตอนเตรียมของ หัวหน้าเห็นว่ายังไม่ได้ชั่งซอสตามสูตร ทำให้รสไม่เท่าทุกวัน ครั้งหน้าลองชั่งทุกครั้งได้ไหม” แล้วถาม “มีอะไรทำให้ทำแบบนั้นยากไหม”',
+    'น้องที่บ่นบ่อย ถาม “เรื่องไหนหนักใจที่สุด อยากให้แก้แบบไหน” แล้วชวนเล่าในประชุมพร้อมทางแก้ หรือบันทึกหน้างาน · ถ้าการบ่นทำให้เพื่อนเหนื่อย บอกแบบ เห็น–ผล–ขอ เช่น “ช่วงเตรียมของ หัวหน้าได้ยินเล่าเรื่องของมาช้าหลายรอบ เพื่อนบางคนเริ่มเครียด ครั้งหน้าลองเล่าในประชุมพร้อมทางแก้ได้ไหม”',
+    'เรื่องที่น้องพูดถึงตัวหัวหน้าเอง ฟังจนจบ ขอบคุณ ไม่โต้ตอนนั้น',
+    'น้องที่ยังทำไม่ตรงที่ตกลง หัวหน้าคุยเองก่อน 2 ครั้ง ยังไม่เปลี่ยน เล่าให้เจ้าของร้านตัดสินตอนคุยกับเจ้าของร้าน',
+  ];
+  var TALK_LEAD = ['ทีมติดอะไรอยู่ ช่วยกันแก้ตรงไหนได้', 'เรื่องที่รอเจ้าของร้านตัดสิน', 'มีงานไหนที่ทีมยังทำไม่ตรงที่วางไว้ คุยกับน้องแล้วเป็นยังไง', 'บรรยากาศทีมช่วงนี้เป็นยังไง มีใครดูเหนื่อย ไม่ลงรอยกัน หรือบ่นจนเพื่อนหนักใจไหม', 'หัวหน้าเองติดอะไร อยากให้เจ้าของร้านช่วยหรือเปลี่ยนอะไร', 'ตกลงกัน 1 อย่างก่อนคุยครั้งหน้า'];
+  // เจ้าของร้านคุยกับน้องทีละคน (g-meetq ง8 · "5 ok" 5 พ.ย. 2569): ทุก 2 เดือน ครบทุกคนในสัปดาห์เดียว คนละราว 15 นาที · คนใหม่คุยต้อนรับในเดือนแรก
+  var TALK_STAFF = ['ทำงานที่ร้านช่วงนี้ อะไรดี อะไรหนัก', 'หัวหน้าช่วยอะไรได้ดี อยากให้หัวหน้าทำอะไรเพิ่มหรือต่างจากเดิม', 'มีเรื่องไหนอยากบอกร้าน แต่ยังไม่ได้พูด', 'ถ้าเปลี่ยนได้ 1 อย่างในร้าน อยากเปลี่ยนอะไร'];
   function meetData() {
     if (S.view === 'owner') return MEET_LAST || (S.ownerHome && S.ownerHome.meet) || null;
     var d = dlHome() || {};
     return d.leadMeet || d.meet || null;
   }
+  // ที่เลือกไว้ (2.13.62): ของในเครื่องของคนนี้ที่เริ่มจากฉบับเดียวกับที่ส่งล่าสุด · ไม่มี: ฉบับที่ส่ง (เปิดแผ่นใหม่แล้วส่งทันทีได้ฉบับเดิม)
+  //  · ยังไม่ส่ง: ว่าง · หัวหน้าอีกคนในเครื่องเดียวกันไม่เห็นของคนนี้ · มีฉบับที่ส่งใหม่กว่าจากเครื่องอื่น ใช้ฉบับนั้น
   function msOf(m) {
-    if (MS.on !== m.on) MS = { on: m.on, pick: {}, spoke: {} };
+    if (MS.on === m.on) return MS;
+    var got = m.picked || null;
+    var base = got ? got.at : 0;
+    var kept = LS.get('meet-pick');
+    if (kept && kept.on === m.on && kept.emp === ((S.staff && S.staff.empId) || '') && kept.base === base) {
+      MS = { on: m.on, pick: kept.pick || {}, spoke: kept.spoke || {}, n: kept.n == null ? null : kept.n, base: base };
+      return MS;
+    }
+    MS = { on: m.on, pick: {}, spoke: {}, n: got ? got.spoke : null, base: base };
+    (got ? got.items : []).forEach(function (it) {
+      MS.pick[it.key] = it.wait ? { m: 'wait', wait: it.wait } : { m: 'ok', by: it.by, due: it.due };
+    });
     return MS;
+  }
+  function msKeep() { LS.set('meet-pick', { on: MS.on, emp: (S.staff && S.staff.empId) || '', base: MS.base || 0, pick: MS.pick, spoke: MS.spoke, n: MS.n == null ? null : MS.n }); }
+  /** จำนวนคนที่ได้พูด: แตะชื่อแล้วนับจากชื่อ · ยังไม่แตะหลังเปิดฉบับที่ส่ง ใช้จำนวนของฉบับนั้น */
+  function msSpoke(m) {
+    var ms = msOf(m);
+    return ms.n != null ? ms.n : m.people.filter(function (q) { return ms.spoke[q.id]; }).length;
   }
   /** หัวข้อหนึ่งบรรทัด เช่น "ของหมด · หมูสามชั้น · 3 ครั้ง 3 วัน" */
   function meetLine(x) {
@@ -18913,7 +18981,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!m) return '';
     var a = m.agenda;
     var sum = m.sum;
-    var wait = sum ? sum.wait.length : 0;
+    var wait = sum ? sum.wait.filter(function (x) { return !x.done; }).length : 0;
     var own = (a.own || []).length + (a.ownMore || 0);
     return html`<section class="card pad-lg mt-card"><button class="mt-open" data-act="meet-open">
       <div class="card-h"><span class="eyebrow">ประชุมทีม · ${m.started ? meetWhen(m) : 'ยังไม่เริ่ม'}</span></div>
@@ -18929,55 +18997,91 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var TALK_BUSY = {};
   function talkChip(act, p) {
     var busy = !!TALK_BUSY[p.id];
-    return html`<button class="chip" data-act="${act}" data-id="${p.id}" aria-pressed="${p.done ? 'true' : 'false'}"${busy ? ' disabled' : ''}>${busy ? 'กำลังบันทึก…' : (p.done ? '✓ ' : '') + p.name}</button>`;
+    return html`<button class="chip" data-act="${act}" data-id="${p.id}" aria-pressed="${p.done ? 'true' : 'false'}"${busy ? ' disabled' : ''}>${busy ? 'กำลังบันทึก…' : (p.done ? '✓ ' : '') + p.name + (p.fresh ? ' · คนใหม่' : '')}</button>`;
   }
   function talkPart(t) {
     if (!t) return '';
     var c = t.cycle;
-    return html`<div class="mt-talk"><div class="row" style="justify-content:space-between;align-items:baseline;gap:8px"><span class="eyebrow">คุยตัวต่อตัว · ${monthName(t.month)}</span>${t.started ? '' : html`<span class="small muted">เริ่มนับเมื่อน้องเริ่มใช้แอป</span>`}</div>
+    var body = html`<div class="row" style="justify-content:space-between;align-items:baseline;gap:8px"><span class="eyebrow">คุยตัวต่อตัว · ${monthName(t.month)}</span>${t.started ? '' : html`<span class="small muted">เริ่มนับเมื่อน้องเริ่มใช้แอป</span>`}</div>
       ${t.heads.map(function (h) {
         return html`<p class="small" style="margin:6px 0 0"><b>${h.name}</b>คุยกับทีม ${!h.of ? 'ยังไม่มีคนในทีม' : h.done >= h.of ? html`<span class="pill ok">ครบ ${h.of} คน</span>` : h.done + '/' + h.of + ' คน · ยังไม่ได้คุย ' + h.left.join(' ')}</p>`;
       })}
       ${t.free.length ? html`<p class="small muted" style="margin:6px 0 0">ยังไม่มีหัวหน้าดูแล: ${t.free.join(' ')}</p>` : ''}
       ${c ? html`<div class="row" style="justify-content:space-between;align-items:baseline;gap:8px;margin-top:12px"><span class="eyebrow">คุณคุยกับหัวหน้า · ${thShort(c.from)} – ${thShort(c.to)}</span><b class="small">คุยแล้ว ${c.done}/${c.of} คน</b></div>
       <div class="chips" role="group" aria-label="คุยตัวต่อตัวกับหัวหน้า">${c.people.map(function (p) { return talkChip('meet-talk', p); })}</div>
-      <p class="small muted" style="margin:8px 0 0">คนละราว 15 นาที 4 หัวข้อ · ${c.every === 'month' ? 'เดือนละครั้ง' : '2 เดือนแรกทุก 2 สัปดาห์ แล้วเดือนละครั้ง'} · แตะชื่อเมื่อคุยแล้ว แตะอีกครั้งเพื่อยกเลิก</p>
-      <button class="btn sm" data-act="talk-open" style="margin-top:8px">${icon('chat')} ดูหัวข้อ</button>` : ''}
-    </div>`;
+      <p class="small muted" style="margin:8px 0 0">คนละราว 15 นาที ${TALK_LEAD.length} หัวข้อ · เดือนละครั้ง · แตะชื่อเมื่อคุยแล้ว แตะอีกครั้งเพื่อยกเลิก</p>
+      <button class="btn sm" data-act="talk-open" style="margin-top:8px">${icon('chat')} ดูหัวข้อ</button>` : ''}${talkStaff(t.staff, talkDone(t))}`;
+    // (2.13.62) หัวหน้าทุกคนคุยครบทีมและคุณคุยครบรอบนี้: ย่อเหลือบรรทัดเดียว แตะขยายแก้ติ๊กผิดได้ · ยังไม่ครบแสดงเต็ม
+    return talkDone(t) ? html`<details class="mt-talk mt-done"><summary class="mt-one">${icon('check')}<span>คุยตัวต่อตัว · ${monthName(t.month)} · <b>ครบทุกคนแล้ว</b></span>${icon('right')}</summary>${body}</details>` : html`<div class="mt-talk">${body}</div>`;
   }
-  /** การ์ดหัวหน้าบนหน้าแรก (2.13.60): ประชุมที่ถึงคิวนำ ทั้งสัปดาห์จนส่งสรุป และคุยตัวต่อตัวกับทีมเดือนนี้ */
+  /** คุยตัวต่อตัวครบแล้ว: หัวหน้า = ทั้งทีมเดือนนี้ · เจ้าของร้าน = หัวหน้าทุกคนคุยครบทีม ทุกคนมีหัวหน้าดูแล และคุณคุยกับหัวหน้าครบรอบนี้ */
+  function talkDone(t) {
+    if (t.head) return t.of > 0 && t.done >= t.of;
+    var c = t.cycle;
+    return !!t.started && !t.free.length && t.heads.length > 0 && t.heads.every(function (h) { return h.of > 0 && h.done >= h.of; }) && (!c || c.done >= c.of) && (!t.staff || t.staff.done >= t.staff.of);
+  }
+  /**
+   * เจ้าของร้านคุยกับน้องทีละคน (g-meetq ง8 · "5 ok"): ขึ้นเมื่อถึงรอบ ชื่อทุกคนเรียงตามรหัส แตะเมื่อคุยแล้ว คนใหม่มีป้าย
+   * · ครบแล้วย่อเหลือบรรทัดเดียว แตะขยายแก้ติ๊กได้ (การ์ดทั้งใบย่อแล้ว flat ไม่พับซ้อนอีกชั้น) · รอบปิดแล้วเหลือคนใหม่ (from ว่าง) ขึ้นเป็นคุยต้อนรับคนใหม่
+   */
+  function talkStaff(s, flat) {
+    if (!s) return '';
+    var body = html`<div class="row" style="justify-content:space-between;align-items:baseline;gap:8px;margin-top:12px"><span class="eyebrow">${s.from ? 'คุณคุยกับน้อง · ' + thShort(s.from) + ' – ' + thShort(s.to) : 'คุณคุยต้อนรับคนใหม่'}</span><b class="small">คุยแล้ว ${s.done}/${s.of} คน</b></div>
+      <div class="chips" role="group" aria-label="คุยกับน้อง">${s.people.map(function (p) { return talkChip('staff-talk', p); })}</div>
+      <p class="small muted" style="margin:8px 0 0">${s.late ? 'เลยสัปดาห์ที่ตั้งใจแล้ว · ' : ''}ทีละคน คนละราว 15 นาที ครบทุกคนภายในสัปดาห์เดียว ทุก 2 เดือน · คนใหม่คุยต้อนรับในเดือนแรก · แตะชื่อเมื่อคุยแล้ว แตะอีกครั้งเพื่อยกเลิก</p>
+      <button class="btn sm" data-act="talk-open" data-k="staff" style="margin-top:8px">${icon('chat')} ดูคำถาม</button>`;
+    return !flat && s.done >= s.of ? html`<details class="mt-done"><summary class="mt-one">${icon('check')}<span>${s.from ? 'คุณคุยกับน้อง' : 'คุณคุยต้อนรับคนใหม่'} · <b>ครบ ${s.of} คนแล้ว</b></span>${icon('right')}</summary>${body}</details>` : body;
+  }
+  /** การ์ดหัวหน้าบนหน้าแรก (2.13.60): ประชุมที่ถึงคิวนำ ทั้งสัปดาห์จนส่งสรุป และคุยตัวต่อตัวกับทีมเดือนนี้
+   *  · 2.13.62 ของที่ทำครบแล้วไม่กินที่หน้าแรก: ส่งสรุปแล้วเหลือบรรทัดเดียวบอกวันสุดท้ายที่ส่งใหม่แทนได้ (แตะเปิดดูหรือแก้)
+   *  · คุยครบทั้งทีมแล้วย่อเหลือบรรทัดเดียว แตะขยายแก้ติ๊กผิดได้ */
   function leadCard(d) {
     var m = d && d.leadMeet && d.leadMeet.mine ? d.leadMeet : null;
     var t = d && d.talk && d.talk.head ? d.talk : null;
     if (!m && !t) return '';
     var bits = m ? meetBits(m.agenda) : [];
-    return html`<section class="card pad-lg mt-card mt-lead">${m ? html`<button class="mt-open" data-act="meet-open">
+    var meet = !m ? '' : m.sent ? html`<button class="mt-open mt-one" data-act="meet-open">${icon('check')}<span>ประชุม ${thShort(m.on)} · <b>ส่งสรุปแล้ว${m.until ? ' · แก้ได้ถึง ' + dlDay(m.until) : ''}</b></span>${icon('right')}</button>` : html`<button class="mt-open" data-act="meet-open">
       <div class="card-h"><span class="eyebrow">คุณนำประชุมทีม · ${meetWhen(m)}</span></div>
-      <p style="margin:4px 0 0"><b>${m.sent ? 'ส่งสรุปถึงเจ้าของร้านแล้ว' : m.canSend ? 'จบประชุมแล้ว แตะส่งสรุปถึงเจ้าของร้าน' : 'ก่อนเปิดร้าน ' + m.min + ' นาที · ทั้งทีม ' + m.people.length + ' คน'}</b></p>
+      <p style="margin:4px 0 0"><b>${m.canSend ? 'จบประชุมแล้ว แตะส่งสรุปถึงเจ้าของร้าน' : 'ก่อนเปิดร้าน ' + m.min + ' นาที · ทั้งทีม ' + m.people.length + ' คน'}</b></p>
       ${bits.length ? html`<p class="small" style="margin:6px 0 0">${mrBits(bits)}</p>` : ''}
-      <p class="small muted" style="margin:8px 0 0">${m.sent ? 'แตะดู หรือส่งใหม่แทนฉบับเดิมได้' : 'แตะดูวาระ 4 ขั้น คำถามนำ และจับเวลา'}</p>
-    </button>` : ''}${t ? html`<div class="${m ? 'mt-talk' : ''}"><div class="row" style="justify-content:space-between;align-items:baseline;gap:8px"><span class="eyebrow">คุยตัวต่อตัวกับทีม · ${monthName(t.month)}</span><b class="small">คุยแล้ว ${t.done}/${t.of} คน</b></div>
+      <p class="small muted" style="margin:8px 0 0">แตะดูวาระ 4 ขั้น คำถามนำ และจับเวลา</p>
+    </button>`;
+    var body = !t ? '' : html`<div class="row" style="justify-content:space-between;align-items:baseline;gap:8px"><span class="eyebrow">คุยตัวต่อตัวกับทีม · ${monthName(t.month)}</span><b class="small">คุยแล้ว ${t.done}/${t.of} คน</b></div>
       ${t.of ? html`<div class="chips" role="group" aria-label="คุยตัวต่อตัวกับทีม">${t.team.map(function (p) { return talkChip('lead-talk', p); })}</div>` : ''}
-      <p class="small muted" style="margin:8px 0 0">เดือนละครั้ง คนละราว 10 นาที 5 คำถาม · แตะชื่อเมื่อคุยแล้ว · คุยกับเจ้าของร้านรอบ ${thShort(t.owner.from)} – ${thShort(t.owner.to)}${t.owner.done ? ' คุยแล้ว' : ''}</p>
-      <button class="btn sm" data-act="talk-open" style="margin-top:8px">${icon('chat')} ดูคำถาม</button></div>` : ''}</section>`;
+      <p class="small muted" style="margin:8px 0 0">เดือนละครั้ง คนละราว 10 นาที ${TALK_Q.length} คำถาม · แตะชื่อเมื่อคุยแล้ว · คุยกับเจ้าของร้านรอบ ${thShort(t.owner.from)} – ${thShort(t.owner.to)}${t.owner.done ? ' คุยแล้ว' : ''}</p>
+      <button class="btn sm" data-act="talk-open" style="margin-top:8px">${icon('chat')} ดูคำถาม</button>`;
+    var talk = !t ? '' : talkDone(t) ? html`<details class="mt-done${m ? ' mt-talk' : ''}"><summary class="mt-one">${icon('check')}<span>คุยตัวต่อตัวกับทีม · ${monthName(t.month)} · <b>ครบ ${t.of} คนแล้ว</b></span>${icon('right')}</summary>${body}</details>` : html`<div class="${m ? 'mt-talk' : ''}">${body}</div>`;
+    return html`<section class="card pad-lg mt-card mt-lead">${meet}${talk}</section>`;
   }
   /** แถวคุยตัวต่อตัวบนหน้าแรกของน้อง: เดือนนี้ยังไม่ได้คุยกับหัวหน้า ดูคำถามล่วงหน้า · คุยแล้วซ่อน */
   function talkRow(d) {
     var t = d && d.talk;
     if (!t || t.head || t.done || !t.lead) return '';
-    return html`<button class="card dl-due" data-act="talk-open">${icon('chat')}<div class="grow"><b>คุยตัวต่อตัวกับ${t.lead} เดือนนี้ ราว 10 นาที</b><span>ดูคำถาม 5 ข้อไว้ก่อน คิดไว้ในใจได้ ไม่ต้องพิมพ์ส่ง</span></div>${icon('right')}</button>`;
+    return html`<button class="card dl-due" data-act="talk-open">${icon('chat')}<div class="grow"><b>คุยตัวต่อตัวกับ${t.lead} เดือนนี้ ราว 10 นาที</b><span>ดูคำถาม ${TALK_Q.length} ข้อไว้ก่อน คิดไว้ในใจได้ ไม่ต้องพิมพ์ส่ง</span></div>${icon('right')}</button>`;
   }
   /** แถวในการ์ดบันทึกหน้างาน: วันก่อนประชุมและวันประชุมพร้อมคนนำ · หัวหน้าอีกคนเปิดวาระนำแทนได้ · คนนำเห็นการ์ดหัวหน้าแทน ไม่ซ้ำ */
   function meetRow(m) {
     var lm = (dlHome() || {}).leadMeet;
     if (!m || (lm && lm.mine)) return '';
-    var sub = lm && !lm.mine ? 'ถ้า' + (m.lead || 'คนนำ') + 'ไม่อยู่ คุณนำแทนได้ แตะเปิดวาระ' : 'ทุกคนได้เล่าคนละเรื่อง อยากให้ร้านดีขึ้นตรงไหน บันทึกไว้ก่อนได้เลย';
+    var sub = lm && !lm.mine ? 'ถ้า' + (m.lead || 'คนนำ') + 'ไม่อยู่ คุณนำแทนได้ แตะเปิดวาระ' : 'ทุกคนได้เล่าคนละเรื่อง อยากให้ร้านดีขึ้นตรงไหน คิดทางแก้ที่อยากลองมาด้วย 1 อย่าง บันทึกไว้ก่อนได้เลย';
     return html`<button class="mt-row" data-act="meet-open">${icon('team')}<span><b>${m.today ? 'วันนี้' : 'พรุ่งนี้'}ประชุมทีมก่อนเปิดร้าน ${m.min} นาที${m.lead ? ' · ' + m.lead + ' นำ' : ''}</b><br>${sub}</span>${icon('right')}</button>`;
   }
   function mmss(s) { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
   function meetLeft() { return MT.run ? MT.left - (Date.now() - MT.at) / 1000 : MT.left; }
   function meetAsk(i) { return html`<ul class="mt-ask">${MEET_STEPS[i][3].map(function (q) { return html`<li>${q}</li>`; })}</ul>`; }
-  /** หัวข้อของแต่ละขั้น · หัวหน้า: ขั้น 3 มีวนถามทีละคน ขั้น 4 มีสรุปแตะเลือก */
+  /** คำชมหนึ่งบรรทัด และข้อความที่น้องพิมพ์ให้คนนำอ่านออกเสียง (said มีเฉพาะคนนำและเจ้าของร้าน หน้าน้องไม่มีข้อความของเพื่อน) */
+  function meetGood(x) {
+    return html`${meetLine(x)}${x.said && x.said !== (x.menu || x.detail) ? html`<br><span class="mt-said">“${x.said}”</span>` : ''}`;
+  }
+  /** กติกาวง 3 ข้อบนหัวแผ่นประชุมทุกแผ่น */
+  function meetRules() {
+    return html`<section class="card mt-rules"><div class="card-h"><span class="eyebrow">กติกาวง · คนนำอ่านตอนเปิดประชุม</span></div><ol class="mt-list">${MEET_RULES.map(function (r) { return html`<li>${r}</li>`; })}</ol></section>`;
+  }
+  /** ประโยคพาวงของคนนำ (ขั้น 3 ในการ์ดคนนำเท่านั้น ไม่ขึ้นหน้าน้อง) */
+  function meetSteer() {
+    return html`<div class="mt-steer"><b class="small">ถ้าเจอแบบนี้ ลองพูดว่า</b><ul class="mt-list">${MEET_STEER.map(function (s) { return html`<li><b>${s[0]}</b> · ${s[2] ? s[1] : '“' + s[1] + '”'}</li>`; })}</ul></div>`;
+  }
+  /** หัวข้อของแต่ละขั้น · หัวหน้า: ขั้น 3 มีประโยคพาวงและวนถามทีละคน ขั้น 4 มีสรุปแตะเลือก */
   function meetParts(m, mode) {
     var a = m.agenda;
     var list = function (xs, one) {
@@ -18985,9 +19089,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     };
     var none = function (t) { return html`<p class="small muted mt0">${t}</p>`; };
     return [
-      list(a.good) || none('สัปดาห์นี้ยังไม่มีบันทึกลูกค้าชม ชวนเล่าเรื่องดีที่เจอ'),
-      list(a.fixing, function (x) { return html`${meetLine(x)}${x.plan ? html`<br><span class="muted">ร้าน: ${x.plan}</span>` : ''}<br><span class="muted">${x.by ? 'ดูแลโดย ' + x.by : 'ยังไม่มีคนดูแล'}${x.due ? ' · ตั้งใจเสร็จ ' + dlDay(x.due) : ''}${x.again ? ' · เจออีก ' + x.again + ' ครั้ง' : ''}${x.from === 'meet' ? ' · ตกลงในประชุมครั้งก่อน' : ''}</span>`; }) || none('ตอนนี้ไม่มีเรื่องที่ร้านกำลังแก้'),
-      html`${a.top.length ? html`${list(a.top)}${a.more ? none('และอีก ' + a.more + ' เรื่อง') : ''}` : none('สัปดาห์นี้ยังไม่มีเรื่องที่ต้องแก้ ชวนทุกคนเล่าสิ่งที่เจอ')}${mode === 'lead' ? msRound(m) : ''}`,
+      list(a.good, meetGood) || none('สัปดาห์นี้ยังไม่มีบันทึกลูกค้าชม ถามฝั่งหน้าร้านว่าลูกค้าชมเมนูไหนบ้าง'),
+      list(a.fixing, function (x) { return html`${meetLine(x)}${meetWait(x, mode === 'owner')}${x.plan ? html`<br><span class="muted">ร้าน: ${x.plan}</span>` : ''}<br><span class="muted">${x.by ? 'ดูแลโดย ' + x.by : 'ยังไม่มีคนดูแล'}${x.due ? ' · ตั้งใจเสร็จ ' + dlDay(x.due) : ''}${x.again ? ' · เจออีก ' + x.again + ' ครั้ง' : ''}${x.from === 'meet' ? ' · ตกลงในประชุมครั้งก่อน' : ''}</span>`; }) || none('ตอนนี้ไม่มีเรื่องที่ตกลงไว้หรือที่ร้านกำลังแก้'),
+      html`${a.top.length ? html`${list(a.top, function (x) { return html`${meetLine(x)}${meetWait(x, mode === 'owner')}`; })}${a.more ? none('และอีก ' + a.more + ' เรื่อง') : ''}` : none('สัปดาห์นี้ยังไม่มีเรื่องที่ต้องแก้ ชวนทุกคนเล่าสิ่งที่เจอ')}${mode === 'lead' ? html`${meetSteer()}${msRound(m)}` : ''}`,
       html`${list(a.fixed, function (x) { return 'แก้แล้ว: ' + meetLine(x) + (x.plan ? ' · ' + x.plan : ''); })}${mode === 'lead' ? msBuild(m) : none(mode === 'owner' ? 'หัวหน้าแตะเลือกคนดูแลและวันเสร็จ แล้วส่งสรุปถึงการ์ดประชุมทีมของคุณ' : 'เรื่องที่ตกลงกันขึ้นในหัวข้อเรื่องที่ร้านกำลังแก้ของประชุมครั้งถัดไป พร้อมคนดูแล')}`,
     ];
   }
@@ -19001,6 +19105,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var who = lead ? (m.mine ? 'คุณนำประชุม' : (m.lead || 'คนนำ') + ' นำ · คุณนำแทนได้') : m.lead ? m.lead + ' นำประชุม' : '';
     return html`<div class="stack mt-sheet">
       <p class="small muted mt0">${meetWhen(m)} ก่อนเปิดร้าน ${m.min} นาที${who ? ' · ' + who : ''} · หัวข้อจากบันทึกหน้างาน ${thShort(a.from)} – ${thShort(a.on)} รวม ${a.total} เรื่อง ไม่มีชื่อคนบันทึก</p>
+      ${meetRules()}
       ${lead ? html`<section class="card mt-timer"><div class="row" style="justify-content:space-between;align-items:center;gap:10px"><div class="grow"><span class="eyebrow">ขั้น ${MT.step + 1}/${MEET_STEPS.length} · ${st[0]} นาที</span><b class="mt-step">${st[1]}</b></div><b class="mt-clock${left <= 0 ? ' over' : ''}" id="mt-clock">${left > 0 ? mmss(left) : 'หมดเวลา'}</b></div>
         <p class="small mt-say">${st[2]}</p>
         <div class="row" style="gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn primary sm" data-act="meet-go">${MT.run ? 'พัก' : MT.left < st[0] * 60 ? 'จับเวลาต่อ' : 'เริ่มจับเวลา'}</button><button class="btn sm" data-act="meet-next">${MT.step < MEET_STEPS.length - 1 ? 'ขั้นถัดไป' : 'เริ่มใหม่'}</button><button class="btn sm" data-act="dl-all">${icon('note')} เรื่องนอกวาระ จดลงบันทึกหน้างาน</button></div></section>` : ''}
@@ -19010,21 +19115,25 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <p class="small muted mt0">ไม่มีประชุมรายวัน · คุยตัวต่อตัวกับหัวหน้าเดือนละครั้ง · เรื่องใหม่ระหว่างสัปดาห์ บันทึกหน้างานได้ทุกวัน</p>
     </div>`;
   }
+  /** ป้ายเรื่องที่รอเจ้าของร้านตัดสิน ยกมาจากสรุปครั้งก่อนจนตัดสิน (2.13.62): หัวหน้าและน้อง รอเจ้าของร้านตัดสิน · เจ้าของร้าน รอคุณตัดสิน */
+  function meetWait(x, own) { return x.wait ? html` <span class="pill mt-waitp">${own ? 'รอคุณตัดสิน' : 'รอเจ้าของร้านตัดสิน'} · ${x.wait}</span>` : ''; }
   /** แผ่นของเจ้าของร้าน: สรุปล่าสุดที่หัวหน้าส่ง เรื่องที่ถึงคุณคนเดียว และหัวข้อครั้งถัดไป (อ่านอย่างเดียว ไม่มีจับเวลา) */
   function ownerMeetBody(m) {
     var a = m.agenda;
     var s = m.sum;
+    var left = s ? s.wait.filter(function (x) { return !x.done; }).length : 0;
     var parts = meetParts(m, 'owner');
     var list = function (xs, one) { return html`<ul class="mt-list">${xs.map(function (x) { return html`<li>${one(x)}</li>`; })}</ul>`; };
     return html`<div class="stack mt-sheet">
       <p class="small muted mt0">${m.started ? 'ครั้งถัดไป ' + meetWhen(m) + ' · ' + (m.lead ? m.lead + ' นำ' : 'ยังไม่มีหัวหน้านำ') + ' · ก่อนเปิดร้าน ' + m.min + ' นาที · คุณไม่ต้องเข้า รับแค่สรุป' : 'เริ่มเองวันอังคารแรกหลังน้องเริ่มใช้แอป ตอนนี้ยังไม่แจ้งใคร'}</p>
       ${s ? html`<section class="card mt-sum"><div class="card-h"><span class="eyebrow">สรุปประชุม ${dlDay(s.on)} · ${s.lead} นำ${s.of ? ' · ได้พูด ' + s.spoke + '/' + s.of + ' คน' : ''}</span></div>
-        ${s.wait.length ? html`<p class="small mt0"><b>รอคุณตัดสิน ${s.wait.length} เรื่อง</b></p>${list(s.wait, function (x) { return html`<span class="pill">${x.wait}</span> ${meetLine(x)}`; })}` : ''}
+        ${s.wait.length ? html`<p class="small mt0"><b>${left ? 'รอคุณตัดสิน ' + left + ' เรื่อง' : 'เรื่องที่รอคุณตัดสิน ตัดสินครบแล้ว'}</b></p>${list(s.wait, function (x) { return html`${x.done ? html`<span class="pill ok">ตัดสินแล้ว</span>` : html`<span class="pill">${x.wait}</span>`} ${meetLine(x)}`; })}` : ''}
         <p class="small" style="margin:8px 0 0"><b>ตกลงกันแล้ว ${s.ok.length} เรื่อง</b></p>${s.ok.length ? list(s.ok, function (x) { return html`${meetLine(x)}<br><span class="muted">ดูแลโดย ${x.by} · เสร็จ ${dlDay(x.due)}</span>`; }) : html`<p class="small muted mt0">ไม่มีเรื่องที่ตกลง</p>`}
         <button class="btn sm" data-act="dl-inbox" style="margin-top:10px">${icon('note')} เปิดบันทึกหน้างาน</button></section>` : ''}
       ${m.missed ? html`<p class="small muted mt0">ประชุม ${dlDay(m.missed)} ยังไม่มีสรุปจากหัวหน้า</p>` : ''}
       ${(a.own || []).length ? html`<section class="card"><div class="card-h"><span class="eyebrow">ถึงคุณคนเดียว · หัวหน้าและทีมไม่เห็น</span></div>${list(a.own, function (x) { return meetLine(x); })}${a.ownMore ? html`<p class="small muted mt0">และอีก ${a.ownMore} เรื่อง</p>` : ''}</section>` : ''}
       <p class="small muted mt0">หัวข้อครั้งถัดไปจากบันทึกหน้างาน ${thShort(a.from)} – ${thShort(a.on)} รวม ${a.total} เรื่อง ไม่มีชื่อคนบันทึก</p>
+      ${meetRules()}
       ${MEET_STEPS.map(function (st, i) {
         return html`<section class="card mt-part"><div class="card-h"><span class="eyebrow">${i + 1}. ${st[1]} · ${st[0]} นาที</span></div>${meetAsk(i)}${parts[i]}</section>`;
       })}
@@ -19039,7 +19148,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function msSpokeText(m) {
     var ms = msOf(m);
-    return 'วนถามทีละคน แตะชื่อเมื่อพูดแล้ว · ได้พูดแล้ว ' + m.people.filter(function (q) { return ms.spoke[q.id]; }).length + '/' + m.people.length + ' คน';
+    return 'วนถามทีละคน แตะชื่อเมื่อพูดแล้ว · ได้พูดแล้ว ' + msSpoke(m) + '/' + m.people.length + ' คน' + (ms.n != null ? ' ตามสรุปที่ส่ง' : '');
   }
   /** เรื่องที่สรุปได้: เรื่องที่ร้านกำลังแก้และเรื่องที่ทีมเจอบ่อย (มีคีย์ ไม่ซ้ำ) */
   function meetPickable(m) {
@@ -19060,7 +19169,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var chip = function (f, v, label, on) {
       return html`<button class="chip" data-act="meet-pick" data-key="${x.key}" data-f="${f}" data-v="${v}" aria-pressed="${on ? 'true' : 'false'}">${label}</button>`;
     };
-    return html`<div class="ms-item"><b class="small">${meetLine(x)}</b>
+    return html`<div class="ms-item"><b class="small">${meetLine(x)}${meetWait(x)}</b>
       <div class="chips">${chip('m', '', 'ข้าม', !p.m)}${chip('m', 'ok', 'ตกลง', p.m === 'ok')}${chip('m', 'wait', 'รอเจ้าของร้านตัดสิน', p.m === 'wait')}</div>
       ${p.m === 'ok' ? html`<span class="small muted">คนดูแล</span><div class="chips">${m.people.map(function (q) { return chip('by', q.id, q.name, p.by === q.id); })}</div><span class="small muted">เสร็จ</span><div class="chips">${meetDues(m.on).map(function (d) { return chip('due', d[1], d[0], p.due === d[1]); })}</div>` : ''}
       ${p.m === 'wait' ? html`<span class="small muted">เรื่องอะไร</span><div class="chips">${MEET_WAIT.map(function (w) { return chip('wait', w[0], w[1], p.wait === w[0]); })}</div>` : ''}
@@ -19084,7 +19193,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="ms-build"><p class="small" style="margin:10px 0 0"><b>สรุปถึงเจ้าของร้าน</b> · แตะ ตกลง แล้วเลือกคนดูแลกับวันเสร็จ หรือ รอเจ้าของร้านตัดสิน ไม่ต้องพิมพ์</p>
       ${xs.length ? xs.map(function (x) { return msItem(x, m); }) : html`<p class="small muted mt0">สัปดาห์นี้ไม่มีเรื่องให้สรุป ส่งสรุปได้เลย</p>`}
       <p class="small muted" id="ms-count" style="margin:8px 0">${msCountText(m)}</p>
-      ${m.canSend ? html`<button class="btn primary" data-act="meet-send">${m.sent ? 'ส่งสรุปใหม่แทนฉบับเดิม' : 'ส่งสรุปถึงเจ้าของร้าน'}</button>` : html`<p class="small muted mt0">ส่งสรุปได้ตั้งแต่วันประชุม</p>`}
+      ${m.canSend ? html`<button class="btn primary" data-act="meet-send">${m.sent ? 'ส่งสรุปใหม่แทนฉบับเดิม' : 'ส่งสรุปถึงเจ้าของร้าน'}</button>` : html`<p class="small muted mt0">ปุ่มส่งสรุปขึ้นวัน${TH_DAYS_LONG[dowOf(m.on)]} ${thShort(m.on)} · ที่เลือกไว้จำในเครื่องนี้</p>`}
+      ${m.sent && m.until ? html`<p class="small muted" style="margin:6px 0 0">ส่งแล้ว · ส่งใหม่แทนฉบับเดิมได้ถึง ${dlDay(m.until)}</p>` : ''}
     </div>`;
   }
   function openMeet() {
@@ -19127,6 +19237,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var q = m.people.filter(function (x) { return x.id === id; })[0];
     if (!q) return;
     ms.spoke[id] = !ms.spoke[id];
+    ms.n = null;
+    msKeep();
     el.setAttribute('aria-pressed', ms.spoke[id] ? 'true' : 'false');
     el.textContent = (ms.spoke[id] ? '✓ ' : '') + q.name;
     var c = $('#ms-spoke');
@@ -19142,6 +19254,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var pick = msOf(m).pick;
     var p = pick[k] || (pick[k] = {});
     p[el.dataset.f] = el.dataset.v || '';
+    msKeep();
     var row = el.closest('.ms-item');
     if (row) row.outerHTML = String(msItem(x, m));
     var c = $('#ms-count');
@@ -19169,9 +19282,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (miss) { toast('เลือกคนดูแลกับวันเสร็จ หรือหมวด ให้ครบทุกเรื่องที่แตะไว้ก่อนส่ง', 'bad'); return; }
     var label = el.textContent;
     el.textContent = 'กำลังบันทึก…';
-    run(el, call('meetSum', { on: m.on, items: items, spoke: m.people.filter(function (q) { return ms.spoke[q.id]; }).length, of: m.people.length }, staffAuth()), 'ส่งสรุปถึงเจ้าของร้านแล้ว').then(function (d) {
+    run(el, call('meetSum', { on: m.on, items: items, spoke: msSpoke(m), of: m.people.length }, staffAuth()), 'ส่งสรุปถึงเจ้าของร้านแล้ว').then(function (d) {
       var h = dlHome();
       if (h && d) h.leadMeet = d.leadMeet;
+      // ส่งสำเร็จ: ของในเครื่องผูกกับฉบับที่เพิ่งส่ง เปิดใหม่ยังเห็นชื่อที่แตะไว้
+      if (d && d.leadMeet && d.leadMeet.picked && MS.on === m.on) { MS.base = d.leadMeet.picked.at; msKeep(); }
       if (sheetState) closeSheet();
       softRender();
     }, function () {
@@ -19192,12 +19307,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var own = S.view === 'owner';
     var t = own ? S.ownerHome && S.ownerHome.talk : (dlHome() || {}).talk;
     var id = el.dataset.id;
-    var list = !t ? [] : own ? (t.cycle ? t.cycle.people : []) : t.team || [];
+    var staffTap = own && el.dataset.act === 'staff-talk';
+    var list = !t ? [] : staffTap ? (t.staff ? t.staff.people : []) : own ? (t.cycle ? t.cycle.people : []) : t.team || [];
     var p = list.filter(function (x) { return x.id === id; })[0];
     if (!p || TALK_BUSY[id]) return;
     TALK_BUSY[id] = true;
     el.textContent = 'กำลังบันทึก…';
-    run(el, own ? call('meetTalk', { empId: id, done: !p.done }, ownerAuth()) : call('leadTalk', { empId: id, done: !p.done }, staffAuth())).then(function (d) {
+    run(el, own ? call('meetTalk', staffTap ? { empId: id, done: !p.done, who: 'staff' } : { empId: id, done: !p.done }, ownerAuth()) : call('leadTalk', { empId: id, done: !p.done }, staffAuth())).then(function (d) {
       delete TALK_BUSY[id];
       if (own && S.ownerHome && d && d.talk) { S.ownerHome.talk = d.talk; ownerChanged(); }
       if (!own && dlHome() && d && d.talk) dlHome().talk = d.talk;
@@ -19207,16 +19323,26 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       softRender();
     });
   }
-  /** คำถามคุยตัวต่อตัว: น้องดูล่วงหน้า หัวหน้าดูคำถามกับหัวข้อคุยกับเจ้าของร้าน เจ้าของร้านดูหัวข้อคุยกับหัวหน้า */
-  function openTalk() {
+  /**
+   * คำถามคุยตัวต่อตัว: น้องดูคำถามล่วงหน้า · หัวหน้าดูคำถาม แนวทางของหัวหน้า (น้องไม่เห็น) และหัวข้อคุยกับเจ้าของร้าน
+   * · เจ้าของร้านดูหัวข้อคุยกับหัวหน้า คำถามและแนวทางที่หัวหน้าใช้ (ใช้ย้ำหัวหน้าตอนคุย)
+   */
+  function openTalk(k) {
+    // เจ้าของร้านคุยกับน้องทีละคน (g-meetq ง8): คำถาม 4 ข้อ
+    if (k === 'staff') {
+      openSheet({ title: 'คุยกับน้องทีละคน', body: html`<div class="stack mt-sheet"><p class="small muted mt0">ทีละคน คนละราว 15 นาที ครบทุกคนภายในสัปดาห์เดียว ทุก 2 เดือน · คนใหม่คุยต้อนรับในเดือนแรกของเขา · น้องไม่เห็นว่าใครคุยแล้ว</p><section class="card"><div class="card-h"><span class="eyebrow">${TALK_STAFF.length} คำถาม</span></div><ol class="mt-list">${TALK_STAFF.map(function (q) { return html`<li>${q}</li>`; })}</ol></section><p class="small muted mt0">เรื่องที่น้องเล่าถึงหัวหน้า คุยกับหัวหน้าเป็นเรื่องงาน ไม่ยกคำพูดและไม่บอกว่าใครเล่า</p></div>` });
+      return;
+    }
     var own = S.view === 'owner';
     var t = (own ? S.ownerHome && S.ownerHome.talk : (dlHome() || {}).talk) || {};
     var ol = function (xs) { return html`<ol class="mt-list">${xs.map(function (q) { return html`<li>${q}</li>`; })}</ol>`; };
+    var card = function (head, body, cls) { return html`<section class="card${cls ? ' ' + cls : ''}"><div class="card-h"><span class="eyebrow">${head}</span></div>${body}</section>`; };
+    var pace = html`<p class="small muted" style="margin:8px 0 0">${TALK_PACE}</p>`;
     var body = own
-      ? html`<p class="small muted mt0">คุยกับหัวหน้าทีละคน คนละราว 15 นาที · 2 เดือนแรกทุก 2 สัปดาห์ แล้วเดือนละครั้ง</p><section class="card"><div class="card-h"><span class="eyebrow">4 หัวข้อ</span></div>${ol(TALK_LEAD)}</section><section class="card"><div class="card-h"><span class="eyebrow">คำถามที่หัวหน้าใช้คุยกับทีม · เดือนละครั้ง ราว 10 นาที</span></div>${ol(TALK_Q)}</section>`
+      ? html`<p class="small muted mt0">คุยกับหัวหน้าทีละคน คนละราว 15 นาที · เดือนละครั้ง</p>${card(TALK_LEAD.length + ' หัวข้อ', html`${ol(TALK_LEAD)}<p class="small" style="margin:8px 0 0">น้องที่ยังทำไม่ตรงที่ตกลง หัวหน้าคุยเองก่อน 2 ครั้ง ยังไม่เปลี่ยน หัวหน้าเล่าให้คุณตัดสิน</p>`)}${card('คำถามที่หัวหน้าใช้คุยกับทีม · เดือนละครั้ง ราว 10 นาที', html`${ol(TALK_Q)}${pace}`)}${card('แนวทางของหัวหน้า · น้องไม่เห็น', ol(TALK_GUIDE), 'mt-guide')}`
       : t.head
-        ? html`<p class="small muted mt0">คุยกับน้องในทีมทีละคน เดือนละครั้ง คนละราว 10 นาที · น้องเห็นคำถามนี้ล่วงหน้า · คุยแล้วแตะชื่อในการ์ด</p><section class="card"><div class="card-h"><span class="eyebrow">5 คำถาม</span></div>${ol(TALK_Q)}</section><section class="card"><div class="card-h"><span class="eyebrow">คุยกับเจ้าของร้าน · ราว 15 นาที</span></div>${ol(TALK_LEAD)}</section>`
-        : html`<p class="small muted mt0">เดือนละครั้ง ราว 10 นาที${t.lead ? ' กับ' + t.lead : ''} · คิดไว้ก่อนได้ ไม่ต้องพิมพ์ส่ง</p><section class="card"><div class="card-h"><span class="eyebrow">5 คำถาม</span></div>${ol(TALK_Q)}</section><p class="small muted mt0">เรื่องที่อยากบอกเจ้าของร้าน บันทึกหน้างานได้ทุกวัน</p>`;
+        ? html`<p class="small muted mt0">คุยกับน้องในทีมทีละคน เดือนละครั้ง คนละราว 10 นาที · น้องเห็นคำถามนี้ล่วงหน้า · คุยแล้วแตะชื่อในการ์ด</p>${card(TALK_Q.length + ' คำถาม', html`${ol(TALK_Q)}${pace}`)}${card('แนวทางของคุณ · น้องไม่เห็นส่วนนี้', ol(TALK_GUIDE), 'mt-guide')}${card('คุยกับเจ้าของร้าน · ราว 15 นาที', ol(TALK_LEAD))}`
+        : html`<p class="small muted mt0">เดือนละครั้ง ราว 10 นาที${t.lead ? ' กับ' + t.lead : ''} · คิดไว้ก่อนได้ ไม่ต้องพิมพ์ส่ง</p>${card(TALK_Q.length + ' คำถาม', ol(TALK_Q))}<p class="small muted mt0">เรื่องที่อยากบอกเจ้าของร้าน บันทึกหน้างานได้ทุกวัน</p>`;
     openSheet({ title: own ? 'คุยตัวต่อตัวกับหัวหน้า' : t.head ? 'คุยตัวต่อตัวกับทีม' : 'คุยตัวต่อตัวกับหัวหน้า', body: html`<div class="stack mt-sheet">${body}</div>` });
   }
   // ---- จบประชุมทีม ----
@@ -20927,11 +21053,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'meet-next': function () { meetStep(); },
     'dl-pickfx': function (el) { dlPickFx(el); },
     'meet-talk': function (el) { meetTalkTap(el); },
+    'staff-talk': function (el) { meetTalkTap(el); },
     'meet-round': function (el) { meetRound(el); },
     'meet-pick': function (el) { meetPick(el); },
     'meet-send': function (el) { meetSend(el); },
     'lead-talk': function (el) { meetTalkTap(el); },
-    'talk-open': function () { openTalk(); },
+    'talk-open': function (el) { openTalk(el && el.dataset.k); },
     'dl-fix': function (el) { askDailyFix(el.dataset.ids); },
     'dl-fixing': function (el) { askDailyFixing(el.dataset.ids); },
     'dl-again': function (el) { openDailyAgain(el.dataset.key); },
