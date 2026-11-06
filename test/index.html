@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.63","page":"","e3":"d122bde1","edge":true,"test":true,"store":"test.","build":"29a950caef24"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.64","page":"","e3":"9d87be80","edge":true,"test":true,"store":"test.","build":"58c4c34c7592"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -622,7 +622,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .fb-go.three .fb-big b { font-size: 15px; }
 .fb-big.ask { background: linear-gradient(160deg, color-mix(in oklab, #7c9cff 22%, transparent), transparent 72%), var(--btn); }
 .fb-big.ask svg { color: #5b7be0; }
-.dl-card { overflow: hidden; }
+.dl-card { overflow: hidden; scroll-margin-top: calc(68px + env(safe-area-inset-top)); } /* k24a เลื่อนมาที่การ์ดแล้วหัวการ์ดไม่อยู่ใต้หัวแอป (สูง 60px) */
 .dl-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(120% 90% at 0% 0%, rgba(47, 86, 71, .12), transparent 62%); pointer-events: none; }
 .dl-card > * { position: relative; }
 .dl-card .fb-ico { background: rgba(47, 86, 71, .12); color: #2f5647; }
@@ -2315,6 +2315,8 @@ body.sb-on #toasts { z-index: 5001; }
 .bk-mem.me small { font-weight: 800; }
 .bk-tools, .bk-stats, .bk-last, .bk-off { display: grid; gap: 4px; }
 .bk-tools .btn, .bk-off .btn { justify-self: start; margin-top: 4px; }
+.bk-clk { color: var(--muted); }
+.bk-clk.on { color: var(--ok); }
 .bk-st, .bk-sf { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
 /* สถิติเล่นเองแบบไฟเป็นแถวแยกสองช่องใต้ตารางหกช่อง ไม่เหลือช่องโหว่ท้ายตาราง (2.13.63) */
 .bk-sf { grid-template-columns: repeat(2, 1fr); }
@@ -16686,6 +16688,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var f = t.from.split('-');
     return a + ' · ตั้งแต่สัปดาห์ ' + (+f[2]) + ' ' + BLOCK_M[+f[1] - 1] + ' ได้ ' + bkN(t.pts) + ' แต้มให้ทีมด้วย (วันละไม่เกิน ' + t.max + ' เรื่อง) เรื่องที่เจ้าของกดแก้แล้ว ได้อีก ' + bkN(t.fix);
   }
+  /** 2.13.64 บันทึกได้ตัวช่วย (และแต้มทีมตั้งแต่ d.told.on) เฉพาะวันที่ลงเวลาเข้างาน ตามกติกาเดิมของแต้มบันทึก · บอกใกล้ปุ่ม
+   *  ไปเขียนบันทึกตามสถานะวันนี้จากหลังบ้าน (d.clocked) · หลังบ้านรุ่นก่อนไม่มีค่านี้: ไม่บอก */
+  function blockClockWords(d) {
+    if (d.clocked == null) return '';
+    var got = d.told && d.told.on ? 'ตัวช่วยและแต้มทีม' : 'ตัวช่วย';
+    return d.clocked ? 'ลงเวลาเข้างานวันนี้แล้ว บันทึกได้' + got : got + 'จากบันทึก นับในวันที่ลงเวลาเข้างาน';
+  }
   function blockLeftWords(ms) {
     var h = Math.max(0, Math.floor(ms / 3600000)), dd = Math.floor(h / 24);
     return 'จบสัปดาห์ในอีก ' + (dd ? dd + ' วัน ' : '') + (h % 24) + ' ชม.';
@@ -16738,7 +16747,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="bk-vs">${d.teams.map(function (t) { return html`<div class="bk-team ${t.id === d.team ? 'me' : ''}"><b>${t.name}</b><strong>${bkN(t.score)}</strong><small class="muted">คะแนนเฉลี่ยต่อคน · ${t.people} คน</small><div class="bk-mems">${t.members.map(function (m, i) { return html`<span class="bk-mem ${m.me ? 'me' : ''}" data-id="${t.id + '-' + i}"><i class="bk-ch" data-mv="${mvfPick(m.look)}">${raw(charOf(m.look))}</i><small>${m.me ? 'ฉัน' : m.name}</small></span>`; })}</div></div>`; })}</div>
         <small class="muted">จบสัปดาห์ ทีมที่คะแนนเฉลี่ยสูงกว่าได้กล่องสุ่มทุกคน คนละ 1 กล่อง · เสมอได้ทั้งสองทีม</small>
       </section>
-      <section class="card bk-tools"><b>ตัวช่วยที่มีวันนี้ ${d.tools.left} ชิ้น</b><span>${blockToldWords(d)}</span>${d.myParts && d.told && d.told.on ? html`<small class="muted">สัปดาห์นี้คุณบอกปัญหา ${d.myParts.told} เรื่อง · เจ้าของแก้แล้ว ${d.myParts.fixed} เรื่อง</small>` : ''}<small class="muted">ใช้เป็นค้อนทุบช่อง หรือเปลี่ยนชิ้นในมือ</small><button class="btn sm" data-act="block-note">ไปเขียนบันทึก</button></section>
+      <section class="card bk-tools"><b>ตัวช่วยที่มีวันนี้ ${d.tools.left} ชิ้น</b><span>${blockToldWords(d)}</span>${d.myParts && d.told && d.told.on ? html`<small class="muted">สัปดาห์นี้คุณบอกปัญหา ${d.myParts.told} เรื่อง · เจ้าของแก้แล้ว ${d.myParts.fixed} เรื่อง</small>` : ''}<small class="muted">ใช้เป็นค้อนทุบช่อง หรือเปลี่ยนชิ้นในมือ</small>${blockClockWords(d) ? html`<small class="bk-clk${d.clocked ? ' on' : ''}">${blockClockWords(d)}</small>` : ''}<button class="btn sm" data-act="block-note">ไปเขียนบันทึก</button></section>
       <section class="card bk-stats"><b>สถิติส่วนตัว</b><div class="bk-st">${[[d.stats.best, 'ดีสุด'], [d.stats.today, 'วันนี้ดีสุด'], [d.stats.rounds, 'รอบที่เล่น'], [d.stats.combo, 'คอมโบสูงสุด'], [d.stats.served, 'เมนูที่เสิร์ฟ'], [d.stats.lines, 'แถวที่เคลียร์']].map(function (x) { return html`<div><b>${bkN(x[0])}</b><small>${x[1]}</small></div>`; })}</div><div class="bk-sf">${[[bkN(d.stats.fbest), 'เล่นเองแบบไฟดีสุด'], ['ระดับ ' + (d.stats.fire || 0), 'ไฟสูงสุด']].map(function (x) { return html`<div><b>${x[0]}</b><small>${x[1]}</small></div>`; })}</div></section>
       ${d.last ? blockLast(d) : ''}
     </div>`;
@@ -18059,7 +18068,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function goDailyLog() {
     if (sheetState) closeSheet();
     if (S.tab !== 'ideas') { S.tab = 'ideas'; S.sub = null; (window.scrollTo(0, 0), scrollNow = 0); render(); }
-    setTimeout(function () { var card = $('.dl-card'); if (card) card.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 80);
+    setTimeout(function () { var card = $('section.dl-card'); if (card) card.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 80);
   }
   function sendDaily(btn, none) {
     if (!dl) return;
@@ -21187,7 +21196,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       run(el, blockPost(un)).then(function (t) { toast(typeof t === 'object' ? t.text + ' · ' + (t.rare ? 'เจอของหายากจากเกม!' : 'เจอของพิเศษจากเกม!') : t, 'ok'); if ($('#block')) setSheetBody(blockBody()); }).catch(function () { /* แจ้งแล้วในแถบข้อความ */ });
     },
     'block-toggle': function (el) { askBlockOff(el); },
-    'block-note': function () { closeSheet(); tab('ideas'); },
+    // k24a ไปเขียนบันทึก: ทางเดียวกับปุ่ม "เจออะไรในร้าน บันทึก" (ปิดแผ่นเกม ไปการ์ดบันทึกหน้างานในแท็บไอเดีย)
+    // เดิมเรียก tab() ที่มีแค่ในตัวเปิดแจ้งเตือน ปุ่มจึงขึ้นข้อผิดพลาด 'tab is not defined' ปิดแผ่นแล้วไม่ไปไหน (2.13.62–2.13.63)
+    'block-note': function () { goDailyLog(); },
     // 2.13.63 ไฮไฟว์ข่าวสถิติใหม่ (ทางเดิมของลาน plazaPlay): ขึ้น "กำลังบันทึก" ทันทีที่กด เป็น "ไฮไฟว์แล้ว" เมื่อบันทึกสำเร็จ · ล้มแล้วบอกเหตุ กดใหม่ได้
     'block-hi5': function (el) {
       if (el.disabled) return;
