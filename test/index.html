@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.68","page":"","e3":"8c0449a0","edge":true,"test":true,"store":"test.","build":"c6eb0bd2e7f7"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.69","page":"","e3":"cff30e5e","edge":true,"test":true,"store":"test.","build":"5559693412e9"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -4924,11 +4924,23 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function c3TurnNext() {
     while (C3Q.out < 3) {
-      var t = C3Q.seen.shift() || (!C3Q.outAhead && C3Q.ahead.shift());
-      if (!t) return;
+      var t = c3TurnPick();
+      if (!t) break;
       if (t.svgs.length && !t.svgs.some(c3OnPage)) { c3TurnEnd(t); t.no(new Error('gone')); continue; }
       c3TurnGo(t);
     }
+    blockQuiet();
+  }
+  // k44 (ลองแอปทดลอง 7 พ.ย. 2569): ระหว่างเล่นเกมครัว ทำเฉพาะภาพตัวน้องบนจอเกม · ภาพของหน้าใต้จอไม่มีใครเห็น และฟิกเกอร์เชียร์ตัวแรกหนักที่สุด
+  // (ดู blockPrep) ทั้งสองกินงานหลักกลางการเล่น จึงรอจนจบรอบหรือออกจากจอเกม (blockHide blockDrop blockSend ปล่อยคิว)
+  function c3TurnPick() {
+    if (!blockOn()) return C3Q.seen.shift() || (!C3Q.outAhead && C3Q.ahead.shift());
+    var mine = function (s) { return block.host.contains(s) && !(s.closest && s.closest('.sb-cheer')); };
+    for (var i = 0; i < C3Q.seen.length; i++) {
+      // (ภาพที่เสร็จแล้วไม่มีงานหนัก ขึ้นจอได้ทันที)
+      if (C3.pics[C3Q.seen[i].key] || C3Q.seen[i].svgs.some(mine)) return C3Q.seen.splice(i, 1)[0];
+    }
+    return null;
   }
   function c3TurnGo(t) {
     var ahead = !t.svgs.length, over = false, stuck = 0;
@@ -4979,13 +4991,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     };
     return kept3Get(key).then(function (rec) {
       if (!rec) return make(false);
-      if (rec.v !== C3.mod.version || rec.d < c3Sharp()) make(true).catch(function () {});
-      else C3.pics[key] = rec.u;
+      // (k44 รอบเตรียมเกม first: ทำใหม่ก่อนงานอื่น ไม่รอจนตกกลางเกม · ระหว่างเล่นใช้ภาพเก่าไปก่อน)
+      if (rec.v === C3.mod.version && rec.d >= c3Sharp()) C3.pics[key] = rec.u;
+      else if (first || !blockOn()) make(!first).catch(function () {});
       return rec.u;
     });
   }
   function c3DrawO(svg) {
-    var late = setTimeout(function () { svg.classList.add('c3-late'); }, C3_GIVE_UP);
+    // (k44 ฟิกเกอร์บนจอเกมระหว่างเล่นรอจบรอบ: ไม่ใช่ภาพโหลดไม่ขึ้น ไม่ตั้งเวลา ภาพวาดไม่โผล่กลางเกม · ที่อื่นรอเท่าตัวละคร)
+    var late = blockOn() && block.host.contains(svg) ? 0 : setTimeout(function () { svg.classList.add('c3-late'); }, C3_GIVE_UP);
     c3Thing(svg.getAttribute('data-c3o'), c3OSize(svg), svg.classList.contains('pet-svg'), false, svg).then(function (url) {
       clearTimeout(late);
       if (svg.isConnected) c3PutO(svg, url, true);
@@ -9573,6 +9587,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var n = playsNew(l.plays);
     // 2.13.28 การ์ดฉันใบแรก นอนเต็มความกว้าง แล้วเพื่อนตามลำดับเดิม
     var people = d.people.filter(function (p) { return p.id === d.me; }).concat(d.people.filter(function (p) { return p.id !== d.me; }));
+    // k44 การ์ดเกมอยู่หน้านี้: ฟิกเกอร์ตัวแรกทำภาพตอนนี้ แสงรอบตัวจึงพร้อมก่อนเข้ากระดาน (blockPrep)
+    if (people[0] && people[0].id === d.me) blockPrep(people[0].figs, 1);
     // 2.13.26 การ์ดเพื่อน 3 ช่องขึ้นก่อน เปิดมาเห็นทุกคน การ์ดเกม 4 ใบอยู่ล่าง (เจ้าของร้านตอบ 30 ต.ค. 2569 "4 ok")
     return html`<div class="stack fr">
       <div class="page-h"><div class="hello" style="font-size:26px;margin:0">เพื่อนในร้าน</div><span class="small muted">แตะการ์ดเพื่อนเข้าไปดูห้อง ส่งคำชม ขอแลกน้อง</span></div>
@@ -10200,6 +10216,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     t.value = odNum(w.d.have);
     odRefreshRow(w.id, true);
   });
+  // k44: ลบจำนวนสั่งจนว่างแล้วออก = กลับไปเลขที่แอปคิด (odQty) · ใส่ 0 ถ้าไม่สั่ง · วาดตามหลังแตะ ปุ่ม − + ที่กำลังแตะยังอยู่
+  document.addEventListener('focusout', function (ev) {
+    var t = ev.target;
+    if (!t || !t.dataset || t.dataset.od !== 'qty' || String(t.value).trim() !== '') return;
+    setTimeout(function () { odRefreshRow(t.dataset.id, true); }, 250);
+  });
   /** 2.13.27 k-tap: ข้อความเด้งไม่บังแถบนับของ · ยกขึ้นเหนือแถบ และแตะทะลุไปถึงปุ่มข้างใต้ */
   function odToastLift(box) {
     if (!box) return;
@@ -10371,7 +10393,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var shown = secs.filter(function (x) { return x.items.length; });
     if (!shown.length) return html`<div class="card"><div class="empty">ไม่พบของที่ค้นหา</div></div>`;
     return shown.map(function (x) {
-      return html`<section class="od-sec" data-i="${x.i}"><div class="od-sec-h" id="od-sec-${x.i}" data-i="${x.i}"><b>${x.cat}</b><span class="od-prog ${odFull(x) ? 'done' : ''}">${odFull(x) ? html`${icon('check')} ` : ''}${odProgText(x)}</span></div>
+      return html`<section class="od-sec" id="od-s${x.i}" data-i="${x.i}"><div class="od-sec-h" id="od-sec-${x.i}" data-i="${x.i}"><b>${x.cat}</b><span class="od-prog ${odFull(x) ? 'done' : ''}">${odFull(x) ? html`${icon('check')} ` : ''}${odProgText(x)}</span></div>
         ${x.staff ? odMealHead() : ''}
         <div class="card flush od-list">${x.items.map(odRow)}</div>${x.staff ? odExtrasBox() : ''}</section>`;
     });
@@ -10429,9 +10451,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     odSections().forEach(function (x) {
       var full = odFull(x);
       var p = document.querySelector('#od-sec-' + x.i + ' .od-prog');
-      if (p) { p.innerHTML = String(html`${full ? html`${icon('check')} ` : ''}${odProgText(x)}`); p.classList.toggle('done', !!full); }
+      if (p) { redraw(p, String(html`${full ? html`${icon('check')} ` : ''}${odProgText(x)}`)); p.classList.toggle('done', !!full); }
       var c = document.querySelector('#od-cats [data-i="' + x.i + '"]');
-      if (c) { c.innerHTML = String(odChipText(x)); c.classList.toggle('full', !!full); }
+      if (c) { redraw(c, String(odChipText(x))); c.classList.toggle('full', !!full); }
     });
   }
   /** Deliveries on their way: as the server lists them (an answer kept from before it did: from the items' "coming"). */
@@ -10656,6 +10678,22 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${counted.length ? html`<h3 class="h3">นับแล้ว ไม่ได้สั่ง ${counted.length} อย่าง</h3>${oddCount.length || lowCount.length ? html`<section class="card flush"><div class="list">${oddCount.map(function (it) { var d = odEntry(it) || {}; return html`<div class="item od-rv"><div class="grow"><div class="t">${it.name}</div>${sureOf(it, d, 'have')}</div><b>มี ${odNum(+d.have)} ${it.unit}</b></div>`; })}${lowCount.map(function (it) { var d = odEntry(it) || {}; return html`<div class="item od-rv"><div class="grow"><div class="t">${it.name}</div><div class="s">${odShortSay(it, d.have)}</div></div><b>มี ${odNum(+d.have)} ${it.unit}</b></div>`; })}</div></section>` : ''}${fineCount.length ? html`<p class="small muted" style="margin:0">${fineCount.map(function (it) { var d = odEntry(it) || {}; return it.name + ' ' + odNum(d.have) + ' ' + it.unit; }).join(' · ')}</p>` : ''}` : ''}`;
   }
   /** One item's row again, without touching the box being typed in. */
+  /**
+   * k46 (เจ้าของ 7 พ.ย. 2569 "ทำไมตอนสั่งของกดเพิ่มตัวเลขแล้วภาพมันกระพริบ"): แถวและแถบล่างวาดใหม่ในที่เดิม ของที่ไม่เปลี่ยนคงตัวเดิม
+   * (เดิมแทนทั้งก้อน รูปของแถวถูกสร้างใหม่ทุกแตะ เบราว์เซอร์ต้องหาและถอดรหัสรูปใหม่ ระหว่างนั้นช่องรูปว่าง)
+   * ช่องเลขคงตัวเดิม เปลี่ยนแค่เลข
+   */
+  function odRedraw(el, out) {
+    var t = document.createElement('template');
+    t.innerHTML = out;
+    Array.prototype.forEach.call(el.querySelectorAll('input[data-od]'), function (f) {
+      var g = t.content.querySelector('input[data-od="' + f.dataset.od + '"]');
+      if (!g) return;
+      f.value = g.value;
+      f._src = g.outerHTML;
+    });
+    morph(el, t.content.firstElementChild);
+  }
   function odRefreshRow(id, keepInput) {
     var it = odItem(id);
     var el = document.getElementById('od-' + id);
@@ -10664,8 +10702,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       // k34: ช่องที่พิมพ์ไม่ตรง HTML ตอนสร้างแล้ว แต่ morph เทียบกับตอนสร้าง (_src) จึงคงเลขเดิมไว้แม้ส่งหรือล้างแล้ว
       // ล้าง _src ให้ครั้งวาดหน้าถัดไปสร้างช่องจากร่างปัจจุบัน
       Array.prototype.forEach.call(el.querySelectorAll('input[data-od]'), function (f) { f._src = ''; });
-      var sub = el.querySelector('.od-sub');
-      if (sub) sub.innerHTML = String(odSub(it));
+      var sub = el.querySelector('.od-sub'), typing = document.activeElement;
+      // k44 (ลองแอปทดลอง 7 พ.ย. 2569): ช่องจำนวนสั่งอยู่ใน .od-sub เดิมทุกตัวที่พิมพ์แทนช่องใหม่ พิมพ์ได้ตัวเดียวแล้วแป้นพิมพ์ปิด ลบเลขแล้วเลขที่แอปคิดกลับมาทันที
+      // ระหว่างพิมพ์เปลี่ยนแค่คำหน้าช่อง
+      if (sub && typing && typing.dataset && typing.dataset.od === 'qty' && sub.contains(typing)) {
+        var fresh = document.createElement('div');
+        fresh.innerHTML = String(odSub(it));
+        var sayOld = sub.querySelector('.od-say'), sayNew = fresh.querySelector('.od-say');
+        if (sayOld && sayNew) { sayOld.className = sayNew.className; sayOld.innerHTML = sayNew.innerHTML; }
+      } else if (sub) sub.innerHTML = String(odSub(it));
       var wn = document.getElementById('od-w-' + id);
       if (wn) { var wt = odWarn(it, (odEntry(it) || {}).have); wn.hidden = !wt; wn.textContent = wt; }
       var mw = document.getElementById('od-mw-' + id);
@@ -10677,10 +10722,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }
       el.classList.toggle('on', !!odEntry(it));
     } else {
-      el.outerHTML = String(odRow(it));
+      odRedraw(el, String(odRow(it)));
     }
     var bar = document.getElementById('od-bar');
-    if (bar) bar.outerHTML = String(odBar());
+    if (bar) odRedraw(bar, String(odBar()));
     odProgress();
   }
   function odSet(id, f, v) {
@@ -10739,7 +10784,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       S.odQ = el.value;
       var secs = odSections();
       var box = $('#od-body');
-      if (box) box.innerHTML = String(html`${odListBody(secs)}`);
+      if (box) redraw(box, String(html`${odListBody(secs)}`));
       var cats = $('#od-cats');
       if (cats) cats.innerHTML = String(html`${odChips(secs)}`);
       var first = secs.filter(function (x) { return x.items.length; })[0];
@@ -11273,7 +11318,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (odLife(it)) ps.push(odLife(it));
       if (it.max) ps.push('สั่งครั้งละไม่เกิน ' + odNum(it.max) + ' ' + it.unit);
       var sp = odoShopee(it);
-      return html`<div class="item od-cat-item ${it.active ? '' : 'off'}">${odPic(odoImgOf(it), it.name)}<div class="grow"><div class="t"><button type="button" class="od-name" data-act="odo-item" data-id="${it.id}">${it.name}</button></div><div class="s">${ps.join(' · ')}</div>${odoUsualBuy(it)}
+      return html`<div class="item od-cat-item ${it.active ? '' : 'off'}" data-id="${it.id}">${odPic(odoImgOf(it), it.name)}<div class="grow"><div class="t"><button type="button" class="od-name" data-act="odo-item" data-id="${it.id}">${it.name}</button></div><div class="s">${ps.join(' · ')}</div>${odoUsualBuy(it)}
         ${sp ? html`<div class="s od-sp">Shopee: <a href="${sp.link}" target="_blank" rel="noopener">${sp.name}</a> · ${sp.per !== 1 ? 'แพ็คละ' : it.unit + 'ละ'} ${money(sp.price, true)} บาท จ่ายจริง${sp.per !== 1 ? ' (= ' + odNum(sp.per) + ' ' + it.unit + ')' : ''} · Claude เทียบ ${sp.checkedAt ? thShort(ymdOf(new Date(sp.checkedAt))) : '-'}${sp.expired ? html` · <span style="color:var(--warn)">เกิน ${odo.cat.shopeeDays || 35} วัน แอปไม่ใช้</span>` : ''}${it.keeps ? '' : ' · ไม่ใช่ของเก็บได้นาน แอปไม่ใช้'} <button class="od-plain" data-act="odo-shopee-off" data-id="${it.id}">เลิกใช้</button></div>` : ''}
         <div class="od-par">${it.staff ? '' : html`<span class="small muted">PAR</span><span class="stepper"><button type="button" data-act="odo-par" data-id="${it.id}" data-d="-1" aria-label="ลด PAR">−</button><b>${it.par != null ? odNum(it.par) : '–'}</b><button type="button" data-act="odo-par" data-id="${it.id}" data-d="1" aria-label="เพิ่ม PAR">+</button></span><span class="small muted">${it.unit}</span>`}
           ${count}
@@ -11286,7 +11331,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     odo.catQ = el.value;
     var q = el.value.trim().toLowerCase();
     var box = $('#odo-items');
-    if (box) box.innerHTML = String(odoItemRows(odo.cat.items.filter(function (it) { return !q || it.name.toLowerCase().indexOf(q) >= 0; })));
+    if (box) redraw(box, String(odoItemRows(odo.cat.items.filter(function (it) { return !q || it.name.toLowerCase().indexOf(q) >= 0; }))));
   });
   /**
    * One store's list with quantities, links, and what to buy if one is sold out: for the owner to paste or read out,
@@ -17106,6 +17151,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (block && block.host && block.host.parentNode) block.host.parentNode.removeChild(block.host);
     document.body.classList.remove('sb-on'); bksSync();
     block = null;
+    c3TurnNext();
   }
   function blockLoad() {
     var mine = block;
@@ -17117,6 +17163,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function blockSet(d) {
     block.data = d;
+    blockPrep(d.figs);
     // ข่าวเกมบนหน้าแรกและหน้าเพื่อนตามทันที (เห็นตอนวาดหน้าครั้งถัดไป)
     if (S.home && S.home.level) S.home.level.block = d.off ? { off: true } : { off: false, left: Math.max(0, d.daily.n - d.daily.played), team: d.team, teams: d.teams.map(function (t) { return { id: t.id, name: t.name, score: t.score }; }), recs: d.news ? d.news.recs : [], mine: d.news ? d.news.mine : null };
   }
@@ -17212,6 +17259,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function blockPlay(el, free) {
     if (!block || block.busy || !block.data) return;
     block.busy = true;
+    // (k44 แตะเล่นแล้ว งานภาพที่ต่อคิวไว้ไม่เริ่มก่อนกระดานขึ้น)
+    blockHush(BLOCK_FX_MS);
     run(el, call('blockStart', free ? { free: true } : {}, staffAuth())).then(function (g) {
       block.busy = false;
       blockShow(blockWithRun(g));
@@ -17221,10 +17270,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var SB = blockBoot(), d = block.data;
     g.stats = blockStats(d);
     block.g = g;
-    if (!block.host) { block.host = document.createElement('div'); block.host.id = 'sb-host'; document.body.appendChild(block.host); }
+    if (!block.host) {
+      block.host = document.createElement('div'); block.host.id = 'sb-host'; document.body.appendChild(block.host);
+      // (k44 นิ้วอยู่บนจอเกม: งานทำภาพไม่เริ่มจนนิ้วพัก ของเดิมรอแค่ 160 มิลลิวินาที)
+      ['pointerdown', 'pointermove'].forEach(function (t) { block.host.addEventListener(t, function () { blockHush(BLOCK_TOUCH_MS); }, { capture: true, passive: true }); });
+    }
     block.host.hidden = false;
     document.body.classList.add('sb-on'); bksSync();
-    if (block.ui) { block.ui.start(null, g); block.ui.fit(); setTimeout(blockWarm, 300); return; }
+    if (block.ui) { block.ui.start(null, g); block.ui.fit(); blockQuiet(); setTimeout(blockWarm, 300); return; }
     var me = blockMe(d), who = block.me;
     block.ui = SB.mount(block.host, {
       game: g, date: g.day, stats: g.stats,
@@ -17242,10 +17295,40 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       keep: function (mode, r) { blockRunSet(who, mode, r); }
     });
     block.host.sb = block.ui; // ตัวคุมหน้าจอเกม (dev/block-ui-check.js ใช้จบรอบ)
+    blockQuiet();
     setTimeout(blockWarm, 300);
   }
   // k38 (ลองแอปทดลอง 6 พ.ย. 2569 ครั้งแรกของคอมโบหลังเปิดหน้า ภาพหยุด 2–6 วินาที ของเอฟเฟกต์ค้าง): เวทีสามมิติแรกของหน้าสร้างบนงานหลัก (ตั้งขนาดภาพ คอมไพล์ตัววาด)
   // เดิมเกิดตรงเฟรมฉลองพอดี · ตอนนี้ตัวน้องเล่นท่าประจำตัวตอนเปิดรอบ เวทีขึ้นก่อนเอฟเฟกต์แรก ระหว่างยังไม่ขึ้นท่าฉลองข้ามเวที ตัวน้องเด้งตามท่า sb-pose · ไฟล์สามมิติมาช้า เวทีขึ้นตอนเอฟเฟกต์จบคืนท่ายืน
+  // k44 (ลองแอปทดลอง 7 พ.ย. 2569 k42 เห็นภาพหยุดราว 1.2 วินาทีเมื่อคอมโบไม่นานหลังเข้าเกม): ต้นเหตุจากการวัด งานก้อนเดียวบนงานหลัก คือภาพฟิกเกอร์เชียร์ตัวแรกของหน้า
+  // สร้างแสงรอบตัวของเครื่องสามมิติและคอมไพล์ตัววาดแบบรอผล เริ่มเมื่อภาพของหน้าเพื่อนหมดคิว จึงตกกลางการเล่นทุกครั้งบนเครื่องที่ยังไม่มีภาพ
+  // คนที่หน้าแรกทำแสงไปแล้วไม่เจอ · งานทำภาพที่เริ่มแล้วรอคอมไพล์ต่อได้เป็นวินาที การกันตอนเอฟเฟกต์จึงไม่พอ
+  // แก้: ทำภาพก่อนเข้ากระดาน ระหว่างเล่นตัววาดไม่เริ่มงานใหม่แบบเกมวิ่ง (blockQuiet) ภาพที่ยังไม่เสร็จรอจบรอบ ภาพเสร็จแล้วขึ้นจอทันที
+  var BLOCK_CHEER_H = 36, BLOCK_FX_MS = 3000, BLOCK_TOUCH_MS = 1200;
+  /** กำลังเล่นกระดาน: จอเกมเปิดและยังไม่ถึงหน้าจบรอบ */
+  function blockOn() { return !!(block && block.host && !block.host.hidden && !block.host.querySelector('.sb-end.on')); }
+  function blockHush(ms) { if (C3.mod && C3.mod.calm) C3.mod.calm(ms); blockQuiet(); }
+  /** ระหว่างเล่นตัววาดไม่เริ่มงานใหม่ (แบบเกมวิ่ง) · hold หมดอายุเองใน 3 นาที ต่ออายุตอนนิ้วแตะจอ (blockHush) · ปล่อยเฉพาะที่ถือเอง เกมวิ่งถือของมันเอง */
+  function blockQuiet() {
+    if (!C3.mod || !C3.mod.hold) return;
+    if (blockOn()) { C3.quiet = true; C3.mod.hold(true); }
+    else if (C3.quiet) { C3.quiet = false; C3.mod.hold(false); }
+  }
+  /** ฟิกเกอร์เชียร์ (BLOCK_CHEER_H ตรงกับ .sb-cheer i) ทำภาพก่อนงานอื่นทีละตัว · เข้ากระดานแล้วตัวที่เหลือรอรอบถัดไป · n: จำนวนตัว */
+  function blockPrep(ids, n) {
+    if (C3.state !== 2 || C3.lost || !C3.mod.hasThing) return;
+    var list = (ids || []).filter(function (id) { return C3.mod.hasThing(id); }).slice(0, n || 3), key = list.join();
+    if (!key || C3.prep === key) return;
+    C3.prep = key;
+    (function next() {
+      // (ภาพที่เพิ่งเสร็จขึ้นจอได้ทันที)
+      c3TurnNext();
+      var id = list.shift();
+      if (!id) return;
+      if (blockOn()) { C3.prep = ''; return; }
+      c3Thing(id, c3Step(BLOCK_CHEER_H), false, true).then(next, next);
+    })();
+  }
   function blockWarm() {
     if (!block || block.warm || !block.host || block.host.hidden || C3.state !== 2 || C3.lost || !MOTION) return;
     var av = block.host.querySelector('.sb-chef .sb-av');
@@ -17257,6 +17340,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function blockAvatar(el, m) {
     if (m !== 'party' && m !== 'joy' && m !== 'dance') { blockWarm(); return; }
+    blockHush(BLOCK_FX_MS);
     // (เครื่องที่ไม่มีสามมิติ C3.state ไม่ใช่ 2: ท่าแบบวาดตามเดิม ไม่ต้องรอ)
     if (C3.state === 2 && !C3.lost && MOTION && block && block.warm !== 2) return;
     if (m === 'party') blockParty(el); else charGo(el);
@@ -17289,8 +17373,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (block && block.ui) block.ui.pause();
     document.body.classList.remove('sb-on'); bksSync();
     if (block && block.data && $('#block')) setSheetBody(blockBody());
+    c3TurnNext();
   }
   function blockSend(res) {
+    // (k44 จบรอบ: ฟิกเกอร์เชียร์ที่รออยู่ทำต่อหลังหน้าจบรอบขึ้น)
+    setTimeout(c3TurnNext, 1500);
     var un = { seed: res.seed, moves: res.log, score: res.score };
     blockKeep(un);
     return blockPost(un);
@@ -21086,7 +21173,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       closeSheet();
       odMealRefresh();
       var bar = document.getElementById('od-bar');
-      if (bar) bar.outerHTML = String(odBar());
+      if (bar) odRedraw(bar, String(odBar()));
       toast('เพิ่ม ' + name + ' แล้ว · กดส่งพร้อมรายการอื่น', 'ok');
     },
     'od-extra-del': function (el) {
@@ -21096,7 +21183,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       odKeep();
       odMealRefresh();
       var bar = document.getElementById('od-bar');
-      if (bar) bar.outerHTML = String(odBar());
+      if (bar) odRedraw(bar, String(odBar()));
     },
     'od-order-only': function (el) { if (odTapScroll()) return; var it = odItem(el.dataset.id); if (!it) return; odSet(it.id, 'qty', it.step); odRefreshRow(it.id, false); },
     'od-clear': function () {
@@ -22542,7 +22629,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         it.staff = staffOnly;
         toast(staffOnly ? it.name + ': ไม่ต้องนับ พนักงานสั่งเมื่อต้องการ' : it.name + ': นับทุกครั้ง สั่งตาม PAR', 'ok');
         var box = $('#odo-items');
-        if (box) box.innerHTML = String(odoItemRows(odo.cat.items.filter(function (x) { var q = String(odo.catQ || '').trim().toLowerCase(); return !q || x.name.toLowerCase().indexOf(q) >= 0; })));
+        if (box) redraw(box, String(odoItemRows(odo.cat.items.filter(function (x) { var q = String(odo.catQ || '').trim().toLowerCase(); return !q || x.name.toLowerCase().indexOf(q) >= 0; }))));
         odo.v = null;
         loadOrderOwner();
       }, function () { setSheetBody(odOwnerBody()); });
