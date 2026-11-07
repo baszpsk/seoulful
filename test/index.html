@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.67","page":"","e3":"47e9aadc","edge":true,"test":true,"store":"test.","build":"72c4f0f7669f"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.68","page":"","e3":"8c0449a0","edge":true,"test":true,"store":"test.","build":"c6eb0bd2e7f7"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -9005,15 +9005,31 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.payKey = null; S.payAt = 0;
     S.loadErr = {}; S.partStale = {};
   }
+  // k38 (เจ้าของ 6 พ.ย. 2569 "เหมือนมีบัคอยู่ หาวิธีป้องกันไม่ให้เกิดอีกด้วย" · เปลี่ยนคนในเบราว์เซอร์เดียว): ของในหน่วยความจำที่เป็นของคนที่เข้าใช้อยู่
+  // ออกจากระบบหรือหมดเวลาแล้วล้างทั้งหมด คนถัดไปเริ่มจากศูนย์ · เดิม ต้นนับของค้างไว้ ออกจากระบบ แพรวเข้าเครื่องเดียวกันเห็นเลขของต้นและส่งเป็นชื่อแพรวได้
+  // (ร่างยังเก็บในเครื่องตามชื่อคน odKey เจ้าตัวกลับมาได้คืน) · S ตัวใหม่ต้องตัดสินว่าเป็นของคนหรือของเครื่อง: test/staff-switch.test.js
+  function staffForget() {
+    Object.keys(S).forEach(function (k) { if (/^od/.test(k)) delete S[k]; });
+    S.staff = null; S.home = null; S.homeAt = 0; S.homeErr = ''; S.homeLoad = null; S.team = null; S.entries = null; S.exceptions = null; S.pay = null; S.leaves = null;
+    S.shift = null; S.month = null; S.monthKey = null; S.monthWant = null; S.cal = null; S.calSel = null; S.calShown = null;
+    S.fbMine = null; S.friendsAt = 0; S.friendsLoad = null; S.heldLevel = undefined; S.lvPending = null; S.posterShot = null;
+    // คำตอบของคนก่อนที่ยังไม่มาถึง ไม่ลงหน้าคนถัดไป
+    S.homeSeq = (S.homeSeq || 0) + 1; S.monthSeq = (S.monthSeq || 0) + 1; S.calSeq = (S.calSeq || 0) + 1; S.paySeq = (S.paySeq || 0) + 1;
+    bellList = null; thx = null; meal = null; rc = null; fb = null; dl = null; dlEd = null; dlFx = null; ck = null; welcome = null;
+    if (block) blockDrop();
+    if (runner) { runStop(); runner = null; }
+  }
   function logoutStaff(msg) {
-    pushOffHere(S.staff ? staffAuth() : null);
+    // (ล้างการแจ้งเตือนในเครื่องไม่สำเร็จ ยังออกจากระบบได้เสมอ)
+    try { pushOffHere(S.staff ? staffAuth() : null); } catch (e) { /* เครื่องที่ล้างไม่ได้ */ }
     LS.del(KEY.staff);
     dropFaces();
     forget('home');
     forget('parts');
     dropSession();
-    S.staff = null; S.home = null; S.homeErr = ''; S.team = null; S.pay = null; S.leaves = null;
+    staffForget();
     S.view = 'start';
+    if (sheetState) closeSheet();
     render();
     if (msg) toast(msg, 'bad');
   }
@@ -9027,7 +9043,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       render();
     } else if (S.staff && LS.get(KEY.staff) && !liveSession(KEY.staff)) {
       closeSheet(); dropSession(); dropFaces();
-      S.staff = null; S.home = null; S.homeErr = ''; S.team = null; S.pay = null; S.leaves = null;
+      staffForget();
       S.pin = ''; S.pinErr = '';
       S.view = 'start';
       render();
@@ -9980,12 +9996,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return out;
   }
   function loadOrderList(open) {
+    var who = staffId();
     return call('orderList', {}, staffAuth()).then(function (d) {
+      // (k38 คำตอบของคนที่ออกจากระบบไปแล้ว ไม่ลงรายการของคนถัดไป)
+      if (who !== staffId()) return null;
       S.od = d;
       delete S.loadErr.od;
       if (S.sub === 'order') softRender();
       return d;
-    }, function (e) { if (open) partFailed('od', e, !!S.od); });
+    }, function (e) { if (open && who === staffId()) partFailed('od', e, !!S.od); });
   }
   function openOrder() {
     S.sub = 'order';
@@ -10737,6 +10756,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   });
   /** The count goes to the server; items someone else ordered meanwhile come back as a question. */
   function odSend(btn, confirmIds, only) {
+    var who = staffId();
     var items = (only || odTouched()).map(function (it) {
       var d = odEntry(it) || {};
       var f = only ? null : odFlag(it);
@@ -10759,7 +10779,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         odAsk(r.ask);
         return;
       }
-      if (!only) odForget();
+      // (k38 ส่งแล้วออกจากระบบก่อนคำตอบมา: ไม่ลบร่างของคนถัดไป)
+      if (!only && who === staffId()) odForget();
       else only.forEach(function (it) { delete odDraft()[it.id]; odKeep(); });
       closeSheet();
       // k34 (เจ้าของ 6 พ.ย. 2569 ภาพแครอท): ตอนนับ แถวและแถบแก้ในที่ ไม่ผ่าน render · ส่งแบบบันทึกจำนวนอย่างเดียว ผลวาดเท่าครั้งก่อนนับ
@@ -15826,7 +15847,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       // · รอบที่เปลี่ยนแล้ว รอบ f2| และรอบทีมไม่แตะ · คืน true เมื่อเพิ่งเปลี่ยน
       function lift(s) { try { return !!s && C.upgrade(s); } catch (e) { return false; } }
       // ลดการเคลื่อนไหว (2.13.63): ไม่ขยับเลย · ชิ้นที่มีข้อความ (คะแนน คำชม ป้ายไฟ ชื่อเมนู) ขึ้นนิ่งตามเวลาเดิมแล้วหาย ชิ้นอื่นไม่ขึ้น
-      function go(e, kf, op) { if (RM && e.animate && /\S/.test(e.textContent) && e.parentNode) { var ms = op && typeof op === 'object' ? (op.duration || 0) + (op.delay || 0) : +op || 0, k1 = kf[1] || kf[0]; e.style.transform = k1.transform || ''; e.style.opacity = 1; setTimeout(function () { if (e.parentNode) e.parentNode.removeChild(e); }, ms); return null; } if (!e.animate || RM) { if (e.parentNode) e.parentNode.removeChild(e); return null; } if (op && typeof op === 'object' && op.delay && !op.fill) op.fill = 'backwards'; var a = e.animate(kf, op); a.onfinish = function () { if (e.parentNode) e.parentNode.removeChild(e); }; return a; }
+      function go(e, kf, op) { if (RM && e.animate && /\S/.test(e.textContent) && e.parentNode) { var ms = op && typeof op === 'object' ? (op.duration || 0) + (op.delay || 0) : +op || 0, k1 = kf[1] || kf[0]; e.style.transform = k1.transform || ''; e.style.opacity = 1; setTimeout(function () { if (e.parentNode) e.parentNode.removeChild(e); }, ms); return null; } if (!e.animate || RM) { if (e.parentNode) e.parentNode.removeChild(e); return null; } if (op && typeof op === 'object' && op.delay && !op.fill) op.fill = 'backwards'; var a = e.animate(kf, op), ms = op && typeof op === 'object' ? ((op.duration || 0) + (op.delay || 0)) * (op.iterations || 1) : +op || 0, spare = 0, out = function () { clearTimeout(spare); if (e.parentNode) e.parentNode.removeChild(e); }; a.onfinish = out; if (isFinite(ms)) spare = setTimeout(out, ms + 600); return a; } // (k38 ตัวเก็บสำรอง: เฟรมจอไม่มา ตัวลบของแอนิเมชันยังไม่ทำงาน ของเอฟเฟกต์ไม่ค้างบนจอ)
       function an(e, kf, op) { return e && e.animate ? e.animate(kf, op) : null; }
       // block-pose:begin
       // ท่าฉลองของตัวละคร (เจ้าของ 6 พ.ย. 2569 "ตอนคอมโบคูณ4แล้วตัวละครมันกระเด็นแปลกๆเหมือนบัค"): เดิมคอมโบ 4 หมุนกรอบตัวละคร 360 องศารอบเท้าวนซ้ำ (sbParty)
@@ -17203,7 +17224,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!block.host) { block.host = document.createElement('div'); block.host.id = 'sb-host'; document.body.appendChild(block.host); }
     block.host.hidden = false;
     document.body.classList.add('sb-on'); bksSync();
-    if (block.ui) { block.ui.start(null, g); block.ui.fit(); return; }
+    if (block.ui) { block.ui.start(null, g); block.ui.fit(); setTimeout(blockWarm, 300); return; }
     var me = blockMe(d), who = block.me;
     block.ui = SB.mount(block.host, {
       game: g, date: g.day, stats: g.stats,
@@ -17211,7 +17232,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       // คอมโบหรือเสิร์ฟเล่นท่า · คอมโบ 4 ขึ้นไปเต้นท่าพิเศษ
       avatar: function (el, m) {
         if (!el.firstChild) el.innerHTML = charOf(me ? me.look : {});
-        if (m === 'party') blockParty(el); else if (m === 'joy' || m === 'dance') charGo(el);
+        blockAvatar(el, m);
       },
       cheer: (d.figs || []).map(function (id) { return FIG_ART(id); }).filter(Boolean),
       // บล็อกวัตถุดิบสามมิติ: ภาพนิ่งใน 3d/i/ มีเฉพาะเว็บของร้านและเดโม หน้าที่ไม่มีใช้ภาพวาดเดิม
@@ -17221,6 +17242,24 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       keep: function (mode, r) { blockRunSet(who, mode, r); }
     });
     block.host.sb = block.ui; // ตัวคุมหน้าจอเกม (dev/block-ui-check.js ใช้จบรอบ)
+    setTimeout(blockWarm, 300);
+  }
+  // k38 (ลองแอปทดลอง 6 พ.ย. 2569 ครั้งแรกของคอมโบหลังเปิดหน้า ภาพหยุด 2–6 วินาที ของเอฟเฟกต์ค้าง): เวทีสามมิติแรกของหน้าสร้างบนงานหลัก (ตั้งขนาดภาพ คอมไพล์ตัววาด)
+  // เดิมเกิดตรงเฟรมฉลองพอดี · ตอนนี้ตัวน้องเล่นท่าประจำตัวตอนเปิดรอบ เวทีขึ้นก่อนเอฟเฟกต์แรก ระหว่างยังไม่ขึ้นท่าฉลองข้ามเวที ตัวน้องเด้งตามท่า sb-pose · ไฟล์สามมิติมาช้า เวทีขึ้นตอนเอฟเฟกต์จบคืนท่ายืน
+  function blockWarm() {
+    if (!block || block.warm || !block.host || block.host.hidden || C3.state !== 2 || C3.lost || !MOTION) return;
+    var av = block.host.querySelector('.sb-chef .sb-av');
+    if (!av || !av.querySelector('.char-svg')) return;
+    block.warm = 1;
+    charGo(av);
+    var s = C3.live, done = function () { if (block) block.warm = 2; };
+    if (s && s.temp) s.ready.then(done, done); else done();
+  }
+  function blockAvatar(el, m) {
+    if (m !== 'party' && m !== 'joy' && m !== 'dance') { blockWarm(); return; }
+    // (เครื่องที่ไม่มีสามมิติ C3.state ไม่ใช่ 2: ท่าแบบวาดตามเดิม ไม่ต้องรอ)
+    if (C3.state === 2 && !C3.lost && MOTION && block && block.warm !== 2) return;
+    if (m === 'party') blockParty(el); else charGo(el);
   }
   // ท่าพิเศษตอนคอมโบ 4 ขึ้นไป: ท่าเต้นที่ไม่ใช่ท่าประจำตัว (ดิสโก้ หรือหมุน) เล่นครั้งเดียว แล้วคืนท่าประจำตัว
   function blockParty(el) {
