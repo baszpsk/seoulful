@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.69","page":"","e3":"cff30e5e","edge":true,"test":true,"store":"test.","build":"5559693412e9"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.70","page":"","e3":"cff30e5e","edge":true,"test":true,"store":"test.","build":"f88f7cb30188"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -653,7 +653,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-cats button.on { background: var(--ink); color: var(--bg); box-shadow: none; }
 .od-cats button.on small { color: inherit; opacity: .7; }
 .od-cats button:disabled { opacity: .38; }
-.od-sec + .od-sec { margin-top: 20px; }
+.od-sec:not([hidden]) ~ .od-sec:not([hidden]) { margin-top: 20px; }
 .od-sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 0 4px 8px; }
 .od-sec-h b { font-size: 17px; font-weight: 600; }
 .od-prog { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -662,8 +662,8 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-rv b { flex: none; font-weight: 600; white-space: nowrap; }
 .od-flag { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; padding: 6px 12px; font-size: 13px; }
 .od-flag svg { width: 14px; height: 14px; }
-.od-item { padding: 12px 14px; border-top: 1px solid var(--line); transition: background-color .25s; }
-.od-item:first-child { border-top: 0; }
+.od-item { padding: 12px 14px; transition: background-color .25s; }
+.od-item:not([hidden]) ~ .od-item { border-top: 1px solid var(--line); }
 .od-item.on { background: var(--gold-soft); }
 .od-top { display: flex; gap: 10px; align-items: center; }
 .od-pic { flex: none; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 10px; overflow: hidden; background: var(--inset); display: inline-block; vertical-align: middle; cursor: zoom-in; }
@@ -789,6 +789,8 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-yn.three { flex-direction: row; flex-wrap: wrap; }
 .od-yn.three .btn { flex: 1 1 0; white-space: nowrap; }
 .od-cat-item.off { opacity: .5; }
+#odo-items .od-cat-item { border-top: 0; }
+#odo-items .od-cat-item:not([hidden]) ~ .od-cat-item { border-top: 1px solid var(--line); }
 .od-par { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
 .od-legend { margin: 6px 0 0; }
 .od-keepsel { max-width: 100%; border: 0; border-radius: 99px; padding: 7px 10px; font: inherit; font-size: 12.5px; background: var(--inset); color: var(--ink-2); }
@@ -10243,6 +10245,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function odRow(it) {
     var d = odEntry(it) || {};
     var tags = [];
+    var off = odHit(it) ? '' : raw('hidden');
     // k30: ชิปรอสั่งกดแก้หรือยกเลิกได้ (คนสั่ง หัวหน้า) · ชิปกำลังมาบอกว่าสั่งแล้วแก้ไม่ได้ และทำอะไรได้แทน
     it.open.forEach(function (x) { tags.push(html`<button type="button" class="od-tag od-tag-btn" data-act="od-line" data-id="${x.id}" data-item="${it.id}">${odOpenSay(x, it.unit)}${x.edits && x.edits.length ? ' · แก้แล้ว' : ''}</button>`); });
     it.coming.forEach(function (x) { tags.push(html`<button type="button" class="od-tag gold od-tag-btn" data-act="od-coming" data-item="${it.id}">${icon('truck')} กำลังมา ${odNum(x.qty)} ${it.unit} · ${odEta(x)}</button>`); });
@@ -10250,7 +10253,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // What only the staff eat: not counted, ordered when wanted.
     if (it.staff) {
       var sq = odQty(it);
-      return html`<div class="od-item ${sq > 0 ? 'on' : ''}" id="od-${it.id}">
+      return html`<div class="od-item ${sq > 0 ? 'on' : ''}" id="od-${it.id}" ${off}>
         <div class="od-top">${odPic(it.img, it.name)}<div class="grow"><b>${it.name}</b><span class="s">ไม่ต้องนับ · สั่งเมื่อต้องการ (${it.unit})</span></div>
           <div class="od-have"><span class="lbl">สั่ง</span>${odStepper('qty', it, d.qty)}</div></div>
         <div id="od-mw-${it.id}">${sq > 0 ? odMealBox(it.id, it.name, it.unit, d.menu, sq) : ''}</div>
@@ -10258,7 +10261,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       </div>`;
     }
     var lot = it.lot && it.lot.left <= 2 ? it.lot : null;
-    return html`<div class="od-item ${odEntry(it) ? 'on' : ''}" id="od-${it.id}">
+    return html`<div class="od-item ${odEntry(it) ? 'on' : ''}" id="od-${it.id}" ${off}>
       <div class="od-top">${odPic(it.img, it.name)}<div class="grow"><b>${it.name}</b><span class="s">${odUnder(it)}</span></div>
         <div class="od-have"><span class="lbl">เหลือ</span>${odStepper('have', it, d.have)}</div></div>
       ${lot ? html`<div class="od-lot ${lot.left <= 0 ? 'due' : ''}">${icon('clock')}<span>${odLot(lot, it.unit)}</span></div>` : ''}
@@ -10356,13 +10359,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
 
   /** The items as the list shows them: all of them, or those whose name has what is typed in the search box. */
-  function odFiltered() {
+  function odFiltered() { return S.od.items.filter(odHit); }
+  /** ชื่อของมีคำที่พิมพ์ในช่องค้นหาไหม (ไม่ได้พิมพ์: ทุกอย่าง) */
+  function odHit(it) {
     var q = String(S.odQ || '').trim().toLowerCase();
-    return S.od.items.filter(function (it) { return !q || it.name.toLowerCase().indexOf(q) >= 0; });
+    return !q || it.name.toLowerCase().indexOf(q) >= 0;
   }
   /**
    * Category by category, in the list's order: [{i, cat, items, all, done}] (done: counted); then
    * what only the staff eat, not counted ({staff: true}, done: how many are being ordered).
+   * items: ที่ตรงคำค้น · rows: ของทั้งหมวด
    */
   function odSections() {
     var cats = S.od.cats.slice();
@@ -10376,9 +10382,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var shown = odFiltered();
     var out = cats.map(function (c, i) {
       var every = all[c] || [];
-      return { i: i, cat: c, items: shown.filter(function (it) { return !it.staff && it.cat === c; }), all: every.length, done: every.filter(function (it) { return !!odEntry(it); }).length };
+      return { i: i, cat: c, items: shown.filter(function (it) { return !it.staff && it.cat === c; }), rows: every, all: every.length, done: every.filter(function (it) { return !!odEntry(it); }).length };
     });
-    if (staff.length) out.push({ i: cats.length, cat: 'ของกินพนักงาน', staff: true, items: shown.filter(function (it) { return it.staff; }), all: staff.length, done: staff.filter(function (it) { return odQty(it) > 0; }).length });
+    if (staff.length) out.push({ i: cats.length, cat: 'ของกินพนักงาน', staff: true, items: shown.filter(function (it) { return it.staff; }), rows: staff, all: staff.length, done: staff.filter(function (it) { return odQty(it) > 0; }).length });
     return out;
   }
   function odFull(sec) { return !sec.staff && sec.done && sec.done === sec.all; }
@@ -10390,13 +10396,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     });
   }
   function odListBody(secs) {
-    var shown = secs.filter(function (x) { return x.items.length; });
-    if (!shown.length) return html`<div class="card"><div class="empty">ไม่พบของที่ค้นหา</div></div>`;
-    return shown.map(function (x) {
-      return html`<section class="od-sec" id="od-s${x.i}" data-i="${x.i}"><div class="od-sec-h" id="od-sec-${x.i}" data-i="${x.i}"><b>${x.cat}</b><span class="od-prog ${odFull(x) ? 'done' : ''}">${odFull(x) ? html`${icon('check')} ` : ''}${odProgText(x)}</span></div>
+    // k63 (ผู้ลองแอปทดลอง 7 พ.ย. 2569: แนน พิมพ์ ขิ แล้วลบจนว่าง รูปถูกสร้างใหม่ 155 จาก 157): ทุกหมวดและทุกแถวอยู่ในหน้าเสมอ
+    // ของที่ไม่ตรงคำค้นซ่อนด้วย hidden ลบคำค้นแล้วแถวและรูปเป็นตัวเดิม เบราว์เซอร์ไม่ต้องหาและถอดรหัสรูปใหม่
+    var none = !secs.some(function (x) { return x.items.length; });
+    return html`${secs.filter(function (x) { return x.all; }).map(function (x) {
+      return html`<section class="od-sec" id="od-s${x.i}" data-i="${x.i}" ${x.items.length ? '' : raw('hidden')}><div class="od-sec-h" id="od-sec-${x.i}" data-i="${x.i}"><b>${x.cat}</b><span class="od-prog ${odFull(x) ? 'done' : ''}">${odFull(x) ? html`${icon('check')} ` : ''}${odProgText(x)}</span></div>
         ${x.staff ? odMealHead() : ''}
-        <div class="card flush od-list">${x.items.map(odRow)}</div>${x.staff ? odExtrasBox() : ''}</section>`;
-    });
+        <div class="card flush od-list">${x.rows.map(odRow)}</div>${x.staff ? odExtrasBox() : ''}</section>`;
+    })}${none ? html`<div class="card"><div class="empty">ไม่พบของที่ค้นหา</div></div>` : ''}`;
   }
   /** 2.13.7 ปุ่มของหมดด่วน: เลือกของ ติ๊กครบ 2 ข้อถึงส่งได้ เจ้าของได้แจ้งเตือนทันที · 2.13.11 ปุ่มอยู่บนสุดของหน้า และพิมพ์ค้นชื่อของแทนเลื่อนหาในรายการยาว (เจ้าของร้านสั่ง 28 ต.ค. 2569) */
   function odUrgentBtn() {
@@ -10602,7 +10609,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** As the page scrolls: the last category whose heading has gone under the bar is the one in view. */
   function odSpy() {
     if (S.sub !== 'order' || S.odGoing) return;
-    var heads = document.querySelectorAll('#od-body .od-sec-h');
+    var heads = document.querySelectorAll('#od-body .od-sec:not([hidden]) .od-sec-h');
     if (!heads.length) return;
     var line = ($('#od-nav') ? $('#od-nav').getBoundingClientRect().bottom : 0) + 14;
     var cur = +heads[0].dataset.i;
@@ -11279,8 +11286,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       loadOdoCat();
       return html`<div class="skel" style="height:320px"></div>`;
     }
-    var q = String(odo.catQ || '').trim().toLowerCase();
-    var items = c.items.filter(function (it) { return !q || it.name.toLowerCase().indexOf(q) >= 0; });
     var log = (odo.v && odo.v.log) || [];
     var keeps = c.items.filter(function (it) { return it.active && it.keeps; });
     var live = keeps.filter(function (it) { var p = odoShopee(it); return p && !p.expired; }).length;
@@ -11289,7 +11294,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <p class="small" style="margin:0 0 8px">เฉพาะของเก็บได้นาน ${keeps.length} อย่าง · มีราคาที่ใช้อยู่ ${live} อย่าง · ยอดจ่ายจริงต่อชิ้นหลังโค้ดทุกใบและค่าส่ง · แอปใช้ไม่เกิน ${c.shopeeDays || 35} วัน และย้ายไป Shopee เฉพาะของที่ถูกกว่าทั้ง Makro และ GO</p>
         <button class="btn block" data-act="odo-shopee-form">${icon('edit')} ใส่ผลเทียบ Shopee</button></section>
       <input class="input" type="search" data-odo="q" placeholder="ค้นหาของ" value="${odo.catQ || ''}" autocomplete="off">
-      <section class="card flush" id="odo-items">${odoItemRows(items)}</section>
+      <section class="card flush" id="odo-items">${odoItemRows(c.items)}</section>
       <p class="small muted">PAR ที่แก้ที่นี่ใช้ทันที · แตะชื่อของ ดูสินค้าทุกร้านพร้อมรูปและเปลี่ยนสถานะได้ · แก้ชื่อ หมวด หน่วย หรือเพิ่มของใหม่ บอก Claude</p>`;
   }
   /** What one of the item's units costs in this product (a pack of another size too): 49 บาท/กก. */
@@ -11305,6 +11310,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return html`${i ? ' · ' : ''}${i === 0 && ss.length > 1 && o.score < b[ss[1]].score - 0.005 ? html`<b>${t}</b>` : t}`;
     })}</div>`;
   }
+  /** k63 แท็บ ของ · PAR: ชื่อมีคำที่พิมพ์ไหม · ทุกแถวอยู่ในหน้าเสมอ ที่ไม่ตรงซ่อนด้วย hidden ลบคำค้นแล้วรูปเป็นตัวเดิม (เดิมสร้างใหม่ 137 จาก 137 แถวที่ถูกเอาออก) */
+  function odoHit(it) {
+    var q = String(odo.catQ || '').trim().toLowerCase();
+    return !q || it.name.toLowerCase().indexOf(q) >= 0;
+  }
   function odoItemRows(items) {
     return html`${items.map(function (it) {
       var ps = [it.cat];
@@ -11318,7 +11328,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (odLife(it)) ps.push(odLife(it));
       if (it.max) ps.push('สั่งครั้งละไม่เกิน ' + odNum(it.max) + ' ' + it.unit);
       var sp = odoShopee(it);
-      return html`<div class="item od-cat-item ${it.active ? '' : 'off'}" data-id="${it.id}">${odPic(odoImgOf(it), it.name)}<div class="grow"><div class="t"><button type="button" class="od-name" data-act="odo-item" data-id="${it.id}">${it.name}</button></div><div class="s">${ps.join(' · ')}</div>${odoUsualBuy(it)}
+      return html`<div class="item od-cat-item ${it.active ? '' : 'off'}" data-id="${it.id}" ${odoHit(it) ? '' : raw('hidden')}>${odPic(odoImgOf(it), it.name)}<div class="grow"><div class="t"><button type="button" class="od-name" data-act="odo-item" data-id="${it.id}">${it.name}</button></div><div class="s">${ps.join(' · ')}</div>${odoUsualBuy(it)}
         ${sp ? html`<div class="s od-sp">Shopee: <a href="${sp.link}" target="_blank" rel="noopener">${sp.name}</a> · ${sp.per !== 1 ? 'แพ็คละ' : it.unit + 'ละ'} ${money(sp.price, true)} บาท จ่ายจริง${sp.per !== 1 ? ' (= ' + odNum(sp.per) + ' ' + it.unit + ')' : ''} · Claude เทียบ ${sp.checkedAt ? thShort(ymdOf(new Date(sp.checkedAt))) : '-'}${sp.expired ? html` · <span style="color:var(--warn)">เกิน ${odo.cat.shopeeDays || 35} วัน แอปไม่ใช้</span>` : ''}${it.keeps ? '' : ' · ไม่ใช่ของเก็บได้นาน แอปไม่ใช้'} <button class="od-plain" data-act="odo-shopee-off" data-id="${it.id}">เลิกใช้</button></div>` : ''}
         <div class="od-par">${it.staff ? '' : html`<span class="small muted">PAR</span><span class="stepper"><button type="button" data-act="odo-par" data-id="${it.id}" data-d="-1" aria-label="ลด PAR">−</button><b>${it.par != null ? odNum(it.par) : '–'}</b><button type="button" data-act="odo-par" data-id="${it.id}" data-d="1" aria-label="เพิ่ม PAR">+</button></span><span class="small muted">${it.unit}</span>`}
           ${count}
@@ -11329,9 +11339,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var el = ev.target;
     if (!el.dataset || el.dataset.odo !== 'q' || !odo.cat) return;
     odo.catQ = el.value;
-    var q = el.value.trim().toLowerCase();
     var box = $('#odo-items');
-    if (box) redraw(box, String(odoItemRows(odo.cat.items.filter(function (it) { return !q || it.name.toLowerCase().indexOf(q) >= 0; }))));
+    if (box) redraw(box, String(odoItemRows(odo.cat.items)));
   });
   /**
    * One store's list with quantities, links, and what to buy if one is sold out: for the owner to paste or read out,
@@ -15609,48 +15618,85 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       // · ตั้งแต่ระดับ FIRE.from ทุก FIRE.burn[ระดับ-1] ชิ้นที่วาง (นับทั้งรอบ) มีช่องไหม้ (ค่า BURNT บนกระดาน) โผล่ 1 ช่อง ติดของที่วางอยู่ ไม่ทำให้แถวหรือคอลัมน์เต็ม
       //   ช่องไหม้ไม่นับในสูตรเมนู หายเมื่อเคลียร์แถวหรือคอลัมน์ที่มันอยู่ (หรือค้อน) · ตำแหน่งคิดจาก seed กับจำนวนชิ้นที่วาง ทุกเครื่องได้ช่องเดียวกัน
       // · seed เดิม (d| และ f|) กติกาเดิมทุกข้อ รอบที่บันทึกหรือค้างในเครื่องก่อนรุ่นนี้เล่นซ้ำได้คะแนนเดิม · ค่าจูนจากจำลอง g-k18 (สเปก 5 พ.ย. 2569)
-      var BURNT = 6, FIRE_SEED = /^f2\|/, LIFT = 3;
+      var BURNT = 6, FIRE_SEED = /^f2\|/, FIRE3_SEED = /^f3\|/, LIFT = 3, COMBO_CAP = 8;
       var FIRE = { every: 20, from: 3, mix: [[7, 8, 5, 0], [4, 8, 8, 0], [0, 8, 12, 1], [0, 6, 14, 2], [0, 6, 14, 2], [0, 6, 14, 3], [0, 6, 14, 4], [0, 6, 14, 4]], burn: [0, 0, 4, 3, 2, 2, 2, 2] };
+      // k58 เล่นได้เรื่อย ๆ ตามฝีมือ (เจ้าของถาม 7 พ.ย. 2569 "มันควรออกแบบให้เล่นได้เรื่อยๆดีกว่าไหม" ตอบ "15ok" · ทุกค่าจากจำลอง k45 แบบแนะนำ): เล่นเองรอบใหม่ seed f3| = กติกา 3 ใช้ตารางนี้แทน FIRE
+      // · rest = ระดับพักเตา ชิ้นเล็กกลับมา ไฟหยุดหรือช้าลง · warn = ไฟบอกช่องล่วงหน้ากี่ชิ้น · tight = ช่องไฟต้องชิดของหรือผนังอย่างน้อยกี่ด้าน · combo = เพดานคอมโบ (16 = ×8.5)
+      // · ลำดับชิ้นมาจาก seed ล้วน ชิ้นถัดไปบนจอตรงเสมอ · ช่องเตือนอยู่ในสถานะ (warnC warnAt) คิดจาก seed กับตาเดิน หลังบ้านเล่นซ้ำได้ตรง
+      var FIRE3 = {
+        every: 20, from: 3, rest: [6, 9, 12, 15, 18, 21], warn: 2, tight: 2, combo: 16,
+        mix: [[7, 8, 5, 0], [5, 8, 7, 0], [3, 8, 9, 0], [0, 8, 12, 1], [0, 6, 14, 2], [4, 9, 7, 0], [0, 6, 14, 2], [0, 6, 14, 2], [4, 9, 7, 0], [0, 6, 14, 3], [0, 6, 14, 3], [3, 9, 8, 0], [0, 6, 14, 4], [0, 5, 15, 4], [3, 9, 8, 0], [0, 5, 15, 5], [0, 4, 16, 5], [2, 9, 9, 0], [0, 4, 16, 6], [0, 4, 16, 6], [2, 8, 10, 1], [0, 4, 16, 7], [0, 4, 16, 7]],
+        burn: [0, 0, 5, 4, 3, 0, 3, 2, 0, 2, 2, 6, 2, 2, 6, 2, 2, 5, 2, 2, 4, 2, 1]
+      };
+      function fireOf(st) { return st.rule === 3 ? FIRE3 : FIRE; }
       var SMQ = [[0], [1, 2], [3, 4, 5, 6], [1, 2], [3, 4, 5, 6]], MDQ = [[7, 8], [9], [10, 11, 12, 13], [14, 15, 16, 17], [18, 19], [20, 21, 22, 23]], BGQ = [[24, 25], [27, 28, 29, 30], [31, 32]];
-      function fireBag(r, lv) {
-        var m = FIRE.mix[Math.min(lv, FIRE.mix.length) - 1], b = [], i;
+      function fireBag(r, lv, T) {
+        var m = T.mix[Math.min(lv, T.mix.length) - 1], b = [], i;
         for (i = 0; i < m[0]; i++) b.push(pick(r, SMQ[i % 5]));
         for (i = 0; i < m[1]; i++) b.push(pick(r, MDQ[i % 6]));
         for (i = 0; i < m[2]; i++) b.push(i < m[3] ? 26 : pick(r, BGQ[(i - m[3]) % 3]));
         return shuf(b, r);
       }
       // ชุดที่ k (ระดับ k+1) จาก seed เดิม ทุกเครื่องได้ลำดับเดียวกัน · ชิ้นใหญ่ไม่ติดกันเท่าที่มีชิ้นอื่นให้สลับ · 3 ชิ้นแรกของรอบมีชิ้นใหญ่ไม่เกิน 1
+      // k58 กติกา 3: ชิ้นไม่ใหญ่ลงช่องห่างเท่ากันทั้งชุดจากจุดเริ่มสุ่ม ชิ้นใหญ่ลงช่องที่เหลือ จึงไม่กองท้ายชุด · วัตถุดิบคงตามช่อง
+      function spread(out, r) {
+        var big = [], sm = [], ph = r(), nn = out.length, mm, keep = {}, i, j = 0, t = 0;
+        for (i = 0; i < nn; i++) (out[i].s > 23 ? big : sm).push(out[i].s);
+        mm = sm.length;
+        for (i = 0; i < mm; i++) keep[Math.min(nn - 1, Math.floor((i + ph) * nn / mm))] = 1;
+        for (i = 0; i < nn; i++) out[i].s = keep[i] && j < mm ? sm[j++] : t < big.length ? big[t++] : sm[j++];
+        return out;
+      }
       function fireDeal(seed, k) {
-        var r = rng(seed + '|F' + k), b = fireBag(r, k + 1), out = [], ks = [], i, j, t;
+        var T = FIRE3_SEED.test(seed) ? FIRE3 : FIRE, r = rng(seed + '|F' + k), b = fireBag(r, k + 1, T), out = [], ks = [], i, j, t;
         for (i = 0; i < b.length; i++) { if (!ks.length) ks = shuf([0, 1, 2, 3, 4, 5], r); out.push({ s: b[i], k: ks.pop() }); }
+        if (T === FIRE3) return spread(out, r);
         for (i = 1; i < out.length; i++) if (out[i].s > 23 && (out[i - 1].s > 23 || (!k && i < 3 && out[0].s > 23))) for (j = i + 1; j < out.length; j++) if (out[j].s < 24) { t = out[i]; out[i] = out[j]; out[j] = t; break; }
         return out;
       }
-      // ช่องไหม้ 1 ช่อง: ช่องว่างที่ติดของบนกระดาน 4 ทิศ และไม่ทำให้แถวหรือคอลัมน์เต็ม · ไม่มีช่องแบบนั้น (เช่นครัวเกลี้ยง) ไม่โผล่ · คืนเลขช่องหรือ -1
-      function burn(st) {
-        var b = st.b, ok = [], i, j, x, y, rf, cf;
+      // ช่องนี้มีของแล้ว W-1 ช่องในแถวหรือคอลัมน์ (ไหม้ตรงนี้แถวจะเต็ม)
+      function nearFull(b, i) {
+        var x = i % W, y = (i - x) / W, rf = 0, cf = 0, j;
+        for (j = 0; j < W; j++) { if (b[y * W + j] >= 0) rf++; if (b[j * W + x] >= 0) cf++; }
+        return rf >= W - 1 || cf >= W - 1;
+      }
+      // ช่องที่ไฟจะลง 1 ช่อง: ช่องว่างที่ติดของบนกระดาน 4 ทิศ และไม่ทำให้แถวหรือคอลัมน์เต็ม · ไม่มีช่องแบบนั้น (เช่นครัวเกลี้ยง) คืน -1
+      // · k58 กติกา 3 เลือกเฉพาะช่องที่ชิดของหรือผนังอย่างน้อย FIRE3.tight ด้าน (ไม่มีช่องแบบนั้นใช้เงื่อนไขเดิม)
+      function burnSpot(st) {
+        var b = st.b, ok = [], tight = [], i, x, y;
         for (i = 0; i < N; i++) {
           if (b[i] >= 0) continue;
           x = i % W; y = (i - x) / W;
           if (!((x > 0 && b[i - 1] >= 0) || (x < W - 1 && b[i + 1] >= 0) || (y > 0 && b[i - W] >= 0) || (y < W - 1 && b[i + W] >= 0))) continue;
-          for (rf = 0, cf = 0, j = 0; j < W; j++) { if (b[y * W + j] >= 0) rf++; if (b[j * W + x] >= 0) cf++; }
-          if (rf < W - 1 && cf < W - 1) ok.push(i);
+          if (nearFull(b, i)) continue;
+          ok.push(i);
+          if (st.rule === 3 && (x === 0 || b[i - 1] >= 0 ? 1 : 0) + (x === W - 1 || b[i + 1] >= 0 ? 1 : 0) + (y === 0 || b[i - W] >= 0 ? 1 : 0) + (y === W - 1 || b[i + W] >= 0 ? 1 : 0) >= FIRE3.tight) tight.push(i);
         }
-        if (!ok.length) return -1;
-        i = ok[hash(st.seed + '|b|' + st.used) % ok.length];
-        b[i] = BURNT; st.burnt++;
+        if (tight.length) ok = tight;
+        return ok.length ? ok[hash(st.seed + '|b|' + st.used) % ok.length] : -1;
+      }
+      function burn(st) {
+        var i = burnSpot(st);
+        if (i >= 0) { st.b[i] = BURNT; st.burnt++; }
         return i;
       }
       // หลังวางแต่ละชิ้น (กติกา 2): ระดับไฟ = 1 + ชิ้นที่วาง ÷ FIRE.every ปัดลง (รอบที่เปลี่ยนเป็นไฟ: fl0 + ชิ้นที่วางหลังจุดเปลี่ยน ÷ FIRE.every) · up = ไฟเพิ่งแรงขึ้นตานี้ · burn = ช่องไหม้ที่เพิ่งโผล่ (-1 ไม่มี)
+      // · k58 กติกา 3: ไฟไม่ลงทันที ทุก e ชิ้นเลือกช่องไว้ (warnC) แล้วลงตรงช่องนั้นอีก FIRE3.warn ชิ้น (warnAt) · ถึงเวลาช่องมีของหรือไหม้แล้วแถวจะเต็ม ไฟดับเอง (fizz = ช่องที่ไฟดับ -1 ไม่มี) · ระหว่างรอไม่เลือกช่องใหม่
       function fireStep(st) {
-        var lv = st.fl0 ? st.fl0 + Math.floor((st.used - st.fu0) / FIRE.every) : 1 + Math.floor(st.used / FIRE.every), up = lv > st.fire, e = lv >= FIRE.from ? FIRE.burn[Math.min(lv, FIRE.burn.length) - 1] : 0;
+        var T = fireOf(st), lv = st.fl0 ? st.fl0 + Math.floor((st.used - st.fu0) / T.every) : 1 + Math.floor(st.used / T.every), up = lv > st.fire, e = lv >= T.from ? T.burn[Math.min(lv, T.burn.length) - 1] : 0, c = st.warnC, land = -1, out = -1;
         st.fire = lv;
-        return { up: up, burn: e && st.used % e === 0 ? burn(st) : -1 };
+        if (st.rule !== 3) return { up: up, burn: e && st.used % e === 0 ? burn(st) : -1 };
+        if (c >= 0 && st.used >= st.warnAt) {
+          st.warnC = -1;
+          if (st.b[c] >= 0 || nearFull(st.b, c)) { st.fizz++; out = c; } else { st.b[c] = BURNT; st.burnt++; land = c; }
+        }
+        if (e && st.used % e === 0 && st.warnC < 0) { c = burnSpot(st); if (c >= 0) { st.warnC = c; st.warnAt = st.used + T.warn; } }
+        return { up: up, burn: land, fizz: out };
       }
       // opt.endless = เล่นเอง: ชิ้นไม่มีเพดาน (n = Infinity) เติมทีละ 30 ชิ้นด้วย more() · ชิ้นไม่หมด จบเมื่อวางไม่ได้หรือกดจบรอบ
       function create(seed, opt) {
         opt = opt || {};
-        var n = opt.endless ? Infinity : opt.pieces || PIECES, ro = rng(seed + '|o'), od = [], b = new Int8Array(N), fire = !!opt.endless && FIRE_SEED.test(String(seed));
+        var n = opt.endless ? Infinity : opt.pieces || PIECES, ro = rng(seed + '|o'), od = [], b = new Int8Array(N), v3 = !!opt.endless && FIRE3_SEED.test(String(seed)), fire = v3 || (!!opt.endless && FIRE_SEED.test(String(seed)));
         b.fill(-1);
         // ออเดอร์มาครบ 7 เมนูทุก 7 ใบ ไม่ซ้ำกันภายใน 2 ใบ
         while (od.length < 84) { var bg = shuf([0, 1, 2, 3, 4, 5, 6], ro), l1 = od[od.length - 1], l2 = od[od.length - 2]; for (var t = 0; t < 7 && (bg[0] === l1 || bg[0] === l2 || bg[1] === l1); t++) bg.push(bg.shift()); od.push.apply(od, bg); }
@@ -15660,7 +15706,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           hand: [p[0], p[1], p[2]], qi: 3, od: od, ord: [0, 1], oi: 2,
           score: 0, combo: 0, maxCombo: 0, lines: 0, served: [], used: 0,
           tools: { h: opt.hammer | 0, s: opt.swap | 0, a: opt.tools | 0 }, toolsUsed: 0, over: false, stuck: false, why: '', log: [],
-          rule: fire ? 2 : 1, fire: fire ? 1 : 0, burnt: 0, burnGone: 0
+          rule: v3 ? 3 : fire ? 2 : 1, fire: fire ? 1 : 0, burnt: 0, burnGone: 0, warnC: -1, warnAt: 0, fizz: 0
         };
       }
       function fits(b, s, x, y) {
@@ -15686,7 +15732,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       function more(st) {
         while (st.endless && st.qi + 1 >= st.p.length) {
           var nx = st.fire ? fireDeal(st.seed, st.fl0 ? (st.p.length - st.fp0) / FIRE.every + st.fl0 - 1 : st.p.length / FIRE.every) : deal(rng(st.seed + '|' + st.p.length / PIECES), PIECES), last = st.p[st.p.length - 1];
-          if (nx[0].s > 23 && last.s > 23) for (var j = 1; j < nx.length; j++) if (nx[j].s < 24) { var t = nx[0]; nx[0] = nx[j]; nx[j] = t; break; }
+          // (k58 กติกา 3: สลับมาหัวชุดแล้วชิ้นใหญ่ในชุดจะรวด 8 ชิ้น ให้สลับมาช่องที่สองแทน ชิ้นใหญ่รวดไม่ถึง 8 ทั้งในชุดและข้ามชุด)
+          if (nx[0].s > 23 && last.s > 23) for (var j = 1; j < nx.length; j++) if (nx[j].s < 24) { var q = j + 1, a = 0; while (q < nx.length && nx[q].s > 23) q++; if (st.rule === 3 && q > 8) a = 1; var t = nx[a]; nx[a] = nx[j]; nx[j] = t; break; }
           st.p.push.apply(st.p, nx);
         }
       }
@@ -15713,7 +15760,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         for (i = 0; i < gone.length; i++) { if (b[gone[i]] === BURNT) { st.burnt--; st.burnGone++; bg++; } b[gone[i]] = -1; }
         var k = lines.length, empty = k > 0, op = 0;
         if (k) for (i = 0; i < N; i++) if (b[i] >= 0) { empty = false; break; }
-        st.combo = k ? Math.min(st.combo + 1, 8) : Math.max(st.combo - 1, 0);
+        st.combo = k ? Math.min(st.combo + 1, st.rule === 3 ? FIRE3.combo : COMBO_CAP) : Math.max(st.combo - 1, 0);
         var mult = k ? 1 + (st.combo - 1) * 0.5 : 1;
         for (i = 0; i < served.length; i++) op += MENUS[served[i].m].pts;
         var bonus = (k ? 5 * k * (k + 1) : 0) + op + (empty ? 120 : 0), gain = sh.n + Math.round(bonus * mult);
@@ -15732,7 +15779,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         st.log.push([slot, x, y]);
         if (!quick) check(st);
         cap(st);
-        return { cells: cells, k: pc.k, lines: lines, gone: gone, was: was, served: served, gain: gain, mult: mult, combo: st.combo, perfect: empty, n: sh.n, fire: st.fire, fireUp: !!(fx && fx.up), burn: fx ? fx.burn : -1, burnGone: bg };
+        return { cells: cells, k: pc.k, lines: lines, gone: gone, was: was, served: served, gain: gain, mult: mult, combo: st.combo, perfect: empty, n: sh.n, fire: st.fire, fireUp: !!(fx && fx.up), burn: fx ? fx.burn : -1, fizz: fx && fx.fizz >= 0 ? fx.fizz : -1, burnGone: bg };
       }
       // ค้อน: ทุบช่องที่แตะกับช่องติดกัน 4 ทิศ (รูปบวก)
       function hammer(st, x, y) {
@@ -15769,7 +15816,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return true;
       }
       // ชิ้นที่ต้องวางอีกจนไฟแรงขึ้น (รอบที่เปลี่ยนเป็นไฟนับจากจุดเปลี่ยน)
-      function fireLeft(st) { return FIRE.every - (st.used - (st.fu0 | 0)) % FIRE.every; }
+      function fireLeft(st) { var e = fireOf(st).every; return e - (st.used - (st.fu0 | 0)) % e; }
+      // k58 ระดับนี้เป็นช่วงพักเตาไหม (กติกา 3)
+      function fireRest(st) { return st.rule === 3 && FIRE3.rest.indexOf(st.fire) >= 0; }
       function end(st) { if (!st.over) { st.over = true; st.why = st.stuck ? 'full' : 'quit'; st.log.push(['e']); } }
       function clone(st) {
         var o = {};
@@ -15813,7 +15862,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         end(st);
         return st;
       }
-      var api = { W: W, MAX_LOG: MAX_LOG, PIECES: PIECES, FIRE: FIRE, BURNT: BURNT, fireDeal: fireDeal, LIFT: LIFT, upgrade: upgrade, fireLeft: fireLeft, ING: ING, MENUS: MENUS, SHAPES: SHAPES, rng: rng, create: create, fits: fits, anyFit: anyFit, canPlay: canPlay, check: check, place: place, hammer: hammer, swap: swap, end: end, clone: clone, replay: replay, verify: verify };
+      var api = { W: W, MAX_LOG: MAX_LOG, PIECES: PIECES, FIRE: FIRE, FIRE3: FIRE3, BURNT: BURNT, fireDeal: fireDeal, LIFT: LIFT, upgrade: upgrade, fireLeft: fireLeft, fireRest: fireRest, ING: ING, MENUS: MENUS, SHAPES: SHAPES, rng: rng, create: create, fits: fits, anyFit: anyFit, canPlay: canPlay, check: check, place: place, hammer: hammer, swap: swap, end: end, clone: clone, replay: replay, verify: verify };
       return api;
     })();
     /* ครัวโซลฟูล์ · หน้าจอเกม (ต้องมี SBCore) · SeoulBlock.mount(el, opts) คืนตัวคุม
@@ -15917,6 +15966,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       };
       // คำเชียร์ใต้คำคอมโบ (ตัวเลขคือคอมโบ)
       var CBW = ['', '', '', 'ร้อนแรง!', 'เชฟมือทอง!', 'เทพครัว!', 'ในตำนาน!'];
+      // k58 ขั้นบนของคอมโบ (กติกา 3 คอมโบถึง 16 · เจ้าของตอบ "15ok" 7 พ.ย. 2569): [คอมโบ, คำเชียร์, สีอนุภาค 6 สี] · อนุภาคเท่าขั้น 5 ไม่เพิ่ม ต่างกันที่สีคำ ขอบกระดาน รัศมี และคำเชียร์ · ท่าตัวละครใช้ขั้น 5 เดิม
+      var TOP = [
+        [16, 'เจ้าแห่งครัว!', ['#ffffff', '#fff3a0', '#ffd23f', '#ff5fd2', '#5ee0ff', '#ffe14d']],
+        [12, 'ไร้เทียมทาน!', ['#36c5f0', '#5ee0ff', '#ffffff', '#3b82f6', '#a5f3fc', '#9b6bff']],
+        [10, 'เตาเดือด!', ['#9b6bff', '#c9a6ff', '#5ee0ff', '#ff5fd2', '#6d5cff', '#ffffff']],
+        [8, 'ไฟลุกโชน!', ['#ff3b9a', '#ff7ac6', '#ffd1ec', '#ff3b6b', '#c04bff', '#ffe14d']],
+        [6, 'ในตำนาน!', ['#ffd23f', '#ff9f1c', '#fff3a0', '#ff6b2c', '#ffe14d', '#ffb640']]
+      ];
       // block-lad:end
       function buzz(p) { try { if (root.navigator && navigator.vibrate) navigator.vibrate(p); } catch (e) { /* ไม่มีการสั่น */ } }
       var STM = '<path class="sb-steam" d="M15 9c-2-3 2-4 0-7M24 8c-2-3 2-4 0-7M33 9c-2-3 2-4 0-7" stroke="#fff" stroke-opacity=".75" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
@@ -16182,7 +16239,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         function q(s) { return R.querySelector(s); }
         var grid = q('.sb-grid'), fx = q('.sb-fx'), bd = q('.sb-bd'), fly = q('.sb-fly'), chef = q('.sb-chef'), heat = q('.sb-heat'), glow = q('.sb-glow'), msg = q('.sb-msg'), endEl = q('.sb-end'), tip = q('.sb-tip'), scEl = q('.sb-sc'), flash = q('.sb-flash'), rim = q('.sb-rim');
         var slots = [].slice.call(R.querySelectorAll('.sb-slot')), ords = [].slice.call(R.querySelectorAll('.sb-ord'));
-        var odo = Odo(q('.sb-odo')), cells = [], st, cs = 40, ts = 20, g = 3, pad = 6, tool = '', drag = null, marks = [], shown = 0, tmr = [], mt = 0, avA = null, auE = null, wdE = null, rimL = 0, rimC = 3;
+        var odo = Odo(q('.sb-odo')), cells = [], st, cs = 40, ts = 20, g = 3, pad = 6, tool = '', drag = null, marks = [], shown = 0, tmr = [], mt = 0, avA = null, auE = null, wdE = null, rimL = 0, rimC = 3, rimT = 0, pal = null, wn = h('i', 'sb-wn', '<b></b>');
         for (var i = 0; i < 64; i++) { var c = h('i', 'sb-c'); grid.appendChild(c); cells.push(c); }
         // ประกาย เศษบล็อก ไอร้อน พลุ วาดบนแคนวาสชั้นเดียว ไม่สร้างชิ้นหน้าเว็บทีละดวง เฟรมจึงไม่ตก
         var cv = h('canvas', 'sb-cv'), g2 = cv.getContext ? cv.getContext('2d') : null, parts = [], pr = 0, paused = 0, dpr = Math.min(2, root.devicePixelRatio || 1), IMG = [], gc = null;
@@ -16423,7 +16480,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (!snd) return;
           if (n === 'pick') tone(660, .07, 'triangle', 0, .05, 880);
           else if (n === 'put') tone(330, .1, 'triangle', 0, .09, 200);
-          else if (n === 'clear') for (var i = 0; i < 3; i++) tone(523 * Math.pow(2, (i * 4 + Math.min(c, 8) * 2) / 12), .16, 'square', i * .06, .035);
+          else if (n === 'clear') for (var i = 0; i < 3; i++) tone(523 * Math.pow(2, (i * 4 + Math.min(c, 8) * 2 + Math.max(c - 8, 0) * .75) / 12), .16, 'square', i * .06, .035); // (k58 เกินคอมโบ 8 เสียงสูงขึ้นช้าลง ไม่แหลมบาดหู)
           else if (n === 'serve') { tone(988, .18, 'sine', 0, .09); tone(1319, .3, 'sine', .11, .09); }
           else if (n === 'win') [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, .22, 'triangle', i * .1, .09); });
           else if (n === 'end') [392, 330, 262].forEach(function (f, i) { tone(f, .26, 'triangle', i * .16, .08); });
@@ -16484,15 +16541,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           c.innerHTML = '<i class="sb-dm">' + dwImg(dishM(st.od[st.ord[o2]])) + '</i><div class="sb-ot"><b>' + m.sh + '</b><span>' + m.need.map(function (n, k) { return n ? '<i class="sb-ki k' + k + '"></i>' + n : ''; }).join('') + '</span></div><em>+' + m.pts + '</em>';
           if (fresh && !RM) an(c, [{ transform: 'translateY(-16px) scale(.85)', opacity: 0 }, { transform: 'scale(1.06)', opacity: 1, offset: .6 }, { transform: 'none', opacity: 1 }], { duration: 480, easing: 'cubic-bezier(.3,1.3,.5,1)' });
         }
+        // k58 ขั้นบนของคอมโบในกติกา 3 (แถวของ TOP หรือ null) · รอบกติกาเดิมภาพเหมือนเดิม
+        function topOf(cb) { for (var i = 0; st.rule === 3 && i < TOP.length; i++) if (cb >= TOP[i][0]) return TOP[i]; return null; }
         function heatUp(up) {
-          var cb = st.combo, fl = q('.sb-fl'), hb = q('.sb-heat b');
-          fl.style.transform = 'scale(' + (cb ? .55 + cb * .13 : .32) + ')'; fl.style.opacity = cb ? 1 : .35;
+          var cb = st.combo, fl = q('.sb-fl'), hb = q('.sb-heat b'), tp = topOf(cb), rt = tp ? tp[0] : 0;
+          fl.style.transform = 'scale(' + (cb ? .55 + Math.min(cb, 8) * .13 : .32) + ')'; fl.style.opacity = cb ? 1 : .35; // (k58 เปลวไฟขยายถึงคอมโบ 8 พอ ไม่บังหัวจอ)
           hb.textContent = '×' + (cb ? 1 + (cb - 1) * .5 : 1);
           q('.sb-heat span').textContent = cb ? 'คอมโบ ' + cb : 'คอมโบ';
           heat.classList.toggle('hot', cb >= 3);
           // กระดานเรืองแสงตลอดช่วงคอมโบ 3 ขึ้นไป: แสงวิ่งรอบขอบนอกกระดาน ทอง › ไฟ › รุ้ง ช่องในกระดานไม่ถูกทับ · ชิ้นเดียวหมุนด้วย transform · เครื่องช้าเรืองนิ่ง ขั้น 0 กับลดการเคลื่อนไหวไม่มี
           var rl = RM || !fxQ() || cb < 3 ? 0 : Math.min(cb, 5);
-          if (rl !== rimL) { rimL = rl; rim.className = 'sb-rim' + (rl ? ' on' : '') + ' l' + (rl || rimC) + (fxQ() < 2 ? ' still' : ''); if (rl) rimC = rl; }
+          if (!rl) rt = 0;
+          if (rl !== rimL || rt !== rimT) { rimL = rl; rimT = rt; rim.className = 'sb-rim' + (rl ? ' on' : '') + ' l' + (rl || rimC) + (rt ? ' tp t' + rt : '') + (fxQ() < 2 ? ' still' : ''); if (rl) rimC = rl; }
           if (!up || cb < 2 || RM) return;
           an(hb, [{ transform: 'scale(1)' }, { transform: 'scale(1.6)' }, { transform: 'scale(1)' }], { duration: 420, easing: 'cubic-bezier(.3,1.5,.5,1)' });
           var r = geo().heat;
@@ -16506,12 +16566,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         // 2.13.63 เล่นเองแบบไฟ: ระดับไฟและชิ้นที่เหลือจนไฟแรงขึ้นข้างคะแนน กับสถิติของแบบไฟ · รอบที่เปลี่ยนเป็นไฟ (k31) นับชิ้นจากจุดเปลี่ยน สถิติแบบเดิม
         function best() {
           var dd = stats.days[day], sm = q('.sb-sc small');
-          if (st && st.rule === 2) { sm.innerHTML = '<b class="sb-fv">ไฟ ' + st.fire + ' · อีก ' + C.fireLeft(st) + ' ชิ้น</b> · สถิติ ' + fmt(st.fl0 ? stats.best : stats.fbest); return; }
+          if (st && st.rule > 1) { sm.innerHTML = '<b class="sb-fv">ไฟ ' + st.fire + (C.fireRest(st) ? ' พักเตา' : '') + ' · อีก ' + C.fireLeft(st) + ' ชิ้น</b> · สถิติ ' + fmt(st.fl0 ? stats.best : stats.fbest); return; }
           sm.textContent = 'สถิติ ' + fmt(stats.best) + (mode === 'daily' && dd ? ' · วันนี้ ' + fmt(dd.best) : '');
         }
         function drawAll() {
           for (var i = 0; i < 64; i++) cells[i].className = st.b[i] < 0 ? 'sb-c' : 'sb-c f k' + st.b[i];
-          drawTray(); drawOrd(0); drawOrd(1); heatUp(); left(); tools(); best();
+          drawTray(); drawOrd(0); drawOrd(1); heatUp(); left(); tools(); best(); warnMark();
+        }
+        // k58 ช่องที่ไฟจะลง (กติกา 3): ป้ายในช่องนั้น เลขคือจำนวนชิ้นก่อนไฟลง อ่านจากสถานะ st.warnC จึงตรงกับช่องที่ไหม้จริงเสมอ · ช่องมีของอยู่ป้ายไม่ขึ้น (วางทับแล้วไฟดับ) · ป้ายเป็นลูกของช่อง กระดานย่อขยายตามเอง
+        function warnMark() {
+          var c = st && st.rule === 3 ? st.warnC : -1;
+          if (c < 0 || st.b[c] >= 0) { if (wn.parentNode) wn.parentNode.removeChild(wn); return; }
+          wn.firstChild.textContent = st.warnAt - st.used;
+          if (wn.parentNode !== cells[c]) cells[c].appendChild(wn);
         }
         function start(m, gm) {
           parts.length = 0; paused = 0;
@@ -16524,10 +16591,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           if (game) game.resume = null;
           // k31 รอบ f| ที่ค้างจากก่อน 2.13.63 เปลี่ยนเป็นแบบไฟ (ไฟเริ่มระดับ 3) เก็บรอบทันทีและบอกบนจอ
           var up = lift(back);
-          st = back || (game ? C.create(game.seed, { tools: game.tools | 0, endless: !!game.endless }) : C.create(mode === 'daily' ? 'd' + day : 'f2|' + day + '|' + Date.now().toString(36) + Math.floor(Math.random() * 1e6), { hammer: tl.hammer | 0, swap: tl.swap | 0, endless: mode !== 'daily' }));
+          st = back || (game ? C.create(game.seed, { tools: game.tools | 0, endless: !!game.endless }) : C.create(mode === 'daily' ? 'd' + day : 'f3|' + day + '|' + Date.now().toString(36) + Math.floor(Math.random() * 1e6), { hammer: tl.hammer | 0, swap: tl.swap | 0, endless: mode !== 'daily' }));
           shown = 0; tool = ''; R.classList.remove('t-h', 't-s'); endEl.classList.remove('on'); msgOff(); tip.style.opacity = back ? 0 : '';
           var dt = day.split('-');
-          q('.sb-mode').textContent = mode === 'daily' ? 'โจทย์ ' + (+dt[2]) + ' ' + TH[+dt[1] - 1] + (game && game.n ? ' · รอบ ' + game.n + '/5' : '') : st.rule === 2 ? 'เล่นเอง · ไฟแรงขึ้นทุก ' + C.FIRE.every + ' ชิ้น' : 'เล่นเอง · ไม่จำกัดชิ้น';
+          q('.sb-mode').textContent = mode === 'daily' ? 'โจทย์ ' + (+dt[2]) + ' ' + TH[+dt[1] - 1] + (game && game.n ? ' · รอบ ' + game.n + '/5' : '') : st.rule > 1 ? 'เล่นเอง · ไฟแรงขึ้นทุก ' + C.FIRE.every + ' ชิ้น' : 'เล่นเอง · ไม่จำกัดชิ้น';
           odo.set(st.score); poseOff(); mood(''); drawAll();
           if (back && st.stuck) stuck();
           else if (up) msgOn('<b>รอบนี้เปลี่ยนเป็นแบบใหม่แล้ว</b>ไฟเริ่มที่ระดับ ' + st.fire + ' แรงขึ้นทุก ' + C.FIRE.every + ' ชิ้น · กระดานและคะแนนเดิมอยู่ครบ<button type="button" class="sb-goon">เล่นต่อ</button>');
@@ -16625,8 +16692,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           heatUp(res.lines.length > 0); left(); drawTray(s); tools();
           // 2.13.63 เล่นเองแบบไฟ: ช่องไหม้โผล่หลังแถวแตก · ไฟแรงขึ้นมีฉากไฟ · ป้ายไฟข้างคะแนน
           if (res.burn >= 0) tmr.push(setTimeout(function () { burnt(res.burn); }, res.lines.length ? 420 : 160));
+          if (res.fizz >= 0) tmr.push(setTimeout(function () { fizzOut(res.fizz); }, res.lines.length ? 420 : 160));
           if (res.fireUp) tmr.push(setTimeout(function () { fireUp(res.fire); }, res.lines.length ? 700 : 200));
-          if (st.rule === 2) best();
+          if (st.rule > 1) { best(); warnMark(); }
           // (2.13.63) จบรอบแล้วไม่วาดออเดอร์ใหม่ใต้หน้าจบรอบ: งานเปล่าที่ทับเอฟเฟกต์หน้าจบ · เล่นอีกรอบวาดใหม่ทั้งหมดอยู่แล้ว
           for (i = 0; i < res.served.length; i++) (function (o2) { tmr.push(setTimeout(function () { if (!shown) drawOrd(o2, true); }, 1500)); })(res.served[i].o);
           if (st.over) {
@@ -16662,7 +16730,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           }
           var cb = res.combo, big = k >= 4 ? 'เทพครัว!' : k === 3 ? 'สุดยอด!' : k === 2 ? 'เยี่ยม!' : '', lv = Math.max(cb, k);
           if (res.perfect) big = 'ครัวเกลี้ยง!';
-          if (big || cb >= 2) word(big || 'คอมโบ ' + cb + '!', big ? (cb >= 2 ? 'คอมโบ ' + cb : '') : CBW[Math.min(cb, 6)], lv);
+          var tp = topOf(cb);
+          if (big || cb >= 2) word(big || 'คอมโบ ' + cb + '!', big ? (cb >= 2 ? 'คอมโบ ' + cb : '') : tp ? tp[1] : CBW[Math.min(cb, 6)], lv, tp);
           // 2.13.63 ทุกการเคลียร์มีวาบแสงกลางช่องที่แตกและสั่น (เดิมสั่นเฉพาะหลายแถว)
           lf(res.gone);
           shake(k >= 2 || cb >= 3 ? Math.min(7, 2 + k + cb * .6) : 2);
@@ -16705,10 +16774,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         }
         // คำคอมโบขึ้นแถบบนของกระดาน ช่องกลางกระดานไม่ถูกบัง (เจ้าของ 6 พ.ย. 2569 ต้องอ่านกระดานออกตลอด) · คำเก่าที่ยังค้างเอาออกก่อน คอมโบติดกันคำไม่ซ้อน
         function wy(b) { return b.y + b.h * .03; }
-        function word(t, sub, lvl) {
+        function word(t, sub, lvl, tp) {
           var b = geo().bd, hot = lvl >= 2, s = (1 + Math.min(lvl || 0, 6) * .1) * (hot && R.classList.contains('short') ? .78 : 1);
           if (hot && wdE && wdE.parentNode) wdE.parentNode.removeChild(wdE);
-          var e = spawn('sb-word' + (lvl >= 5 ? ' l5' : lvl >= 4 ? ' l4' : lvl >= 3 ? ' l3' : lvl >= 2 ? ' l2' : ''), t + (sub ? '<small>' + sub + '</small>' : ''), fly);
+          var e = spawn('sb-word' + (lvl >= 5 ? ' l5' : lvl >= 4 ? ' l4' : lvl >= 3 ? ' l3' : lvl >= 2 ? ' l2' : '') + (tp ? ' tp t' + tp[0] : ''), t + (sub ? '<small>' + sub + '</small>' : ''), fly);
           if (hot) wdE = e;
           e.style.fontSize = Math.round(36 * s) + 'px';
           var T = 'translate(' + (b.x + b.w / 2) + 'px,' + (hot ? wy(b) : b.y + b.h * .42) + 'px) translate(-50%,-50%)';
@@ -16720,10 +16789,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         // 2 คำเด้ง ประกายทอง วงแสง · 3 + คลื่นแสงรอบกระดาน อนุภาคหลากสี กระดานเรืองแสงทอง
         // 4 + ลิ้นไฟรอบกระดาน ถ่านไฟ ดาวพุ่งเต็มจอ แสงวาบขอบจอ รัศมีหลังคำและหลังตัวละคร ตัวคูณบินเข้าหม้อ กระดานเรืองแสงไฟ · 5 ขึ้นไป + ดาวตก รัศมีสีรุ้ง กระดานเรืองแสงรุ้ง
         function ladder(lv, cb, res) {
-          var L = LAD[Math.min(lv, 5)];
-          fxAt(34, function () { if (cb >= 2) glowUp(cb); if (lv >= 4) edgeFlash(lv); if (L.wave) wave(lv, L.wave); });
+          var L = LAD[Math.min(lv, 5)], tp = topOf(cb), tc = tp ? ' tp t' + tp[0] : '';
+          pal = tp ? tp[2] : null;
+          fxAt(34, function () { if (cb >= 2) glowUp(cb); if (lv >= 4) edgeFlash(lv); if (L.wave) wave(lv, L.wave, tc); });
           fxAt(68, function () { sparkle(L.sp); rings(L.ring, res.gone); if (L.edge) edge(L.edge); });
-          if (lv >= 4) fxAt(102, function () { rays(lv); stars(L.star); fire(L.fl, L.em); if (L.cm) comets(L.cm); if (res.mult > 1) mul(res.mult); });
+          if (lv >= 4) fxAt(102, function () { rays(lv, tc); stars(L.star); fire(L.fl, L.em); if (L.cm) comets(L.cm); if (res.mult > 1) mul(res.mult, tc); });
         }
         function glowUp(cb) { if (RM || fxQ() < 2) return; an(glow, [{ opacity: 0 }, { opacity: Math.min(1, .45 + cb * .1), offset: .2 }, { opacity: 0 }], { duration: 950, easing: 'ease-out' }); }
         // 2.13.63 วาบแสงกลมกลางช่องที่เคลียร์ 300 มิลลิวินาที (ชิ้นเดียว · ลดการเคลื่อนไหวไม่ขึ้น)
@@ -16741,11 +16811,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           var b0 = geo().bd;
           emit({ ty: 'smk', x: b0.x + P(c % W) + cs / 2, y: b0.y + P((c / W) | 0) + cs / 2, d: 900 });
         }
+        // k58 ไฟดับเอง (วางทับช่องเตือน หรือไหม้แล้วแถวจะเต็ม): ควันเทา 1 ก้อน
+        function fizzOut(c) { var b0 = geo().bd; emit({ ty: 'smk', x: b0.x + P(c % W) + cs / 2, y: b0.y + P((c / W) | 0) + cs / 2, d: 900 }); }
         // 2.13.63 ไฟแรงขึ้น: ไฟไล่สีจากล่างเต็มจอ 0.9 วิ ป้าย "ไฟแรงขึ้น! ระดับ N" 1.2 วิ ถ่านไฟ 24 ดวง สั่นสั้น (Android) · ลดการเคลื่อนไหว: ป้ายนิ่งอย่างเดียว
+        // · k58 กติกา 3: ระดับพักเตาขึ้นป้ายพักเตาอย่างเดียว ไม่มีฉากไฟ · ระดับแรกที่ไฟลงบอกความหมายของช่องเตือน (ป้ายอยู่นานขึ้นให้อ่านทัน)
         function fireUp(lv) {
-          go(spawn('sb-fu', 'ไฟแรงขึ้น! ระดับ ' + lv, fly), [{ transform: 'scale(.6)', opacity: 0 }, { transform: 'scale(1.15)', opacity: 1, offset: .25 }, { transform: 'scale(1)', opacity: 1, offset: .8 }, { transform: 'scale(1)', opacity: 0 }], { duration: 1200, fill: 'both' });
+          var rest = st.fire === lv && C.fireRest(st), hint = st.rule === 3 && lv === C.FIRE3.from;
+          go(spawn('sb-fu', rest ? 'พักเตา<small>ไฟเบาลง ชิ้นเล็กกลับมา</small>' : 'ไฟแรงขึ้น! ระดับ ' + lv + (hint ? '<small>ช่องส้มคือที่ไฟจะลง วางของทับได้</small>' : ''), fly), [{ transform: 'scale(.6)', opacity: 0 }, { transform: 'scale(1.15)', opacity: 1, offset: .25 }, { transform: 'scale(1)', opacity: 1, offset: .8 }, { transform: 'scale(1)', opacity: 0 }], { duration: rest || hint ? 2200 : 1200, fill: 'both' });
           sfx('serve'); bz([20, 30, 40]);
-          if (RM) return;
+          if (RM || rest) return;
           if (fxQ() > 1) go(spawn('sb-fire', '', fly), [{ transform: 'translateY(35%) scaleY(.5)', opacity: 0 }, { transform: 'translateY(0) scaleY(1)', opacity: 1, offset: .3 }, { transform: 'translateY(-6%) scaleY(1.08)', opacity: .8, offset: .6 }, { transform: 'translateY(-10%) scaleY(1.1)', opacity: 0 }], { duration: 900, easing: 'ease-out', fill: 'both' });
           var r = geo().R;
           for (var i = 0; i < 24; i++) emit({ ty: 'em', x: Math.random() * r.w, y: r.h - Math.random() * 120, dx: (Math.random() - .5) * 60, dy: -260 - Math.random() * 300, d: 900 + Math.random() * 500, dl: Math.random() * 300 });
@@ -16763,13 +16837,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           var b = geo().bd, x = 0, y = 0, i;
           for (i = 0; i < gone.length; i++) { x += P(gone[i] % W) + cs / 2; y += P((gone[i] / W) | 0) + cs / 2; }
           x = b.x + x / gone.length; y = b.y + y / gone.length;
-          for (i = 0; i < n; i++) emit({ ty: 'rg', x: x, y: y, r: 90 + i * 34, z: 1, c: RB[(i * 2 + 1) % 6], d: 460, dl: i * 90 });
+          for (i = 0; i < n; i++) emit({ ty: 'rg', x: x, y: y, r: 90 + i * 34, z: 1, c: (pal || RB)[(i * 2 + 1) % 6], d: 460, dl: i * 90 });
         }
         var RB = ['#ff3b6b', '#ff9f1c', '#ffe14d', '#3ddc84', '#36c5f0', '#9b6bff'];
         // คลื่นแสงรอบกระดาน (คอมโบ 3 ขึ้นไป)
-        function wave(lv, n) {
+        function wave(lv, n, tc) {
           if (RM || fxQ() < 2) return;
-          for (var i = 0; i < n; i++) go(spawn('sb-wave' + (lv >= 5 ? ' l5' : lv >= 4 ? ' l4' : '')), [{ transform: 'scale(.97)', opacity: 0 }, { transform: 'scale(1)', opacity: 1, offset: .2 }, { transform: 'scale(1.12)', opacity: 0 }], { duration: 700, delay: i * 180, easing: 'ease-out', fill: 'both' });
+          for (var i = 0; i < n; i++) go(spawn('sb-wave' + (lv >= 5 ? ' l5' : lv >= 4 ? ' l4' : '') + (tc || '')), [{ transform: 'scale(.97)', opacity: 0 }, { transform: 'scale(1)', opacity: 1, offset: .2 }, { transform: 'scale(1.12)', opacity: 0 }], { duration: 700, delay: i * 180, easing: 'ease-out', fill: 'both' });
         }
         // อนุภาคหลากสีพุ่งออกจากขอบกระดาน (คอมโบ 3 ขึ้นไป)
         function edge(n) {
@@ -16777,7 +16851,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           for (var i = 0; i < n; i++) {
             var sd = i % 4, u = Math.random(), px = sd < 2 ? b.x + u * b.w : sd === 2 ? b.x : b.x + b.w, py = sd === 0 ? b.y : sd === 1 ? b.y + b.h : b.y + u * b.h;
             var vx = sd === 2 ? -1 : sd === 3 ? 1 : u - .5, vy = sd === 0 ? -1 : sd === 1 ? 1 : u - .5, r = 30 + Math.random() * 50;
-            emit({ ty: 'sp', st: !(i % 3), x: px, y: py, dx: vx * r, dy: vy * r, r: 3, c: RB[i % 6], d: 650 + Math.random() * 300 });
+            emit({ ty: 'sp', st: !(i % 3), x: px, y: py, dx: vx * r, dy: vy * r, r: 3, c: (pal || RB)[i % 6], d: 650 + Math.random() * 300 });
           }
         }
         // แสงวาบเฉพาะขอบจอ กลางจอใส กระดานไม่ขาวโพลน (เดิมวาบขาวทับทั้งกระดาน)
@@ -16785,7 +16859,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         // ดาวพุ่งจากกลางกระดานไปทั่วจอ (คอมโบ 4 ขึ้นไป)
         function stars(n) {
           var r = geo().R, b = geo().bd, cx = b.x + b.w / 2, cy = b.y + b.h / 2;
-          for (var i = 0; i < n; i++) { var a = i / n * 6.283 + Math.random() * .2, d = Math.max(r.w, r.h) * (.45 + Math.random() * .25); emit({ ty: 'bs', st: 1, z: 11, x: cx, y: cy, dx: Math.cos(a) * d, dy: Math.sin(a) * d, c: RB[i % 6], d: 900 + Math.random() * 300 }); }
+          for (var i = 0; i < n; i++) { var a = i / n * 6.283 + Math.random() * .2, d = Math.max(r.w, r.h) * (.45 + Math.random() * .25); emit({ ty: 'bs', st: 1, z: 11, x: cx, y: cy, dx: Math.cos(a) * d, dy: Math.sin(a) * d, c: (pal || RB)[i % 6], d: 900 + Math.random() * 300 }); }
         }
         // ลิ้นไฟรอบขอบนอกกระดาน และถ่านไฟลอยขึ้นจากขอบ (คอมโบ 4 ขึ้นไป) ไม่ขึ้นกลางกระดาน
         function fire(nf, ne) {
@@ -16805,13 +16879,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           for (var i = 0; i < n; i++) {
             var lf2 = i % 2 === 0, x0 = lf2 ? -20 - i * 12 : r.w + 20 + i * 12, y0 = 40 + i * 26, x1 = b.x + b.w * (lf2 ? .2 + i * .05 : .8 - i * .05), y1 = b.y - 6, dl = i * 70, dd = 460;
             emit({ ty: 'cm', x: x0, y: y0, dx: x1 - x0, dy: y1 - y0, r: Math.atan2(y1 - y0, x1 - x0), d: dd, dl: dl });
-            for (var j = 0; j < 3; j++) emit({ ty: 'sp', st: 1, x: x1, y: y1, dx: (Math.random() - .5) * 90, dy: -30 - Math.random() * 50, r: 2, c: RB[(i + j) % 6], d: 520, dl: dl + dd * .9 });
+            for (var j = 0; j < 3; j++) emit({ ty: 'sp', st: 1, x: x1, y: y1, dx: (Math.random() - .5) * 90, dy: -30 - Math.random() * 50, r: 2, c: (pal || RB)[(i + j) % 6], d: 520, dl: dl + dd * .9 });
           }
         }
         // รัศมีหลังคำคอมโบ (คอมโบ 4 ขึ้นไป · 5 สีรุ้ง) ชิ้นเดียวหมุนด้วย transform จางเร็ว อยู่ใต้คำ
-        function rays(lv) {
+        function rays(lv, tc) {
           if (RM || fxQ() < 2) return;
-          var b = geo().bd, e = h('i', 'sb-rays' + (lv >= 5 ? ' l5' : '')), T = 'translate(' + (b.x + b.w / 2) + 'px,' + wy(b) + 'px)';
+          var b = geo().bd, e = h('i', 'sb-rays' + (lv >= 5 ? ' l5' : '') + (tc || '')), T = 'translate(' + (b.x + b.w / 2) + 'px,' + wy(b) + 'px)';
           fly.insertBefore(e, fly.firstChild);
           go(e, [{ transform: T + ' scale(.4) rotate(-20deg)', opacity: 0 }, { transform: T + ' scale(1) rotate(30deg)', opacity: .9, offset: .25 }, { transform: T + ' scale(1.12) rotate(90deg)', opacity: 0 }], { duration: 1050, easing: 'ease-out', fill: 'both' });
         }
@@ -16830,8 +16904,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           for (var i = 0; i < n; i++) { var a = 3.34 + i / (n - 1) * 2.74, d = 26 + Math.random() * 26; emit({ ty: 'sp', st: !(i % 2), x: x, y: y, dx: Math.cos(a) * d, dy: Math.sin(a) * d * .7, r: 2, c: i % 2 ? '#fff3a0' : '#ffb640', d: 420 + Math.random() * 160 }); }
         }
         // ตัวคูณโผล่เหนือกระดานข้างหม้อ แล้วบินเข้าหม้อ ไม่ทับกระดาน (เดิมตัวใหญ่ 88 กลางล่างกระดาน)
-        function mul(mult) {
-          var r = geo().heat, e = spawn('sb-mul', '×' + mult, fly);
+        function mul(mult, tc) {
+          var r = geo().heat, e = spawn('sb-mul' + (tc || ''), '×' + mult, fly);
           var T0 = 'translate(' + (r.x - 38) + 'px,' + (r.y + r.h * .55) + 'px) translate(-50%,-50%)', T1 = 'translate(' + (r.x + r.w / 2) + 'px,' + (r.y + r.h * .62) + 'px) translate(-50%,-50%)';
           go(e, [{ transform: T0 + ' scale(.2) rotate(-20deg)', opacity: 0 }, { transform: T0 + ' scale(1.25) rotate(6deg)', opacity: 1, offset: .2 }, { transform: T0 + ' scale(1) rotate(0)', opacity: 1, offset: .62 }, { transform: T1 + ' scale(.34)', opacity: .4 }], { duration: 1000, delay: 80, easing: 'ease-in-out', fill: 'both' });
         }
@@ -16857,7 +16931,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           var hm = spawn('sb-hm', IC.ham), T2 = 'translate(' + (P(x) - 6) + 'px,' + (P(y) - 30) + 'px)';
           go(hm, [{ transform: T2 + ' rotate(-50deg) scale(1.4)', opacity: 0 }, { transform: T2 + ' rotate(20deg) scale(1.4)', opacity: 1, offset: .4 }, { transform: T2 + ' rotate(0) scale(1.3)', opacity: 0 }], { duration: 520, easing: 'ease-in', fill: 'both' });
           shake(5); sfx('hit'); bz(20);
-          drawTray(); tools(); keep();
+          drawTray(); tools(); warnMark(); keep();
           if (st.over) tmr.push(setTimeout(showEnd, 700)); else if (st.stuck) stuck(); else msgOff();
         }
         function doSwap(s) {
@@ -16914,7 +16988,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           [].forEach.call(fly.querySelectorAll('.sb-fu,.sb-fire,.sb-word,.sb-dish,.sb-mul,.sb-rays'), function (e) { if (e.parentNode) e.parentNode.removeChild(e); });
           // 2.13.63 เล่นเองแบบไฟ (กติกา 2): สถิติใหม่เทียบเฉพาะรอบแบบไฟ (stats.fbest) และไฟถึง stats.recFire ตรงกับหลังบ้าน (apiBlockSend_)
           // · รอบ f| ที่เปลี่ยนเป็นไฟ (k31 · fl0) นับสถิติแบบเดิมตรงกับหลังบ้าน ป้ายไฟถึงระดับยังขึ้น
-          var fr = st.rule === 2 && !st.fl0, rf = stats.recFire || 2, sc = st.score, prev = (fr ? stats.fbest : stats.best) || 0, dd = stats.days[day] || { best: 0, plays: 0 }, low = fr && st.fire < rf, nb = sc > prev && !low;
+          var fr = st.rule > 1 && !st.fl0, rf = stats.recFire || 2, sc = st.score, prev = (fr ? stats.fbest : stats.best) || 0, dd = stats.days[day] || { best: 0, plays: 0 }, low = fr && st.fire < rf, nb = sc > prev && !low;
           if (mode === 'daily') { dd.plays++; dd.best = Math.max(dd.best, sc); stats.days[day] = dd; }
           if (fr) { stats.fbest = Math.max(stats.fbest || 0, sc); stats.fire = Math.max(stats.fire || 0, st.fire); }
           stats.best = Math.max(stats.best || 0, sc); stats.combo = Math.max(stats.combo || 0, st.maxCombo); stats.served = (stats.served || 0) + st.served.length; stats.plays = (stats.plays || 0) + 1;
@@ -16925,7 +16999,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           var ds = Object.keys(cnt).map(function (m) { return '<i>' + dwImg(dishM(+m)) + (cnt[m] > 1 ? '<b>×' + cnt[m] + '</b>' : '') + '</i>'; }).join(''), dishes = ds ? '' : '<span>ยังไม่ได้เสิร์ฟ ลองวางวัตถุดิบตามออเดอร์ให้อยู่แถวเดียวกัน</span>';
           team = o.onEnd ? 'กำลังบันทึกรอบนี้…' : mode !== 'daily' ? 'เล่นเองไม่นับเข้าทีม สถิติส่วนตัวยังนับ' : dd.plays <= 5 ? 'นับเข้าทีมแล้ว ' + dd.plays + '/5 รอบวันนี้ · ทีมใช้รอบดีสุดของวัน' : 'วันนี้นับเข้าทีมครบ 5 รอบแล้ว เล่นต่อเก็บสถิติได้';
           endEl.innerHTML = '<div class="sb-ep"><div class="sb-et">' + (st.why === 'done' ? 'ครบทุกชิ้นแล้ว!' : st.why === 'full' ? 'ครัวเต็มแล้ว!' : st.why === 'cap' ? 'รอบนี้ยาวมาก จบรอบให้แล้ว' : 'จบรอบ') + '</div>' +
-            '<div class="sb-chef sb-ec' + (o.avatar ? '' : ' own') + '"><div class="sb-av"></div></div><div class="sb-es"><b class="sb-odo"></b></div>' + (st.rule === 2 ? '<div class="sb-ef">' + FLAME + '<span>ไฟถึงระดับ ' + st.fire + '</span></div>' : '') +
+            '<div class="sb-chef sb-ec' + (o.avatar ? '' : ' own') + '"><div class="sb-av"></div></div><div class="sb-es"><b class="sb-odo"></b></div>' + (st.rule > 1 ? '<div class="sb-ef">' + FLAME + '<span>ไฟถึงระดับ ' + st.fire + '</span></div>' : '') +
             '<div class="sb-eb' + (nb ? ' nb' : '') + '">' + (nb ? 'สถิติใหม่!' : low && sc > prev ? 'ไฟถึงระดับ ' + rf + ' จึงนับเป็นสถิติใหม่' : sc === prev ? 'เท่าสถิติเดิม! อีกนิดเดียว' : 'อีก ' + fmt(prev - sc + 1) + ' คะแนนจะทำลายสถิติ') + '</div>' +
             '<div class="sb-e3"><div><b>' + st.maxCombo + '</b><span>คอมโบสูงสุด</span></div><div><b>' + st.served.length + '</b><span>เมนูที่เสิร์ฟ</span></div><div><b>' + st.lines + '</b><span>แถวที่เคลียร์</span></div></div>' +
             '<div class="sb-ed">' + dishes + '</div><p class="sb-er">' + (fr ? 'สถิติเล่นเองแบบไฟ ' + fmt(stats.fbest) + ' · ไฟสูงสุด ระดับ ' + stats.fire : 'สถิติส่วนตัว ' + fmt(stats.best)) + (mode === 'daily' ? ' · วันนี้ดีสุด ' + fmt(dd.best) : '') + '</p><p class="sb-em">' + team + '</p>' +
@@ -17008,7 +17082,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     })(window);
     var css = document.createElement('style');
     css.id = 'sb-css';
-    css.textContent = "/* ครัวโซลฟูล์ · หน้าตา (ขยับด้วย transform และ opacity เท่านั้น) */\n.sb{--cs:40px;--g:3px;--t1:#2a1f17;--t2:#85786b;--cd:rgba(255,255,255,.74);--cdl:rgba(92,68,36,.12);position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:6px;height:100%;padding:6px 14px calc(8px + env(safe-area-inset-bottom));overflow:hidden;font-family:var(--font,system-ui,sans-serif);color:var(--t1);background:radial-gradient(120% 60% at 15% 0,rgba(255,206,140,.55),transparent 60%),radial-gradient(80% 50% at 100% 35%,rgba(255,168,140,.32),transparent 60%),var(--bg,#f2eee7);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}\n.sb,.sb *{box-sizing:border-box}\n.sb button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cursor:pointer}\n.sb svg{display:block}\n.sb.th-autumn{background:radial-gradient(120% 60% at 15% 0,rgba(255,180,100,.6),transparent 60%),radial-gradient(80% 50% at 100% 40%,rgba(226,110,60,.26),transparent 60%),#f4ece0}\n.sb.th-loy,.sb.th-xmas{--t1:#fff8ec;--t2:rgba(255,244,228,.72);--cd:rgba(255,255,255,.13);--cdl:rgba(255,255,255,.16)}\n.sb.th-loy{background:radial-gradient(90% 50% at 80% 0,rgba(255,190,90,.35),transparent 60%),linear-gradient(180deg,#0f1c42,#1d3470 60%,#2a4f8f)}\n.sb.th-xmas{background:radial-gradient(90% 50% at 20% 0,rgba(255,120,110,.3),transparent 60%),linear-gradient(180deg,#0f3326,#1b5038)}\n.sb-top,.sb-hud,.sb-ords,.sb-bd,.sb-tray,.sb-bar{position:relative;z-index:1;flex:none}\n.sb-deco{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}\n.sb-deco i{position:absolute;top:0;opacity:.5;will-change:transform}\n.sb-deco i.dn{animation:sbDn 20s linear infinite}\n.sb-deco i.up{animation:sbUp 20s linear infinite}\n.sb-deco i.fl{top:auto;bottom:6px;width:42px;opacity:.9;animation:sbBob 5s ease-in-out infinite}\n.sb-deco svg{width:100%;height:auto}\n@keyframes sbDn{from{transform:translateY(-10vh) rotate(0)}to{transform:translateY(105vh) rotate(300deg)}}\n@keyframes sbUp{from{transform:translateY(105vh)}to{transform:translateY(-12vh)}}\n@keyframes sbBob{50%{transform:translate(16px,-5px) rotate(4deg)}}\n.sb-glow{position:absolute;inset:0;z-index:20;pointer-events:none;opacity:0;will-change:opacity;background:linear-gradient(90deg,rgba(255,110,20,.9),rgba(255,150,40,0) 13%,rgba(255,150,40,0) 87%,rgba(255,110,20,.9)),linear-gradient(180deg,rgba(255,110,20,.9),rgba(255,150,40,0) 9%,rgba(255,150,40,0) 91%,rgba(255,110,20,.9))}\n.sb-top{display:flex;align-items:center;gap:8px;height:42px}\n.sb-x,.sb-snd,.sb-vib{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-x svg,.sb-snd svg,.sb-vib svg{width:20px;height:20px}\n.sb-snd,.sb-vib{color:var(--t2)}\n.sb-snd.on,.sb-vib.on{color:#e0702a}\n.sb-ttl{flex:1;min-width:0;line-height:1.3}\n.sb-ttl b{display:block;font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-ttl span{display:block;font-size:12.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-left{flex:none;min-width:64px;padding:3px 8px;border-radius:14px;text-align:center;line-height:1.2;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-left b{display:block;font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}\n.sb-left span{font-size:10.5px;color:var(--t2)}\n.sb-fin{flex:none;min-width:64px;padding:3px 10px;border-radius:14px;text-align:center;line-height:1.2;color:#24170e;background:#ffd36b;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}\n.sb-fin b{display:block;font-size:15px;font-weight:800}\n.sb-fin span{font-size:10.5px;font-weight:600}\n.sb-fin[hidden],.sb-left[hidden]{display:none}\n.sb.low .sb-left b{color:#e0482f}\n.sb-hud{display:flex;align-items:flex-end;gap:10px;height:104px}\n.sb-chef{position:relative;flex:none;width:62px;height:104px}\n.sb-chef svg{position:absolute;left:-2px;bottom:-10px;width:66px;height:123px;overflow:visible}\n.sb-av{position:absolute;inset:0;z-index:1;transform-origin:50% 100%}\n.sb-sc{flex:1;min-width:0;padding-bottom:8px;line-height:1.2;transform-origin:20% 70%}\n.sb-sc>span,.sb-sc small{display:block;font-size:12.5px;color:var(--t2)}\n.sb-sc small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-odo{display:flex;height:1em;overflow:hidden;font-size:40px;font-weight:800;line-height:1;letter-spacing:-.5px;font-variant-numeric:tabular-nums}\n.sb-d{display:block;height:1em;overflow:hidden}\n.sb-d>span{display:block;transition:transform .5s cubic-bezier(.3,1.25,.5,1);will-change:transform}\n.sb-heat{flex:none;width:84px;padding-bottom:6px;text-align:center;line-height:1.2}\n.sb-pot{position:relative;width:56px;height:52px;margin:0 auto}\n.sb-pot>svg{position:absolute;left:0;top:0;width:56px;height:40px}\n.sb-fl{position:absolute;left:12px;bottom:-4px;width:32px;height:38px;transform-origin:50% 100%;transition:transform .45s cubic-bezier(.3,1.5,.5,1),opacity .3s}\n.sb-fl svg{width:100%;height:100%;transform-origin:50% 100%;animation:sbFlick .5s ease-in-out infinite alternate}\n@keyframes sbFlick{from{transform:scale(1,1)}to{transform:scale(.9,1.12)}}\n.sb-heat.hot .sb-pot::after{content:\"\";position:absolute;left:-14px;right:-14px;bottom:-16px;height:46px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,150,40,.7),transparent);animation:sbPulse .6s ease-in-out infinite alternate}\n.sb-heat b{display:block;font-size:20px;font-weight:800;color:#e0552f}\n.sb-heat span{display:block;font-size:11px;color:var(--t2)}\n.sb-ords{display:grid;grid-template-columns:1fr 1fr;gap:8px;height:58px}\n.sb-ord{display:flex;align-items:center;gap:5px;min-width:0;padding:5px 7px;border-radius:16px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 6px 14px -10px rgba(60,30,10,.4);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-ord.hit{transform:scale(1.05);box-shadow:inset 0 0 0 2px #ffb020,0 0 16px rgba(255,170,40,.7)}\n.sb-dm{flex:none;width:40px}\n.sb-dm svg,.sb-dm .sb-dw>img{width:40px;height:34px}\n.sb-dm .sb-dw>img{display:block}\n.sb-ot{flex:1;min-width:0;line-height:1.3}\n.sb-ot b{display:block;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-ot span{display:flex;align-items:center;gap:1px;font-size:12.5px;font-weight:800}\n.sb-ki{display:inline-block;width:17px;height:17px;margin-left:3px;border-radius:5px;background:var(--i) center/82% no-repeat,linear-gradient(var(--c1),var(--c2))}\n.sb-ki:first-child{margin-left:0}\n.sb-ord em{flex:none;padding:2px 6px;border-radius:99px;font-style:normal;font-size:11.5px;font-weight:800;color:#b4410f;background:#ffe9cf}\n.sb-bd{align-self:center;will-change:transform}\n.sb-grid{display:grid;grid-template-columns:repeat(8,var(--cs));grid-auto-rows:var(--cs);gap:var(--g);padding:6px;border-radius:20px;background:linear-gradient(180deg,#34428f,#1a2052);box-shadow:inset 0 2px 0 rgba(255,255,255,.16),inset 0 0 0 2px rgba(150,175,255,.24),0 16px 30px -14px rgba(20,20,70,.7)}\n.sb-c{position:relative;display:block;border-radius:calc(var(--cs)*.26);background:rgba(170,190,255,.11);box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}\n.sb-c.f,.sb-bk{background:var(--i) center/64% no-repeat,linear-gradient(var(--c1),var(--c2));box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 2px 3px rgba(0,0,0,.28)}\n.sb-c.gh{background:linear-gradient(var(--c1),var(--c2));opacity:.5;box-shadow:none}\n.sb-c.ln::after{content:\"\";position:absolute;inset:-1px;border-radius:inherit;box-shadow:0 0 0 2px #fff4b8,0 0 14px 3px rgba(255,205,70,.9);animation:sbPulse .55s ease-in-out infinite alternate}\n@keyframes sbPulse{from{opacity:.4}to{opacity:1}}\n.sb-fx,.sb-fly{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}\n.sb-fly{z-index:60}\n.sb-cv{position:absolute;left:0;top:0;z-index:58;pointer-events:none}\n.sb-fx>*,.sb-fly>*{position:absolute;left:0;top:0;will-change:transform,opacity}\n.sb-bk{width:var(--cs);height:var(--cs);border-radius:calc(var(--cs)*.26)}\n.sb-beam{border-radius:12px;background:linear-gradient(90deg,rgba(255,250,220,0),rgba(255,250,220,.95),rgba(255,250,220,0))}\n.sb-ring{width:60px;height:20px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.85)}\n.sb-pts{width:60px;text-align:center;white-space:nowrap;font-size:21px;font-weight:900;color:#fff;text-shadow:0 2px 0 rgba(120,50,0,.55),0 0 10px rgba(255,170,40,.95)}\n.sb-pts small{margin-left:2px;font-size:13px;color:#ffe08a}\n.sb-word{white-space:nowrap;text-align:center;font-size:36px;font-weight:900;line-height:1.15;color:#fff;text-shadow:0 3px 0 #c2410c,0 5px 0 #8a2a07}\n.sb-word small{display:block;font-size:.54em;color:#ffe08a}\n.sb-dish{display:flex;flex-direction:column;align-items:center;width:100px;margin:-34px 0 0 -50px}\n.sb-dish svg,.sb-dish img{width:70px;height:58px}\n.sb-dish img{display:block}\n.sb-dish.big{width:232px;margin:-56px 0 0 -116px}\n.sb-dish.big svg,.sb-dish.big img{width:104px;height:86px}\n.sb-dish b{margin-top:2px;padding:5px 14px;border-radius:99px;white-space:nowrap;font-size:16px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ff9a4a,#e0480f);box-shadow:0 8px 16px -6px rgba(180,60,0,.7),inset 0 1px 0 rgba(255,255,255,.4)}\n.sb-dish em{margin-top:3px;font-style:normal;font-size:18px;font-weight:900;color:#fff4c2;text-shadow:0 2px 0 rgba(120,40,0,.6)}\n.sb-hm,.sb-hm svg{width:36px;height:36px}\n.sb-dw{position:relative;display:block;font-style:normal}\n.sb .sb-stv{position:absolute;left:0;top:0;pointer-events:none;animation:sbStm 1.6s ease-in-out infinite alternate}\n@keyframes sbStm{0%{transform:translateY(5%);opacity:.3}100%{transform:translateY(-7%);opacity:1}}\n.sb-tip{position:absolute;left:7%;right:7%;top:27%;text-align:center;font-size:13.5px;line-height:1.6;color:rgba(255,248,236,.8);pointer-events:none;transition:opacity .4s}\n.sb-tip b{display:block;margin-bottom:6px;font-size:18px;color:#fff}\n.sb-tray{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;height:104px}\n.sb-slot{display:grid;place-items:center;min-width:0;border-radius:20px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 8px 18px -12px rgba(60,30,10,.4);transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .25s}\n.sb-slot.lift{opacity:.25;transform:scale(.9)}\n.sb-slot.no .sb-pc{opacity:.32}\n.sb-pc{position:relative}\n.sb-pc .sb-c{position:absolute}\n.sb.t-s .sb-slot{animation:sbWig .45s ease-in-out infinite alternate}\n@keyframes sbWig{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}\n.sb-drag{position:absolute;left:0;top:0;z-index:50;pointer-events:none;will-change:transform}\n.sb-drag .sb-c{box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 10px 16px rgba(0,0,0,.3)}\n.sb-bar{display:flex;align-items:center;gap:8px;height:46px}\n.sb-tool{display:flex;align-items:center;gap:5px;height:42px;padding:0 10px 0 8px;border-radius:99px;font-size:13.5px;font-weight:700;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-tool svg{width:24px;height:24px}\n.sb-tool em{min-width:20px;height:20px;padding:0 5px;border-radius:99px;font-style:normal;font-size:12px;line-height:20px;text-align:center;color:#fff;background:#e0552f}\n.sb-tool.off{opacity:.38}\n.sb-tool.off em{background:#9a8f84}\n.sb.t-h .sb-tool[data-t=h],.sb.t-s .sb-tool[data-t=s]{transform:scale(1.07);box-shadow:inset 0 0 0 2px #ffb020,0 0 14px rgba(255,170,40,.6)}\n.sb-next{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;color:var(--t2)}\n.sb-next i{display:grid;place-items:center;width:52px;height:42px;border-radius:12px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-msg{position:absolute;left:16px;right:16px;bottom:168px;z-index:30;padding:12px 14px;border-radius:18px;text-align:center;font-size:14px;line-height:1.45;color:#fff;background:rgba(32,22,14,.93);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s,transform .35s cubic-bezier(.3,1.4,.5,1)}\n.sb-msg.on{opacity:1;transform:none;pointer-events:auto}\n.sb-msg b{display:block;font-size:16px}\n.sb .sb-quit{display:block;height:38px;margin:8px auto 0;padding:0 22px;border-radius:99px;font-weight:800;color:#24170e;background:#fff}\n.sb .sb-goon{display:block;height:34px;margin:8px auto 0;padding:0 20px;border-radius:99px;font-weight:700;color:#fff;background:rgba(255,255,255,.2)}\n.sb-end{position:absolute;inset:0;z-index:40;display:flex;align-items:flex-end;background:rgba(24,14,6,.5);opacity:0;pointer-events:none;transition:opacity .35s}\n.sb-end.on{opacity:1;pointer-events:auto}\n.sb-ep{width:100%;padding:16px 18px calc(16px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;text-align:center;color:#2a1f17;background:var(--surface,#fffdf9);transform:translateY(100%);transition:transform .55s cubic-bezier(.22,1,.36,1)}\n.sb-end.on .sb-ep{transform:none}\n.sb-et{font-size:20px;font-weight:800}\n.sb .sb-ec{width:92px;height:142px;margin:0 auto}\n.sb .sb-ec svg{left:0;bottom:-12px;width:92px;height:172px}\n.sb-es{display:flex;justify-content:center}\n.sb-es .sb-odo{font-size:54px;color:#e0552f}\n.sb-eb{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:99px;font-size:14px;font-weight:700;color:#6b5b4b;background:#f4ece1}\n.sb-eb.nb{font-size:16px;color:#fff;background:linear-gradient(90deg,#ffcf4a,#ff8a3d);animation:sbBeat 1s ease-in-out infinite}\n.sb-e3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 8px}\n.sb-e3 div{padding:8px 4px;border-radius:14px;line-height:1.25;background:#f7f1e8}\n.sb-e3 b{display:block;font-size:22px;font-weight:800}\n.sb-e3 span{font-size:12px;color:#85786b}\n.sb-ed{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px;min-height:40px;font-size:12.5px;color:#85786b}\n.sb-ed i{position:relative}\n.sb-ed svg,.sb-ed .sb-dw>img{width:44px;height:37px}\n.sb-ed .sb-dw>img{display:block}\n.sb-ed b{position:absolute;right:-4px;bottom:-2px;padding:0 5px;border-radius:99px;font-size:11px;font-weight:800;color:#fff;background:#e0552f}\n.sb-er,.sb-em{margin:6px 0 0;font-size:13px;color:#6b5b4b}\n.sb-ep .sb-em{font-weight:700;color:#2d6a4d}\n.sb .sb-find{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:10px 14px;border-radius:18px;text-align:left;background:linear-gradient(135deg,#fff6d8,#ffe3ee);box-shadow:0 10px 22px -12px rgba(224,85,47,.6);animation:sbFind .75s cubic-bezier(.2,1.5,.4,1) both}\n.sb .sb-find.rare{background:linear-gradient(135deg,#efe6ff,#dcf5ff)}\n.sb .sb-find>i{flex:0 0 56px;height:56px;display:grid;place-items:center;font-style:normal;font-size:36px;animation:sbFindI 1.4s ease-in-out .75s 2}\n.sb .sb-find>i svg,.sb .sb-find>i img{width:56px;height:56px}\n.sb .sb-find b{display:block;font-size:16px;font-weight:800;color:#c2410c}\n.sb .sb-find.rare b{color:#7c3aed}\n.sb .sb-find small{display:block;margin-top:2px;font-size:13px;color:#6b5b4b}\n@keyframes sbFind{0%{opacity:0;transform:translateY(18px) scale(.6)}60%{opacity:1;transform:translateY(-4px) scale(1.06)}100%{opacity:1;transform:none}}\n@keyframes sbFindI{0%,100%{transform:none}50%{transform:rotate(-10deg) scale(1.15)}}\n@media (prefers-reduced-motion:reduce){.sb .sb-find,.sb .sb-find>i{animation:none}}\n.sb .sb-top{z-index:41}.sb .sb-x{position:relative;z-index:41}\n.sb .sb-find .sb-try{margin-left:auto;flex:none;border:0;border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;font-weight:700;background:#7c3aed;color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.35)}.sb .sb-again{display:block;width:100%;height:56px;margin-top:12px;border-radius:99px;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ffa24a,#e0552f);box-shadow:0 12px 24px -10px rgba(224,85,47,.8),inset 0 1px 0 rgba(255,255,255,.4);animation:sbBeat 1.3s ease-in-out infinite}\n.sb .sb-alt{display:block;width:100%;height:44px;margin-top:6px;font-size:14.5px;font-weight:700;color:#85786b}\n@keyframes sbBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}\n.sb.short .sb-hud{height:66px}\n.sb.short .sb-chef{width:40px;height:66px}\n.sb.short .sb-chef svg{width:42px;height:78px;bottom:-6px}\n.sb.short .sb-odo{font-size:30px}\n/* ตัวละคร: ขยับเบา ๆ ตลอด เต้นตอนคอมโบ ดีใจตอนเสิร์ฟ เสียดายตอนจบรอบ */\n.sb-chef.own .sb-joy,.sb-chef.own .sb-sad{opacity:0}\n.sb-chef.own.joy .sb-joy,.sb-chef.own.sad .sb-sad{opacity:1}\n.sb-chef.own.joy .cp-eyes,.sb-chef.own.joy .cp-mouth,.sb-chef.own.sad .cp-mouth{opacity:0}\n.sb-chef .sb-av{animation:sbIdle 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armL{animation:sbSwL 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armR{animation:sbSwR 2.8s ease-in-out infinite}\n.sb-chef.own .cp-eyes{transform-origin:60px 63px;animation:sbBlink 4.2s infinite}\n.sb-chef.dance .sb-av{animation:sbHop .46s ease-in-out infinite}\n.sb-chef.own.dance .cp-armL{animation:sbDL .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-armR{animation:sbDR .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-head{animation:sbNod .46s ease-in-out infinite}\n.sb-chef.joy .sb-av{animation:sbJump .62s ease-in-out infinite}\n.sb-chef.own.joy .cp-armL{animation:sbUpL .31s ease-in-out infinite alternate}\n.sb-chef.own.joy .cp-armR{animation:sbUpR .31s ease-in-out infinite alternate}\n.sb-chef.sad .sb-av{animation:sbSad 2.6s ease-in-out infinite}\n.sb-chef.own.sad .cp-head{animation:none;transform:translateY(4px) rotate(-6deg)}\n.sb-chef.own.sad .cp-armL,.sb-chef.own.sad .cp-armR{animation:none}\n.sb-chef.own.sad .sb-tear{animation:sbTear 1.5s ease-in infinite}\n@keyframes sbIdle{50%{transform:translateY(-2.5px)}}\n@keyframes sbSwL{50%{transform:rotate(6deg)}}\n@keyframes sbSwR{50%{transform:rotate(-6deg)}}\n@keyframes sbBlink{0%,92%,100%{transform:none}95%{transform:scaleY(.1)}}\n@keyframes sbHop{0%,50%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-12px) rotate(-7deg)}75%{transform:translateY(-12px) rotate(7deg)}}\n@keyframes sbDL{from{transform:rotate(30deg)}to{transform:rotate(150deg)}}\n@keyframes sbDR{from{transform:rotate(-150deg)}to{transform:rotate(-30deg)}}\n@keyframes sbNod{50%{transform:rotate(9deg)}}\n@keyframes sbJump{0%,100%{transform:translateY(0) scale(1)}15%{transform:translateY(2px) scale(1.06,.92)}50%{transform:translateY(-22px) scale(.96,1.05)}}\n@keyframes sbUpL{from{transform:rotate(135deg)}to{transform:rotate(165deg)}}\n@keyframes sbUpR{from{transform:rotate(-135deg)}to{transform:rotate(-165deg)}}\n@keyframes sbSad{50%{transform:translateY(3px) rotate(-1.5deg)}}\n@keyframes sbTear{0%{transform:translateY(0);opacity:0}25%{opacity:1}100%{transform:translateY(12px);opacity:0}}\n/* เครื่องที่ตั้งลดการเคลื่อนไหว: เหลือแบบเบา */\n@media (prefers-reduced-motion:reduce){.sb *,.sb *::after{animation:none!important;transition-duration:.01ms!important}}\n.sb .sb-cheer{flex:1;display:flex;justify-content:center;align-items:flex-end;gap:2px;min-width:0;height:46px;pointer-events:none}.sb .sb-cheer i{display:block;width:30px;height:36px;transform-origin:50% 100%;animation:sb-cheer 2.6s ease-in-out infinite}.sb .sb-cheer i:nth-child(2){animation-delay:-.9s}.sb .sb-cheer i:nth-child(3){animation-delay:-1.7s}.sb .sb-cheer svg{width:100%;height:100%;overflow:visible}@keyframes sb-cheer{0%,100%{transform:none}40%{transform:translateY(-3px) rotate(-4deg)}70%{transform:translateY(0) rotate(3deg)}}.sb.rm .sb-cheer i{animation:none}.sb .sb-em.wait{opacity:.7}.sb .sb-em.ok{color:#15803d}.sb .sb-em.bad{color:#b91c1c}.sb .sb-resend{margin-left:8px;padding:4px 12px;border:0;border-radius:99px;background:#b91c1c;color:#fff;font:inherit;font-weight:800}.sb button:disabled{opacity:.55}/* 2.13.39 ปุ่มสั่น บล็อกสามมิติ คอมโบไล่ระดับ ปุ่มออก */.sb-hp{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}.sb.b3 .sb-c.f,.sb.b3 .sb-bk{background:var(--b3) center/100% no-repeat;box-shadow:none}.sb.b3 .sb-c.gh{background:var(--b3) center/100% no-repeat;opacity:.45}.sb.b3 .sb-ki{background:var(--b3) center/100% no-repeat}.sb.b3 .sb-drag .sb-c{box-shadow:none}.sb.b3 .sb-drag .sb-pc{filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))}.sb-flash{position:absolute;inset:0;z-index:55;pointer-events:none;opacity:0;will-change:opacity;background:radial-gradient(ellipse 120% 72% at 50% 53%,rgba(255,250,225,0) 56%,rgba(255,240,190,.85) 80%,rgba(255,214,120,.95))}.sb-word.l2{color:#fff8dc;text-shadow:0 3px 0 #ea580c,0 6px 0 #9a3412,0 0 18px rgba(255,196,60,.95)}.sb-word.l3{color:#fff;text-shadow:0 3px 0 #db2777,0 6px 0 #7e22ce,0 0 22px rgba(255,120,220,.95)}.sb-word.l4{color:#fff3b0;text-shadow:0 2px 0 #ff7a1a,0 4px 0 #e5381b,0 7px 0 #7a1a0a,0 0 22px rgba(255,150,40,.95)}.sb-word.l5{color:#fff;text-shadow:0 2px 0 #ff2d6f,0 4px 0 #7c3aed,0 7px 0 #1e3a8a,0 0 22px #5ee0ff,0 0 44px #ffd23f}.sb-fx>.sb-wave{width:100%;height:100%;border-radius:20px;box-shadow:0 0 0 3px #fff,0 0 16px 6px #ff5fd2,0 0 34px 12px rgba(70,200,255,.7)}.sb-fx>.sb-wave.l4{box-shadow:0 0 0 3px #fff,0 0 18px 8px #ffd23f,0 0 40px 16px rgba(255,80,60,.75)}.sb-fx>.sb-wave.l5{box-shadow:0 0 0 3px #fff,0 0 16px 7px #ff5fd2,0 0 30px 12px #5ee0ff,0 0 46px 18px rgba(255,214,60,.8)}.sb-mul{white-space:nowrap;font-size:54px;font-weight:900;line-height:1;color:#fff;text-shadow:0 3px 0 #ef4444,0 6px 0 #6d28d9,0 0 24px rgba(255,214,60,1)}.sb-chef.sb-pose .sb-av{animation:none}.sb-chef .sb-aura{position:absolute;left:50%;bottom:34%;width:158px;height:158px;margin:0 0 -79px -79px;z-index:0;border-radius:50%;pointer-events:none;will-change:transform,opacity;background:repeating-conic-gradient(rgba(255,226,120,.85) 0 10deg,rgba(255,226,120,0) 10deg 30deg),radial-gradient(closest-side,rgba(255,240,170,.95),rgba(255,176,60,.6) 46%,rgba(255,130,40,0));-webkit-mask:radial-gradient(closest-side,#000 52%,transparent);mask:radial-gradient(closest-side,#000 52%,transparent)}.sb-chef .sb-aura.l5{background:repeating-conic-gradient(#ff5d8f 0 12deg,#ffd23f 12deg 24deg,#5ee0ff 24deg 36deg,rgba(255,255,255,0) 36deg 60deg),radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,214,90,.7) 46%,rgba(255,120,200,0))}.sb.short .sb-chef .sb-aura{width:104px;height:104px;margin:0 0 -52px -52px}.sb-fly>.sb-rays{width:330px;height:330px;margin:-165px 0 0 -165px;border-radius:50%;background:repeating-conic-gradient(rgba(255,214,90,.75) 0 9deg,rgba(255,214,90,0) 9deg 24deg);-webkit-mask:radial-gradient(closest-side,#000 18%,transparent);mask:radial-gradient(closest-side,#000 18%,transparent)}.sb-fly>.sb-rays.l5{background:repeating-conic-gradient(rgba(255,93,143,.8) 0 8deg,rgba(255,210,63,.8) 8deg 16deg,rgba(94,224,255,.8) 16deg 24deg,rgba(255,255,255,0) 24deg 40deg)}.sb-rim{position:absolute;inset:-5px;z-index:-1;border-radius:25px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .35s;box-shadow:0 0 16px 3px rgba(255,170,60,.85)}.sb-rim.on{opacity:1}.sb-rim i{position:absolute;inset:-21.5%;display:block}.sb-rim.l3 i{background:conic-gradient(#ffd23f,#ff9f1c,#fff3a0,#ffd23f,#ff9f1c,#fff3a0,#ffd23f)}.sb-rim.l4 i{background:conic-gradient(#fff3a0,#ff9f1c,#ff3b1c,#ff9f1c,#fff3a0,#ff9f1c,#ff3b1c,#ff9f1c,#fff3a0)}.sb-rim.l5 i{background:conic-gradient(#ff3b6b,#ff9f1c,#ffe14d,#3ddc84,#36c5f0,#9b6bff,#ff3b6b)}.sb-rim.l5{box-shadow:0 0 18px 4px rgba(120,190,255,.9)}.sb-rim.on i{will-change:transform;animation:sbRim 3s linear infinite}.sb-rim.l4.on i{animation-duration:2.2s}.sb-rim.l5.on i{animation-duration:1.6s}.sb-rim.still.on i{animation:none}@keyframes sbRim{to{transform:rotate(360deg)}}.sb .sb-eg{display:grid;grid-template-columns:1fr 1.7fr;gap:10px;margin-top:12px}.sb .sb-eg .sb-again{margin-top:0}.sb .sb-out{height:56px;border-radius:99px;font-size:17px;font-weight:800;color:#4a3626;background:#f3e9dd;box-shadow:inset 0 0 0 1.5px rgba(92,68,36,.22)}\n.sb-fx>.sb-lf{width:220px;height:220px;margin:-110px 0 0 -110px;border-radius:50%;background:radial-gradient(circle,rgba(255,250,220,.95),rgba(255,200,80,.5) 40%,rgba(255,160,40,0) 70%)}\n.sb-fly>.sb-fire{width:100%;height:100%;transform-origin:50% 100%;background:linear-gradient(to top,rgba(255,70,0,.9),rgba(255,150,0,.55) 35%,rgba(255,200,60,.15) 65%,rgba(255,200,60,0) 85%)}\n.sb-fly>.sb-fu{left:50%;top:38%;width:280px;margin-left:-140px;text-align:center;white-space:nowrap;font-size:30px;font-weight:900;color:#fff;text-shadow:0 2px 0 #b3261e,0 0 12px #ff8a00}\n.sb-sc .sb-fv{font-weight:800;color:#ff8a3d}\n.sb-ef{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px;font-size:14px;font-weight:800;color:#e8742a}\n.sb-ef svg{width:15px;height:18px}\n.sb.rm *,.sb.rm *::before,.sb.rm *::after{animation:none!important;transition:none!important}";
+    css.textContent = "/* ครัวโซลฟูล์ · หน้าตา (ขยับด้วย transform และ opacity เท่านั้น) */\n.sb{--cs:40px;--g:3px;--t1:#2a1f17;--t2:#85786b;--cd:rgba(255,255,255,.74);--cdl:rgba(92,68,36,.12);position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:6px;height:100%;padding:6px 14px calc(8px + env(safe-area-inset-bottom));overflow:hidden;font-family:var(--font,system-ui,sans-serif);color:var(--t1);background:radial-gradient(120% 60% at 15% 0,rgba(255,206,140,.55),transparent 60%),radial-gradient(80% 50% at 100% 35%,rgba(255,168,140,.32),transparent 60%),var(--bg,#f2eee7);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}\n.sb,.sb *{box-sizing:border-box}\n.sb button{font:inherit;color:inherit;border:0;background:none;padding:0;margin:0;cursor:pointer}\n.sb svg{display:block}\n.sb.th-autumn{background:radial-gradient(120% 60% at 15% 0,rgba(255,180,100,.6),transparent 60%),radial-gradient(80% 50% at 100% 40%,rgba(226,110,60,.26),transparent 60%),#f4ece0}\n.sb.th-loy,.sb.th-xmas{--t1:#fff8ec;--t2:rgba(255,244,228,.72);--cd:rgba(255,255,255,.13);--cdl:rgba(255,255,255,.16)}\n.sb.th-loy{background:radial-gradient(90% 50% at 80% 0,rgba(255,190,90,.35),transparent 60%),linear-gradient(180deg,#0f1c42,#1d3470 60%,#2a4f8f)}\n.sb.th-xmas{background:radial-gradient(90% 50% at 20% 0,rgba(255,120,110,.3),transparent 60%),linear-gradient(180deg,#0f3326,#1b5038)}\n.sb-top,.sb-hud,.sb-ords,.sb-bd,.sb-tray,.sb-bar{position:relative;z-index:1;flex:none}\n.sb-deco{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}\n.sb-deco i{position:absolute;top:0;opacity:.5;will-change:transform}\n.sb-deco i.dn{animation:sbDn 20s linear infinite}\n.sb-deco i.up{animation:sbUp 20s linear infinite}\n.sb-deco i.fl{top:auto;bottom:6px;width:42px;opacity:.9;animation:sbBob 5s ease-in-out infinite}\n.sb-deco svg{width:100%;height:auto}\n@keyframes sbDn{from{transform:translateY(-10vh) rotate(0)}to{transform:translateY(105vh) rotate(300deg)}}\n@keyframes sbUp{from{transform:translateY(105vh)}to{transform:translateY(-12vh)}}\n@keyframes sbBob{50%{transform:translate(16px,-5px) rotate(4deg)}}\n.sb-glow{position:absolute;inset:0;z-index:20;pointer-events:none;opacity:0;will-change:opacity;background:linear-gradient(90deg,rgba(255,110,20,.9),rgba(255,150,40,0) 13%,rgba(255,150,40,0) 87%,rgba(255,110,20,.9)),linear-gradient(180deg,rgba(255,110,20,.9),rgba(255,150,40,0) 9%,rgba(255,150,40,0) 91%,rgba(255,110,20,.9))}\n.sb-top{display:flex;align-items:center;gap:8px;height:42px}\n.sb-x,.sb-snd,.sb-vib{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-x svg,.sb-snd svg,.sb-vib svg{width:20px;height:20px}\n.sb-snd,.sb-vib{color:var(--t2)}\n.sb-snd.on,.sb-vib.on{color:#e0702a}\n.sb-ttl{flex:1;min-width:0;line-height:1.3}\n.sb-ttl b{display:block;font-size:17px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-ttl span{display:block;font-size:12.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-left{flex:none;min-width:64px;padding:3px 8px;border-radius:14px;text-align:center;line-height:1.2;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-left b{display:block;font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}\n.sb-left span{font-size:10.5px;color:var(--t2)}\n.sb-fin{flex:none;min-width:64px;padding:3px 10px;border-radius:14px;text-align:center;line-height:1.2;color:#24170e;background:#ffd36b;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}\n.sb-fin b{display:block;font-size:15px;font-weight:800}\n.sb-fin span{font-size:10.5px;font-weight:600}\n.sb-fin[hidden],.sb-left[hidden]{display:none}\n.sb.low .sb-left b{color:#e0482f}\n.sb-hud{display:flex;align-items:flex-end;gap:10px;height:104px}\n.sb-chef{position:relative;flex:none;width:62px;height:104px}\n.sb-chef svg{position:absolute;left:-2px;bottom:-10px;width:66px;height:123px;overflow:visible}\n.sb-av{position:absolute;inset:0;z-index:1;transform-origin:50% 100%}\n.sb-sc{flex:1;min-width:0;padding-bottom:8px;line-height:1.2;transform-origin:20% 70%}\n.sb-sc>span,.sb-sc small{display:block;font-size:12.5px;color:var(--t2)}\n.sb-sc small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-odo{display:flex;height:1em;overflow:hidden;font-size:40px;font-weight:800;line-height:1;letter-spacing:-.5px;font-variant-numeric:tabular-nums}\n.sb-d{display:block;height:1em;overflow:hidden}\n.sb-d>span{display:block;transition:transform .5s cubic-bezier(.3,1.25,.5,1);will-change:transform}\n.sb-heat{flex:none;width:84px;padding-bottom:6px;text-align:center;line-height:1.2}\n.sb-pot{position:relative;width:56px;height:52px;margin:0 auto}\n.sb-pot>svg{position:absolute;left:0;top:0;width:56px;height:40px}\n.sb-fl{position:absolute;left:12px;bottom:-4px;width:32px;height:38px;transform-origin:50% 100%;transition:transform .45s cubic-bezier(.3,1.5,.5,1),opacity .3s}\n.sb-fl svg{width:100%;height:100%;transform-origin:50% 100%;animation:sbFlick .5s ease-in-out infinite alternate}\n@keyframes sbFlick{from{transform:scale(1,1)}to{transform:scale(.9,1.12)}}\n.sb-heat.hot .sb-pot::after{content:\"\";position:absolute;left:-14px;right:-14px;bottom:-16px;height:46px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,150,40,.7),transparent);animation:sbPulse .6s ease-in-out infinite alternate}\n.sb-heat b{display:block;font-size:20px;font-weight:800;color:#e0552f}\n.sb-heat span{display:block;font-size:11px;color:var(--t2)}\n.sb-ords{display:grid;grid-template-columns:1fr 1fr;gap:8px;height:58px}\n.sb-ord{display:flex;align-items:center;gap:5px;min-width:0;padding:5px 7px;border-radius:16px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 6px 14px -10px rgba(60,30,10,.4);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-ord.hit{transform:scale(1.05);box-shadow:inset 0 0 0 2px #ffb020,0 0 16px rgba(255,170,40,.7)}\n.sb-dm{flex:none;width:40px}\n.sb-dm svg,.sb-dm .sb-dw>img{width:40px;height:34px}\n.sb-dm .sb-dw>img{display:block}\n.sb-ot{flex:1;min-width:0;line-height:1.3}\n.sb-ot b{display:block;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n.sb-ot span{display:flex;align-items:center;gap:1px;font-size:12.5px;font-weight:800}\n.sb-ki{display:inline-block;width:17px;height:17px;margin-left:3px;border-radius:5px;background:var(--i) center/82% no-repeat,linear-gradient(var(--c1),var(--c2))}\n.sb-ki:first-child{margin-left:0}\n.sb-ord em{flex:none;padding:2px 6px;border-radius:99px;font-style:normal;font-size:11.5px;font-weight:800;color:#b4410f;background:#ffe9cf}\n.sb-bd{align-self:center;will-change:transform}\n.sb-grid{display:grid;grid-template-columns:repeat(8,var(--cs));grid-auto-rows:var(--cs);gap:var(--g);padding:6px;border-radius:20px;background:linear-gradient(180deg,#34428f,#1a2052);box-shadow:inset 0 2px 0 rgba(255,255,255,.16),inset 0 0 0 2px rgba(150,175,255,.24),0 16px 30px -14px rgba(20,20,70,.7)}\n.sb-c{position:relative;display:block;border-radius:calc(var(--cs)*.26);background:rgba(170,190,255,.11);box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}\n.sb-c.f,.sb-bk{background:var(--i) center/64% no-repeat,linear-gradient(var(--c1),var(--c2));box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 2px 3px rgba(0,0,0,.28)}\n.sb-c.gh{background:linear-gradient(var(--c1),var(--c2));opacity:.5;box-shadow:none}\n.sb-c.ln::after{content:\"\";position:absolute;inset:-1px;border-radius:inherit;box-shadow:0 0 0 2px #fff4b8,0 0 14px 3px rgba(255,205,70,.9);animation:sbPulse .55s ease-in-out infinite alternate}\n@keyframes sbPulse{from{opacity:.4}to{opacity:1}}\n.sb-fx,.sb-fly{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}\n.sb-fly{z-index:60}\n.sb-cv{position:absolute;left:0;top:0;z-index:58;pointer-events:none}\n.sb-fx>*,.sb-fly>*{position:absolute;left:0;top:0;will-change:transform,opacity}\n.sb-bk{width:var(--cs);height:var(--cs);border-radius:calc(var(--cs)*.26)}\n.sb-beam{border-radius:12px;background:linear-gradient(90deg,rgba(255,250,220,0),rgba(255,250,220,.95),rgba(255,250,220,0))}\n.sb-ring{width:60px;height:20px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.85)}\n.sb-pts{width:60px;text-align:center;white-space:nowrap;font-size:21px;font-weight:900;color:#fff;text-shadow:0 2px 0 rgba(120,50,0,.55),0 0 10px rgba(255,170,40,.95)}\n.sb-pts small{margin-left:2px;font-size:13px;color:#ffe08a}\n.sb-word{white-space:nowrap;text-align:center;font-size:36px;font-weight:900;line-height:1.15;color:#fff;text-shadow:0 3px 0 #c2410c,0 5px 0 #8a2a07}\n.sb-word small{display:block;font-size:.54em;color:#ffe08a}\n.sb-dish{display:flex;flex-direction:column;align-items:center;width:100px;margin:-34px 0 0 -50px}\n.sb-dish svg,.sb-dish img{width:70px;height:58px}\n.sb-dish img{display:block}\n.sb-dish.big{width:232px;margin:-56px 0 0 -116px}\n.sb-dish.big svg,.sb-dish.big img{width:104px;height:86px}\n.sb-dish b{margin-top:2px;padding:5px 14px;border-radius:99px;white-space:nowrap;font-size:16px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ff9a4a,#e0480f);box-shadow:0 8px 16px -6px rgba(180,60,0,.7),inset 0 1px 0 rgba(255,255,255,.4)}\n.sb-dish em{margin-top:3px;font-style:normal;font-size:18px;font-weight:900;color:#fff4c2;text-shadow:0 2px 0 rgba(120,40,0,.6)}\n.sb-hm,.sb-hm svg{width:36px;height:36px}\n.sb-dw{position:relative;display:block;font-style:normal}\n.sb .sb-stv{position:absolute;left:0;top:0;pointer-events:none;animation:sbStm 1.6s ease-in-out infinite alternate}\n@keyframes sbStm{0%{transform:translateY(5%);opacity:.3}100%{transform:translateY(-7%);opacity:1}}\n.sb-tip{position:absolute;left:7%;right:7%;top:27%;text-align:center;font-size:13.5px;line-height:1.6;color:rgba(255,248,236,.8);pointer-events:none;transition:opacity .4s}\n.sb-tip b{display:block;margin-bottom:6px;font-size:18px;color:#fff}\n.sb-tray{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;height:104px}\n.sb-slot{display:grid;place-items:center;min-width:0;border-radius:20px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl),0 8px 18px -12px rgba(60,30,10,.4);transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .25s}\n.sb-slot.lift{opacity:.25;transform:scale(.9)}\n.sb-slot.no .sb-pc{opacity:.32}\n.sb-pc{position:relative}\n.sb-pc .sb-c{position:absolute}\n.sb.t-s .sb-slot{animation:sbWig .45s ease-in-out infinite alternate}\n@keyframes sbWig{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}\n.sb-drag{position:absolute;left:0;top:0;z-index:50;pointer-events:none;will-change:transform}\n.sb-drag .sb-c{box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.16),0 10px 16px rgba(0,0,0,.3)}\n.sb-bar{display:flex;align-items:center;gap:8px;height:46px}\n.sb-tool{display:flex;align-items:center;gap:5px;height:42px;padding:0 10px 0 8px;border-radius:99px;font-size:13.5px;font-weight:700;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}\n.sb-tool svg{width:24px;height:24px}\n.sb-tool em{min-width:20px;height:20px;padding:0 5px;border-radius:99px;font-style:normal;font-size:12px;line-height:20px;text-align:center;color:#fff;background:#e0552f}\n.sb-tool.off{opacity:.38}\n.sb-tool.off em{background:#9a8f84}\n.sb.t-h .sb-tool[data-t=h],.sb.t-s .sb-tool[data-t=s]{transform:scale(1.07);box-shadow:inset 0 0 0 2px #ffb020,0 0 14px rgba(255,170,40,.6)}\n.sb-next{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;color:var(--t2)}\n.sb-next i{display:grid;place-items:center;width:52px;height:42px;border-radius:12px;background:var(--cd);box-shadow:inset 0 0 0 1px var(--cdl)}\n.sb-msg{position:absolute;left:16px;right:16px;bottom:168px;z-index:30;padding:12px 14px;border-radius:18px;text-align:center;font-size:14px;line-height:1.45;color:#fff;background:rgba(32,22,14,.93);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s,transform .35s cubic-bezier(.3,1.4,.5,1)}\n.sb-msg.on{opacity:1;transform:none;pointer-events:auto}\n.sb-msg b{display:block;font-size:16px}\n.sb .sb-quit{display:block;height:38px;margin:8px auto 0;padding:0 22px;border-radius:99px;font-weight:800;color:#24170e;background:#fff}\n.sb .sb-goon{display:block;height:34px;margin:8px auto 0;padding:0 20px;border-radius:99px;font-weight:700;color:#fff;background:rgba(255,255,255,.2)}\n.sb-end{position:absolute;inset:0;z-index:40;display:flex;align-items:flex-end;background:rgba(24,14,6,.5);opacity:0;pointer-events:none;transition:opacity .35s}\n.sb-end.on{opacity:1;pointer-events:auto}\n.sb-ep{width:100%;padding:16px 18px calc(16px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;text-align:center;color:#2a1f17;background:var(--surface,#fffdf9);transform:translateY(100%);transition:transform .55s cubic-bezier(.22,1,.36,1)}\n.sb-end.on .sb-ep{transform:none}\n.sb-et{font-size:20px;font-weight:800}\n.sb .sb-ec{width:92px;height:142px;margin:0 auto}\n.sb .sb-ec svg{left:0;bottom:-12px;width:92px;height:172px}\n.sb-es{display:flex;justify-content:center}\n.sb-es .sb-odo{font-size:54px;color:#e0552f}\n.sb-eb{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:99px;font-size:14px;font-weight:700;color:#6b5b4b;background:#f4ece1}\n.sb-eb.nb{font-size:16px;color:#fff;background:linear-gradient(90deg,#ffcf4a,#ff8a3d);animation:sbBeat 1s ease-in-out infinite}\n.sb-e3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 8px}\n.sb-e3 div{padding:8px 4px;border-radius:14px;line-height:1.25;background:#f7f1e8}\n.sb-e3 b{display:block;font-size:22px;font-weight:800}\n.sb-e3 span{font-size:12px;color:#85786b}\n.sb-ed{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px;min-height:40px;font-size:12.5px;color:#85786b}\n.sb-ed i{position:relative}\n.sb-ed svg,.sb-ed .sb-dw>img{width:44px;height:37px}\n.sb-ed .sb-dw>img{display:block}\n.sb-ed b{position:absolute;right:-4px;bottom:-2px;padding:0 5px;border-radius:99px;font-size:11px;font-weight:800;color:#fff;background:#e0552f}\n.sb-er,.sb-em{margin:6px 0 0;font-size:13px;color:#6b5b4b}\n.sb-ep .sb-em{font-weight:700;color:#2d6a4d}\n.sb .sb-find{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:10px 14px;border-radius:18px;text-align:left;background:linear-gradient(135deg,#fff6d8,#ffe3ee);box-shadow:0 10px 22px -12px rgba(224,85,47,.6);animation:sbFind .75s cubic-bezier(.2,1.5,.4,1) both}\n.sb .sb-find.rare{background:linear-gradient(135deg,#efe6ff,#dcf5ff)}\n.sb .sb-find>i{flex:0 0 56px;height:56px;display:grid;place-items:center;font-style:normal;font-size:36px;animation:sbFindI 1.4s ease-in-out .75s 2}\n.sb .sb-find>i svg,.sb .sb-find>i img{width:56px;height:56px}\n.sb .sb-find b{display:block;font-size:16px;font-weight:800;color:#c2410c}\n.sb .sb-find.rare b{color:#7c3aed}\n.sb .sb-find small{display:block;margin-top:2px;font-size:13px;color:#6b5b4b}\n@keyframes sbFind{0%{opacity:0;transform:translateY(18px) scale(.6)}60%{opacity:1;transform:translateY(-4px) scale(1.06)}100%{opacity:1;transform:none}}\n@keyframes sbFindI{0%,100%{transform:none}50%{transform:rotate(-10deg) scale(1.15)}}\n@media (prefers-reduced-motion:reduce){.sb .sb-find,.sb .sb-find>i{animation:none}}\n.sb .sb-top{z-index:41}.sb .sb-x{position:relative;z-index:41}\n.sb .sb-find .sb-try{margin-left:auto;flex:none;border:0;border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;font-weight:700;background:#7c3aed;color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.35)}.sb .sb-again{display:block;width:100%;height:56px;margin-top:12px;border-radius:99px;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(180deg,#ffa24a,#e0552f);box-shadow:0 12px 24px -10px rgba(224,85,47,.8),inset 0 1px 0 rgba(255,255,255,.4);animation:sbBeat 1.3s ease-in-out infinite}\n.sb .sb-alt{display:block;width:100%;height:44px;margin-top:6px;font-size:14.5px;font-weight:700;color:#85786b}\n@keyframes sbBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}\n.sb.short .sb-hud{height:66px}\n.sb.short .sb-chef{width:40px;height:66px}\n.sb.short .sb-chef svg{width:42px;height:78px;bottom:-6px}\n.sb.short .sb-odo{font-size:30px}\n/* ตัวละคร: ขยับเบา ๆ ตลอด เต้นตอนคอมโบ ดีใจตอนเสิร์ฟ เสียดายตอนจบรอบ */\n.sb-chef.own .sb-joy,.sb-chef.own .sb-sad{opacity:0}\n.sb-chef.own.joy .sb-joy,.sb-chef.own.sad .sb-sad{opacity:1}\n.sb-chef.own.joy .cp-eyes,.sb-chef.own.joy .cp-mouth,.sb-chef.own.sad .cp-mouth{opacity:0}\n.sb-chef .sb-av{animation:sbIdle 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armL{animation:sbSwL 2.8s ease-in-out infinite}\n.sb-chef.own .cp-armR{animation:sbSwR 2.8s ease-in-out infinite}\n.sb-chef.own .cp-eyes{transform-origin:60px 63px;animation:sbBlink 4.2s infinite}\n.sb-chef.dance .sb-av{animation:sbHop .46s ease-in-out infinite}\n.sb-chef.own.dance .cp-armL{animation:sbDL .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-armR{animation:sbDR .23s ease-in-out infinite alternate}\n.sb-chef.own.dance .cp-head{animation:sbNod .46s ease-in-out infinite}\n.sb-chef.joy .sb-av{animation:sbJump .62s ease-in-out infinite}\n.sb-chef.own.joy .cp-armL{animation:sbUpL .31s ease-in-out infinite alternate}\n.sb-chef.own.joy .cp-armR{animation:sbUpR .31s ease-in-out infinite alternate}\n.sb-chef.sad .sb-av{animation:sbSad 2.6s ease-in-out infinite}\n.sb-chef.own.sad .cp-head{animation:none;transform:translateY(4px) rotate(-6deg)}\n.sb-chef.own.sad .cp-armL,.sb-chef.own.sad .cp-armR{animation:none}\n.sb-chef.own.sad .sb-tear{animation:sbTear 1.5s ease-in infinite}\n@keyframes sbIdle{50%{transform:translateY(-2.5px)}}\n@keyframes sbSwL{50%{transform:rotate(6deg)}}\n@keyframes sbSwR{50%{transform:rotate(-6deg)}}\n@keyframes sbBlink{0%,92%,100%{transform:none}95%{transform:scaleY(.1)}}\n@keyframes sbHop{0%,50%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-12px) rotate(-7deg)}75%{transform:translateY(-12px) rotate(7deg)}}\n@keyframes sbDL{from{transform:rotate(30deg)}to{transform:rotate(150deg)}}\n@keyframes sbDR{from{transform:rotate(-150deg)}to{transform:rotate(-30deg)}}\n@keyframes sbNod{50%{transform:rotate(9deg)}}\n@keyframes sbJump{0%,100%{transform:translateY(0) scale(1)}15%{transform:translateY(2px) scale(1.06,.92)}50%{transform:translateY(-22px) scale(.96,1.05)}}\n@keyframes sbUpL{from{transform:rotate(135deg)}to{transform:rotate(165deg)}}\n@keyframes sbUpR{from{transform:rotate(-135deg)}to{transform:rotate(-165deg)}}\n@keyframes sbSad{50%{transform:translateY(3px) rotate(-1.5deg)}}\n@keyframes sbTear{0%{transform:translateY(0);opacity:0}25%{opacity:1}100%{transform:translateY(12px);opacity:0}}\n/* เครื่องที่ตั้งลดการเคลื่อนไหว: เหลือแบบเบา */\n@media (prefers-reduced-motion:reduce){.sb *,.sb *::after{animation:none!important;transition-duration:.01ms!important}}\n.sb .sb-cheer{flex:1;display:flex;justify-content:center;align-items:flex-end;gap:2px;min-width:0;height:46px;pointer-events:none}.sb .sb-cheer i{display:block;width:30px;height:36px;transform-origin:50% 100%;animation:sb-cheer 2.6s ease-in-out infinite}.sb .sb-cheer i:nth-child(2){animation-delay:-.9s}.sb .sb-cheer i:nth-child(3){animation-delay:-1.7s}.sb .sb-cheer svg{width:100%;height:100%;overflow:visible}@keyframes sb-cheer{0%,100%{transform:none}40%{transform:translateY(-3px) rotate(-4deg)}70%{transform:translateY(0) rotate(3deg)}}.sb.rm .sb-cheer i{animation:none}.sb .sb-em.wait{opacity:.7}.sb .sb-em.ok{color:#15803d}.sb .sb-em.bad{color:#b91c1c}.sb .sb-resend{margin-left:8px;padding:4px 12px;border:0;border-radius:99px;background:#b91c1c;color:#fff;font:inherit;font-weight:800}.sb button:disabled{opacity:.55}/* 2.13.39 ปุ่มสั่น บล็อกสามมิติ คอมโบไล่ระดับ ปุ่มออก */.sb-hp{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}.sb.b3 .sb-c.f,.sb.b3 .sb-bk{background:var(--b3) center/100% no-repeat;box-shadow:none}.sb.b3 .sb-c.gh{background:var(--b3) center/100% no-repeat;opacity:.45}.sb.b3 .sb-ki{background:var(--b3) center/100% no-repeat}.sb.b3 .sb-drag .sb-c{box-shadow:none}.sb.b3 .sb-drag .sb-pc{filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))}.sb-flash{position:absolute;inset:0;z-index:55;pointer-events:none;opacity:0;will-change:opacity;background:radial-gradient(ellipse 120% 72% at 50% 53%,rgba(255,250,225,0) 56%,rgba(255,240,190,.85) 80%,rgba(255,214,120,.95))}.sb-word.l2{color:#fff8dc;text-shadow:0 3px 0 #ea580c,0 6px 0 #9a3412,0 0 18px rgba(255,196,60,.95)}.sb-word.l3{color:#fff;text-shadow:0 3px 0 #db2777,0 6px 0 #7e22ce,0 0 22px rgba(255,120,220,.95)}.sb-word.l4{color:#fff3b0;text-shadow:0 2px 0 #ff7a1a,0 4px 0 #e5381b,0 7px 0 #7a1a0a,0 0 22px rgba(255,150,40,.95)}.sb-word.l5{color:#fff;text-shadow:0 2px 0 #ff2d6f,0 4px 0 #7c3aed,0 7px 0 #1e3a8a,0 0 22px #5ee0ff,0 0 44px #ffd23f}.sb-fx>.sb-wave{width:100%;height:100%;border-radius:20px;box-shadow:0 0 0 3px #fff,0 0 16px 6px #ff5fd2,0 0 34px 12px rgba(70,200,255,.7)}.sb-fx>.sb-wave.l4{box-shadow:0 0 0 3px #fff,0 0 18px 8px #ffd23f,0 0 40px 16px rgba(255,80,60,.75)}.sb-fx>.sb-wave.l5{box-shadow:0 0 0 3px #fff,0 0 16px 7px #ff5fd2,0 0 30px 12px #5ee0ff,0 0 46px 18px rgba(255,214,60,.8)}.sb-mul{white-space:nowrap;font-size:54px;font-weight:900;line-height:1;color:#fff;text-shadow:0 3px 0 #ef4444,0 6px 0 #6d28d9,0 0 24px rgba(255,214,60,1)}.sb-chef.sb-pose .sb-av{animation:none}.sb-chef .sb-aura{position:absolute;left:50%;bottom:34%;width:158px;height:158px;margin:0 0 -79px -79px;z-index:0;border-radius:50%;pointer-events:none;will-change:transform,opacity;background:repeating-conic-gradient(rgba(255,226,120,.85) 0 10deg,rgba(255,226,120,0) 10deg 30deg),radial-gradient(closest-side,rgba(255,240,170,.95),rgba(255,176,60,.6) 46%,rgba(255,130,40,0));-webkit-mask:radial-gradient(closest-side,#000 52%,transparent);mask:radial-gradient(closest-side,#000 52%,transparent)}.sb-chef .sb-aura.l5{background:repeating-conic-gradient(#ff5d8f 0 12deg,#ffd23f 12deg 24deg,#5ee0ff 24deg 36deg,rgba(255,255,255,0) 36deg 60deg),radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,214,90,.7) 46%,rgba(255,120,200,0))}.sb.short .sb-chef .sb-aura{width:104px;height:104px;margin:0 0 -52px -52px}.sb-fly>.sb-rays{width:330px;height:330px;margin:-165px 0 0 -165px;border-radius:50%;background:repeating-conic-gradient(rgba(255,214,90,.75) 0 9deg,rgba(255,214,90,0) 9deg 24deg);-webkit-mask:radial-gradient(closest-side,#000 18%,transparent);mask:radial-gradient(closest-side,#000 18%,transparent)}.sb-fly>.sb-rays.l5{background:repeating-conic-gradient(rgba(255,93,143,.8) 0 8deg,rgba(255,210,63,.8) 8deg 16deg,rgba(94,224,255,.8) 16deg 24deg,rgba(255,255,255,0) 24deg 40deg)}.sb-rim{position:absolute;inset:-5px;z-index:-1;border-radius:25px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .35s;box-shadow:0 0 16px 3px rgba(255,170,60,.85)}.sb-rim.on{opacity:1}.sb-rim i{position:absolute;inset:-21.5%;display:block}.sb-rim.l3 i{background:conic-gradient(#ffd23f,#ff9f1c,#fff3a0,#ffd23f,#ff9f1c,#fff3a0,#ffd23f)}.sb-rim.l4 i{background:conic-gradient(#fff3a0,#ff9f1c,#ff3b1c,#ff9f1c,#fff3a0,#ff9f1c,#ff3b1c,#ff9f1c,#fff3a0)}.sb-rim.l5 i{background:conic-gradient(#ff3b6b,#ff9f1c,#ffe14d,#3ddc84,#36c5f0,#9b6bff,#ff3b6b)}.sb-rim.l5{box-shadow:0 0 18px 4px rgba(120,190,255,.9)}.sb-rim.on i{will-change:transform;animation:sbRim 3s linear infinite}.sb-rim.l4.on i{animation-duration:2.2s}.sb-rim.l5.on i{animation-duration:1.6s}.sb-rim.still.on i{animation:none}@keyframes sbRim{to{transform:rotate(360deg)}}.sb .sb-eg{display:grid;grid-template-columns:1fr 1.7fr;gap:10px;margin-top:12px}.sb .sb-eg .sb-again{margin-top:0}.sb .sb-out{height:56px;border-radius:99px;font-size:17px;font-weight:800;color:#4a3626;background:#f3e9dd;box-shadow:inset 0 0 0 1.5px rgba(92,68,36,.22)}\n.sb-fx>.sb-lf{width:220px;height:220px;margin:-110px 0 0 -110px;border-radius:50%;background:radial-gradient(circle,rgba(255,250,220,.95),rgba(255,200,80,.5) 40%,rgba(255,160,40,0) 70%)}\n.sb-fly>.sb-fire{width:100%;height:100%;transform-origin:50% 100%;background:linear-gradient(to top,rgba(255,70,0,.9),rgba(255,150,0,.55) 35%,rgba(255,200,60,.15) 65%,rgba(255,200,60,0) 85%)}\n.sb-fly>.sb-fu{left:50%;top:38%;width:280px;margin-left:-140px;text-align:center;white-space:nowrap;font-size:30px;font-weight:900;color:#fff;text-shadow:0 2px 0 #b3261e,0 0 12px #ff8a00}\n.sb-fu small{display:block;margin-top:2px;font-size:16px;font-weight:800}\n.sb-wn{position:absolute;inset:0;z-index:2;display:grid;place-items:center;border-radius:inherit;pointer-events:none;font-style:normal;background:rgba(255,106,26,.6);box-shadow:inset 0 0 0 calc(var(--cs)*.09) #ff6a1a,0 0 calc(var(--cs)*.3) calc(var(--cs)*.06) rgba(255,122,40,.85);animation:sbWn .7s ease-in-out infinite alternate}\n.sb-wn b{font-size:calc(var(--cs)*.52);font-weight:900;line-height:1;color:#fff;text-shadow:0 1px 2px #7a1c00}\n@keyframes sbWn{from{opacity:.8}to{opacity:1}}\n.tp.t6{--ta:#ffd23f;--tb:#ff9f1c;--tc:#7a1a0a}\n.tp.t8{--ta:#ff7ac6;--tb:#ff3b9a;--tc:#6d1450}\n.tp.t10{--ta:#c9a6ff;--tb:#9b6bff;--tc:#3b1a8a}\n.tp.t12{--ta:#5ee0ff;--tb:#36c5f0;--tc:#123a8a}\n.tp.t16{--ta:#fff3a0;--tb:#ff5fd2;--tc:#5b21b6}\n.sb-word.tp,.sb-mul.tp{color:#fff;text-shadow:0 2px 0 var(--tb),0 4px 0 var(--tc),0 7px 0 #1a1033,0 0 22px var(--ta),0 0 44px var(--tb)}\n.sb-word.tp small{color:var(--ta)}\n.sb-rim.tp i{background:conic-gradient(var(--ta),var(--tb),#fff,var(--ta),var(--tb),#fff,var(--ta))}\n.sb-rim.tp{box-shadow:0 0 18px 4px var(--tb)}\n.sb-fly>.sb-rays.tp{background:repeating-conic-gradient(var(--ta) 0 9deg,rgba(255,255,255,0) 9deg 24deg)}\n.sb-fx>.sb-wave.tp{box-shadow:0 0 0 3px #fff,0 0 16px 7px var(--ta),0 0 34px 14px var(--tb)}\n.sb-sc .sb-fv{font-weight:800;color:#ff8a3d}\n.sb-ef{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px;font-size:14px;font-weight:800;color:#e8742a}\n.sb-ef svg{width:15px;height:18px}\n.sb.rm *,.sb.rm *::before,.sb.rm *::after{animation:none!important;transition:none!important}";
     document.head.appendChild(css);
     BLOCK_UI = window.SeoulBlock;
     return BLOCK_UI;
@@ -17256,12 +17330,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<section class="card bk-last"><b>ผลสัปดาห์ก่อน: ${res}</b><div class="bk-lt">${l.teams.map(function (t) { return html`<span class="${t.id === l.team ? 'me' : ''}">${t.name} ${bkN(t.score)}</span>`; })}</div>
       <small class="muted">${l.box ? 'คุณได้กล่องสุ่ม 1 กล่องจากเกม' : l.team ? 'สัปดาห์ก่อนทีมของคุณยังไม่ได้กล่อง สัปดาห์นี้ลุยใหม่' : 'สัปดาห์ก่อนคุณยังไม่ได้อยู่ทีม'} · กล่องจากเกมทั้งหมด ${d.boxes || 0} กล่อง</small></section>`;
   }
+  /** ขอรอบจากหลังบ้าน · rule 3 = หน้านี้รู้จักกติกา 3 (k61) หน้ารุ่นเก่าไม่ส่ง จึงได้ f2| ที่หน้านั้นเล่นได้ */
+  function blockAsk(free) { return call('blockStart', free ? { free: true, rule: 3 } : { rule: 3 }, staffAuth()); }
   function blockPlay(el, free) {
     if (!block || block.busy || !block.data) return;
     block.busy = true;
     // (k44 แตะเล่นแล้ว งานภาพที่ต่อคิวไว้ไม่เริ่มก่อนกระดานขึ้น)
     blockHush(BLOCK_FX_MS);
-    run(el, call('blockStart', free ? { free: true } : {}, staffAuth())).then(function (g) {
+    run(el, blockAsk(free)).then(function (g) {
       block.busy = false;
       blockShow(blockWithRun(g));
     }, function () { block.busy = false; });
@@ -17360,7 +17436,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function blockAgain(mode) {
     if (!block || block.busy) return;
     block.busy = true;
-    call('blockStart', mode === 'free' ? { free: true } : {}, staffAuth()).then(function (g) {
+    blockAsk(mode === 'free').then(function (g) {
       block.busy = false;
       blockWithRun(g);
       g.stats = blockStats(block.data);
@@ -22629,7 +22705,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         it.staff = staffOnly;
         toast(staffOnly ? it.name + ': ไม่ต้องนับ พนักงานสั่งเมื่อต้องการ' : it.name + ': นับทุกครั้ง สั่งตาม PAR', 'ok');
         var box = $('#odo-items');
-        if (box) redraw(box, String(odoItemRows(odo.cat.items.filter(function (x) { var q = String(odo.catQ || '').trim().toLowerCase(); return !q || x.name.toLowerCase().indexOf(q) >= 0; }))));
+        if (box) redraw(box, String(odoItemRows(odo.cat.items)));
         odo.v = null;
         loadOrderOwner();
       }, function () { setSheetBody(odOwnerBody()); });
