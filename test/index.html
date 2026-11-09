@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.72","page":"","e3":"a39716d2","edge":true,"test":true,"store":"test.","build":"e22ce17da0ff"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.74","page":"","e3":"a39716d2","edge":true,"test":true,"store":"test.","build":"cfd60d51b1ba"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -6984,6 +6984,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       </div>`);
     stamp($('#sheet-body'));
     nmShineOn();
+    // (2.13.73 k91) เลขในแผ่นนับตั้งแต่แผ่นขึ้น ไม่ขึ้นยอดใหม่ก่อนแล้วถอยกลับตอนข้อมูลมา
+    countUp();
     // (2.13.46 ตัวเฝ้าฉากเฉพาะแผ่นที่มีฉากครัวโซลฟูล์: แผ่นอื่น เช่น แผ่นสแกนลงเวลา ไม่สั่งงานของการ์ด)
     if ($('#sheet-body .bks')) bksWatch();
     if (root.querySelector('.sheet-f')) stamp(root.querySelector('.sheet-f'));
@@ -8023,42 +8025,89 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // Points won float up as "+2". Behind an open sheet nothing counts: it does once the sheet closes.
   var CNT_FMT = { m: function (v) { return money(v); }, h: function (v) { return hrs(Math.round(v * 100) / 100); }, i: function (v) { return String(Math.round(v)); } };
   var CNT = LS.get('seoulful.cnt') || {}; // per person: what each number last showed on this phone
+  // (2.13.73 k91 · ตัวลอง k80 บนแอปทดลอง 2.13.72: แนนได้ 10 เหรียญ หน้า ฉัน ขึ้น 49 แต่แผ่น แต่งตัว ขึ้น 49 แล้วถอยเป็น 39
+  // แล้วนับถึง 49 เพราะ openSheet ไม่นับ ป้ายจึงขึ้นยอดใหม่ก่อน แล้วนับจากยอดที่จำไว้ตอนข้อมูลร้านมา) เลขที่ขึ้นจอแล้วไม่ถอยกลับ:
+  // · ป้ายวาดเลขที่จอนี้เห็นล่าสุดไว้ก่อน (data-s) ไม่วาดยอดใหม่ แล้วนับไปยอดใหม่ ทุกป้ายที่วาดถูกนับก่อนขึ้นจอเฟรมแรก (cntTick)
+  //   ป้ายจึงไม่มีเฟรมที่ขึ้นยอดใหม่แล้วถอยกลับ · ป้ายที่อยู่บนจอแล้วนับจากเลขที่ตัวเองโชว์อยู่ (_cntV)
+  // · ยอดที่โชว์เป็นคำธรรมดา (cntSeen เช่น หน้า ฉัน "มี … เหรียญ") จดว่าจอเห็นยอดนี้แล้ว ป้ายนับยอดเดียวกันขึ้นยอดนี้เลย
+  // · ใต้แผ่นที่เปิดอยู่ ป้ายโชว์เลขเดิมไว้นับตอนแผ่นปิด · ยอดใหม่ขึ้นจอที่อื่นแล้วขึ้นยอดใหม่เลย ไม่นับจากเลขเก่า
+  // · วาดทับระหว่างนับ: หยุดนับ ขึ้นยอดที่นับไป
+  var cntTicking = false, cntRuns = 0;
+  function cntWho() { return S.view === 'owner' ? 'OWNER' : S.view === 'staff' && S.staff ? S.staff.empId : ''; }
+  function cntTick() {
+    if (cntTicking) return;
+    cntTicking = true;
+    requestAnimationFrame(function () { cntTicking = false; countUp(); });
+  }
   /** A counted number in the markup: its key (one per thing), its value, how it is written (i, m, h). */
-  function cnt(key, v, f) { f = f || 'i'; return html`<span class="cnt" data-cnt="${key}" data-v="${+v || 0}" data-f="${f}">${CNT_FMT[f](+v || 0)}</span>`; }
+  function cnt(key, v, f) {
+    f = f || 'i';
+    v = +v || 0;
+    var who = cntWho();
+    var was = who && CNT[who] ? CNT[who][key] : null;
+    var s = MOTION && was != null && isFinite(was) ? +was : v;
+    cntTick();
+    return html`<span class="cnt" data-cnt="${key}" data-v="${v}" data-s="${s}" data-f="${f}">${CNT_FMT[f](s)}</span>`;
+  }
+  /** ยอดที่โชว์เป็นคำธรรมดา ไม่นับ (หน้า ฉัน "มี … เหรียญ"): จอนี้เห็นยอดนี้แล้ว */
+  function cntSeen(key, v) { v = +v || 0; cntTick(); return html`<span data-cnt-seen="${key}" data-v="${v}">${String(v)}</span>`; }
+  function cntSet(el, v) {
+    el._cntRun = 0;
+    el._cntV = v;
+    var t = (CNT_FMT[el.dataset.f] || CNT_FMT.i)(v);
+    if (el.textContent !== t) el.textContent = t;
+  }
   function countUp() {
-    var who = S.view === 'owner' ? 'OWNER' : S.view === 'staff' && S.staff ? S.staff.empId : '';
+    var who = cntWho();
     if (!who) return;
     var mine = CNT[who] = CNT[who] || {};
     var changed = false;
+    var put = function (k, v) { if (mine[k] !== v) { mine[k] = v; changed = true; } };
+    // Under an open sheet it waits (closeSheet counts again).
+    var under = function (el) { return !!sheetState && !el.closest('#sheet-root'); };
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cnt-seen]'), function (el) {
+      var v = +el.dataset.v;
+      if (isFinite(v) && !under(el)) put(el.dataset.cntSeen, v);
+    });
+    var seen = {};
+    for (var x in mine) seen[x] = mine[x];
+    var held = [];
     Array.prototype.forEach.call(document.querySelectorAll('.cnt[data-cnt]'), function (el) {
-      // Under an open sheet it waits (closeSheet counts again).
-      if (sheetState && !el.closest('#sheet-root')) return;
       var k = el.dataset.cnt;
       var v = +el.dataset.v;
-      var was = mine[k];
-      if (!isFinite(v) || was === v) return;
-      mine[k] = v;
-      changed = true;
-      if (was == null || !MOTION) return;
-      cntRun(el, was, v);
-      if (k === 'pts' && v > was) { floatUp('+' + (v - was) + ' แต้ม', el); sfx('coin'); }
+      if (!isFinite(v)) return;
+      if (el._cntRun && el._cntTo === v) { if (!under(el)) put(k, v); return; }
+      var s = el.dataset.s;
+      var from = el._cntV != null ? el._cntV : s != null && s !== '' && isFinite(+s) ? +s : v;
+      if (under(el)) { el._cntV = from; if (from !== v) held.push(el); return; }
+      put(k, v);
+      if (from === v || !MOTION || seen[k] === v) { cntSet(el, v); return; }
+      cntRun(el, from, v);
+      if (k === 'pts' && v > from) { floatUp('+' + Math.round(v - from) + ' แต้ม', el); sfx('coin'); }
     });
+    held.forEach(function (el) { var v = +el.dataset.v; if (mine[el.dataset.cnt] === v || !MOTION) cntSet(el, v); });
     if (changed) LS.set('seoulful.cnt', CNT);
   }
   function cntRun(el, from, to) {
     var f = CNT_FMT[el.dataset.f] || CNT_FMT.i;
     var t0 = 0;
+    var last = '';
     var dur = Math.min(900, 350 + Math.abs(to - from) * 25);
+    var me = el._cntRun = ++cntRuns;
+    el._cntTo = to;
+    var show = function (x) { el._cntV = x; last = f(x); el.textContent = last; };
     var step = function (t) {
-      if (!el.isConnected) return;
+      if (el._cntRun !== me) return;
+      if (!el.isConnected) { el._cntRun = 0; return; }
+      // (วาดทับระหว่างนับ: ขึ้นยอดที่นับไปเลย ไม่ถอยกลับ)
+      if (el.textContent !== last) { cntSet(el, to); return; }
       if (!t0) t0 = t;
       var p = Math.min(1, (t - t0) / dur);
-      el.textContent = f(from + (to - from) * (1 - Math.pow(1 - p, 3)));
-      if (p < 1) { requestAnimationFrame(step); return; }
-      el.textContent = f(to);
+      if (p < 1) { show(from + (to - from) * (1 - Math.pow(1 - p, 3))); requestAnimationFrame(step); return; }
+      cntSet(el, to);
       el.classList.add(to > from ? 'bump-up' : 'bump-down');
     };
-    el.textContent = f(from);
+    show(from);
     requestAnimationFrame(step);
   }
   /** A word floating up from where something was won (or from the top, when that is out of sight). */
@@ -9771,7 +9820,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       </div></section>
       <section class="card flush"><div class="list">
         ${row('data-act="shelf-open"', 'gift', 'ห้องของฉัน', l && l.box ? 'น้อง ' + l.box.n + '/' + l.box.of + (l.box.gifts ? ' · กล่องฟรี ' + l.box.gifts : '') : '')}
-        ${row('data-act="shop-open"', 'bag', 'แต่งตัว', l && l.coins ? 'มี ' + l.coins.left + ' เหรียญ' : '')}
+        ${row('data-act="shop-open"', 'bag', 'แต่งตัว', l && l.coins ? html`มี ${cntSeen('coins', l.coins.left)} เหรียญ` : '')}
         ${row('data-act="face-take"', 'camera', face ? 'เปลี่ยนรูปโปรไฟล์' : 'ใส่รูปโปรไฟล์ (ถ่ายเซลฟี่)', 'ขึ้นเฉพาะในแอปหลังเข้าระบบ')}
         ${face ? row('data-act="face-remove"', 'trash', 'เอารูปโปรไฟล์ออก', '') : ''}
         ${row('data-act="snd-toggle"', SOUND.on ? 'sound' : 'mute', 'เสียงในแอป', 'เปิดกล่อง ลูบหัวสัตว์เลี้ยง เล่นในลาน', html`<span class="pill ${SOUND.on ? 'gold' : ''}">${SOUND.on ? 'เปิด' : 'ปิด'}</span>`)}
@@ -14729,7 +14778,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div id="fig">${hero}
       <section class="card"><span class="eyebrow">ตีบวก</span>
         ${step ? html`<div class="fg-odds"><span>+${plus} → <b>+${plus + 1}</b></span><span>โอกาสติด <b>${step[1]}%</b></span><span><span class="coin"></span> ${step[0]}</span></div>
-          <p class="small ${risk === 'break' ? 'fg-danger' : 'muted'}" style="margin:8px 0 0">${risk === 'break' ? html`${icon('alert')} ไม่ติด: <b>แตก! กลับเป็น +0</b> และเหรียญหาย` : risk === 'drop' ? 'ไม่ติด: เหรียญหาย และบวกลดเป็น +' + (plus - 1) : 'ไม่ติด: เหรียญหายอย่างเดียว บวกไม่ลด'} · มีเหรียญ ${d.coins.left}</p>
+          <p class="small ${risk === 'break' ? 'fg-danger' : 'muted'}" style="margin:8px 0 0">${risk === 'break' ? html`${icon('alert')} ไม่ติด: <b>แตก! กลับเป็น +0</b> และเหรียญหาย` : risk === 'drop' ? 'ไม่ติด: เหรียญหาย และบวกลดเป็น +' + (plus - 1) : 'ไม่ติด: เหรียญหายอย่างเดียว บวกไม่ลด'} · มีเหรียญ ${cntSeen('coins', d.coins.left)}</p>
           ${risk ? guard ? html`<label class="fg-guard"><input type="checkbox" id="fg-guard" ${fg.guard === false ? '' : 'checked'}> ใช้ตัวซ้ำกันไว้ (${guardNames}) ไม่ติดก็ไม่${risk === 'break' ? 'แตก' : 'ลด'}</label>` : html`<p class="small muted" style="margin:6px 0 0">มีตัวซ้ำของตัวนี้ 1 ตัว หรือตัวอื่น 2 ตัว ใช้กัน${risk === 'break' ? 'แตก' : 'บวกลด'}ได้</p>` : ''}`
         : html`<p class="small" style="margin:8px 0 0">${icon('spark')} +10 สูงสุดแล้ว สุดยอดมาก</p>`}
       </section>
@@ -22059,7 +22108,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="list">${list.map(function (c) { return html`<div class="row between" style="padding:8px 0;border-bottom:1px solid var(--line)"><div><b>${names[c.id] || c.id}</b><div class="small muted">${c.name} · โดย ${c.author}</div></div>${c.url ? html`<a class="small" href="${c.url}" target="_blank" rel="noopener">${c.license}</a>` : html`<span class="small">${c.license}</span>`}</div>`; })}</div>` });
     },
     // (k33 แตะแท็บที่เปิดอยู่ซ้ำไม่ทำอะไร: เดิมล้างของที่ลองและกลับหมวดแรก ชุดที่กำลังลองหายกลับเป็นชุดเดิม)
-    'shop-mode': function (el) { if (el.dataset.mode === shop.mode) return; shop.mode = el.dataset.mode; shop.slot = SHOP_SLOTS[shop.mode][0]; shop.tries = {}; shop.tryKit = null; shopRedraw(); },
+    // (2.13.74 ข้ามโหมด ตัวละคร รูปและชื่อ ห้อง ของที่ลองยังอยู่เหมือนข้ามแท็บ: เดิมล้างทุกช่อง ลองลูกโป่งแล้วแตะโหมดอื่น
+    // กลับมาลองท่า ลูกโป่งหายทุกเฟรม · ตัวลอง k80c บนแอปทดลอง 2.13.72)
+    'shop-mode': function (el) { if (el.dataset.mode === shop.mode) return; shop.mode = el.dataset.mode; shop.slot = SHOP_SLOTS[shop.mode][0]; shop.tryKit = null; shopRedraw(); },
     'shop-room': function () { closeSheet(); setTimeout(function () { openShelf({ tab: 'room' }); setTimeout(function () { if (shelf && shelf.data && !shelf.arrange && $('#shelf')) roomArrange(); }, 500); }, 230); },
     'shop-kit': function (el) { shop.tryKit = shop.tryKit === el.dataset.id ? null : el.dataset.id; shopRedraw(); var b = $('#sheet-body'); if (b && shop.tryKit) b.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' }); },
     'shop-wear-kit': function (el) { run(el, call('shopWearKit', { kit: el.dataset.id }, staffAuth()), null, shopDone).catch(function () {}); },
