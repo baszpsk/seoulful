@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.71","page":"","e3":"cff30e5e","edge":true,"test":true,"store":"test.","build":"1930a3143c70"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.72","page":"","e3":"a39716d2","edge":true,"test":true,"store":"test.","build":"e22ce17da0ff"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -2381,7 +2381,11 @@ body.sb-on #toasts { z-index: 5001; }
 .fr-run .rn-poses img { position: absolute; max-width: none; will-change: opacity; }
 .fr-run .rn-poses { opacity: 0; }
 .fr-run .c3-run .rn-poses { opacity: 1; }
-.fr-run .c3-run .rn-drawn { opacity: 0; }
+.fr-run .c3-run .rn-drawn { opacity: 0; animation: none; }
+/* k83 (เจ้าของ 8 พ.ย. 2569 "วิ่งฝ่าด่านหน้าเพื่อนตัวละครบัคไปแปปนึงแบบนี้อะ"): ภาพยืนก่อนภาพวิ่งสามมิติมา (และมือถือที่ไม่มีภาพสามมิติ)
+   กระโดดข้ามลูกอมและรั้วตามจังหวะเดียวกับ rn-jumps แบบตัวที่กระโดดจริง ไม่ยืนตรงลอย: ย่อตัวก่อนออกตัว ยืดและเอียงไปทางที่วิ่งตอนขึ้น
+   เหยียดตัวเอียงกลับตอนลง หดเมื่อแตะพื้น โยกตัวระหว่างวิ่งบนพื้น (แบบคนเดินในลานที่ภาพก้าวยังไม่มา) · test/run-card-pose.test.js ตรวจทุก 10 ms */
+.fr-run .rn-drawn { transform-origin: 50% 100%; animation: rn-hop 2.8s infinite; }
 .fr-run .rn-run { position: absolute; inset: 0; animation: rn-on-run 2.8s step-end infinite; }
 .fr-run .rn-run img { opacity: .001; animation: rn-leg .4s step-end infinite; }
 .fr-run .rn-run img:nth-child(2) { animation-delay: -.3s; }
@@ -2396,6 +2400,7 @@ body.sb-on #toasts { z-index: 5001; }
 .fr-run.rn-still .rn-b,
 .fr-run.rn-still .rn-sh,
 .fr-run.rn-still .fr-run-art b,
+.fr-run.rn-still .rn-drawn,
 .fr-run.rn-still .rn-run,
 .fr-run.rn-still .rn-run img,
 .fr-run.rn-still .rn-poses .rn-up,
@@ -2433,6 +2438,29 @@ html.i3-rn-ball-0 .fr-run .rn-b { bottom: 22px; width: 26px; height: 26px; borde
 @keyframes rn-on-up { 0% { opacity: .001; } 6.43% { opacity: 1; } 21.43% { opacity: .001; } 61.25% { opacity: 1; } 75.54% { opacity: .001; } }
 @keyframes rn-on-dn { 0% { opacity: .001; } 21.43% { opacity: 1; } 36.43% { opacity: .001; } 75.54% { opacity: 1; } 89.82% { opacity: .001; } }
 @keyframes rn-leg { 0% { opacity: 1; } 25% { opacity: .001; } }
+@keyframes rn-hop {
+  0% { rotate: 0deg; scale: 1 1; }
+  3% { rotate: 0deg; scale: 1.06 .9; }
+  6.43% { rotate: 5deg; scale: .95 1.08; }
+  14% { rotate: 10deg; scale: .96 1.06; }
+  21.43% { rotate: 6deg; scale: .97 1.05; }
+  29% { rotate: -5deg; scale: .97 1.05; }
+  34% { rotate: -3deg; scale: .98 1.04; }
+  36.43% { rotate: 0deg; scale: 1.08 .88; }
+  40.5% { rotate: 0deg; scale: 1 1; }
+  46% { rotate: -2deg; scale: 1 1; }
+  51.5% { rotate: 2deg; scale: 1 1; }
+  58% { rotate: 0deg; scale: 1.06 .9; }
+  61.25% { rotate: 5deg; scale: .95 1.08; }
+  68% { rotate: 10deg; scale: .96 1.06; }
+  75.54% { rotate: 6deg; scale: .97 1.05; }
+  83% { rotate: -5deg; scale: .97 1.05; }
+  87.5% { rotate: -3deg; scale: .98 1.04; }
+  89.82% { rotate: 0deg; scale: 1.08 .88; }
+  93.5% { rotate: 0deg; scale: 1 1; }
+  97% { rotate: -2deg; scale: 1 1; }
+  100% { rotate: 0deg; scale: 1 1; }
+}
 #run .run-stage { position: relative; height: 250px; border-radius: 20px; overflow: hidden; touch-action: manipulation; -webkit-user-select: none; user-select: none; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06); }
 #run-cv { display: block; width: 100%; height: 100%; }
 /* (in the open ahead of the runners at the line, never over one's own name: #239) */
@@ -2467,7 +2495,7 @@ html.i3-rn-ball-0 .fr-run .rn-b { bottom: 22px; width: 26px; height: 26px; borde
 .run-row.me b { color: var(--gold-ink); }
 .run-t { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 14px; }
 .run-st { font-size: 12px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
-@media (prefers-reduced-motion: reduce) { .fr-run .rn-world, .fr-run .fr-run-art b, .fr-run .rn-g, .fr-run .rn-sh, .fr-run .rn-run, .fr-run .rn-poses img { animation: none; } .fr-run .rn-run img:first-child { opacity: 1; } .fr-run .rn-h { animation: none; translate: -150px 0; } .fr-run .rn-b { animation: none; translate: -110px 0; } }
+@media (prefers-reduced-motion: reduce) { .fr-run .rn-world, .fr-run .fr-run-art b, .fr-run .rn-drawn, .fr-run .rn-g, .fr-run .rn-sh, .fr-run .rn-run, .fr-run .rn-poses img { animation: none; } .fr-run .rn-run img:first-child { opacity: 1; } .fr-run .rn-h { animation: none; translate: -150px 0; } .fr-run .rn-b { animation: none; translate: -110px 0; } }
 .pz-tease-h { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 .pz-tease-h b { font-size: 13.5px; }
 .pz-acts.tease { grid-template-columns: repeat(4, 1fr); margin-top: 6px; }
@@ -17587,11 +17615,23 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     blockKeep(un);
     return blockPost(un);
   }
+  /** ระดับล่าสุดจากหลังบ้านหลังบันทึกสำเร็จ (k82): หน้า ฉัน หน้าแรก แต่งตัว และห้อง ขึ้นเหรียญยอดนี้ทันที ไม่ต้องเปิดแอปใหม่
+   *  แต่งตัวและห้องที่เคยเปิดจำของเดิมไว้ในเครื่อง จึงตั้งเหรียญด้วย · แคชหน้าแรกเป็นยอดใหม่ เปิดแอปใหม่ไม่เห็นยอดเก่าก่อน */
+  function lvFresh(l) {
+    if (!l || !S.home) return;
+    S.home.level = l;
+    if (l.coins && shop && shop.data) shop.data.coins = l.coins;
+    if (l.coins && shelf && shelf.data) shelf.data.coins = l.coins;
+    if (S.staff) remember('home', S.home, homeTag(S.staff.empId, S.home));
+    softRender();
+  }
   /** ส่งรอบ: คืนข้อความเมื่อหลังบ้านบันทึกแล้วเท่านั้น · ล้มแล้วรอบยังเก็บในเครื่อง ส่งใหม่ได้ */
   function blockPost(un) {
     var mine = block;
     return call('blockSend', { seed: un.seed, moves: un.moves }, staffAuth()).then(function (r) {
       blockKeep(null);
+      // รอบที่ได้เหรียญประจำสัปดาห์: ระดับหลังบันทึกจากหลังบ้าน ทุกหน้าที่โชว์เหรียญขึ้นยอดนี้ทันที (lvFresh)
+      lvFresh(r.level);
       if (block !== mine) return 'บันทึกแล้ว';
       blockSet(r.game);
       if ($('#block') && block.host && block.host.hidden) setSheetBody(blockBody());
@@ -17903,8 +17943,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // and past its frame (engine.js bleed: a hand held out), from when it has come; the drawn one meanwhile.
   // A friend's ghost has fewer (two of the stride), all made before the run as a rule.
   var RUN_POSES = [['stand', '', 0], ['run1', 'm-run', 375], ['run3', 'm-run', 875], ['up', 'm-leap', 500], ['ouch', 'm-ouch', 500], ['run0', 'm-run', 125], ['run2', 'm-run', 625], ['down', 'm-drop', 500]];
-  function runSprites(look, few) {
-    var sp = { drawn: runImg(look), look: look, few: few };
+  // (k83) ภาพของการ์ดวิ่งฝ่าด่าน: ขึ้นและลงต่อจากภาพวิ่งสองจังหวะแรก ทุกภาพที่การ์ดใช้อยู่คิวปกติ (เดิม 4 ภาพอยู่คิวลำดับต่ำ ทำหลังทุกภาพในหน้า
+  // การ์ดจึงรอครบนาน: เปิดหน้าเพื่อนครั้งแรกในเครื่องลอง 24.4 วิ) · ท่าชนการ์ดไม่ใช้ ทำทีหลังตามเดิม
+  var RN_CARD_ORDER = ['stand', 'run1', 'run3', 'up', 'down', 'run0', 'run2', 'ouch'];
+  function runSprites(look, few, card) {
+    var sp = { drawn: runImg(look), look: look, few: few, card: !!card };
     sp.drawn.onload = function () {
       picTop(sp.drawn.src, function (t) { sp.dtop = t; runRepaint(); }, 78 / 42);
       // (drawn into pixels once, as big as the screen shows it: a drawing laid on the course each frame
@@ -17929,6 +17972,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function runPoses(sp) {
     var lk = Object.assign({}, sp.look || {}, { p: '' });
     var all = RUN_POSES.slice(0, sp.few ? 5 : RUN_POSES.length);
+    if (sp.card) all = RN_CARD_ORDER.map(function (k) { return RUN_POSES.filter(function (p) { return p[0] === k; })[0]; });
     var got = function (p, u) {
       var im = new Image();
       im.decoding = 'async';
@@ -17955,7 +17999,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // pictures made the same way, and the friends ran as the drawn characters)
     var ask = function (p) {
       if (sp.kept[p[0]]) return;
-      C3.mod.still(lk, { w: 42, h: 78, move: p[1], at: p[2], turn: 55, bleed: true, first: p[0] === 'stand', low: !/^(stand|run1|run3)$/.test(p[0]) }).then(function (u) { got(p, u); }, function () { /* the drawn one stays */ });
+      C3.mod.still(lk, { w: 42, h: 78, move: p[1], at: p[2], turn: 55, bleed: true, first: p[0] === 'stand', low: sp.card ? p[0] === 'ouch' : !/^(stand|run1|run3)$/.test(p[0]) }).then(function (u) { got(p, u); }, function () { /* the drawn one stays */ });
     };
     ask(all[0]);
     Promise.resolve().then(function () { all.slice(1).forEach(ask); });
@@ -17981,10 +18025,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** A runner's picture now (`st`: a frame of runPlay_'s, or one's own as it is): [picture, made past its frame]. */
   function runPick(sp, st, standing) {
     var k = standing ? 'stand' : st[2] === 1 ? 'ouch' : st[2] === 2 ? 'down' : st[2] === 3 ? ((st[4] || 0) > 1.5 || st[5] ? 'up' : 'down') : 'run' + (Math.floor(st[0] / 24) % 4);
-    var alt = { run0: 'run1', run2: 'run3', down: 'up', stand: 'run1' };
+    var alt = { run0: 'run1', run2: 'run3', down: 'up', up: 'down', stand: 'run1' };
+    // (k83 แบบเดียวกับการ์ดวิ่งหน้าเพื่อน 8 พ.ย. 2569) ขึ้น ลง ชน ที่ภาพยังไม่มา: ภาพก้าวก่อนภาพยืน ตัวที่ลอยจึงไม่ยืนตรง
+    var air = k === 'up' || k === 'down' || k === 'ouch';
     // (one of its moves not made yet: another of its 3D pictures, standing, a stride, never the drawn one
     // while it has one: #254, the friends went from 3D to the drawn ones as the run began)
-    var im = sp[k] || sp[alt[k]] || sp.stand || sp.run1 || sp.run3 || sp.up || sp.down || sp.ouch;
+    var im = sp[k] || sp[alt[k]] || (air && (sp.run1 || sp.run3 || sp.run0 || sp.run2)) || sp.stand || sp.run1 || sp.run3 || sp.up || sp.down || sp.ouch;
     return im ? [im, true] : [sp.flat || sp.drawn, false];
   }
   /** How high a runner stands above its feet, its hat and all (#239: its name was put as high as the
@@ -18531,7 +18577,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var RUN_CARD = { key: '', sp: null };
   function runCardSp(look) {
     var key = JSON.stringify(look);
-    if (RUN_CARD.key !== key) { RUN_CARD.key = key; RUN_CARD.sp = runSprites(look); }
+    if (RUN_CARD.key !== key) { RUN_CARD.key = key; RUN_CARD.sp = runSprites(look, 0, 1); }
     else runPoses(RUN_CARD.sp);
     return RUN_CARD.sp;
   }
@@ -18549,23 +18595,33 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var art = RUN_CARD.sp && document.querySelector('.fr-run-art');
     if (art && C3.mod && C3.mod.bleed) runCardPicsIn(art, RUN_CARD.sp);
   }
-  /** ภาพวิ่งที่มาแล้วใส่ช่องภาพของการ์ดวิ่งฝ่าด่าน ครบทุกช่องแล้วสลับจากภาพวาด (sp ท่า › ภาพ) */
+  // (k83) ภาพของแต่ละช่องเรียงจากท่าที่ใกล้ที่สุด: ช่องที่ภาพยังไม่มาใช้ภาพสามมิติที่มาแล้ว ไม่ใช้ภาพยืน (ยืนตรงลอยตอนกระโดด)
+  var RN_CARD_ALT = { run0: ['run0', 'run1', 'run3', 'run2'], run1: ['run1', 'run0', 'run2', 'run3'], run2: ['run2', 'run3', 'run1', 'run0'], run3: ['run3', 'run2', 'run0', 'run1'], up: ['up', 'down', 'run1', 'run3', 'run0', 'run2'], down: ['down', 'up', 'run3', 'run1', 'run2', 'run0'] };
+  /** ภาพวิ่งที่มาแล้วใส่ช่องภาพของการ์ดวิ่งฝ่าด่าน (sp ท่า › ภาพ) · k83 (เจ้าของ 8 พ.ย. 2569 ส่งภาพตัวละครยืนตรงลอยมุมซ้ายบนของการ์ด):
+   *  เดิมรอครบทั้ง 6 ภาพแล้วค่อยสลับจากภาพยืน ระหว่างนั้นภาพยืนหน้าตรงกระโดดตามฉาก · ตอนนี้มีภาพวิ่งภาพแรกเมื่อไรสลับเลย ช่องที่ยังไม่มา
+   *  ใช้ภาพที่ใกล้ท่านั้น (RN_CARD_ALT) แล้วแทนเมื่อภาพจริงมา (ภาพเดิมค้างจนภาพใหม่พร้อม) · สลับเมื่อทุกช่องถอดรหัสภาพเสร็จ ไม่มีเฟรมที่ตัวละครหาย */
   function runCardPicsIn(art, sp) {
-    var b = C3.mod.bleed, all = true;
-    // (ใส่ตามช่องภาพที่การ์ดมี: ท่าวิ่ง ขึ้น ลง)
+    var b = C3.mod.bleed, ready = true;
     var ims = art.querySelectorAll('img[data-rn]');
-    if (!ims.length) return;
+    if (!ims.length || !(sp.run0 || sp.run1 || sp.run2 || sp.run3)) return;
     for (var i = 0; i < ims.length; i++) {
-      var im = ims[i], k = im.getAttribute('data-rn');
-      if (!sp[k]) { all = false; continue; }
-      if (im.getAttribute('src') !== sp[k].src) {
+      var im = ims[i], u = runCardPic(sp, im.getAttribute('data-rn'));
+      if (!u) { ready = false; continue; }
+      if (im.getAttribute('src') !== u.src) {
         // (made past its frame, as the run draws them: laid as far past the character's box)
         im.style.cssText = 'left:' + (-30 * b.side) + 'px;top:' + (-56 * b.top) + 'px;width:' + 30 * (1 + 2 * b.side) + 'px;height:' + 56 * (1 + b.top) + 'px';
-        im.src = sp[k].src;
+        im.src = u.src;
       }
+      if (!im.complete) { ready = false; if (im.decode) im.decode().then(runCardPics, runCardPics); }
     }
-    // (all of them come: they show, the drawn one goes; c3-…: kept as the page is drawn anew)
-    if (all) art.classList.add('c3-run');
+    // (c3-…: kept as the page is drawn anew)
+    if (ready) art.classList.add('c3-run');
+  }
+  /** ภาพของช่อง k: ภาพท่านั้น หรือภาพที่ใกล้ท่านั้นที่สุดที่มาแล้ว */
+  function runCardPic(sp, k) {
+    var alt = RN_CARD_ALT[k] || [k];
+    for (var j = 0; j < alt.length; j++) if (sp[alt[j]]) return sp[alt[j]];
+    return null;
   }
   function runCard(l) {
     var r = (l && l.run) || { best: 0, leader: null };
