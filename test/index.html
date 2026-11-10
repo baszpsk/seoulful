@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.75","page":"","e3":"10a09fa2","edge":true,"test":true,"store":"test.","build":"3f89bcda2a36"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.76","page":"","e3":"13ee6aac","edge":true,"test":true,"store":"test.","build":"e6b17659836b"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -272,10 +272,21 @@ a { color: inherit; }
 h2.title { font-size: 19px; font-weight: 600; margin: 0; letter-spacing: -0.005em; }
 h3.h3 { font-size: 15px; font-weight: 600; margin: 20px 4px 8px; }
 
+/* k107 กันหน้าเลื่อนข้าง: วงรุ้งรอบรูปที่หมุนอยู่ยื่นเกินขอบขวา 0.8 px และการ์ดตอนเปลี่ยนแท็บเลื่อนเข้าจากขวา 22 px ทำให้หน้ากว้างเกินจอชั่วคราว (จอ 390 กว้าง 391) · ตัดเฉพาะส่วนที่เกินขอบจอ เอฟเฟกต์เหมือนเดิม */
+html, body { overflow-x: clip; }
+
 /* ---------- cards ---------- */
 .card { position: relative; background: var(--card); border: 0; border-radius: var(--r-lg); box-shadow: var(--card-shadow); padding: 18px; color: inherit; }
 /* 2.13.75 การ์ดอัปเดตบนหน้าเจ้าของยาวหลายจอเมื่อข้ามหลายรุ่น: ปุ่ม รับทราบ ติดขอบล่างของจอเหนือแถบล่างตลอดที่การ์ดอยู่บนจอ (ระยะแบบ .od-bar) กดได้ทันทีไม่ต้องเลื่อนไปท้ายการ์ด */
-.upd-ack { position: sticky; z-index: 5; bottom: calc(92px + env(safe-area-inset-bottom)); box-shadow: var(--card-shadow); }
+/* k107 ปุ่มลอยพื้นทึบและขอบสีการ์ด 8 px: ตอนลอยทับเนื้อหาการ์ด (จอ 360 ทับปุ่ม ดูข้อความ ครึ่งปุ่ม) ตัวหนังสือข้างใต้ไม่ทะลุ */
+.upd-ack { position: sticky; z-index: 5; bottom: calc(92px + env(safe-area-inset-bottom)); }
+/* k107 เจาะจงกว่ากฎพื้นปุ่มทั่วไป พื้นทึบจึงมีผลจริง */
+body .btn.upd-ack.block { background: var(--surface); box-shadow: 0 0 0 8px var(--card), var(--card-shadow); }
+/* k109 แถบอัปเดตในคำทักทายของเจ้าของ: ข้อความกับปุ่ม รับทราบ แถวเดียว ไม่ใช่การ์ด การ์ดทีมใช้แอปจึงยังเป็นการ์ดแรก (กติกา 2.13.6) */
+.hello > .upd-tip { display: flex; align-items: center; gap: 12px; margin-top: 12px; font-size: 15px; font-weight: 600; line-height: 1.35; letter-spacing: 0; }
+.hello > .upd-tip > span { flex: 1; min-width: 0; }
+.hello > .upd-tip small { margin-top: 2px; font-size: 13px; }
+.hello > .upd-tip > .btn { flex: none; }
 button.card { transition: transform .45s var(--spring); }
 button.card:active { transform: scale(.975); transition-duration: .12s; }
 .card.pad-lg { padding: 22px; }
@@ -757,8 +768,10 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-bar[hidden] { display: none; }
 .od-bar b { display: block; font-size: 15px; }
 .od-bar small { display: block; font-size: 12.5px; color: var(--muted); }
-.od-truck .row { align-items: center; }
-.od-truck .btn { flex: none; }
+/* k107 ของที่กำลังมา: ข้อความใช้เต็มกว้าง ปุ่ม ได้ของแล้ว อยู่ใต้ข้อความ (จอ 360 เดิมรายการเหลือกว้าง 116 px ยาว 6 บรรทัด) */
+.od-truck .row { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 8px 10px; }
+.od-truck .row > .fb-ico { grid-row: span 2; }
+.od-truck .btn { grid-column: 2; justify-self: start; }
 .od-truck-items { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
 .od-only { font-size: 12.5px; padding: 0; vertical-align: baseline; }
 .od-ask b { display: block; }
@@ -979,7 +992,8 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-plain { min-height: 32px; padding: 6px 2px; }
 .od-su.stepper button { height: 40px; }
 .od-su.stepper input { height: 40px; padding: 0 0 14px; }
-.od-iu { bottom: 5px; font-size: 12px; }
+/* k107 กล่องหน่วยกว้างเท่าช่องตัวเลข ไม่คร่อมปุ่ม + − (เดิมกว้างเต็ม 120 px ทับกรอบปุ่ม · หน่วยยาวสุด แกลลอน 42 px ในช่อง 48 px) */
+.od-iu { left: 36px; right: 36px; bottom: 5px; font-size: 12px; }
 .mt-part > summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; list-style: none; cursor: pointer; }
 .mt-part > summary::-webkit-details-marker { display: none; }
 .mt-part > summary svg { width: 18px; height: 18px; flex: none; color: var(--muted); transition: transform .2s; }
@@ -1212,6 +1226,10 @@ img.u3 { display: inline-block; width: 1.3em; height: 1.3em; margin: -.18em 0; v
 .pl-quest.done .gem.q-ring {background: linear-gradient(135deg, #f7e2a8, #d4ad66); color: #3a2a12;}
 .pl-row .quest.blk {overflow: hidden; padding: 6px 1px 8px;}
 .pl-row .quest.blk .bks {zoom: .5; flex: none;}
+/* k107 ฉากเกมในไทล์ครัวกว้าง 61 px เกินไทล์จอแคบ (จอ 360 ไทล์ 56 px ขอบฉากถูกตัด) ย่อฉากตามความกว้างจอให้อยู่ในไทล์ · เกมเล่นวนเหมือนเดิม */
+@media (max-width: 394px) {.pl-row .quest.blk .bks {zoom: .46;}}
+@media (max-width: 374px) {.pl-row .quest.blk .bks {zoom: .43;}}
+@media (max-width: 354px) {.pl-row .quest.blk .bks {zoom: .37;}}
 .pl-row .quest.blk .grow {display: grid; justify-items: center; gap: 2px; min-width: 0; max-width: 100%;}
 /* (k98 หน้าแรก) ภารกิจวันนี้แบบย่อ: แถวเดียว แตะกางการ์ดภารกิจเต็มในกรอบเดียวกัน */
 .card.dm-fold {padding: 0; overflow: hidden;}
@@ -9975,7 +9993,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var d = ymdOf(new Date(iso));
     return (d === ymdOf(now()) ? '' : odDay(d) + ' ') + isoTime(iso) + ' น.'; // 2.13.26 เวลากับ น. ไม่แยกบรรทัด
   }
-  function odEta(c) { return odDay(c.eta) + (c.slot ? ' ' + c.slot : ''); }
+  // k107 gap: ต่อท้ายคำว่า มา ให้วันย่อเว้นวรรค (มา ส. 7 พ.ย.) · มาวันนี้ มาพรุ่งนี้ ติดกันเหมือนเดิม
+  function odEta(c, gap) { var e = odDay(c.eta) + (c.slot ? ' ' + c.slot : ''); return gap && e && !/^(วันนี้|พรุ่งนี้|เมื่อวาน| )/.test(e) ? ' ' + e : e; }
   /** 2.13.26 ช่วงเวลาไม่ขาดกลางบรรทัด เช่น 12:00–16:00 (หัวการ์ดคำสั่งซื้อ หน้ากำลังมา) */
   function odNw(s) { return String(s).split(/(\d{1,2}[:.]\d{2}\s*[–-]\s*\d{1,2}[:.]\d{2})/).map(function (x, i) { return i % 2 ? html`<span class="od-nw">${x}</span>` : x; }); }
   /** When a count was made, short: 'วันนี้ 10:28', 'เมื่อวาน', 'อา. 27 ก.ย.' */
@@ -10806,7 +10825,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // k100c (เจ้าของ 10 พ.ย. 2569 "จัดทุกหน้า ใช้งานง่ายที่สุด"): ของมา รอร้านค้าส่ง เจอของขาด รวมเป็นกล่องสถานะเดียว แถวละเรื่อง
     // รายการนับขึ้นมาใกล้จอแรก · ปุ่มและคำเดิมทุกตัว
     var status = coming.map(function (b) {
-      return html`<div class="od-st od-truck"><div class="row"><span class="fb-ico od">${icon('truck')}</span><div class="grow"><b>ของ ${b.store} มา${odEta(b)}</b><div class="small muted od-truck-items">${b.items.length} อย่าง: ${b.items.join(' · ')}</div></div><button class="btn sm" data-act="od-got" data-id="${b.id}">${icon('check')} ได้ของแล้ว</button></div></div>`;
+      return html`<div class="od-st od-truck"><div class="row"><span class="fb-ico od">${icon('truck')}</span><div class="grow"><b>ของ ${b.store} มา${odEta(b, true)}</b><div class="small muted od-truck-items">${b.items.length} อย่าง: ${b.items.join(' · ')}</div></div><button class="btn sm" data-act="od-got" data-id="${b.id}">${icon('check')} ได้ของแล้ว</button></div></div>`;
     }).concat([odWaitCard(), odLate()].filter(Boolean));
     return html`<div class="stack od-page">${back}
       <div class="od-head"><h2>เช็กของ · สั่งของ<button class="info-btn" data-act="od-how" aria-label="วิธีเช็กของ">${icon('info')}</button></h2></div>
@@ -11171,7 +11190,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="fb-invite-h"><span class="fb-ico od">${icon('cart')}</span><div class="grow"><span class="eyebrow">สั่งของ · ${sp ? 'Makro GO และ Shopee' : 'Makro และ GO'}</span><b>${o.lines ? 'รอสั่ง ' + o.lines + ' อย่าง · ' + money(o.total) + ' บาท' : 'ยังไม่มีของรอสั่ง'}</b></div>${o.questions ? html`<span class="pill warn">ถาม ${o.questions}</span>` : ''}${icon('right')}</div>
       ${o.lines ? html`<div class="row wrapx" style="gap:6px">${st('Makro')}${st('GO')}${st('Shopee')}${o.saving ? html`<span class="pill gold">${icon('spark')} ถูกกว่าเดิม ${money(o.saving)} บาท</span>` : ''}</div>` : ''}
       ${o.fixes ? html`<p class="small" style="margin:10px 0 0;color:var(--warn);font-weight:600">${icon('alert')} รอร้านค้าแก้ ${o.fixes} อย่าง (ของขาด ส่งผิด หรือเสีย)</p>` : ''}
-      ${o.coming.length ? html`<p class="small" style="margin:10px 0 0">${icon('truck')} ${o.coming.map(function (c) { return c.store + ' มา' + odEta(c); }).join(' · ')}</p>` : ''}
+      ${o.coming.length ? html`<p class="small" style="margin:10px 0 0">${icon('truck')} ${o.coming.map(function (c) { return c.store + ' มา' + odEta(c, true); }).join(' · ')}</p>` : ''}
       <p class="small muted" style="margin:8px 0 0">${o.prices.error ? 'เช็กราคาไม่สำเร็จ ใช้ราคาล่าสุด' : o.prices.at ? 'ราคาจากเว็บเมื่อ ' + whenAt(odoReadAt(o.prices)) : ''}${fresh ? html` · <span style="color:var(--warn)">${fresh}</span>` : ''}${o.raised ? ' · ปรับ PAR อัตโนมัติ ' + o.raised + ' อย่าง' : ''}${o.subs ? ' · ของแทนรอตอบ ' + o.subs + ' คู่' : ''}</p>
     </button>`;
   }
@@ -12500,7 +12519,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           <div class="row wrapx" style="gap:6px;flex-basis:100%;justify-content:flex-end">${x.screenPhoto ? html`<button class="btn sm tap" data-act="photo" data-url="${x.screenPhoto}">${icon('image')} รูปจากจอ</button>` : ''}${x.photo ? html`<button class="btn sm tap" data-act="photo" data-url="${x.photo}">${icon('camera')} รูปจากมือถือ</button>` : ''}${mine ? html`<span class="small muted">รายการของคุณ — เจ้าของร้านตรวจ</span>` : html`<button class="btn sm tap" data-act="review-fix" data-id="${x.empId}" data-date="${x.date}" data-shift="${x.shift}" data-in="${x.in}">แก้เวลา</button><button class="btn sm primary tap" data-act="review-ok" data-id="${x.id}">ผ่าน</button>`}</div></div>`;
       })}</div></section>`;
   }
-  function teamView() {
+  function teamView(part) {
     var t = S.team;
     if (!t) return waiting('team', html`<div class="stack" aria-busy="true"><div class="skel" style="height:44px"></div><div class="skel" style="height:360px"></div><div class="skel" style="height:220px"></div></div>`);
     var b = t.board;
@@ -12517,9 +12536,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return html`<div class="board-row">${avatar(r)}<div class="grow bd-name"><span class="t">${nameTag(r, r.name)}</span><span class="s">${r.dept}</span></div><div class="st">${boardState(r)}</div><button class="icon-btn" data-act="row-menu" data-id="${r.id}" aria-label="ตัวเลือกของ ${r.name}">${icon('more')}</button></div>`;
       })}</section>
       ${S.view === 'owner' ? html`<h3 class="h3">ปฏิทินวันลาและวันหยุด</h3>${calCard(S.cal || t.month)}` : ''}
-      ${entries.length && S.view !== 'owner' ? html`<details class="card flush tm-entries"><summary class="item" style="cursor:pointer"><span class="grow t">รายการเดือนนี้ (${entries.length})</span></summary><div class="list">${entries.slice(0, 40).map(function (x) { return entryRow(x); })}</div></details>` : html`<h3 class="h3">รายการเดือนนี้ (${entries.length})</h3>
-      <section class="card flush">${entries.length ? html`<div class="list">${entries.slice(0, 40).map(function (x) { return entryRow(x); })}</div>` : html`<div class="empty">ยังไม่มีรายการ</div>`}</section>`}
+      ${part === 'board' ? '' : teamEntries()}
     </div>`;
+  }
+  /** k107 รายการเดือนนี้: แท็บทีมของผู้อนุมัติวางใต้การลาล่าสุด (teamView('board') ไม่มีส่วนนี้) · หน้าเจ้าของอยู่ท้ายทีมวันนี้เหมือนเดิม */
+  function teamEntries() {
+    var entries = (S.entries && S.entries.entries) || [];
+    return html`${entries.length && S.view !== 'owner' ? html`<details class="card flush tm-entries"><summary class="item" style="cursor:pointer"><span class="grow t">รายการเดือนนี้ (${entries.length})</span></summary><div class="list">${entries.slice(0, 40).map(function (x) { return entryRow(x); })}</div></details>` : html`<h3 class="h3">รายการเดือนนี้ (${entries.length})</h3>
+      <section class="card flush">${entries.length ? html`<div class="list">${entries.slice(0, 40).map(function (x) { return entryRow(x); })}</div>` : html`<div class="empty">ยังไม่มีรายการ</div>`}</section>`}`;
   }
   function entryRow(x, owner) {
     var amount = x.kind === 'permit' ? 'เข้า ' + x.time : x.kind === 'rain' ? rainTimeText(x.time) : (x.kind === 'ot' && x.qty > 0 ? '+' : '') + (x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)) + ' ' + x.unit;
@@ -12672,7 +12696,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var pend = S.leaves && S.leaves.pending && S.leaves.pending.length;
     var recent = S.leaves && S.leaves.recent && S.leaves.recent.length;
     // (k100a) คำขอที่รออนุมัติบนสุดเมื่อมี › ทีมวันนี้ › การลาล่าสุด › เงินเดือน (เนื้อหาเดิม)
-    return html`<div class="stack">${pushTeamCard(S.home && S.home.approver && S.home.approver.push)}${pend ? html`${leaveApprovals('wait')}<div class="divider"></div>` : ''}${teamView()}<div class="divider"></div>${pend ? (recent ? html`${leaveApprovals('recent')}<div class="divider"></div>` : '') : html`${leaveApprovals()}<div class="divider"></div>`}${payView()}</div>`;
+    // k107 คำขอที่รอขึ้นก่อนการ์ดเปิดแจ้งเตือน · รายการเดือนนี้ย้ายลงใต้การลาล่าสุด (เดิมอยู่ท้ายทีมวันนี้ ขึ้นก่อนการลา)
+    return html`<div class="stack">${pend ? html`${leaveApprovals('wait')}<div class="divider"></div>` : ''}${pushTeamCard(S.home && S.home.approver && S.home.approver.push)}${teamView('board')}<div class="divider"></div>${pend ? (recent ? html`${leaveApprovals('recent')}<div class="divider"></div>` : '') : html`${leaveApprovals()}<div class="divider"></div>`}${teamEntries()}<div class="divider"></div>${payView()}</div>`;
   }
 
   /** A leave that costs nothing off the Incentive: a doctor's note seen, or beyond anyone's control (#256, #257). */
@@ -13336,6 +13361,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${tabBar([['overview', 'home', 'ภาพรวม'], ['pay', 'money', 'เงินเดือน'], ['team', 'team', 'ทีม', o.pendingLeaves], ['staff', 'user', 'พนักงาน'], ['settings', 'settings', 'ตั้งค่า']], tab, 'owner-tab')}`;
   };
   function overview() {
+    // k109 ทีมใช้แอปยังเป็นการ์ดแรกใต้คำทักทาย (กติกา 2.13.6) การ์ดอัปเดตถัดมา (เดิมเริ่มราว 2,700 px ต้องเลื่อนลง 3 จอ) · การ์ดทีมสูงราว 630 px เต็มจอแรก
+    // จึงมีแถบ อัปเดตแอปแล้ว กับปุ่ม รับทราบ ในคำทักทาย กดได้ตั้งแต่เปิดหน้า · การ์ดอัปเดตยังแสดงครบทุกบรรทัด ปุ่มในการ์ดติดเหนือแถบล่างเหมือนเดิม
     var o = S.ownerHome;
     var due = o.periods.filter(function (p) { return p.status === 'approved'; })[0];
     var cur = o.current;
@@ -13361,16 +13388,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (rem.leadsGone) todo.unshift(['team', 'ตั้งคนส่งบันทึกหน้างานใหม่ — คนที่ตั้งไว้ออกแล้ว ระหว่างนี้ผู้อนุมัติและหัวหน้าส่งแทน', 'settings']);
     if (rem.keepersGone) todo.unshift(['team', 'ตั้งคนดูแล PAR ใหม่ — คนที่ตั้งไว้ออกแล้ว ระหว่างนี้หัวหน้าครัวดูแทน', 'settings']);
     return html`<div class="stack">
-      <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}</div>
+      <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}${o.update && o.team && (o.team.list || []).length ? updateTip(o.update) : ''}</div>
       ${pushCard()}
       ${teamUseCard(o.team)}
+      ${o.update ? updateCard(o.update) : ''}
       ${morningCard(o.morning)}
       ${meetCard(o.meet, o.talk)}
       ${pinLocksCard(o.pinLocks)}
       ${turnoverCard(o.turnover)}${yearEndWarnCard(o.yearEnd)}
       ${dailyOwnerCard(o.daily)}
       ${feedbackCard(o.feedback)}
-      ${o.update ? updateCard(o.update) : ''}
       ${tempUp ? tempOwnerCard(o.temp) : ''}
       ${due ? html`<section class="card hero pad-lg"><span class="eyebrow">ต้องจ่าย · เงินเดือน${due.month}${due.payDue ? ' · วันที่ ' + thShort(due.payDue) : ''}</span><div class="big" style="margin-top:6px">${money(due.total)}<small>บาท</small></div>
         <p class="small muted">อนุมัติโดย ${due.approvedBy} ${isoDate(due.approvedAt)}</p><div class="row" style="margin-top:12px"><button class="btn gold grow" data-act="go-pay" data-key="${due.key}">${icon('money')} ดูรายละเอียดและยืนยันจ่าย</button></div></section>` : ''}
@@ -13399,10 +13426,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     </div>`;
   }
 
+  /** k109 แถบในคำทักทาย: บอกว่ามีอัปเดต กับปุ่ม รับทราบ ตัวเดียวกับในการ์ด (การ์ดเต็มอยู่ถัดการ์ดทีมใช้แอป) */
+  function updateTip(up) {
+    var pending = !!up.news && up.news.state === 'pending';
+    return html`<div class="upd-tip"><span>อัปเดตแอปแล้ว · รุ่น ${up.to}<small>${pending ? 'ยังไม่ได้ประกาศกติกาใหม่ · ดูการ์ดอัปเดตข้างล่าง' : 'เปลี่ยนอะไรบ้าง ดูการ์ดอัปเดตข้างล่าง'}</small></span>${pending ? '' : html`<button class="btn sm tap" data-act="update-news" data-do="seen">รับทราบ</button>`}</div>`;
+  }
   /** What the last update changed, and the new rules' announcement to staff in the app (the LINE group too when a phone cannot). */
   function updateCard(up) {
     var n = up.news;
-    var when = function (iso) { return isoDate(iso) + ' ' + isoTime(iso) + ' น.'; };
+    var when = function (iso) { return isoDate(iso) + ' ' + isoTime(iso) + ' น.'; }; // k107 เวลากับ น. ไม่แยกบรรทัด
     var pending = !!n && n.state === 'pending';
     var status = !n ? '' : n.state === 'sent' ? 'ประกาศกติกาใหม่ในแอปแล้ว (กระดิ่งและแจ้งเตือนของน้องทุกคน) ' + when(n.sentAt) + (n.line ? ' · ส่งเข้ากลุ่ม LINE ด้วย เพราะมีน้องที่มือถือรับแจ้งเตือนไม่ได้' : '')
       : n.state === 'done' ? 'โพสต์ประกาศเองแล้ว'
