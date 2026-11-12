@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.13.77","page":"","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"047164d90970"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.0","page":"","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"0e018eae95c3"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -203,6 +203,55 @@
   color-scheme: dark;
 }
 
+/* k117 เจ้าของ 12 พ.ย. 2569 "สีพื้นหลังที่มีการไล่สีของเก่าดูพรีเมียมดูสวยกว่า": พื้นไล่สีอุ่นของ 2.13.77 กลับ (--amb-1..3 ค่าเดิมด้านบน ไม่ทับในชุดนี้ · ฐาน --bg ของชุดนี้ให้การ์ดขาวแยกพื้น ≥1.18:1 · ตัวหนังสือเทาสว่างเข้มขึ้น 2 หน่วย ให้ต่างจากจุดแย่สุดของไล่สี ≥4.5:1)
+   การ์ดยังทึบตัดจากพื้น แถบกระจกลอยบนพื้นไล่สี · test/warm-backdrop.test.js กันพื้นกลับเป็นสีเรียบ */
+/* k116e k116f ชุดสี (เจ้าของ 11 พ.ย. 2569 21:01 "สีเก่าจะสวยกว่าไหม ... สีส้มมันเหมือนดูไม่ค่อยพรีเมียม"): โทนเดิม 2.13.77 ครีม น้ำตาล ทอง
+   ปุ่มหลักทึบดำ (มืด: ครีม) พื้นขาวขึ้น ทองน้อยลง · การ์ดเนื้อหาทึบ · แถบบนล่างกระจก (--glass) ตัวอักษรบนแถบต่างจากพื้นแย่สุดที่เลื่อนผ่าน 4.5 ขึ้นไป */
+:root {
+  --bg: #EFEBE4;
+  --surface: #ffffff; --surface-2: #F2EEE8; --card: #ffffff; --inset: rgba(92, 68, 36, .06);
+  --ink: #171412; --ink-2: #48423C; --muted: #685F56; --line: rgba(92, 68, 36, .11); --line-strong: rgba(92, 68, 36, .22);
+  --gold: #806130; --gold-ink: #77592A; --gold-soft: rgba(160, 122, 63, .11); --warn: #8A5A00;
+  --accent: #171412; --accent-ink: #ffffff; --accent-text: #171412; --accent-soft: rgba(23, 20, 18, .06);
+  --glass: rgba(255, 255, 255, .74); --glass-strong: rgba(255, 255, 255, .97); --glass-solid: #FFFFFF; --glass-blur: blur(22px) saturate(1.9);
+  --glass-rim: inset 0 1px 0 rgba(255, 255, 255, .8), inset 0 0 0 .5px rgba(92, 68, 36, .16); --glass-drop: 0 12px 30px -14px rgba(40, 28, 14, .34), 0 2px 6px rgba(40, 28, 14, .07);
+  --lens: rgba(255, 255, 255, .94); --rim-hi: rgba(255, 255, 255, .9);
+  --btn: #EFEBE5; --btn-line: transparent; --gold-btn: #77592A;
+  --hero-bg: var(--card); --hero-ink: var(--ink); --hero-muted: var(--muted); --hero-rim: var(--card-shadow);
+  --card-shadow: 0 0 0 .5px rgba(92, 68, 36, .09), 0 1px 2px rgba(92, 68, 36, .06), 0 8px 22px -14px rgba(92, 68, 36, .28);
+  --primary-bg: var(--accent); --primary-ink: var(--accent-ink); --primary-shadow: 0 6px 16px -8px rgba(23, 20, 18, .5);
+  --r-lg: 22px; --r-md: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --bg: #0F0D0B;
+  --surface: #24201C; --surface-2: #2D2824; --card: #24201C; --inset: rgba(255, 248, 238, .06);
+  --ink: #F2EDE6; --ink-2: #D0C7BB; --muted: #A69C90; --line: rgba(255, 248, 238, .10); --line-strong: rgba(255, 248, 238, .18);
+  --gold: #D2AC6B; --gold-ink: #E2C088; --gold-soft: rgba(210, 172, 107, .14); --warn: #E6B464;
+  --accent: #F2EDE6; --accent-ink: #171412; --accent-text: #F2EDE6; --accent-soft: rgba(255, 248, 238, .08);
+  --glass: rgba(30, 30, 30, .8); --glass-strong: rgba(30, 30, 30, .97); --glass-solid: #1E1E1E;
+  --glass-rim: inset 0 1px 0 rgba(255, 255, 255, .14), inset 0 0 0 .5px rgba(255, 255, 255, .10); --glass-drop: 0 14px 32px -12px rgba(0, 0, 0, .75), 0 2px 6px rgba(0, 0, 0, .4);
+  --lens: rgba(255, 248, 238, .15); --rim-hi: rgba(255, 255, 255, .14);
+  --btn: #322D28; --btn-line: transparent; --gold-btn: #8C6A2F;
+  --hero-bg: var(--card); --hero-ink: var(--ink); --hero-muted: var(--muted); --hero-rim: var(--card-shadow);
+  --card-shadow: 0 0 0 .5px rgba(255, 248, 238, .08);
+  --primary-bg: var(--accent); --primary-ink: var(--accent-ink); --primary-shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F0D0B;
+  --surface: #24201C; --surface-2: #2D2824; --card: #24201C; --inset: rgba(255, 248, 238, .06);
+  --ink: #F2EDE6; --ink-2: #D0C7BB; --muted: #A69C90; --line: rgba(255, 248, 238, .10); --line-strong: rgba(255, 248, 238, .18);
+  --gold: #D2AC6B; --gold-ink: #E2C088; --gold-soft: rgba(210, 172, 107, .14); --warn: #E6B464;
+  --accent: #F2EDE6; --accent-ink: #171412; --accent-text: #F2EDE6; --accent-soft: rgba(255, 248, 238, .08);
+  --glass: rgba(30, 30, 30, .8); --glass-strong: rgba(30, 30, 30, .97); --glass-solid: #1E1E1E;
+  --glass-rim: inset 0 1px 0 rgba(255, 255, 255, .14), inset 0 0 0 .5px rgba(255, 255, 255, .10); --glass-drop: 0 14px 32px -12px rgba(0, 0, 0, .75), 0 2px 6px rgba(0, 0, 0, .4);
+  --lens: rgba(255, 248, 238, .15); --rim-hi: rgba(255, 255, 255, .14);
+  --btn: #322D28; --btn-line: transparent; --gold-btn: #8C6A2F;
+  --hero-bg: var(--card); --hero-ink: var(--ink); --hero-muted: var(--muted); --hero-rim: var(--card-shadow);
+  --card-shadow: 0 0 0 .5px rgba(255, 248, 238, .08);
+  --primary-bg: var(--accent); --primary-ink: var(--accent-ink); --primary-shadow: none;
+}
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
@@ -250,7 +299,8 @@ a { color: inherit; }
 /* ---------- brand ---------- */
 .brand { display: inline-flex; align-items: baseline; gap: 8px; text-decoration: none; white-space: nowrap; flex: none; }
 .brand .wm { font-family: var(--serif); font-weight: 600; font-size: 22px; letter-spacing: 0.01em; }
-.brand .ko { font-family: var(--ko); font-weight: 600; font-size: 13px; color: var(--gold); letter-spacing: 0.08em; }
+/* (k117) วางบนพื้นไล่สีตรง ๆ: ทองเข้มต่างจากจุดแย่สุดของไล่สี ≥4.5:1 (--gold ไม่ถึง) */
+.brand .ko { font-family: var(--ko); font-weight: 600; font-size: 13px; color: var(--gold-ink); letter-spacing: 0.08em; }
 .brand .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); display: inline-block; transform: translateY(-3px); }
 /* The fox from the shop's logo, in the app's gold, over the wordmark where there is room. */
 .crest { display: block; width: auto; height: 56px; aspect-ratio: 728 / 559; margin: 0 auto 14px; color: var(--gold); }
@@ -724,6 +774,22 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-lot svg { flex: none; width: 15px; height: 15px; }
 .od-lot.due, .od-first .due, .od-due { color: var(--bad); }
 .od-lot.due { background: #fdecea; }
+/* k114 รอบ ข: สีที่ยังต่างกันน้อย (ล็อตใกล้หมด ไอคอนการ์ด หัวตู้โชว์ ไอคอนลาน) */
+.pz-gem { color: #0C4A6E !important; }
+.pl-quest .gem.q-ring { color: #2A2622 !important; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .od-lot.due { background: rgba(240, 140, 130, .16); }
+  :root:not([data-theme="light"]) .use-card .fb-ico, :root:not([data-theme="light"]) .fb-ico.od { background: rgba(157, 184, 224, .14); color: #9DB8E0; }
+  :root:not([data-theme="light"]) .dl-card .fb-ico { background: rgba(143, 209, 180, .14); color: #8FD1B4; }
+  :root:not([data-theme="light"]) .rm-cab-h > b { background: rgba(18, 16, 14, .72); color: #F5F3F0; padding: 1px 8px; border-radius: 8px; }
+}
+:root[data-theme="dark"] .od-lot.due { background: rgba(240, 140, 130, .16); }
+:root[data-theme="dark"] .use-card .fb-ico, :root[data-theme="dark"] .fb-ico.od { background: rgba(157, 184, 224, .14); color: #9DB8E0; }
+:root[data-theme="dark"] .dl-card .fb-ico { background: rgba(143, 209, 180, .14); color: #8FD1B4; }
+:root[data-theme="dark"] .rm-cab-h > b { background: rgba(18, 16, 14, .72); color: #F5F3F0; padding: 1px 8px; border-radius: 8px; }
+/* k114 รอบ ข: ป้าย +N ของตู้และจุดเลขแท็บห้อง ตัวขาวต้องต่างจากพื้น 4.5 ขึ้นไป */
+.sh-plus { background: #7A5C24 !important; color: #fff !important; }
+.rm-dot { background: #E11D48 !important; color: #fff !important; }
 .od-first { display: grid; gap: 3px; margin-top: 10px; padding: 8px 10px; border-radius: 12px; background: var(--gold-soft); font-size: 12.5px; color: var(--ink); }
 .od-first b { display: flex; align-items: center; gap: 5px; color: var(--gold-ink); font-size: 13px; }
 .od-first svg { width: 14px; height: 14px; }
@@ -1257,6 +1323,7 @@ html.i3-ui-coin .coin::before { content: none; }
 .shop-top { text-align: center; padding: 54px 0 6px; }
 .shop-modes { margin-bottom: 10px; }
 .shop-modes svg { width: 16px; height: 16px; margin-right: 4px; vertical-align: -3px; }
+.shop-modes button { white-space: nowrap; padding-left: 4px; padding-right: 4px; }
 .shop-char { width: 124px; height: 230px; margin: -14px auto -6px; }
 /* On a dark screen black hair and the black uniform keep their outline: a thin rim of light (--char-rim). */
 .shop-char .char-svg, .me-char .char-svg, .sh-char .char-svg, .shop-item .char-svg { display: block; width: 100%; height: 100%; overflow: visible; filter: var(--char-rim); }
@@ -2099,8 +2166,8 @@ html.i3-pz-shop-day .pz-art.day .pz3-shop.pz-d, html.i3-pz-shop-lit .pz-art.lit 
 .ideas-link.tell-hero .grow span { font-size: 13.5px; }
 /* 2.13.6 ทีมใช้แอป 7 วัน (หน้าเจ้าของ) */
 .team-use .team-sum { margin: 6px 16px 0; }
-.team-use .team-row.zero .t b { color: #b4532a; }
-.team-use .team-off { color: #b4532a; font-weight: 600; }
+.team-use .team-row.zero .t b { color: var(--warn); }
+.team-use .team-off { color: var(--warn); font-weight: 600; }
 .ideas-score { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 12px 8px; }
 .ideas-num { display: grid; justify-items: center; align-content: start; text-align: center; gap: 2px; }
 .ideas-num b { font-size: 26px; font-weight: 700; color: var(--gold-ink); line-height: 1.1; }
@@ -2900,9 +2967,9 @@ html.i3-box-s1-body.i3-box-s1-lid .bx-svg.s1 .bx-body, html.i3-box-s2-body.i3-bo
 .fb-files { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
 .fb-file, .fb-add { position: relative; aspect-ratio: 1; border-radius: 16px; overflow: hidden; background: var(--inset); }
 .fb-file img, .fb-file video { width: 100%; height: 100%; object-fit: cover; display: block; }
-.fb-badge, .fb-thumb i { position: absolute; left: 6px; bottom: 6px; width: 22px; height: 22px; border-radius: 50%; background: rgba(0, 0, 0, .5); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: #fff; display: grid; place-items: center; }
+.fb-badge, .fb-thumb i { position: absolute; left: 6px; bottom: 6px; width: 22px; height: 22px; border-radius: 50%; background: rgba(0, 0, 0, .5); color: #fff; display: grid; place-items: center; }
 .fb-badge svg, .fb-thumb i svg { width: 11px; height: 11px; fill: currentColor; }
-.fb-x { position: absolute; top: 5px; right: 5px; width: 26px; height: 26px; border-radius: 50%; border: 0; padding: 0; background: rgba(0, 0, 0, .5); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: #fff; display: grid; place-items: center; }
+.fb-x { position: absolute; top: 5px; right: 5px; width: 26px; height: 26px; border-radius: 50%; border: 0; padding: 0; background: rgba(0, 0, 0, .5); color: #fff; display: grid; place-items: center; }
 .fb-x svg { width: 14px; height: 14px; }
 .fb-add { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 1.5px dashed var(--line-strong); background: transparent; color: var(--muted); font-size: 11.5px; text-align: center; line-height: 1.25; cursor: pointer; transition: transform .45s var(--spring); }
 .fb-add:active { transform: scale(.95); transition-duration: .1s; }
@@ -2920,7 +2987,7 @@ html.i3-box-s1-body.i3-box-s1-lid .bx-svg.s1 .bx-body, html.i3-box-s2-body.i3-bo
 .fb-media img, .fb-media video { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 18px; display: block; background: #0d0b0a; }
 .fb-play { position: relative; width: 100%; aspect-ratio: 16 / 10; border: 0; border-radius: 18px; background: #1a1714 center / cover no-repeat; color: #fff; display: grid; place-items: center; overflow: hidden; }
 .fb-play::before { content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, .35); }
-.fb-play-in { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; background: rgba(255, 255, 255, .16); -webkit-backdrop-filter: blur(12px) saturate(1.6); backdrop-filter: blur(12px) saturate(1.6); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), inset 0 0 0 1px rgba(255, 255, 255, .12); font-size: 15px; }
+.fb-play-in { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; background: rgba(255, 255, 255, .16); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), inset 0 0 0 1px rgba(255, 255, 255, .12); font-size: 15px; }
 .fb-play-in svg { width: 18px; height: 18px; fill: currentColor; }
 .fb-card .fb-ico { width: 36px; height: 36px; border-radius: 12px; }
 
@@ -3040,7 +3107,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 /* A sheet floats up on a spring as a pane of glass, clear of the screen's edges.
    Pulled down by its top, it follows the finger and goes when let go. */
 #sheet-root .scrim { position: fixed; top: 0; left: 0; right: 0; height: 100vh; height: 100lvh; background: var(--scrim); z-index: 60; opacity: 0; transition: opacity .35s ease; }
-#sheet-root .sheet { position: fixed; left: 8px; right: 8px; bottom: 8px; z-index: 61; max-width: 640px; margin: 0 auto; max-height: 92vh; max-height: calc(100dvh - 16px - env(safe-area-inset-top)); display: flex; flex-direction: column; background: var(--glass-strong); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); border-radius: 32px; box-shadow: inset 0 1px 0 var(--rim-hi), inset 0 0 0 1px var(--rim), var(--shadow-2); transform: translateY(calc(100% + 24px)); transition: transform .55s var(--spring-soft); }
+#sheet-root .sheet { position: fixed; left: 8px; right: 8px; bottom: 8px; z-index: 61; max-width: 640px; margin: 0 auto; max-height: 92vh; max-height: calc(100dvh - 16px - env(safe-area-inset-top)); display: flex; flex-direction: column; background: var(--glass-strong); border-radius: 32px; box-shadow: inset 0 1px 0 var(--rim-hi), inset 0 0 0 1px var(--rim), var(--shadow-2); transform: translateY(calc(100% + 24px)); transition: transform .55s var(--spring-soft); }
 #sheet-root .sheet.wide { max-width: 860px; }
 #sheet-root.open .scrim { opacity: 1; }
 #sheet-root.open .sheet { transform: none; }
@@ -3077,7 +3144,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
 /* Messages float up over the tab bar as small panes of smoked glass. */
 #toasts { position: fixed; left: 0; right: 0; bottom: calc(84px + env(safe-area-inset-bottom)); z-index: 80; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; padding: 0 16px; }
-.toast { max-width: 520px; background: rgba(30, 26, 22, .80); color: #f8f3eb; -webkit-backdrop-filter: blur(20px) saturate(1.6); backdrop-filter: blur(20px) saturate(1.6); padding: 12px 18px; border-radius: 22px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), inset 0 0 0 1px rgba(255, 255, 255, .06), 0 14px 34px -12px rgba(0, 0, 0, .5); font-size: 14.5px; pointer-events: auto; animation: toast-in .55s var(--spring) both; }
+.toast { max-width: 520px; background: rgba(30, 26, 22, .80); color: #f8f3eb; padding: 12px 18px; border-radius: 22px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), inset 0 0 0 1px rgba(255, 255, 255, .06), 0 14px 34px -12px rgba(0, 0, 0, .5); font-size: 14.5px; pointer-events: auto; animation: toast-in .55s var(--spring) both; }
 .toast.bad { background: rgba(158, 40, 33, .88); }
 .toast.ok { background: rgba(36, 94, 66, .88); }
 .toast.out { animation: toast-out .22s ease-in both; }
@@ -3300,6 +3367,140 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 .fb-starter, .seg [data-act="fb-kind"] { min-height: 44px; }
 .lv-chip, .dm { min-height: 44px; }
 .topbar .icon-btn { width: 44px; height: 44px; }
+/* ---------- k114 หน้าตาใหม่: ปุ่ม 3 ระดับ หลัก (สีเน้นทึบ) รอง (พื้นเทา) ตัวหนังสือ (สีเน้น ไม่มีพื้น) · หน้าละปุ่มหลักเดียว · การ์ดห่างกัน 18 ---------- */
+.card { background: var(--card); }
+.card.hero { background: var(--hero-bg); }
+.btn { background: var(--btn); color: var(--ink); box-shadow: none; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); box-shadow: var(--primary-shadow); }
+.btn.ghost { background: transparent; color: var(--accent-text); box-shadow: none; }
+.btn.gold { background: var(--gold-btn); color: #fff; box-shadow: none; }
+.tab { color: var(--ink-2); }
+.tab[aria-selected="true"] { color: var(--accent-text); font-weight: 700; }
+.tab[aria-selected="true"]::before, .tabbar .lens { background: var(--accent-soft); box-shadow: none; }
+.stack.home-stack > * + *, .stack.ideas-page > * + *, .stack.me-page > * + *, .stack.fr > * + * { margin-top: 18px; }
+/* หน้าแรก: การ์ดบอกเรื่อง (หัวใจแอป) ขอบสีเน้น · ตัวละครกับสัตว์เลี้ยงปุ่มเดียว ยืนข้างกันไม่ทับ · กะที่เลือกบรรทัดเดียว */
+.ideas-link.tell-hero { border-color: var(--accent); background: var(--card); box-shadow: var(--card-shadow); }
+.ideas-link.tell-hero .fb-ico { background: var(--accent); color: var(--accent-ink); }
+.me-char.me-duo { width: auto; height: auto; }
+.me-char .me-fig { position: relative; display: block; width: 140px; height: 262px; }
+.me-char .me-fig > svg { width: 100%; height: 100%; }
+.me-char .me-pet { display: block; flex: none; margin: 0 -2px 4px 0; cursor: inherit; }
+.shift-one { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 2px; }
+.shift-now { min-width: 0; font-size: 16px; }
+.shift-one .btn { flex: none; min-height: 44px; }
+/* ไอเดีย: บอกได้ทุกเรื่อง เป็นปุ่มหลักของหน้า (หัวหน้าที่ยังไม่ส่งสรุป ปุ่มส่งสรุปเป็นปุ่มหลักแทน) */
+.dl-all { background: var(--accent); color: var(--accent-ink); box-shadow: var(--primary-shadow); }
+.dl-all > svg { color: var(--accent-ink); }
+.dl-all.quiet { background: var(--btn); color: var(--ink); box-shadow: none; }
+.dl-all.quiet > svg:first-child { color: var(--accent-text); }
+.dl-all.quiet > svg:last-child { color: var(--muted); }
+/* ฉัน: หัวกลุ่ม · หน้าบัญชี */
+.me-h { margin: 10px 6px -8px; font-size: 14px; font-weight: 700; color: var(--muted); }
+.me-more { margin: 14px 6px 0; }
+.set-h { display: flex; align-items: center; gap: 8px; }
+.set-h .hello { margin: 0; font-size: 22px; }
+/* ---------- k114 รอบ 2 ---------- */
+/* การ์ดเดือน: ตัวเลข ป้าย แถบ บนการ์ดปกติ */
+.hero .m-stats { border-top-color: var(--line); }
+.hero .m-stats .ms.ok b { color: var(--gold-ink); }
+.hero .bar { background: var(--inset); box-shadow: none; }
+.hero .pill { background: var(--btn); color: var(--ink); }
+.streak { background: var(--surface-2); color: var(--gold-ink); }
+/* ภาพตัวอย่างเกมครัว: พื้นทึบสีเดียวทั้งสองโหมด (เป็นภาพ ไม่เปลี่ยนตามโหมด) · แต้มลอยและคอมโบอยู่บนป้ายสีกระดาน ตัวอักษรตัดชัด เอฟเฟกต์เดิมครบ */
+.bks { background: #FFF1E4 !important; }
+.bks .bks-sc, .bks .bks-sc b { color: #5C2A10 !important; }
+.bks .bks-sc small { color: #6B3418 !important; }
+.bks-pts, .bks-cb { background: #1A2052; border-radius: 7px; padding: 2px 6px 3px; }
+/* หน้าเพื่อน: การ์ดเกมครัวภาพใหญ่ (กระดานขนาดเต็ม) ข้อความใต้ภาพ */
+.fr-block.big { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 10px; padding: 0 0 14px; overflow: hidden; text-align: left; }
+.fr-block.big > .bks { width: 100%; }
+.fr-block.big > .fr-block-tx { padding: 0 44px 0 16px; }
+.fr-block.big > svg:last-child { position: absolute; right: 14px; bottom: 24px; }
+/* ไอคอนและลูกศรในปุ่มหลักสีเดียวกับตัวหนังสือในปุ่ม (ห้อง 19:3x: ไอคอนแชตกับลูกศรสีเข้มบนส้มแทบมองไม่เห็น) */
+.btn.primary svg, .dl-all:not(.quiet) > svg:first-child, .dl-all:not(.quiet) > svg:last-child { color: var(--accent-ink) !important; }
+.btn.gold svg { color: #fff !important; }
+/* เพื่อน: ดูของใหม่ท้ายหน้า กลางจอ */
+.fr-more { display: flex; margin-left: auto; margin-right: auto; }
+/* ---------- k116e (เจ้าของ 11 พ.ย. 2569 21:01): โทนเดิม ปุ่มหลักดำ · แถบบนล่างกระจก การ์ดทึบ · จอแรกเหลือของที่ช่วยลงเวลาและบอกเรื่อง ---------- */
+/* ระบบเดียว: ระยะระหว่างการ์ด 16 · การ์ดโค้ง --r-lg (22) · ของในการ์ดโค้ง --r-md (14) · ปุ่มและป้ายโค้งเต็ม · หัวหน้า 26 หนา · หัวกลุ่ม 13 หนา */
+.stack.home-stack > * + *, .stack.ideas-page > * + *, .stack.me-page > * + *, .stack.fr > * + * { margin-top: 16px; }
+.page-h .hello, .set-h .hello { font-size: 26px !important; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
+.me-h { margin: 6px 4px -6px; font-size: 13px; font-weight: 700; letter-spacing: .01em; color: var(--ink-2); }
+.fr-card { border-radius: var(--r-md); }
+/* ปุ่มหลักทึบดำ (โหมดมืด: ครีม) สีเดียวทั้งแอป */
+.btn.primary { background: var(--primary-bg); color: var(--primary-ink); box-shadow: var(--primary-shadow); }
+.btn.primary svg { color: var(--primary-ink) !important; }
+.dl-all { background: var(--primary-bg); color: var(--primary-ink); }
+.dl-all > svg { color: var(--primary-ink); }
+.ideas-link.tell-hero { border: 0; background: var(--card); box-shadow: var(--card-shadow); }
+.ideas-link.tell-hero .fb-ico { background: var(--ink); color: var(--surface); }
+/* แถบบนล่าง: กระจกโปร่ง (Liquid Glass) เบลอเฉพาะแถบ · ตัวอักษรบนแถบใช้ --ink กับ --ink-2 เท่านั้น
+   ต่างจากพื้นแย่สุดที่เลื่อนผ่าน (ของดำล้วนใต้แถบสว่าง ของขาวล้วนใต้แถบมืด) 4.5 ขึ้นไป ตรวจใน test/k116-look.test.js */
+.tabbar { background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--glass-rim), var(--glass-drop); }
+.tab { color: var(--ink-2); }
+.tab[aria-selected="true"] { color: var(--ink); font-weight: 700; }
+.tab[aria-selected="true"]::before, .tabbar .lens { background: var(--lens); box-shadow: var(--glass-rim), 0 4px 12px -6px rgba(40, 28, 14, .25); }
+.topbar.scrolled { background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: inset 0 -.5px 0 var(--line-strong); }
+.topbar.scrolled .brand .ko { color: var(--ink-2); }
+.topbar.scrolled .brand .dot { background: var(--ink-2); }
+.topbar .who .meta span { color: var(--ink-2); }
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .tabbar, .topbar.scrolled { background: var(--glass-solid); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .tabbar, .topbar.scrolled { background: var(--glass-solid); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+/* แผ่นและข้อความลอยเป็นพื้นทึบ (เบลอเฉพาะแถบ) */
+#sheet-root .sheet { background: var(--surface); }
+.toast { background: #1E1A16; }
+/* หน้าแรก: ตัวละครเล็กยืนข้างคำทักทาย สูงพอ ๆ กัน ไม่เกิน 15% ของจอ 390x844 (เจ้าของ "ตัวละครในหน้าแรกใหญ่ไปไหม") */
+.hello-row { align-items: center; gap: 12px; }
+.home-stack > .hello-row > .hello { margin: 0; font-size: 30px; line-height: 1.2; }
+.me-char.me-duo { flex: none; display: flex; align-items: flex-end; gap: 0; width: auto; height: auto; padding: 0; }
+.me-char.me-duo .me-fig { width: 48px; height: 90px; }
+.me-char.me-duo .me-pet { width: 34px; height: 34px; margin: 0 -2px 0 0; }
+/* แถวของเล่นท้ายหน้าแรก แถวเล็ก */
+.home-stack > .pl-row { gap: 12px; } /* (k131) ไทล์ห่างไม่น้อยกว่าระยะการ์ดลบ 2 px เหมือนบล็อกอื่นบนหน้าแรก (2.13.8 เจ้าของร้าน 28 ต.ค. 2569 · dev/overlap.js homeGaps) */
+.home-stack > .pl-row .pl-tile, .home-stack > .pl-row .quest.blk { padding: 6px 1px 6px; gap: 2px; }
+.home-stack > .pl-row b { font-size: 12px; }
+.home-stack > .pl-row small { font-size: 10.5px; }
+.home-stack > .pl-row .quest.blk .bks { zoom: .4; }
+/* ไอเดีย: ช่องพิมพ์ใหญ่ช่องเดียวบนสุด เต็มจอแรก ส่วนอื่นอยู่ใต้จอแรก · ปุ่มส่งอยู่เหนือช่อง แป้นพิมพ์ไม่บัง */
+.ideas-top { display: flex; flex-direction: column; gap: 14px; min-height: calc(100vh - 150px); min-height: calc(100svh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+.tell-card { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 16px; }
+.tell-lbl { font-size: 18px; font-weight: 700; line-height: 1.35; color: var(--ink); }
+.tell-row { display: flex; align-items: center; gap: 8px; }
+.tell-topic { display: inline-flex; align-items: center; gap: 6px; min-width: 0; height: 44px; padding: 0 14px 0 12px; border: 0; border-radius: 999px; background: var(--btn); color: var(--ink-2); font: inherit; font-size: 14px; font-weight: 600; }
+.tell-topic svg { flex: none; width: 18px; height: 18px; }
+.tell-topic span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tell-photo { flex: none; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: var(--btn); color: var(--ink-2); }
+.tell-photo svg { width: 20px; height: 20px; }
+.tell-send { flex: none; margin-left: auto; height: 44px; padding: 0 20px; }
+.tell-in { flex: 1; display: block; width: 100%; min-height: 150px; margin: 0; padding: 14px; border: 0; border-radius: var(--r-md); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line-strong); color: var(--ink); font: inherit; font-size: 16px; line-height: 1.55; resize: none; }
+.tell-in:focus { outline: none; box-shadow: inset 0 0 0 2px var(--ink); }
+.tell-in::placeholder { color: var(--muted); }
+.tell-note { margin: 0 2px; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.tell-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.tell-tile { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; min-height: 64px; padding: 10px 4px 9px; border: 0; border-radius: var(--r-md); background: var(--btn); color: var(--ink); font: inherit; font-size: 13px; font-weight: 600; }
+.tell-tile svg { width: 20px; height: 20px; color: var(--ink-2); }
+.tell-tile.on { background: var(--primary-bg); color: var(--primary-ink); }
+.tell-tile.on svg { color: var(--primary-ink); }
+/* เพื่อน: เพื่อนทุกคนกับขอบคุณเต็มจอแรก · เกมเป็นแถวเล็กท้ายหน้า (ภาพตัวอย่างเล่นเหมือนเดิม ย่อขนาด) */
+.fr-top { display: flex; flex-direction: column; gap: 16px; min-height: calc(100vh - 180px); min-height: calc(100svh - 180px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+.stack.fr > .fr-play-h { margin-top: 22px; }
+.stack.fr .fr-block > .bks, .stack.fr .fr-plaza-art, .stack.fr .fr-run .fr-run-art { zoom: .7; flex: none; }
+/* k116f k116g: ตัวละครหน้าแรกราว 84 px (refs2 2.4 ไม่เกิน 100) · หัวข้อที่เลือกสีเข้มไม่ใช้ทอง · การ์ดเพื่อนทีมไม่เกิน 7 คนตัวละครใหญ่ขึ้น */
+.me-char.me-duo .me-fig { width: 45px; height: 84px; }
+.me-char.me-duo .me-pet { width: 32px; height: 32px; }
+.tell-topic.on { background: var(--btn); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+.tell-photo { display: inline-grid; }
+.ideas-h { padding: 0 4px; }
+.fr-grid:not(:has(> :nth-child(8))) .fr-stage { height: 170px; }
+.fr-grid:not(:has(> :nth-child(8))) .fr-char { width: 96px; height: 158px; }
+.fr-grid:not(:has(> :nth-child(8))) .fr-pet { left: calc(50% + 16px); width: 32px; height: 32px; }
+.fr-top { min-height: calc(100vh - 120px); min-height: calc(100svh - 120px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+/* k116h k116k: ช่องพิมพ์พื้นขาวขอบบาง */
+.tell-in { background: var(--card); }
 </style>
 </head>
 <body>
@@ -4151,6 +4352,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function charGo(el, loop) {
     var svg = el && (el.classList && el.classList.contains('char-svg') ? el : el.querySelector && el.querySelector('.char-svg'));
     if (!svg || !MOTION) return;
+    mvfStopSvg(svg); // (k117) แตะตัวละครระหว่างท่าที่เล่นวนเอง: หยุดท่าวนก่อน ท่าที่แตะเล่นทันทีไม่ทับกัน
     if (c3Go(svg, loop)) return;
     clearTimeout(svg._go);
     svg.classList.remove('go', 'loop', 'pose');
@@ -4179,6 +4381,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var MOVE_FREE = { 'm-wave': 1, 'm-wai': 1 };
   var MVF = { sets: {}, making: null, on: [], rest: {}, t: 0, last: 0, touch: 0, fillAt: 0, pre: null, preTried: {} };
   var MVF_MAX = 2, MVF_H = 160, MVF_X = 3;
+  // (k117) ตัวละครของตัวเองข้างคำทักทายบนหน้าแรก เล่นท่าที่ได้มาวนเองแบบการ์ดฉันหน้าเพื่อนเดิม ขนาดตัวเท่าเดิม
+  // (ห้องตัดสิน 29 ต.ค. 2569 ที่เจ้าของร้านมอบ · k114 ย้ายการ์ดฉันออกจากหน้าเพื่อน ท่าวนจึงหายจากที่น้องเห็น)
+  var MVF_HOME = 'main .me-duo .me-fig';
   // (ตัวในลาน .pz-char 64×118: ภาพขนาด 128 ตาม c3Size)
   var PZ_C3H = 128;
   var MVF_MQ = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null;
@@ -4204,7 +4409,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (document.hidden) return '';
     // การ์ดทีมของครัวโซลฟูล์ (แผ่นเกมเปิด ไม่ได้อยู่ในจอเล่น): ตัวน้องเล่นท่าแบบหน้าเพื่อน (2.13.39)
     if ($('#sheet-root.open')) return $('#plaza') ? 'pz' : $('#block .bk-ch') && !document.body.classList.contains('sb-on') ? 'bk' : '';
-    return $('main .fr-grid') ? 'fr' : '';
+    return $('main .fr-grid') ? 'fr' : $(MVF_HOME) ? 'home' : '';
   }
   /** Each one there: the character, its move, who (for its rest), own or not, and its box. */
   function mvfList(ctx) {
@@ -4215,6 +4420,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     };
     if (ctx === 'fr') Array.prototype.forEach.call(document.querySelectorAll('main .fr-card .fr-char'), function (c) { add(c, c.closest('.fr-card'), 'fr'); });
     else if (ctx === 'bk') Array.prototype.forEach.call(document.querySelectorAll('#block .bk-mem .bk-ch'), function (c) { add(c, c.closest('.bk-mem'), 'bk'); });
+    else if (ctx === 'home') Array.prototype.forEach.call(document.querySelectorAll(MVF_HOME), function (c) { var svg = c.querySelector('svg.char-svg'); if (svg) out.push({ svg: svg, mv: c.getAttribute('data-mv') || 'm-wave', id: 'home' + staffId(), me: true, box: c.closest('.me-duo') || c }); });
     else Array.prototype.forEach.call(document.querySelectorAll('#plaza .pz-p .pz-char'), function (c) { add(c, c.closest('.pz-p'), 'pz'); });
     return out;
   }
@@ -4227,7 +4433,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       v = { top: Math.max(0, r.top), left: Math.max(0, r.left), right: Math.min(innerWidth, r.right), bottom: Math.min(innerHeight, r.bottom) };
     }
     // (the tabs at the foot of the screen cover what is under them)
-    var tb = ctx === 'fr' && $('.tab');
+    var tb = (ctx === 'fr' || ctx === 'home') && $('.tab');
     var tr = tb && tb.parentNode.getBoundingClientRect();
     if (tr && tr.top > innerHeight / 2) v.bottom = Math.min(v.bottom, tr.top);
     return v;
@@ -4404,7 +4610,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     s.classList.remove('mvf-on');
     if (p.drawn) { clearTimeout(s._go); s.classList.remove('go'); }
     // (its own card on the friends' page the most often; in the plaza as often as the others)
-    MVF.rest[p.id] = performance.now() + (p.me && p.id.indexOf('fr') === 0 ? 1500 + Math.random() * 1500 : 4000 + Math.random() * 5000);
+    MVF.rest[p.id] = performance.now() + (p.me && (p.id.indexOf('fr') === 0 || p.id.indexOf('home') === 0) ? 1500 + Math.random() * 1500 : 4000 + Math.random() * 5000);
   }
   /** A frame that does not open there (a phone that opens blob: pictures, but not in a drawing): made again, once, the way it can. */
   function mvfBroken(p, u) {
@@ -4431,12 +4637,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function mvfStopSvg(svg) { MVF.on.filter(function (p) { return p.svg === svg; }).forEach(function (p) { mvfEnd(p); }); }
   /** With the friends' page or the plaza (afterRender, plazaStart): every 0.6 s, who plays next and whose frames are made. */
   function mvfRun() {
-    if (MVF.t || mvfCalm() || !($('main .fr-grid') || $('#plaza'))) return;
+    if (MVF.t || mvfCalm() || !($('main .fr-grid') || $('#plaza') || $(MVF_HOME))) return;
     MVF.last = performance.now();
     MVF.t = setInterval(mvfTick, 600);
   }
   function mvfTick() {
-    if (!($('main .fr-grid') || $('#plaza'))) { MVF.on.slice().forEach(function (p) { mvfEnd(p); }); clearInterval(MVF.t); MVF.t = 0; return; }
+    if (!($('main .fr-grid') || $('#plaza') || $(MVF_HOME))) { MVF.on.slice().forEach(function (p) { mvfEnd(p); }); clearInterval(MVF.t); MVF.t = 0; return; }
     var ctx = mvfWhere();
     if (!ctx || mvfCalm()) { MVF.on.slice().forEach(function (p) { mvfEnd(p); }); return; }
     var v = mvfView(ctx);
@@ -5405,7 +5611,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ['go', 'loop', 'c3-under', 'c3-held'].forEach(function (c) { if (old.classList.contains(c)) svg.classList.add(c); });
       }
       var r = svg.getBoundingClientRect();
-      if (!r.width || !r.height) { if (s) s.end(); return; }
+      // (k131) แผ่นเปิดทับตัวละครในหน้าระหว่างท่า (แตะตัวละครหรือสัตว์บนหน้าแรกแล้วเปิดลานทันที): ท่าจบเหมือนพ้นจอ ไม่เล่นต่อ
+      // ใต้แผ่นที่ไม่มีใครเห็น และไม่ค้างเวทีให้ตัวในแผ่นต้องแย่ง (กลไกเดียวกับตัวทักทาย n1 · เดิมแตะเพื่อนในลาน เวทีย้ายจาก
+      // กรอบตัวหน้าแรก 61×97 ไปกรอบตัวในลาน 88×137 ในงานเดียว ตัวตรวจเดโมนับเป็นเวทีเปลี่ยนขนาดระหว่างเล่น)
+      if (!r.width || !r.height || (!svg.closest('#sheet-root') && $('#sheet-root.open'))) { if (s) s.end(); return; }
       if (box.parentNode !== svg.parentNode) { svg.parentNode.insertBefore(box, svg.nextSibling); map = null; }
       var w = svg.clientWidth || Math.round(r.width), h = svg.clientHeight || Math.round(r.height);
       var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
@@ -6707,7 +6916,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var USE_AGAIN = EDGE ? 20000 : 600000;
   var USE = { cur: null, page: '', act: null, wait: {}, seq: 0, dev: '', last: '', seen: {}, go: '' };
   var USE_VIEW = { loading: 'กำลังเปิด', moved: 'แอปย้ายที่', error: 'เปิดไม่ได้', offline: 'ไม่มีเน็ต', start: 'เลือกชื่อ', pin: 'ใส่ PIN', ownerLogin: 'ใส่รหัสเจ้าของร้าน', ownerCode: 'ใส่รหัสจากอีเมล' };
-  var USE_TAB = { home: 'หน้าแรก', team: 'ทีม', friends: 'เพื่อน', ideas: 'ไอเดีย', me: 'ฉัน', history: 'ประวัติการทำงาน', slips: 'สลิปเงินเดือน', leave: 'วันลา', order: 'สั่งของ', approve: 'อนุมัติ' };
+  var USE_TAB = { home: 'หน้าแรก', team: 'ทีม', friends: 'เพื่อน', ideas: 'ไอเดีย', me: 'ฉัน', settings: 'บัญชีและตั้งค่า', history: 'ประวัติการทำงาน', slips: 'สลิปเงินเดือน', leave: 'วันลา', order: 'สั่งของ', approve: 'อนุมัติ' };
   var USE_OWNER_TAB = { overview: 'ภาพรวม', pay: 'เงินเดือน', team: 'ทีม', staff: 'พนักงาน', settings: 'ตั้งค่า' };
   var USE_KIOSK = { names: 'เลือกชื่อ', pin: 'ใส่ PIN', confirm: 'ยืนยัน', result: 'ลงเวลาแล้ว' };
   function useId() {
@@ -7072,7 +7281,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     el.className = 'toast ' + (tone || '');
     el.textContent = msg;
     box.appendChild(el); if (typeof odToastLift === 'function') odToastLift(box);
-    el._t = setTimeout(function () { drop(el); }, ms);
+    // (k123) นับเวลาแสดงจากเฟรมที่ข้อความขึ้นจอจริง ไม่ใช่ตอนสร้าง: งานหนักหลังกด (เช่น ภาพสามมิติของท่าใหม่ในร้าน) ค้างหน้าไว้หลายวินาที
+    //   บนมือถือช้า นับจากตอนสร้างข้อความหายก่อนน้องได้เห็น (demo 12 พ.ย. ข้อความใส่ท่าหายก่อนตัวตรวจได้ดู 2 ครั้ง)
+    var arm = function () { clearTimeout(el._t); el._t = setTimeout(function () { drop(el); }, ms); };
+    var nextFrame = window.requestAnimationFrame || function (f) { return setTimeout(f, 16); };
+    nextFrame(function () { nextFrame(arm); });
   }
   var sheetState = null;
   function openSheet(o) {
@@ -9228,6 +9441,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     bellList = null; thx = null; meal = null; rc = null; fb = null; dl = null; dlEd = null; dlFx = null; ck = null; welcome = null;
     if (block) blockDrop();
     if (runner) { runStop(); runner = null; }
+    // (k116l) กะที่กางเลือกอยู่ (k114 เปลี่ยนกะ) เป็นของคน: คนถัดไปเห็นกะบรรทัดเดียว
+    S.shiftOpen = false;
   }
   function logoutStaff(msg) {
     // (ล้างการแจ้งเตือนในเครื่องไม่สำเร็จ ยังออกจากระบบได้เสมอ)
@@ -9285,11 +9500,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     tabs.push(['friends', 'friends', 'เพื่อน', friendsNews()], ['ideas', 'bulb', 'ไอเดีย', S.home ? fbNews(S.home.feedback).length : 0], ['me', 'user', 'ฉัน']);
     return tabs;
   }
-  /** On the เพื่อน tab: offers to swap, compliments and plays with me not seen yet. */
+  /** On the เพื่อน tab: offers to swap waiting for an answer, and thanks not seen yet.
+   *  (k116e) เลขแดงแถบล่างเฉพาะเรื่องที่น้องต้องกดดู · คำชมห้องและการเล่นในลานไม่นับบนแถบ (ยังบอกบนการ์ดห้องและการ์ดลานเหมือนเดิม) */
   function friendsNews() {
     var l = S.home && S.home.level;
     if (!l) return 0;
-    return (l.asks || 0) + praiseNew(l.praise) + thxNew() + playsNew(l.plays);
+    return (l.asks || 0) + thxNew();
   }
   /** The bottom menu; `inert` while the screen's data is on the way. */
   function tabBar(tabs, current, act, inert) {
@@ -9406,7 +9622,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (S.wasLock) { S.wasLock = false; (window.scrollTo(0, 0), scrollNow = 0); }
     var me = h.me;
     var tab = S.sub || S.tab;
-    var body = tab === 'history' ? historyView() : tab === 'order' ? orderView() : tab === 'leave' ? leaveView() : tab === 'slips' ? slipsView() : tab === 'team' ? (isApprover() ? teamApproveView() : teamView()) : tab === 'approve' ? approveView() : tab === 'friends' ? friendsView() : tab === 'ideas' ? ideasView() : tab === 'me' ? meView() : homeView();
+    var body = tab === 'history' ? historyView() : tab === 'order' ? orderView() : tab === 'leave' ? leaveView() : tab === 'slips' ? slipsView() : tab === 'team' ? (isApprover() ? teamApproveView() : teamView()) : tab === 'approve' ? approveView() : tab === 'friends' ? friendsView() : tab === 'ideas' ? ideasView() : tab === 'me' ? meView() : tab === 'settings' ? staffSettingsView() : homeView();
     return html`${topbar({ name: nameTag(me, ownName(me)), sub: '', av: avatar(me) }, 'staff-menu', S.home && S.home.bell)}
       <main class="wrap page">${body}</main>${tabBar(staffTabs(), S.tab, 'tab')}`;
   };
@@ -9552,7 +9768,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return html`<div class="hint" style="margin-top:6px">${icon('tablet')}<span>ลงเวลาที่<b>เครื่องในร้าน</b> แตะชื่อ ใส่ PIN แล้วเลือกกะ</span></div>`;
     }
     var shifts = st.shifts || [];
-    var chips = html`<p class="muted small" style="margin:2px 0 10px">เลือกกะที่เข้าทำงาน</p>
+    // (k114) เจ้าของ 11 พ.ย. 2569 "ปุ่มให้กดเยอะเกินไป": กะที่เลือกไว้ (กะที่แนะนำ) บรรทัดเดียว · แตะ เปลี่ยนกะ แล้วเห็นทุกกะให้เลือก (2 แตะ)
+    var cur = !S.shiftOpen && shifts.filter(function (s) { return s.code === S.shift; })[0];
+    var chips = cur ? html`<div class="shift-one"><span class="shift-now"><b>กะ${cur.type}</b> · ${cur.start} น.${cur.ot ? ' · OT ' + hrs(cur.ot) + ' ชม.' : ''}</span>${shifts.length > 1 ? html`<button class="btn sm" data-act="shift-more">เปลี่ยนกะ</button>` : ''}</div>${shiftHint(st)}` : html`<p class="muted small" style="margin:2px 0 10px">เลือกกะที่เข้าทำงาน</p>
       <div class="chips fill">${shifts.map(function (s) {
         return html`<button class="chip" aria-pressed="${S.shift === s.code}" data-act="pick-shift" data-code="${s.code}"><b>${s.type}${st.suggested === s.code ? html`<span class="tag">แนะนำ</span>` : ''}</b><span>${s.start} น.</span><span>${s.ot ? 'OT ' + hrs(s.ot) + ' ชม.' : '\u00a0'}</span></button>`;
       })}</div>${shiftHint(st)}`;
@@ -9672,9 +9890,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var st = h.status || {};
     // ลงเวลาก่อนเกม: การ์ดลงเวลาอยู่จอแรกเสมอ แถวชิปเกมอยู่ใต้งานของวันนี้ · การ์ดชวนบันทึกอยู่ใต้การ์ดลงเวลา (เจ้าของ ok 27 ต.ค. 2569)
     // (k98 หน้าแรก) เจ้าของ 9 พ.ย. 2569 "หน้าแรกมันดูรกๆ": บนสุดเหลือเรื่องที่ใช้ทุกวัน (บันทึกหน้างาน ลงเวลา การ์ดงาน ภารกิจวันนี้แบบย่อ)
+    // (k114) เจ้าของ 11 พ.ย. 2569 "ปุ่มให้กดเยอะเกินไป": จอแรกเหลือ ตัวละคร (สัตว์เลี้ยงอยู่ในปุ่มเดียวกัน) · บันทึกหน้างาน · ลงเวลา (กะที่เลือกบรรทัดเดียว)
+    //   ระดับและแต้มอยู่แท็บฉันที่เดียว · คุยตัวต่อตัวอยู่ใต้ภารกิจวันนี้
     //   ระดับและแต้มอยู่ใต้ชื่อ · ห้อง ลาน แต่งตัว ครัว ภารกิจทีม รวมแถวเดียว · ไม่ตัดฟังก์ชัน แค่ย้ายที่ (แตะไม่เกิน 2 ครั้งถึงทุกอย่าง)
+    // (k116e) เจ้าของ 11 พ.ย. 2569 21:01 "ตัวละครในหน้าแรกใหญ่ไปไหม" "เกมไม่ใช่ตัวเด่น": ตัวละครเล็กสูงพอ ๆ กับคำทักทาย · แถวของเล่น (มีเกมครัว) ท้ายหน้า แถวเล็ก
     return html`<div class="stack home-stack">
-      <div class="hello-row"><div class="hello">${greeting()}<br>${nameTag(me, ownName(me))}${S.homeErr ? staleNote(S.homeAt) : ''}${h.level ? levelChip(h.level) : ''}</div>${h.level ? html`<div class="me-duo">${h.level.look && h.level.look.p ? html`<button class="me-pet pet-box ${h.level.pet && !h.level.pet.today ? 'wants' : ''}" data-act="pet-pat" aria-label="ลูบหัว${h.level.pet ? h.level.pet.name : 'สัตว์เลี้ยง'}">${raw(PET_ART(h.level.look.p, h.level.look))}</button>` : ''}<button class="me-char" data-act="char-go" aria-label="ตัวละครของฉัน แตะเพื่อเล่นท่า">${raw(charOf(h.level.look))}${chFx(h.level.look)}</button></div>` : ''}</div>
+      <div class="hello-row"><div class="hello">${greeting()}<br>${nameTag(me, ownName(me))}${S.homeErr ? staleNote(S.homeAt) : ''}</div>${h.level ? meDuo(h.level) : ''}</div>
       ${ideasLink(h)}
       ${!st.checkedIn && !st.leaveToday && !st.closedToday ? rainBanner(h.rain, 'home') : ''}
       ${todayCard()}
@@ -9682,7 +9903,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${noApproverCard(h.welcome)}
       ${dailyDue(h.daily)}
       ${leadCard(h.daily)}
-      ${talkRow(h.daily)}
       ${checkDue(h.check)}
       ${approver && h.approver && h.approver.pendingLeaves ? html`<button class="card row" style="width:100%;text-align:left" data-act="tab" data-tab="team">${icon('approve')}<span class="grow"><b>มีคำขอลารออนุมัติ ${h.approver.pendingLeaves} รายการ</b></span>${icon('right')}</button>` : ''}
       ${pushCard()}
@@ -9690,9 +9910,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${h.order && h.order.keeper ? mealCard(h.order.staffMeal, false) : ''}
       ${parCard(h.order)}
       ${h.level ? dayFold(h.level.day) : ''}
+      ${talkRow(h.daily)}
       ${h.level ? welcomeCard(h.level) : ''}
-      ${h.level ? html`${playRow(h.level)}${salesRow(h.sales)}` : ''}
+      ${h.level ? salesRow(h.sales) : ''}
       ${monthCard(h.month)}
+      ${h.level ? playRow(h.level) : ''}
     </div>`;
   }
 
@@ -9707,6 +9929,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var week = 'สัปดาห์นี้ ' + day.week.n + '/' + day.week.of + ' ดวง';
     var sub = day.stamp ? 'ได้แสตมป์วันนี้แล้ว · ' + week : done >= day.need && !day.work ? 'อีกนิดเดียว: มาตรงเวลาหรือบันทึกหน้างาน 1 เรื่อง' : 'ทำ ' + day.need + ' ใน ' + day.missions.length + ' ได้แสตมป์ · ' + week;
     return html`<details class="card dm-fold ${day.stamp ? 'stamped' : ''}"><summary class="dm-sum"><span class="q-gem ${pop ? 'pop' : ''}">${icon(day.stamp ? 'check' : 'star')}</span><span class="grow"><b>ภารกิจวันนี้ ${done}/${day.missions.length}</b><span>${sub}</span></span><i class="dm-dots" aria-hidden="true">${day.missions.map(function (m) { return html`<i class="${m.done ? 'on' : ''}"></i>`; })}</i>${icon('right')}</summary>${dayCard(day)}</details>`;
+  }
+  /** (k114) ตัวละครกับสัตว์เลี้ยงปุ่มเดียวบนหน้าแรก ยืนข้างกันไม่ทับ: แตะแล้วตัวละครเล่นท่า สัตว์ที่รอให้ลูบได้ลูบ (วันละครั้ง) ไม่งั้นเล่นท่าด้วยกัน */
+  function meDuo(l) {
+    var pet = l.look && l.look.p;
+    return html`<button class="me-char me-duo" data-act="char-go" aria-label="ตัวละครของฉัน แตะเพื่อเล่นท่า${pet ? ' และลูบหัว' + (l.pet ? l.pet.name : 'สัตว์เลี้ยง') : ''}">${pet ? html`<span class="me-pet pet-box ${l.pet && !l.pet.today ? 'wants' : ''}">${raw(PET_ART(l.look.p, l.look))}</span>` : ''}<span class="me-fig" data-mv="${mvfPick(l.look, mvfThings(staffId()))}">${raw(charOf(l.look))}${chFx(l.look)}</span></button>`;
   }
   /** (k98 หน้าแรก) ของเล่นรวมแถวเดียวใต้เรื่องของวันนี้: ห้อง ลาน แต่งตัว ครัวโซลฟูล์ ภารกิจทีม · ไทล์เท่ากัน จุดแดงเมื่อมีของใหม่ · แตะเดียวเปิดที่เดิม */
   function playRow(l) {
@@ -9725,27 +9952,130 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var r = (h.level && h.level.rules) || { note: 2 };
     return html`<button class="card ideas-link tell-hero" data-act="ideas-invite" data-seen="ชวนบันทึก"><span class="fb-ico">${icon('note')}</span><div class="grow"><b>${mine ? 'วันนี้บันทึกแล้ว ' + mine + ' เรื่อง' : 'วันนี้ที่ร้านเป็นยังไงบ้าง'}</b><span>บันทึกหน้างาน · ส่งไอเดีย · เรื่องละ +${r.note} แต้ม</span></div>${icon('right')}</button>`;
   }
+  /**
+   * (k116e) ไอเดีย: ช่องพิมพ์ใหญ่ช่องเดียวบนสุด แตะแล้วพิมพ์ได้ทันที (เจ้าของ 11 พ.ย. 2569 21:01 "อยากพิมพ์ปัญหาหรืออะไรต่างๆมา")
+   * หัวข้อเลือกในช่องไม่บังคับ (ไม่เลือก = เรื่องอื่น แบบปุ่มบอกได้ทุกเรื่องเดิม) · ส่งทางเดิม sendDaily แต้มเท่าเดิม · ปุ่มส่งอยู่บนช่อง แป้นพิมพ์ไม่บัง
+   * ที่พิมพ์ค้างเก็บในเครื่องต่อคนต่อวัน ปิดแอปกลับมายังอยู่ · ปุ่มแนบรูปขึ้นเมื่อเริ่มพิมพ์ เปิดแผ่นบันทึกเดิมพร้อมข้อความ (แผ่นเดิมมีช่องแนบรูป)
+   * หัวหน้าที่ยังไม่ส่งสรุปวันนี้: ปุ่มส่งสรุปเป็นปุ่มหลัก ปุ่มส่งของช่องพิมพ์เป็นปุ่มธรรมดา (หน้าละปุ่มหลักเดียว)
+   */
+  function tellKey() { return 'seoulful.tell.' + ((S.staff && S.staff.empId) || ''); }
+  function tellKept() { var k = S.staff ? LS.get(tellKey()) : null; return k && k.date === workDate() ? k : { date: workDate(), topic: '', text: '' }; }
+  function tellKeep(k) { if (S.staff) LS.set(tellKey(), k); }
+  function tellCard(d) {
+    if (!d) return '';
+    var k = tellKept();
+    var topic = k.topic || '';
+    var lead = d.lead && !d.sentToday;
+    return html`<section class="card tell-card ${String(k.text || '').trim() ? 'has-text' : ''}">
+      <label class="tell-lbl" for="tell-text">เจออะไรในร้าน อยากบอกอะไร เล่าได้เลย</label>
+      <div class="tell-row"><button class="tell-topic ${topic ? 'on' : ''}" data-act="tell-topic">${icon(topic ? DL_ICON[topic] || 'chat' : 'layers')}<span>${topic ? DL_SHORT[topic] || dlTopic(topic)[1] : 'หัวข้อ ไม่เลือกก็ได้'}</span></button>${String(k.text || '').trim() ? raw(tellPhotoBtn()) : ''}<button class="btn ${lead ? '' : 'primary'} tell-send" data-act="tell-send">${icon('send')} ส่ง</button></div>
+      <textarea class="tell-in" id="tell-text" maxlength="500" placeholder="เช่น ซอสหวานเหลือหลายจาน · ลูกค้าถามหาเมนูเด็ก · ของใกล้หมด · พิมพ์ไม่ถนัด แตะไมค์บนแป้นพิมพ์แล้วพูดได้">${k.text || ''}</textarea>
+      <p class="tell-note">ทุกหัวข้อ +${dlNotePts()} แต้มเท่ากัน · เจ้าของร้านอ่านทุกเรื่อง${DL_NO_NAMES[topic] ? ' · เล่าว่าเกิดอะไร ไม่ต้องบอกว่าใครทำ' : ''}</p>
+    </section>`;
+  }
+  document.addEventListener('input', function (ev) {
+    var el = ev.target;
+    if (!el || el.id !== 'tell-text') return;
+    var k = tellKept();
+    k.text = el.value;
+    tellKeep(k);
+    var card = el.closest('.tell-card');
+    var has = !!el.value.trim();
+    if (card) card.classList.toggle('has-text', has);
+    var row = card && card.querySelector('.tell-row');
+    var ph = row && row.querySelector('.tell-photo');
+    var send = row && row.querySelector('.tell-send');
+    if (has && send && !ph) send.insertAdjacentHTML('beforebegin', tellPhotoBtn());
+    if (!has && ph) ph.remove();
+    if (has) useFormBegin('บันทึกหน้างาน');
+  });
+  function tellPhotoBtn() { return '<button class="tell-photo" data-act="tell-photo" aria-label="แนบรูป">' + String(icon('image')) + '</button>'; }
+  /** หัวข้อในช่องพิมพ์: แผ่นเลือก 1 หัวข้อ (ของแผนกตัวเองก่อน) หรือไม่เลือก · ไม่เปิดฟอร์ม ข้อความที่พิมพ์อยู่ที่เดิม */
+  function openTellTopics() {
+    var all = dlTopics().filter(function (x) { return x[0] !== 'other'; });
+    var me = S.home && S.home.me;
+    var dept = me && DL_DEPT[me.dept];
+    var list = dept ? all.filter(function (x) { return dept[x[0]]; }).concat(all.filter(function (x) { return !dept[x[0]]; })) : all;
+    var now = tellKept().topic || '';
+    var b = function (key, ic, name) { return html`<button class="tell-tile ${now === key ? 'on' : ''}" data-act="tell-pick" data-topic="${key}" aria-pressed="${now === key ? 'true' : 'false'}">${icon(ic)}<span>${name}</span></button>`; };
+    openSheet({ title: 'หัวข้อ (ไม่บังคับ)', body: html`<p class="small muted mt0">ไม่เลือกก็ส่งได้ ทุกหัวข้อแต้มเท่ากัน</p><div class="tell-tiles">${b('', 'chat', 'ไม่เลือก')}${list.map(function (x) { return b(x[0], DL_ICON[x[0]] || 'chat', DL_SHORT[x[0]] || x[1]); })}</div>`, foot: html`<button class="btn" data-act="sheet-close">ปิด</button>` });
+  }
+  function tellPick(key) {
+    var k = tellKept();
+    var box = $('#tell-text');
+    if (box) k.text = box.value;
+    k.topic = key || '';
+    tellKeep(k);
+    closeSheet();
+    render();
+  }
+  function tellSend(btn) {
+    var box = $('#tell-text');
+    var k = tellKept();
+    var text = String((box ? box.value : k.text) || '').trim();
+    if (!text) { toast('พิมพ์สั้น ๆ สักนิดก่อนนะ', 'tip'); if (box) box.focus(); return; }
+    var key = k.topic || 'other';
+    dl = { date: workDate(), quick: key, open: key, items: {}, tell: true };
+    dl.items[key] = { menu: '', detail: text };
+    sendDaily(btn, false);
+  }
+  /** แนบรูป: แผ่นบันทึกเดิมของหัวข้อนั้น (มีช่องแนบรูป) พร้อมข้อความที่พิมพ์ · ส่งจากแผ่นแล้วช่องพิมพ์ว่าง กดยกเลิกข้อความยังอยู่ในช่อง */
+  function tellPhoto() {
+    var k = tellKept();
+    var key = k.topic || 'other';
+    var box = $('#tell-text');
+    var text = String((box ? box.value : k.text) || '');
+    openDailyQuick(key);
+    if (!dl) return;
+    dl.tell = true;
+    if (!text.trim()) return;
+    dl.items[key] = dl.items[key] || { menu: '', detail: '' };
+    dl.items[key].detail = text;
+    var f = $('#dl-detail-' + key);
+    if (f) f.value = text;
+    dlSave();
+  }
+  /** ส่งสำเร็จ: ช่องพิมพ์ว่าง หัวข้อกลับเป็นไม่เลือก */
+  function tellDone() {
+    if (S.staff) LS.del(tellKey());
+    var box = $('#tell-text');
+    if (box) box.value = '';
+    var card = $('.tell-card');
+    if (card) card.classList.remove('has-text');
+    var ph = $('.tell-card .tell-photo');
+    if (ph) ph.remove();
+  }
   function ideasView() {
     var h = S.home;
     var d = h.daily;
     var l = h.level;
     // (k100a) เจ้าของ 10 พ.ย. 2569 "จัดทุกหน้าเลยได้ไหมให้ใช้งานง่ายที่สุด": หัวบรรทัดเดียวมีแต้มเดือนนี้ (แตะดูระดับ) แทนกล่องแต้ม
     //   การ์ดบันทึกหน้างานคงที่เดิมทุกปุ่มทุกคำ · ช่องส่งความเห็น (มีไอเดีย แอปมีปัญหา ถามเรื่องแอป) ขึ้นมาใต้การ์ด · ข่าวไอเดีย แล้วดาวเด่น
+    // (k114) เจ้าของ 11 พ.ย. 2569 "ปุ่มให้กดเยอะเกินไป": จอแรกเหลือการ์ดบันทึกหน้างาน (หัวใจแอป) · ดาวเด่นตามมา (บันทึกได้แต้ม ได้ดาวเด่น)
+    //   ช่องส่งความเห็นและข่าวไอเดียอยู่ถัดไป ยังแตะเดียวจากแท็บ
+    // (k116e) เจ้าของ 11 พ.ย. 2569 21:01 "หน้าไอเดียคุณทำให้มันดีกว่านี้ได้ไหมฉันว่ามันยังรกอยู่": ช่องพิมพ์ใหญ่ช่องเดียวบนสุด แตะแล้วพิมพ์ได้เลย
+    //   หัวข้อเลือกในช่องไม่บังคับ · หัวข้อ ร้านกำลังแก้ ดาวเด่น ส่งความเห็น อยู่ใต้จอแรก ทางเดิมครบ
+    // (k116j) ช่องส่งความเห็น (ไอเดีย แอปมีปัญหา ถาม) ถัดช่องพิมพ์ทันที ใต้จอแรก (เกณฑ์ k100a เหนือ y 1,100) แล้วหัวข้อของแผนก ดาวเด่น
     return html`<div class="stack ideas-page">
-      ${ideasHead(l, d)}
+      <div class="ideas-top">${tellCard(d)}
+      ${ideasHead(l, d)}</div>
       ${dailyDue(d)}
-      ${dailyCard(d)}
       ${feedbackInvite(h.feedback)}
-      ${fbCheer(h.feedback)}
+      ${dailyCard(d)}
       ${ideasChamp(l)}
+      ${fbCheer(h.feedback)}
     </div>`;
   }
   /** (k100a) หัวหน้าไอเดีย: แต้มของฉันเดือนนี้เป็นปุ่มเปิดหน้าระดับ · เรื่องที่ร้านแก้แล้วเดือนนี้กับแต้มที่ร้านแก้ให้อยู่บรรทัดเล็ก (เดิมอยู่กล่องแต้ม) */
   function ideasHead(l, d) {
     var team = (d && d.team) || {};
     var r = (l && l.rules) || {};
-    return html`<div class="page-h ideas-h"><div class="ideas-h-top"><div class="hello" style="font-size:26px;margin:0">ช่วยกันทำร้านให้ดีขึ้น</div>${l ? html`<button class="btn sm ideas-pts" data-act="lv-open" aria-label="แต้มของฉันเดือนนี้ ${l.month || 0} แต้ม ดูระดับ">${l.month || 0} แต้ม ${icon('right')}</button>` : ''}</div><span class="small muted">บอกเรื่องไหนก็ได้แต้ม เจ้าของร้านอ่านทุกเรื่อง${d ? ' · เดือนนี้ร้านแก้แล้ว ' + (team.fixed || 0) + ' เรื่อง · ร้านแก้ให้ +' + (r.fixed || 5) : ''}</span></div>`;
+    // (k114) แต้มเดือนนี้เป็นข้อความ ปุ่มระดับอยู่แท็บฉันที่เดียว (เจ้าของ 11 พ.ย. 2569 "ปุ่มให้กดเยอะเกินไป")
+    // (k116e) คำอธิบายเรื่องแต้มกับเจ้าของอ่านอยู่ใต้ช่องพิมพ์ที่เดียว หัวเหลือตัวเลข
+    // (k116k) บรรทัดเล็กบรรทัดเดียวใต้ช่องพิมพ์ ไม่มีปุ่ม (กล่องแต้มสามช่องตัดไปแล้ว ไม่กลับมา)
+    return html`<div class="page-h ideas-h"><span class="small muted">ช่วยกันทำร้านให้ดีขึ้น${l ? ' · เดือนนี้คุณได้ ' + (l.month || 0) + ' แต้ม' : ''}${d ? ' · ร้านแก้แล้ว ' + (team.fixed || 0) + ' เรื่อง · ร้านแก้ให้ +' + (r.fixed || 5) : ''}</span></div>`;
   }
+
   /**
    * The stars (prizes nobody can buy): everyone's who came to the mark, the same for all, so nobody
    * races anybody; the names in the alphabet's order, nobody's points but one's own (#240).
@@ -9798,28 +10128,31 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var d = mineOnly(shelf) && shelf.data;
     if (!d) {
       loadFriends();
-      return html`<div class="stack"><div class="skel" style="height:44px"></div><div class="fr-grid"><div class="skel" style="width:100%;height:124px"></div>${[0, 1, 2, 3, 4, 5].map(function () { return html`<div class="skel" style="height:164px"></div>`; })}</div><div class="skel" style="height:100px"></div></div>`;
+      return html`<div class="stack"><div class="skel" style="height:44px"></div><div class="fr-grid">${[0, 1, 2, 3, 4, 5].map(function () { return html`<div class="skel" style="height:164px"></div>`; })}</div><div class="skel" style="height:100px"></div></div>`;
     }
     var l = S.home.level || {};
     var total = allFigs(d).length;
     var n = playsNew(l.plays);
-    // 2.13.28 การ์ดฉันใบแรก นอนเต็มความกว้าง แล้วเพื่อนตามลำดับเดิม
-    var people = d.people.filter(function (p) { return p.id === d.me; }).concat(d.people.filter(function (p) { return p.id !== d.me; }));
-    // k44 การ์ดเกมอยู่หน้านี้: ฟิกเกอร์ตัวแรกทำภาพตอนนี้ แสงรอบตัวจึงพร้อมก่อนเข้ากระดาน (blockPrep)
-    if (people[0] && people[0].id === d.me) blockPrep(people[0].figs, 1);
-    // 2.13.26 การ์ดเพื่อน 3 ช่องขึ้นก่อน เปิดมาเห็นทุกคน การ์ดเกม 4 ใบอยู่ล่าง (เจ้าของร้านตอบ 30 ต.ค. 2569 "4 ok")
-    // (k100a) ขอบคุณเพื่อนขึ้นมาใต้ตารางเพื่อน (อยู่ในจอแรก) · ดูของใหม่ ลาน การ์ดเกมตามมาเหมือนเดิม
+    // (k114) เจ้าของ 11 พ.ย. 2569 "ปุ่มให้กดเยอะเกินไป": การ์ดของฉันออก ห้องของฉันเปิดจากแถว ห้อง ที่หน้าแรกที่เดียว
+    //   เพื่อนทุกคนยังเห็นตั้งแต่เปิด (2.13.26 เจ้าของร้านตอบ 30 ต.ค. 2569 "4 ok") · ขอบคุณเพื่อน ลาน ครัว วิ่ง ตามมา · ดูของใหม่ของเพื่อนท้ายหน้า
+    var mine = d.people.filter(function (p) { return p.id === d.me; })[0];
+    var people = d.people.filter(function (p) { return p.id !== d.me; });
+    // k44 การ์ดเกมอยู่หน้านี้: ฟิกเกอร์ตัวแรกของฉันทำภาพตอนนี้ แสงรอบตัวจึงพร้อมก่อนเข้ากระดาน (blockPrep)
+    if (mine) blockPrep(mine.figs, 1);
+    // (k116e) เจ้าของ 11 พ.ย. 2569 21:01 "หน้าที่มีเกมควรเปิดมาไม่เห็นดีกว่าไหม": เพื่อนกับขอบคุณเต็มจอแรก (fr-top สูงอย่างน้อยเท่าจอ) เกมเป็นแถวเล็กท้ายหน้า
     return html`<div class="stack fr">
-      <div class="page-h"><div class="hello" style="font-size:26px;margin:0">เพื่อนในร้าน</div><span class="small muted">แตะการ์ดเพื่อนเข้าไปดูห้อง ส่งคำชม ขอแลกน้อง</span></div>
+      <div class="fr-top"><div class="page-h"><div class="hello" style="font-size:26px;margin:0">เพื่อนในร้าน</div><span class="small muted">แตะการ์ดเพื่อนเข้าไปดูห้อง ส่งคำชม ขอแลกน้อง</span></div>
       <div class="fr-grid">${people.map(function (p) { return friendCard(p, d, total); })}</div>
-      ${thanksCard()}
-      <button class="btn sm" data-act="fr-reload" style="justify-self:center">${icon('refresh')} ดูของใหม่ของเพื่อน</button>
+      ${thanksCard()}</div>
+      <h3 class="me-h fr-play-h">เล่นด้วยกัน</h3>
+      ${blockCard(l)}${blockNews(l)}
       <button class="card fr-plaza" data-act="plaza-open"><span class="fr-plaza-art">${raw(PLAZA_ART(pzSky(), ''))}</span>
         <span class="fr-plaza-tx"><b>ลานโซลฟูล์</b><span>${n ? 'มีคนเล่นด้วย ' + n + ' ครั้ง · ไปเล่นตอบ' : 'เดินเล่น ทักทาย ไฮไฟว์ ปาหมอนใส่เพื่อน'}</span></span>${icon('right')}</button>
-      ${blockCard(l)}${blockNews(l)}
       ${runCard(l)}
+      <button class="btn sm fr-more" data-act="fr-reload">${icon('refresh')} ดูของใหม่ของเพื่อน</button>
     </div>`;
   }
+
   function friendCard(p, d, total) {
     var me = p.id === d.me;
     var plus = Object.keys(p.plus || {}).map(function (k) { return p.plus[k]; });
@@ -9942,25 +10275,40 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var l = h.level;
     var slip = (h.payslips || [])[0];
     var vac = ((h.leave && h.leave.balance) || []).filter(function (b) { return b.vacation; })[0];
-    var face = faceOf(me);
+    var fbN = fbHome(h.feedback).count;
+    var fbNew = fbNews(h.feedback).length;
     var row = function (act, ic, t, sub, extra) { return html`<button class="item" ${raw(act)}><span class="me-ic">${icon(ic)}</span><div class="grow"><div class="t">${t}</div>${sub ? html`<div class="s">${sub}</div>` : ''}</div>${extra || ''}${icon('right')}</button>`; };
     // (k100a) แถวที่มีทางลัดในตัว: แตะแถวไปหน้าเดิม ปุ่มเล็กขวาไปอีกที่ (ไม่ซ้อนปุ่มในปุ่ม)
     var duo = function (act, ic, t, sub, label, side) { return html`<div class="item me-duo-row"><button class="me-duo-go" ${raw(act)} aria-label="${label}"><span class="me-ic">${icon(ic)}</span><div class="grow"><div class="t">${t}</div>${sub ? html`<div class="s">${sub}</div>` : ''}</div></button>${side}</div>`; };
-    // (k100a) เจ้าของ 10 พ.ย. 2569 "จัดทุกหน้าเลยได้ไหมให้ใช้งานง่ายที่สุด": เวลา สลิป วันลาบนสุด · สลิปล่าสุดและขอลาแตะเดียวจากแท็บนี้
-    //   เรื่องที่ฉันส่งกับคำขอบคุณถัดมา · ห้อง ลาน แต่งตัว ครัว ทีม เป็นแถวไทล์เดียวแบบหน้าแรก · ตั้งค่า วิธีใช้ อยู่ล่าง
+    // (k114) เจ้าของ 11 พ.ย. 2569 "ปุ่มให้กดเยอะเกินไป": ตัวฉันกับระดับ · งานและเงิน (เวลา สลิป วันลา สลิปล่าสุดและขอลาแตะเดียว) · เรื่องที่ฉันส่ง
+    //   ตั้งค่า คำขอบคุณจากเพื่อน วิธีใช้ ออกจากระบบ อยู่หน้าบัญชีที่เปิดจากรูปมุมขวาบน (แตะ 2 ครั้งจากทุกหน้า) · ห้อง ลาน แต่งตัว ครัว ทีม อยู่แถวเดียวที่หน้าแรก
     return html`<div class="stack me-page">
-      <section class="card me-top"><div class="me-id">${avatar(me, 'lg')}<div class="grow"><b class="me-name">${nameTag(me, ownName(me))}</b><span class="small muted">${me.fullName || ''}</span></div>
-        ${l ? html`<button class="me-top-char" data-act="char-go" aria-label="ตัวละครของฉัน">${raw(charOf(l.look))}</button>` : ''}</div>${levelChip(l)}</section>
+      <section class="card me-top"><div class="me-id">${avatar(me, 'lg')}<div class="grow"><b class="me-name">${nameTag(me, ownName(me))}</b><span class="small muted">${me.fullName || ''}</span></div></div>${levelChip(l)}</section>
+      <h3 class="me-h">งานและเงิน</h3>
       <section class="card flush"><div class="list">
         ${row('data-act="me-go" data-sub="history"', 'list', 'ประวัติการทำงาน', 'เวลาเข้า-ออก สาย OT รายเดือน')}
         ${slip ? duo('data-act="open-slip" data-key="' + String(slip.key).replace(/[^\w-]/g, '') + '"', 'slip', 'สลิปเงินเดือน', 'ล่าสุด ' + slip.month + ' · ' + money(slip.net) + ' บาท', 'เปิดสลิปล่าสุด ' + slip.month, html`<button class="btn sm me-side" data-act="me-go" data-sub="slips">ทุกเดือน ${icon('right')}</button>`) : row('data-act="me-go" data-sub="slips"', 'slip', 'สลิปเงินเดือน', 'ยังไม่มีสลิป')}
         ${duo('data-act="me-go" data-sub="leave"', 'leave', 'วันลา', vac ? 'พักร้อนเหลือ ' + vac.remaining + ' วัน' : 'ดูวันลาที่เหลือ', 'วันลา ดูวันลาที่เหลือและปฏิทินของทีม', html`<button class="btn sm primary me-side" data-act="open-leave">${icon('plus')} ขอลา</button>`)}
       </div></section>
+      ${fbN ? html`<h3 class="me-h">เรื่องที่ฉันส่ง</h3>
       <section class="card flush"><div class="list">
-        ${fbHome(h.feedback).count ? row('data-act="fb-mine"', 'list', 'เรื่องที่ฉันส่ง', fbHome(h.feedback).count + ' เรื่อง') : ''}
+        ${row('data-act="fb-mine"', 'list', 'เรื่องที่ฉันส่ง', fbN + ' เรื่อง · ดูว่าเจ้าของร้านตอบหรือยัง', fbNew ? html`<span class="pill gold">ใหม่ ${fbNew}</span>` : '')}
+      </div></section>` : ''}
+      <p class="small muted me-more">ตั้งค่า คำขอบคุณจากเพื่อน และวิธีใช้แอป แตะรูปของคุณมุมขวาบน</p>
+    </div>`;
+  }
+  /** (k114) หน้าบัญชี เปิดจากรูปมุมขวาบน: คำขอบคุณจากเพื่อน ตั้งค่า วิธีใช้ ออกจากระบบ (ย้ายจากแท็บฉัน คำเดิมทุกคำ) */
+  function staffSettingsView() {
+    var h = S.home;
+    var me = h.me;
+    var l = h.level;
+    var face = faceOf(me);
+    var row = function (act, ic, t, sub, extra) { return html`<button class="item" ${raw(act)}><span class="me-ic">${icon(ic)}</span><div class="grow"><div class="t">${t}</div>${sub ? html`<div class="s">${sub}</div>` : ''}</div>${extra || ''}${icon('right')}</button>`; };
+    return html`<div class="stack me-page">
+      <div class="set-h"><button class="btn ghost sm" data-act="close-sub">${icon('left')} กลับ</button><div class="hello">บัญชีและตั้งค่า</div></div>
+      <section class="card flush"><div class="list">
         ${row('data-act="thx-mine"', 'heart', 'คำขอบคุณจากเพื่อน', thxOf().n ? thxOf().n + ' ครั้ง · เห็นแค่คุณ' : 'ขอบคุณเพื่อนได้ที่แท็บเพื่อน', thxNew() ? html`<span class="pill gold">ใหม่ ${thxNew()}</span>` : '')}
       </div></section>
-      ${l ? playRow(l) : ''}
       <section class="card flush"><div class="list">
         ${row('data-act="face-take"', 'camera', face ? 'เปลี่ยนรูปโปรไฟล์' : 'ใส่รูปโปรไฟล์ (ถ่ายเซลฟี่)', 'ขึ้นเฉพาะในแอปหลังเข้าระบบ')}
         ${face ? row('data-act="face-remove"', 'trash', 'เอารูปโปรไฟล์ออก', '') : ''}
@@ -9976,6 +10324,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <button class="use-note" data-act="use-about">${icon('info')}<span>ร้านเก็บสถิติการใช้แอป (เปิดหน้าไหน กดปุ่มไหน เริ่มกรอกแล้วส่งไหม แอปตอบเร็วไหม) เพื่อปรับปรุงแอปให้เร็วและใช้ง่ายขึ้น ไม่เก็บสิ่งที่พิมพ์ · <u>ดูรายละเอียด</u></span></button>
     </div>`;
   }
+
 
 
   // ======================================================================
@@ -10287,7 +10636,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var up = a.to > a.par;
     return html`<div class="od-q-row"><b>${a.name}</b>
       <p class="small" style="margin:4px 0 8px">PAR ${odNum(a.par)} → <b>${odNum(a.to)}</b> ${a.unit} · ${a.kind === 'down' ? 'ของเหลือเยอะ: ' : ''}${a.why}</p>
-      <div class="od-yn two"><button class="btn sm" data-act="${act}-no" data-id="${a.id}">คง ${odNum(a.par)}</button><button class="btn sm primary" data-act="${act}-ok" data-id="${a.id}">${up ? 'เพิ่ม' : 'ลด'}เป็น ${odNum(a.to)}</button></div></div>`;
+      <div class="od-yn two"><button class="btn sm" data-act="${act}-no" data-id="${a.id}">คง ${odNum(a.par)}</button><button class="btn sm" data-act="${act}-ok" data-id="${a.id}">${up ? 'เพิ่ม' : 'ลด'}เป็น ${odNum(a.to)}</button></div></div>`;
   }
   // -- the staff's food: the owner or the kitchen's keeper says whether the list is right (once)
   var meal = null; // { items, keep: {id: true}, add, owner }
@@ -11406,7 +11755,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var pl = v.parLife || [];
     return html`${mealCard(v.staffMeal, true)}${v.staffMealDone ? html`<p class="small muted" style="margin:0 0 4px">ของกินพนักงาน: ${v.staffMealDone.by}ตรวจแล้ว ${odWhen(v.staffMealDone.at)}${v.staffMealDone.add ? ' · อยากเพิ่ม: ' + v.staffMealDone.add : ''}</p>` : ''}${pl.length ? html`<section class="card od-q"><div class="card-h"><span class="eyebrow">PAR มากกว่าที่ใช้ทันก่อนเสีย · ${pl.length} อย่าง</span></div>
         <p class="small muted" style="margin:0 0 4px">จากที่ร้านใช้จริงต่อวันและอายุของ · ลด PAR หรือสั่งให้ถี่ขึ้น</p>
-        ${pl.map(function (a) { return html`<div class="od-q-row"><b>${a.name}</b><p class="small" style="margin:4px 0 8px">PAR ${odNum(a.par)} ${a.unit} · เก็บได้ ${a.life} วัน · ใช้ทันราว ${odNum(a.fits)} ${a.unit}</p><div class="od-yn two"><button class="btn sm" data-act="odo-par-keep" data-id="${a.id}">คง ${odNum(a.par)}</button><button class="btn sm primary" data-act="odo-par-fit" data-id="${a.id}" data-par="${a.fits}">ลดเป็น ${odNum(a.fits)}</button></div></div>`; })}</section>` : ''}
+        ${pl.map(function (a) { return html`<div class="od-q-row"><b>${a.name}</b><p class="small" style="margin:4px 0 8px">PAR ${odNum(a.par)} ${a.unit} · เก็บได้ ${a.life} วัน · ใช้ทันราว ${odNum(a.fits)} ${a.unit}</p><div class="od-yn two"><button class="btn sm" data-act="odo-par-keep" data-id="${a.id}">คง ${odNum(a.par)}</button><button class="btn sm" data-act="odo-par-fit" data-id="${a.id}" data-par="${a.fits}">ลดเป็น ${odNum(a.fits)}</button></div></div>`; })}</section>` : ''}
       ${pa.length ? html`<section class="card od-q"><div class="card-h"><span class="eyebrow">PAR ที่เสนอ · ${pa.length} อย่าง</span></div>
         <p class="small muted" style="margin:0 0 4px">จากของที่เหลือเยอะทุกครั้งที่นับ หรือพนักงานบอกว่า PAR น้อยไป/เยอะไป${v.keepers && v.keepers.length ? ' · ' + v.keepers.join(', ') + ' เห็นที่หน้าแรกและตอบได้เหมือนกัน' : ''}</p>
         ${pa.map(function (a) { return parAskRow(a, 'odo-par'); })}</section>` : ''}
@@ -12731,7 +13080,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return html`<div class="item stacked">${avatar(empById(l.empId) || { name: l.name })}<div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${l.swap ? leaveWhen(l) + ' · วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง' : thRange(l.from, l.to) + ' · ' + l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}<div class="s">ขอเมื่อ ${whenAt(l.requestedAt)}${!l.swap && leaveAskedOnDay(l) && l.type !== sickType() && !l.ill ? ' · ขอในวันลา' : ''}</div>${leaveFreeTag(l)}</div>
           <div class="row" style="width:100%;justify-content:flex-end">${mine
             ? html`<span class="pill">รอเจ้าของร้านอนุมัติ</span>`
-            : html`${l.swap ? '' : html`<button class="btn sm tap" data-act="open-leave-free" data-id="${l.id}" data-decide="1">${l.type === sickType() ? 'ใบแพทย์ / ' : ''}ไม่หัก…</button>`}<button class="btn sm tap" data-act="decide-leave" data-id="${l.id}" data-ok="false">ไม่อนุมัติ</button><button class="btn sm primary tap" data-act="decide-leave" data-id="${l.id}" data-ok="true">อนุมัติ</button>`}</div></div>`;
+            : html`${l.swap ? '' : html`<button class="btn sm tap" data-act="open-leave-free" data-id="${l.id}" data-decide="1">${l.type === sickType() ? 'ใบแพทย์ / ' : ''}ไม่หัก…</button>`}<button class="btn sm tap" data-act="decide-leave" data-id="${l.id}" data-ok="false">ไม่อนุมัติ</button><button class="btn sm tap" data-act="decide-leave" data-id="${l.id}" data-ok="true">อนุมัติ</button>`}</div></div>`;
       })}</div>` : html`<div class="empty">ไม่มีคำขอรออนุมัติ</div>`}</section>
       ${part === 'wait' ? '' : recent}`;
   }
@@ -13331,7 +13680,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           ${sub ? html`<div class="s">${sub}</div>` : ''}
           ${p.card && !p.card.opened ? html`<div class="s" style="margin-top:6px"><span class="pill warn">ยังไม่เคยเข้าแอป</span></div>` : ''}
           ${p.prob ? html`<div class="s" style="margin-top:8px">ครบทดลองงาน ${thShort(p.prob)} — ผลเป็นอย่างไร</div>
-            <div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><button class="btn sm primary" data-act="emp-check" data-id="${p.id}" data-k="probOk">ผ่าน</button><button class="btn sm" data-act="edit-emp" data-id="${p.id}" data-preset="extend">ขยาย</button><button class="btn sm" data-act="edit-emp" data-id="${p.id}" data-preset="fail">ไม่ผ่าน</button></div>` : ''}
+            <div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><button class="btn sm" data-act="emp-check" data-id="${p.id}" data-k="probOk">ผ่าน</button><button class="btn sm" data-act="edit-emp" data-id="${p.id}" data-preset="extend">ขยาย</button><button class="btn sm" data-act="edit-emp" data-id="${p.id}" data-preset="fail">ไม่ผ่าน</button></div>` : ''}
           ${(p.items || []).map(function (c) {
             return html`<div class="row" style="gap:8px;margin-top:8px"><span style="width:18px;text-align:center">${c.done ? icon('check') : '○'}</span><span class="grow ${c.done ? 'muted' : ''}">${c.label}${c.auto ? html` <span class="s">(แอปเช็กให้)</span>` : ''}</span>${c.auto ? '' : c.done ? html`<button class="btn sm" data-act="emp-check" data-id="${p.id}" data-k="${c.k}" data-off="1">ยกเลิก</button>` : html`<button class="btn sm" data-act="emp-check" data-id="${p.id}" data-k="${c.k}">ทำแล้ว</button>`}</div>`;
           })}
@@ -13400,7 +13749,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${feedbackCard(o.feedback)}
       ${tempUp ? tempOwnerCard(o.temp) : ''}
       ${due ? html`<section class="card hero pad-lg"><span class="eyebrow">ต้องจ่าย · เงินเดือน${due.month}${due.payDue ? ' · วันที่ ' + thShort(due.payDue) : ''}</span><div class="big" style="margin-top:6px">${money(due.total)}<small>บาท</small></div>
-        <p class="small muted">อนุมัติโดย ${due.approvedBy} ${isoDate(due.approvedAt)}</p><div class="row" style="margin-top:12px"><button class="btn gold grow" data-act="go-pay" data-key="${due.key}">${icon('money')} ดูรายละเอียดและยืนยันจ่าย</button></div></section>` : ''}
+        <p class="small muted">อนุมัติโดย ${due.approvedBy} ${isoDate(due.approvedAt)}</p><div class="row" style="margin-top:12px"><button class="btn primary grow" data-act="go-pay" data-key="${due.key}">${icon('money')} ดูรายละเอียดและยืนยันจ่าย</button></div></section>` : ''}
       <section class="card pad-lg"><div class="card-h"><span class="eyebrow">เดือนนี้ถึงวันนี้ · ${cur.period.month}</span><span class="pill">ประมาณการ</span></div>
         <div class="big">${cnt('net', cur.totals.net, 'm')}<small>บาท</small></div>
         <div class="row wrapx small muted" style="margin-top:10px;gap:14px"><span>OT ${hrs(cur.totals.otHours)} ชม.</span>${onTimeRate(cur.totals) != null ? html`<span>ตรงเวลา ${onTimeRate(cur.totals)}%</span>` : ''}<span>ลา ${cur.totals.leaveDays} วัน</span>${cur.totals.warnings ? html`<span style="color:var(--warn)">ต้องตรวจ ${cur.totals.warnings} จุด</span>` : ''}</div>
@@ -13577,7 +13926,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <details><summary class="small muted" style="cursor:pointer">${keyed ? 'กุญแจที่วางไว้ (ทางสำรอง)' : 'หรือวางกุญแจเอง (ทางสำรอง)'}</summary>
         ${url ? html`<ol class="small muted" style="margin:8px 0 0;padding-left:18px"><li><a href="${url}" target="_blank" rel="noopener">สร้างกุญแจ GitHub</a> (หน้า GitHub กรอกชื่อ สิทธิ์ และวันหมดอายุไว้ให้แล้ว)</li><li>ที่ Repository access เลือก <b>Only select repositories</b> แล้วเลือก <b>${repo}</b></li><li>กด <b>Generate token</b> แล้วกด Copy</li><li>วางในช่องด้านล่าง แล้วกดบันทึก</li></ol>` : ''}
         ${settingField(set)}
-        <button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="githubToken">บันทึกกุญแจ</button></details>`;
+        <button class="btn block" style="margin-top:16px" data-act="save-settings" data-keys="githubToken">บันทึกกุญแจ</button></details>`;
   }
   // ---- what the sheet held, changed here (ย้ายหลังบ้าน task 7): on Cloudflare the sheet is only a copy ----
   /** Part of the start data changed on this page (the shifts, the types of leave): here, and in what this phone keeps of it. */
@@ -13682,7 +14031,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <p class="small muted" style="margin:8px 0 0"><b>กันโกงดีที่สุด:</b> ใช้มือถือหรือแท็บเล็ตเครื่องเก่า (ไม่ใช่โทรศัพท์ร้าน) ติดผนังด้านในร้าน สูงระดับหน้าอก มองไม่เห็นจากนอกร้าน เปิดหน้านี้บนเครื่องนั้นแล้วกดปุ่มด้านบน จอแสดง QR ที่เปลี่ยนทุก 5 วินาที และกล้องหน้าของจอเก็บภาพคนที่สแกนทุกครั้ง พนักงานสแกนด้วยแอปในมือถือตัวเอง รูปที่ถ่ายส่งต่อกันใช้ไม่ได้ · เสียบชาร์จไว้ ต่อ Wi-Fi และตั้งไม่ให้จอดับ</p></section>
       ${SETTING_GROUPS.map(function (g) {
         return html`<section class="card"><div class="card-h"><span class="eyebrow">${g[0]}</span></div>${g[2] ? g[2](o) : ''}${g[1].map(function (k) { return settingField(set[k]); })}
-          ${g[1].length ? html`<button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="${g[1].join(',')}">บันทึก${g[0]}</button>` : ''}</section>`;
+          ${g[1].length ? html`<button class="btn block" style="margin-top:16px" data-act="save-settings" data-keys="${g[1].join(',')}">บันทึก${g[0]}</button>` : ''}</section>`;
       })}
       <section class="card"><div class="card-h"><span class="eyebrow">LINE</span></div>
         <div class="small" style="line-height:2.25">กลุ่มพนักงาน: ${o.line.groupLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`} · LINE เจ้าของร้าน: ${o.line.ownerLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`}</div>
@@ -13694,7 +14043,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${backupStatus(o.backup)}
         ${o.backup && o.backup.restore ? html`<div class="list" style="margin:0 0 8px">${restoreRows(o.backup.restore)}</div>` : ''}
         ${settingField(set.backupMail)}${settingField(set.backupEmail)}
-        <button class="btn primary block" style="margin-top:16px" data-act="save-settings" data-keys="backupMail,backupEmail">บันทึกการสำรอง</button>
+        <button class="btn block" style="margin-top:16px" data-act="save-settings" data-keys="backupMail,backupEmail">บันทึกการสำรอง</button>
         <div class="row wrapx" style="margin-top:12px">${o.backup && o.backup.sheet ? html`<a class="btn sm" href="${o.backup.sheet}" target="_blank" rel="noopener">${icon('sheet')} เปิด Google Sheet</a>` : ''}${o.backup && o.backup.folder ? html`<a class="btn sm" href="${o.backup.folder}" target="_blank" rel="noopener">${icon('shield')} โฟลเดอร์สำรอง</a>` : ''}<button class="btn sm" data-act="backup">สำรองตอนนี้</button><button class="btn sm" data-act="backup-mail">${icon('mail')} ส่งเข้าอีเมลตอนนี้</button><button class="btn sm" data-act="export-tables">${icon('download')} ส่งออกไฟล์ตาราง</button></div>
         <p class="small muted" style="margin:8px 0 0">ส่งออกไฟล์ตาราง: ไฟล์ Excel ของทุกตารางลงเครื่องนี้ (ไม่มี PIN รหัสผ่าน และกุญแจ) เปิดดูหรือเก็บไว้เองได้</p>
         <p class="tiny muted" style="margin:10px 0 0">เวอร์ชัน ${o.version} · ตรวจฝนโดย <a href="https://www.weatherapi.com/" target="_blank" rel="noopener" title="Free Weather API">WeatherAPI.com</a></p></section>
@@ -14833,7 +15182,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (!box) { clearInterval(shelfLife); return; }
       // (nor under a box being opened over it)
       if (document.hidden || bx || box.querySelector('.rm-cab.arranging')) return;
-      var got = box.querySelectorAll('.sh-slot.got');
+      // (k123) ตัวที่กำลังเล่นท่าอยู่ (เช่น น้องเพิ่งแตะให้เต้น) เล่นให้จบก่อน ท่าสุ่มรอบนี้เลือกตัวอื่น ไม่ตัดกลางคัน
+      var got = box.querySelectorAll('.sh-slot.got:not([class*="fm-"])');
       if (!got.length) return;
       var slot = got[Math.floor(Math.random() * got.length)];
       figGo(slot, 0);
@@ -16513,12 +16863,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           later(function () { board(); as.forEach(function (x) { if (x) x.cancel(); }); }, 240 + 7 * 16 + 30);
         }
         function pts(g, p) {
-          fly(pin(h('em', 'bks-pts', '+' + fmt(g)), p), [{ transform: 'translate(-50%,-50%) scale(.6)', opacity: 0 }, { transform: 'translate(-50%,-110%) scale(1.1)', opacity: 1, offset: .25 }, { transform: 'translate(-50%,-220%) scale(1)', opacity: 0 }], { duration: 950, easing: 'ease-out' });
+          fly(pin(h('em', 'bks-pts', '+' + fmt(g)), p), [{ transform: 'translate(-50%,-50%) scale(0)' }, { transform: 'translate(-50%,-110%) scale(1.1)', offset: .25 }, { transform: 'translate(-50%,-200%) scale(1)', offset: .8 }, { transform: 'translate(-50%,-220%) scale(0)' }], { duration: 950, easing: 'ease-out' });
         }
         function combo(k) {
           var e = h('em', 'bks-cb', 'คอมโบ<small>x' + k + '</small>');
           e.style.left = '50%'; e.style.top = '42%';
-          fly(e, [{ transform: 'translate(-50%,-50%) scale(0) rotate(-12deg)', opacity: 0 }, { transform: 'translate(-50%,-50%) scale(1.25) rotate(4deg)', opacity: 1, offset: .22 }, { transform: 'translate(-50%,-50%) scale(1) rotate(0deg)', opacity: 1, offset: .75 }, { transform: 'translate(-50%,-62%) scale(1) rotate(0deg)', opacity: 0 }], { duration: 1100, easing: 'ease-out' });
+          fly(e, [{ transform: 'translate(-50%,-50%) scale(0) rotate(-12deg)' }, { transform: 'translate(-50%,-50%) scale(1.25) rotate(4deg)', offset: .22 }, { transform: 'translate(-50%,-50%) scale(1) rotate(0deg)', offset: .75 }, { transform: 'translate(-50%,-62%) scale(0) rotate(0deg)' }], { duration: 1100, easing: 'ease-out' });
         }
         function dish(sv) {
           var L = sv.line;
@@ -17463,7 +17813,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var b = l && l.block;
     if (b && b.off) return '';
     var my = b && (b.teams || []).filter(function (x) { return x.id === b.team; })[0];
-    return html`<button class="card fr-block" data-act="block-open">${raw(bksScene('c'))}
+    return html`<button class="card fr-block" data-act="block-open">${raw(bksScene('h'))}
       <span class="fr-block-tx"><b>ครัวโซลฟูล์</b><span>${!b ? 'ต่อบล็อกวัตถุดิบ แข่งเป็นทีมรายสัปดาห์' : (b.left ? 'โจทย์วันนี้นับเข้าทีมได้อีก ' + b.left + ' รอบ' : 'วันนี้นับเข้าทีมครบแล้ว · เล่นเองได้') + (my ? ' · ' + my.name : '')}</span></span>${icon('right')}</button>`;
   }
   /** 2.13.63 ข่าวสถิติใหม่ในเล่นเองบนหน้าเพื่อน (ภายใน 24 ชม. คนละข่าว ไม่เกิน 3 ข่าว เรียงตามเวลา ไม่มีอันดับ) · ปุ่มไฮไฟว์ใช้ทางเดิมของลาน (plazaPlay)
@@ -17471,7 +17821,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function blockNews(l) {
     var b = l && l.block;
     if (!b || b.off || (!(b.recs || []).length && !b.mine)) return '';
-    return html`<section class="card fr-recs">${b.mine ? html`<div class="fr-rec me"><i class="fr-rec-ic">${raw(bkFlame())}</i><span class="grow"><b>สถิติใหม่ของคุณ${b.mine.fans ? ' · เพื่อนไฮไฟว์ ' + b.mine.fans + ' คน' : ''}</b><small>เล่นเอง ${bkN(b.mine.score)} แต้ม ไฟระดับ ${b.mine.fire}</small></span></div>` : ''}${(b.recs || []).map(function (r) { return html`<div class="fr-rec"><i class="fr-rec-ic">${raw(bkFlame())}</i><span class="grow"><b>${r.name}ทำสถิติใหม่ในเล่นเอง</b><small>${bkN(r.score)} แต้ม ไฟระดับ ${r.fire}</small></span><button class="btn sm${r.hi5 ? '' : ' primary'}" data-act="block-hi5" data-id="${r.id}" ${r.hi5 ? 'disabled' : ''}>${r.hi5 ? 'ไฮไฟว์แล้ว' : 'ไฮไฟว์'}</button></div>`; })}</section>`;
+    return html`<section class="card fr-recs">${b.mine ? html`<div class="fr-rec me"><i class="fr-rec-ic">${raw(bkFlame())}</i><span class="grow"><b>สถิติใหม่ของคุณ${b.mine.fans ? ' · เพื่อนไฮไฟว์ ' + b.mine.fans + ' คน' : ''}</b><small>เล่นเอง ${bkN(b.mine.score)} แต้ม ไฟระดับ ${b.mine.fire}</small></span></div>` : ''}${(b.recs || []).map(function (r) { return html`<div class="fr-rec"><i class="fr-rec-ic">${raw(bkFlame())}</i><span class="grow"><b>${r.name}ทำสถิติใหม่ในเล่นเอง</b><small>${bkN(r.score)} แต้ม ไฟระดับ ${r.fire}</small></span><button class="btn sm" data-act="block-hi5" data-id="${r.id}" ${r.hi5 ? 'disabled' : ''}>${r.hi5 ? 'ไฮไฟว์แล้ว' : 'ไฮไฟว์'}</button></div>`; })}</section>`;
   }
   function bkFlame() { return '<svg viewBox="0 0 40 48" aria-hidden="true"><path d="M20 2c4 10 14 14 14 28a14 14 0 0 1-28 0c0-8 5-12 8-18 1 6 4 8 6 9-1-7 0-13 0-19z" fill="#ff6a1a"/><path d="M20 18c3 6 8 9 8 16a8 8 0 0 1-16 0c0-5 3-7 5-11 0 3 2 5 3 5 0-4 0-7 0-10z" fill="#ffd23f"/></svg>'; }
   /** ครัวโซลฟูล์บนหน้าแรกต่อจากภารกิจทีม: รอบที่เหลือวันนี้ คะแนนสองทีม · แตะแล้วเปิดเกม · คนที่ปิดเกมไม่เห็นแถวนี้ */
@@ -18896,9 +19246,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var mineToday = (d.mine || []).filter(function (x) { return x.date === d.today; }).length;
     var news = dlNews(d);
     return html`<section class="card dl-card">
-      <div class="fb-invite-h"><span class="fb-ico">${icon('note')}</span><div class="grow"><span class="eyebrow">บันทึกหน้างาน</span><b>วันนี้ที่ร้านเป็นยังไงบ้าง</b></div></div>
-      <button class="dl-all" data-act="dl-all">${icon('chat')}<b class="grow">บอกได้ทุกเรื่อง ไม่ต้องเลือกหัวข้อ</b>${icon('right')}</button>
-      <p class="dl-all-note">ทุกหัวข้อ +${dlNotePts()} เท่ากัน · เลือกที่ใกล้สุดได้เลย</p>
+      <div class="fb-invite-h"><span class="fb-ico">${icon('note')}</span><div class="grow"><span class="eyebrow">บันทึกหน้างาน</span><b>เลือกหัวข้อ เปิดช่องของหัวข้อนั้น</b></div></div>
       ${d.lead ? (d.sentToday ? html`<div class="dl-done"><span class="pill ok">${icon('check')} ส่งสรุปวันนี้แล้ว</span>${d.streak >= 2 ? html`<span class="pill gold">${icon('spark')} ส่งครบ ${d.streak} วันติด</span>` : ''}</div>` : html`<button class="btn primary block" style="margin-top:12px" data-act="dl-form" data-date="${d.today}">${icon('note')} ส่งสรุปวันนี้</button>`) : ''}
       ${dlTiles()}
       ${dlFixingList(d)}
@@ -18919,6 +19267,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var dept = me && DL_DEPT[me.dept];
     var first = dept ? all.filter(function (t) { return dept[t[0]]; }) : all;
     var rest = dept ? all.filter(function (t) { return !dept[t[0]]; }) : [];
+    // (k116g) หัวข้อของแผนกครบ 8 ช่องเหมือน 2.13.77: การ์ดหัวข้ออยู่ใต้ช่องพิมพ์ (ใต้จอแรก) ไม่เพิ่มของในจอแรก แตะเดียวถึงทุกหัวข้อของแผนก
     var tile = function (t) { return html`<button class="dl-tile ${t[0]}" data-act="dl-quick" data-topic="${t[0]}">${icon(DL_ICON[t[0]] || 'chat')}<span>${DL_SHORT[t[0]] || t[1]}</span></button>`; };
     return html`<div class="dl-tiles">${first.map(tile)}${rest.length ? html`<button class="dl-more" data-act="dl-more" aria-expanded="${dlMore ? 'true' : 'false'}">${icon('more')}<span>${dlMore ? 'ย่อหัวข้อ' : html`ดูหัวข้อทั้งหมด <span class="dl-more-n">อีก ${rest.length} หัวข้อ</span>`}</span>${icon('right')}</button>${dlMore ? rest.map(tile) : ''}` : ''}</div>`;
   }
@@ -19124,12 +19473,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var ask = dl.ask || '';
     var had = S.home && S.home.level ? S.home.level.points : null;
     var backTo = dl.backTo;
+    var told = !!dl.tell;
     run(btn, sendAgainOnLoss(function () { return call('dailySend', ask ? { draft: draft, date: date, items: items, none: !!none, photo: photo, ask: ask } : { draft: draft, date: date, items: items, none: !!none, photo: photo }, staffAuth()); })).then(function (d) {
       if (S.home) { S.home.daily = d.daily; if (d.level) S.home.level = d.level; if (d.welcome) S.home.welcome = d.welcome; }
       if (d.levels) { S.levels = d.levels; if (S.home) S.home.levels = d.levels; }
       dlSent(!!none);
       if (none) delete USE_FORMS['บันทึกหน้างาน']; else useFormSent('บันทึกหน้างาน', items.length);
       dl = null;
+      // (k116l) ส่งจากช่องพิมพ์บนสุด: ล้างช่องและข้อความที่จำไว้
+      if (told) tellDone();
       // เรื่องนอกวาระจากแผ่นประชุม (k29): แผ่นประชุมเปิดกลับ การ์ดชุดใหม่จากหลังบ้านมีเรื่องที่เพิ่งบันทึกในเรื่องใหม่วันนี้
       if (backTo === 'meet') {
         render();
@@ -20108,7 +20460,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var first = tempFastFirst(t);
     var app = html`<a class="btn ${first ? '' : 'primary'}" href="${t.links.app}" target="_blank" rel="noopener">${icon('link')} เปิดไฟน์เทมป์</a>`;
     var fast = html`<a class="btn ${first ? 'primary' : ''}" href="${t.links.fast}" target="_blank" rel="noopener">${icon('link')} บริการด่วน</a>`;
-    var book = t.booked ? html`<button class="btn ghost wide" data-act="temp-book" data-undo="1">ยังไม่ได้จอง (กดผิด)</button>` : html`<button class="btn gold wide" data-act="temp-book">${icon('check')} จองแล้ว</button>`;
+    var book = t.booked ? html`<button class="btn ghost wide" data-act="temp-book" data-undo="1">ยังไม่ได้จอง (กดผิด)</button>` : html`<button class="btn wide" data-act="temp-book">${icon('check')} จองแล้ว</button>`;
     return html`<div class="tp-acts">${first ? fast : app}${first ? app : fast}${book}</div>`;
   }
   /** The page the card and the owner's notes open: who is off, FindTemp, and "จองแล้ว"; fresh from the server as it opens. */
@@ -21071,8 +21423,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="fb-invite-h"><span class="fb-ico">${icon('spark')}</span><div class="grow"><span class="eyebrow">ส่งความคิดเห็น</span><b>ช่วยกันทำร้านและแอปให้ดีขึ้น</b></div></div>
       <p class="small muted">เล็กแค่ไหนก็ส่งได้ · เจ้าของร้านเห็นคนเดียว และตอบทุกเรื่อง</p>
       <div class="fb-go three"><button class="fb-big idea" data-act="fb-new" data-kind="idea">${icon('bulb')}<b>มีไอเดีย</b><span>ทำร้านหรือแอปให้ดีขึ้น</span></button><button class="fb-big" data-act="fb-new" data-kind="bug">${icon('tool')}<b>แอปมีปัญหา</b><span>ค้าง กดไม่ไป ตัวเลขไม่ตรง</span></button><button class="fb-big ask" data-act="fb-new" data-kind="ask">${icon('chat')}<b>ถามเรื่องแอป</b><span>ใช้ยังไง ทำได้ไหม</span></button></div>
-      <button class="fb-tolog" data-act="dl-goto">${icon('note')}<span><b>เรื่องในร้าน บันทึกหน้างาน</b><br>ของหมด อุปกรณ์เสีย ลูกค้าบ่น ความสะอาด</span>${icon('right')}</button>
-      <div class="fb-foot"><span>${icon('team')}${team.sent ? 'ทีมเราเสนอ ' + team.sent + ' เรื่อง' + (team.done ? ' · ใช้ได้แล้ว ' + team.done : '') : 'ยังไม่มีใครเสนอ เป็นคนแรกเลย'}</span>${f.count ? html`<button class="fb-mine-btn" data-act="fb-mine">ที่ฉันเสนอ ${f.count}${news ? html`<i class="dot" aria-label="มีความคืบหน้า"></i>` : ''}${icon('right')}</button>` : ''}</div>
+      <div class="fb-foot"><span>${icon('team')}${team.sent ? 'ทีมเราเสนอ ' + team.sent + ' เรื่อง' + (team.done ? ' · ใช้ได้แล้ว ' + team.done : '') : 'ยังไม่มีใครเสนอ เป็นคนแรกเลย'}</span></div>
     </section>`;
   }
   var FB_CHEER = {
@@ -22111,7 +22462,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (was === 'order') loadHome(true);
     },
     'month-nav': function (el) { loadMonth(shiftMonth(S.month.period.key, +el.dataset.delta)); },
-    'pick-shift': function (el) { S.shift = el.dataset.code; render(); },
+    'pick-shift': function (el) { S.shift = el.dataset.code; S.shiftOpen = false; render(); },
+    'shift-more': function () { S.shiftOpen = true; render(); },
     'clock-in': function (el) { phoneClockIn(el); },
     'scan-photo': function () {
       var sc = S.scanner;
@@ -22243,7 +22595,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     // The name at the top: ฉัน, one's own things.
     'staff-menu': function () {
-      if (S.home) ACTIONS.tab({ dataset: { tab: 'me' } });
+      // (k114) รูปมุมขวาบนเปิดหน้าบัญชี (ตั้งค่า คำขอบคุณ วิธีใช้ ออกจากระบบ) ไม่ซ้ำปุ่มแท็บฉัน
+      if (S.home) { ACTIONS.tab({ dataset: { tab: 'me' } }); ACTIONS['me-go']({ dataset: { sub: 'settings' } }); }
     },
     'refresh-home': function () { closeSheet(); loadHome(false, true); },
     // one's own picture: a selfie, made small and square here; everyone signed in sees it
@@ -22291,7 +22644,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'shop-kit': function (el) { shop.tryKit = shop.tryKit === el.dataset.id ? null : el.dataset.id; shopRedraw(); var b = $('#sheet-body'); if (b && shop.tryKit) b.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' }); },
     'shop-wear-kit': function (el) { run(el, call('shopWearKit', { kit: el.dataset.id }, staffAuth()), null, shopDone).catch(function () {}); },
     'char-open': function () { openShop('char'); },
-    'char-go': function (el) { charGo(el); buzz(8); moveSfx(el); },
+    'char-go': function (el) {
+      charGo(el); buzz(8); moveSfx(el);
+      // (k114) สัตว์เลี้ยงในปุ่มเดียวกับตัวละคร: รอให้ลูบ = ลูบ (บันทึกเหมือนแตะสัตว์เดิม) · ลูบแล้ววันนี้ = เล่นท่าด้วยกัน
+      var pet = el.querySelector && el.querySelector('.me-pet');
+      if (pet) { if (pet.classList.contains('wants')) petPat(pet); else { var l = S.home && S.home.level; petGo(pet, l && l.pet ? l.pet.love : 1); } }
+    },
     'quest-open': function () { openQuest(); },
     'sales-open': function () { openSales(); },
     'sales-owner': function () { openSalesOwner(); },
@@ -22534,6 +22892,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     'dl-quick': function (el) { openDailyQuick(el.dataset.topic); },
     'dl-all': function (el) { openDailyQuick('other', null, el && el.dataset.back); },
+    'tell-topic': function () { openTellTopics(); },
+    'tell-pick': function (el) { tellPick(el.dataset.topic); },
+    'tell-send': function (el) { tellSend(el); },
+    'tell-photo': function () { tellPhoto(); },
     'dl-edit': function (el) { openDailyEdit(el.dataset.id); },
     'dl-edit-topic': function (el) { dlEditTopic(el.dataset.topic); },
     'dl-edit-send': function (el) { sendDailyEdit(el); },
