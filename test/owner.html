@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.3","page":"owner","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"49c9d17748e7"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.4","page":"owner","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"fb0ce06157c5"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -10885,7 +10885,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var out = [];
     var add = function (m) { m = String(m || '').trim(); if (m && out.indexOf(m) < 0) out.push(m); };
     ((S.od && S.od.items) || []).forEach(function (it) { var d = odEntry(it); if (it.staff && d) add(d.menu); });
-    odExtras().forEach(function (x) { add(x.menu); });
+    odExtras().forEach(function (x) { if (!x.shop) add(x.menu); });
     return out;
   }
   /** "กะเพราหมูสับ 8 คน ใช้ราว 0.96 กก. (คนละ ~120 ก.)": what the dish needs, and whether this is much more. */
@@ -10912,21 +10912,48 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   /** Under the staff's food: what is asked for off the list (by anyone, and on this phone), and the button to ask. */
   function odExtrasBox() {
-    var pend = (S.od && S.od.extras) || [];
+    var pend = ((S.od && S.od.extras) || []).filter(function (x) { return !x.shop; });
     return html`<div class="od-extras" id="od-extras">
       ${pend.length ? html`<p class="small muted" style="margin:0 0 8px">ขอไว้แล้ว รอเจ้าของร้านสั่ง: ${pend.map(function (x) { return x.name + ' ' + odNum(x.qty) + ' ' + x.unit + ' (' + (x.empId === staffId() ? 'คุณ' : x.by) + ')'; }).join(' · ')}</p>` : ''}
       ${odExtras().map(function (x, i) {
-        return html`<div class="od-item on od-extra"><div class="od-top"><div class="grow"><b>${x.name}</b><span class="s">ไม่มีในรายการ · ${odNum(x.qty)} ${x.unit} · ${x.menu}</span></div><button type="button" class="icon-btn" data-act="od-extra-del" data-i="${i}" aria-label="เอา ${x.name} ออก">${icon('trash')}</button></div><div class="od-mhs">${odMealHint(null, x.name, x.unit, x.menu, x.qty)}</div></div>`;
+        return x.shop ? '' : html`<div class="od-item on od-extra"><div class="od-top"><div class="grow"><b>${x.name}</b><span class="s">ไม่มีในรายการ · ${odNum(x.qty)} ${x.unit} · ${x.menu}</span></div><button type="button" class="icon-btn" data-act="od-extra-del" data-i="${i}" aria-label="เอา ${x.name} ออก">${icon('trash')}</button></div><div class="od-mhs">${odMealHint(null, x.name, x.unit, x.menu, x.qty)}</div></div>`;
       })}
       <button type="button" class="btn block" data-act="od-extra-open">${icon('plus')} ของที่ไม่มีในรายการ</button></div>`;
   }
-  function odExtraOpen() {
-    S.odX = { name: '', qty: '', unit: 'กก.', menu: odMenus()[0] || '' };
-    openSheet({ title: 'ของที่ไม่มีในรายการ', body: odExtraBody(), foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="od-extra-add">${icon('plus')} เพิ่มในรายการสั่ง</button>` });
+  /** 2.14.4 ของร้านที่ไม่มีในรายการ (ท้ายรายการ): ที่ขอไว้แล้ว ที่อยู่ในร่างบนมือถือนี้ และปุ่มขอ · เจ้าของร้าน (ห้อง Claude) หาและสั่งให้ */
+  function odShopBox() {
+    var pend = ((S.od && S.od.extras) || []).filter(function (x) { return x.shop; });
+    return html`<section class="card od-extras od-shop" id="od-shop"><b>ของใช้ร้านหรือวัตถุดิบที่ไม่มีในรายการ</b>
+      <p class="small muted" style="margin:4px 0 8px">ขอได้ เจ้าของร้านหาและสั่งให้</p>
+      ${pend.length ? html`<p class="small muted" style="margin:0 0 8px">ขอไว้แล้ว รอเจ้าของร้านสั่ง: ${pend.map(function (x) { return x.name + ' ' + odNum(x.qty) + ' ' + x.unit + ' (' + (x.empId === staffId() ? 'คุณ' : x.by) + ')'; }).join(' · ')}</p>` : ''}
+      ${odExtras().map(function (x, i) {
+        return x.shop ? html`<div class="od-item on od-extra"><div class="od-top"><div class="grow"><b>${x.name}</b><span class="s">ไม่มีในรายการ · ${odNum(x.qty)} ${x.unit}${x.menu ? ' · ' + x.menu : ''}</span></div><button type="button" class="icon-btn" data-act="od-extra-del" data-i="${i}" aria-label="เอา ${x.name} ออก">${icon('trash')}</button></div></div>` : '';
+      })}
+      <button type="button" class="btn block" data-act="od-shop-open">${icon('plus')} ขอของที่ไม่มีในรายการ</button></section>`;
+  }
+  /** 2.14.4 ร่างของนอกรายการเปลี่ยน: กล่องของกินพนักงาน (odMealRefresh) และกล่องของร้านท้ายรายการ */
+  function odExtrasRedraw() {
+    odMealRefresh();
+    var sb = $('#od-shop');
+    if (sb) sb.outerHTML = String(odShopBox());
+  }
+  /** แผ่นของที่ไม่มีในรายการ: ของกินพนักงาน (บอกเมนู) หรือ 2.14.4 ของร้าน `shop` (ชื่อจากคำค้น `name` ที่หาไม่พบ) */
+  function odExtraOpen(shop, name) {
+    S.odX = shop ? { shop: true, name: name || '', qty: '', unit: 'ชิ้น', menu: '' } : { name: '', qty: '', unit: 'กก.', menu: odMenus()[0] || '' };
+    openSheet({ title: shop ? 'ขอของที่ไม่มีในรายการ' : 'ของที่ไม่มีในรายการ', body: odExtraBody(), foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="od-extra-add">${icon('plus')} เพิ่มในรายการสั่ง</button>` });
   }
   function odExtraBody() {
     var x = S.odX;
     var units = (S.od && S.od.meal && S.od.meal.units) || ['กก.'];
+    if (x.shop) {
+      return html`<div class="stack">
+      <p class="small muted mt0">ของใช้ในร้านหรือวัตถุดิบที่ไม่มีในรายการ · เจ้าของร้านหาและสั่งให้</p>
+      <label class="field"><span>ของที่ต้องการ</span><input class="input" data-odx="name" value="${x.name}" maxlength="60" placeholder="เช่น ฟอยล์ห่ออาหาร ถุงมือยาง" autocomplete="off"></label>
+      <div id="odx-same">${odExtraSame()}</div>
+      <div class="row" style="gap:10px"><label class="field grow"><span>จำนวน</span><input class="input" data-odx="qty" inputmode="decimal" value="${x.qty}" placeholder="เช่น 2" autocomplete="off"></label>
+        <label class="field grow"><span>หน่วย</span><select class="input" data-odx="unit">${units.map(function (u) { return html`<option value="${u}" ${u === x.unit ? 'selected' : ''}>${u}</option>`; })}</select></label></div>
+      <label class="field"><span>ใช้ทำอะไร หรือยี่ห้อที่ใช้ (ไม่ใส่ก็ได้)</span><input class="input" data-odx="menu" value="${x.menu}" maxlength="60" placeholder="เช่น ห่อหมูย่าง ยี่ห้อเดิม" autocomplete="off"></label></div>`;
+    }
     return html`<div class="stack">
       <p class="small muted mt0">ของกินพนักงานที่ไม่มีในรายการ · บอกเมนูที่จะทำด้วย แอปคิดให้ว่าพอสำหรับ ${odPeople()} คนไหม</p>
       <label class="field"><span>ของที่ต้องการ</span><input class="input" data-odx="name" value="${x.name}" maxlength="60" placeholder="เช่น หมูสามชั้น ไข่ไก่" autocomplete="off"></label>
@@ -11005,7 +11032,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return html`<section class="od-sec" id="od-s${x.i}" data-i="${x.i}" ${x.items.length ? '' : raw('hidden')}><div class="od-sec-h" id="od-sec-${x.i}" data-i="${x.i}"><b>${x.cat}</b><span class="od-prog ${odFull(x) ? 'done' : ''}">${odFull(x) ? html`${icon('check')} ` : ''}${odProgText(x)}</span></div>
         ${x.staff ? odMealHead() : ''}
         <div class="card flush od-list">${x.rows.map(odRow)}</div>${x.staff ? odExtrasBox() : ''}</section>`;
-    })}${none ? html`<div class="card" id="od-none"><div class="empty">ไม่พบของที่ค้นหา</div></div>` : ''}`;
+    })}${none ? html`<div class="card" id="od-none"><div class="empty">ไม่พบของที่ค้นหา</div><button type="button" class="btn block" data-act="od-shop-open" data-name="${String(S.odQ || '').trim()}">${icon('plus')} ขอ "${String(S.odQ || '').trim()}" ให้เจ้าของร้านหา</button></div>` : ''}`;
   }
   /**
    * k72 คำค้นเปลี่ยน: แถว หมวด ชิปหมวด และข้อความไม่พบที่อยู่ในหน้าแล้วเปิดปิดตามคำค้น ผลเท่ากับ odListBody กับ odChips
@@ -11031,8 +11058,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     for (k = 0; k < flips.length; k += 2) if (flips[k].hidden !== flips[k + 1]) flips[k].hidden = flips[k + 1];
     var none = !secs.some(function (x) { return x.items.length; }), say = document.getElementById('od-none');
-    if (none && !say) { var t = document.createElement('template'); t.innerHTML = String(html`<div class="card" id="od-none"><div class="empty">ไม่พบของที่ค้นหา</div></div>`); box.appendChild(t.content); }
-    if (!none && say) say.parentNode.removeChild(say);
+    // (2.14.4 ปุ่มขอของที่พิมพ์: วาดใหม่ทุกครั้งที่คำค้นเปลี่ยนแล้วยังไม่พบ)
+    if (say) say.parentNode.removeChild(say);
+    if (none) { var t = document.createElement('template'); t.innerHTML = String(html`<div class="card" id="od-none"><div class="empty">ไม่พบของที่ค้นหา</div><button type="button" class="btn block" data-act="od-shop-open" data-name="${String(S.odQ || '').trim()}">${icon('plus')} ขอ "${String(S.odQ || '').trim()}" ให้เจ้าของร้านหา</button></div>`); box.appendChild(t.content); }
     secs.forEach(function (x) {
       var c = document.querySelector('#od-cats [data-i="' + x.i + '"]');
       if (c) { if (x.items.length) c.removeAttribute('disabled'); else c.setAttribute('disabled', ''); }
@@ -11214,6 +11242,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="od-cats" id="od-cats" aria-label="ไปที่หมวด">${odChips(secs)}</div>
       </div>
       <div id="od-body">${odListBody(secs)}</div>
+      ${odShopBox()}
       ${odBar()}
     </div>`;
   }
@@ -11329,7 +11358,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return html`<div class="item od-rv"><div class="grow"><div class="t">${it.name}</div><div class="s">${(d.have != null ? 'มี ' + odNum(d.have) + ' ' + it.unit + ' · ' : '') + (it.par != null ? 'PAR ' + odNum(it.par) + ' ' + it.unit : 'ไม่มี PAR')}${f ? ' · แอปคิด ' + odNum(f.sug) + ' ' + it.unit : ''}</div>
           ${f ? html`<button class="chip sm od-flag" type="button" aria-pressed="${f.on}" data-act="od-par-flag" data-id="${it.id}" data-kind="${f.kind}">${f.on ? icon('check') : ''} PAR ${f.kind === 'low' ? 'น้อยไป' : 'เยอะไป'} ควรเป็น ${odNum(f.to)} ${it.unit}</button>` : ''}${sureOf(it, d, odCheck(it, d, odQty(it)))}</div><b>สั่ง ${odNum(odQty(it))} ${it.unit}</b></div>`;
       })}${extras.map(function (x) {
-        return html`<div class="item od-rv"><div class="grow"><div class="t">${x.name} <span class="pill">ไม่มีในรายการ</span></div>${mealOf(x.name, x.unit, x.menu, x.qty)}</div><b>สั่ง ${odNum(x.qty)} ${x.unit}</b></div>`;
+        return html`<div class="item od-rv"><div class="grow"><div class="t">${x.name} <span class="pill">ไม่มีในรายการ</span></div>${x.shop ? (x.menu ? html`<div class="s">${x.menu}</div>` : '') : mealOf(x.name, x.unit, x.menu, x.qty)}</div><b>สั่ง ${odNum(x.qty)} ${x.unit}</b></div>`;
       })}</div></section>
       ${flags ? html`<p class="small muted" style="margin:6px 2px 0">สั่งไม่ตรงกับที่แอปคิด: ถ้าปกติใช้มากหรือน้อยกว่านี้ กด "PAR น้อยไป/เยอะไป" หัวหน้าครัวจะเห็นและปรับให้ ถ้าแค่ครั้งนี้ไม่ต้องกด</p>` : ''}` : html`<div class="hint">${icon(noOrder.icon)}<span>${noOrder.say}</span></div>`}
       ${counted.length ? html`<h3 class="h3">นับแล้ว ไม่ได้สั่ง ${counted.length} อย่าง</h3>${oddCount.length || lowCount.length ? html`<section class="card flush"><div class="list">${oddCount.map(function (it) { var d = odEntry(it) || {}; return html`<div class="item od-rv"><div class="grow"><div class="t">${it.name}</div>${sureOf(it, d, 'have')}</div><b>มี ${odNum(+d.have)} ${it.unit}</b></div>`; })}${lowCount.map(function (it) { var d = odEntry(it) || {}; return html`<div class="item od-rv"><div class="grow"><div class="t">${it.name}</div><div class="s">${odShortSay(it, d.have)}</div></div><b>มี ${odNum(+d.have)} ${it.unit}</b></div>`; })}</div></section>` : ''}${fineCount.length ? html`<p class="small muted" style="margin:0">${fineCount.map(function (it) { var d = odEntry(it) || {}; return it.name + ' ' + odNum(d.have) + ' ' + it.unit; }).join(' · ')}</p>` : ''}` : ''}`;
@@ -11637,11 +11666,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function odoList(v) {
     var plan = v.plan;
     var stores = ['Makro', 'GO', 'Shopee'].filter(function (s) { return plan.stores[s] && plan.stores[s].lines.length; });
-    if (!stores.length && !plan.cannot.length && (v.extras || []).length) return html`${odoPrices(v)}${odoExtras(v.extras)}`;
+    if (!stores.length && !plan.cannot.length && (v.extras || []).length) return html`${odoSinceCard(v)}${odoPrices(v)}${odoLateCard(v)}${odoExtras(v.extras)}`;
     if (!stores.length && !plan.cannot.length) {
-      return html`${odoPrices(v)}<section class="card pad-lg center"><p class="muted mt0">ยังไม่มีของรอสั่ง</p><p class="small muted" style="margin:0">พนักงานนับของและกดส่งที่ หน้าแรก › เช็กของ · สั่งของ แล้วรายการจะขึ้นที่นี่ พร้อมราคาของทั้งสองร้าน</p></section>`;
+      return html`${odoSinceCard(v)}${odoPrices(v)}${odoLateCard(v)}<section class="card pad-lg center"><p class="muted mt0">ยังไม่มีของรอสั่ง</p><p class="small muted" style="margin:0">พนักงานนับของและกดส่งที่ หน้าแรก › เช็กของ · สั่งของ แล้วรายการจะขึ้นที่นี่ พร้อมราคาของทั้งสองร้าน</p></section>`;
     }
-    return html`${odoPrices(v)}
+    return html`${odoSinceCard(v)}${odoPrices(v)}${odoLateCard(v)}
       <section class="card pad-lg od-sum"><div class="row between"><div><span class="eyebrow">รวมทั้งหมด</span><div class="big">${money(plan.total)}<small>บาท</small></div></div>
         ${plan.saving ? html`<span class="pill gold">${icon('spark')} ถูกกว่าซื้อร้านเดิม ${money(plan.saving)} บาท</span>` : ''}</div>
         <p class="small muted" style="margin:8px 0 0">แต่ละอย่างอยู่ร้านที่ถูกกว่าหลังโปร เทียบทุกขนาดของ Makro และ GO (ของเก็บได้นานเทียบกับราคา Shopee ที่ Claude เช็กเดือนละครั้งด้วย) ไม่ย้ายไปร้านที่แพงกว่า · ของที่ราคาเท่ากันทั้งสองร้าน แอปจัดให้ครบ ${money(v.freeMin)} บาท ส่งฟรี</p>
@@ -11654,6 +11683,53 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${(v.extras || []).length ? odoExtras(v.extras) : ''}
       ${odoUseFirst(v)}
       ${stores.map(function (s) { return odoStore(plan.stores[s], v); })}`;
+  }
+  /** 2.14.4 เวลาของข้อมูลหน้าเจ้าของร้านตอนห้อง Claude กด อ่านรอบนี้แล้ว ครั้งล่าสุด (จดในเครื่องนี้) · 0 = ยังไม่เคยกด */
+  function odoSeenAt() { var t = Date.parse(LS.get('odoSeen') || ''); return isNaN(t) ? 0 : t; }
+  /** 2.14.4 เพิ่ม แก้ ยกเลิก หลังเวลา `after` เก่าก่อน · ร้านตามแผนของรายการที่ยังรอสั่ง */
+  function odoChangeRows(v, after) {
+    var store = {};
+    var stores = (v.plan && v.plan.stores) || {};
+    Object.keys(stores).forEach(function (s) {
+      (stores[s].lines || []).forEach(function (pl) { (pl.lines || []).forEach(function (x) { store[x.id] = s; }); });
+    });
+    var rows = [];
+    (v.changes || []).forEach(function (c) {
+      var tail = c.extra ? ' · ของนอกรายการ' : store[c.id] ? ' · ' + store[c.id] : '';
+      var t = Date.parse(c.at);
+      if (t > after) rows.push({ t: t, say: c.by + 'เพิ่ม ' + c.name + ' ' + odNum(c.qty0) + ' ' + c.unit + tail });
+      (c.edits || []).forEach(function (e) {
+        var et = Date.parse(e.at);
+        if (!(et > after)) return;
+        rows.push({ t: et, say: e.by + (+e.to > 0 ? 'แก้ ' + c.name + ' ' + odNum(e.from) + ' → ' + odNum(e.to) : 'ยกเลิก ' + c.name + ' ' + odNum(e.from)) + ' ' + c.unit + tail });
+      });
+    });
+    return rows.sort(function (a, b) { return a.t - b.t; });
+  }
+  /** 2.14.4 การ์ดบนสุดของแท็บรอสั่ง: ที่เพิ่มหรือแก้หลังห้อง Claude อ่านรอบก่อน (ย้อนได้ 2 วัน) · ปุ่มจดเวลาของข้อมูลที่เปิดอยู่ ไม่ใช่เวลากด
+   *  (ของที่เข้ามาระหว่างอ่านขึ้นรอบหน้า) */
+  function odoSinceCard(v) {
+    var nowMs = Date.parse(v.now);
+    if (isNaN(nowMs)) nowMs = Date.now();
+    var seen = odoSeenAt();
+    var floor = nowMs - 48 * 3600000;
+    var rows = odoChangeRows(v, Math.max(seen, floor));
+    var today = ymdOf(new Date(nowMs));
+    var when = function (t) { var d = new Date(t); return (ymdOf(d) === today ? '' : thShort(ymdOf(d)) + ' ') + hmOf(d); };
+    return html`<section class="card od-q" id="odo-since"><div class="card-h"><span class="eyebrow">${icon('clock')} เพิ่มหรือแก้หลังรอบก่อน${seen ? ' (อ่านเมื่อ ' + when(seen) + ')' : ''} · ${rows.length}</span></div>
+      ${rows.length ? html`<div class="odo-since-rows" style="max-height:212px;overflow:auto">${rows.map(function (r) { return html`<p class="small" style="margin:0 0 4px"><b>${when(r.t)}</b> ${r.say}</p>`; })}</div>` : html`<p class="small muted" style="margin:0 0 4px">${seen && seen >= floor ? 'ไม่มีรายการเพิ่มหรือแก้หลัง ' + when(seen) : 'ไม่มีรายการเพิ่มหรือแก้ใน 2 วันนี้'}</p>`}
+      <p class="small muted" style="margin:6px 0 8px">${!seen ? 'กด อ่านรอบนี้แล้ว หลังอ่านรายการ รอบหน้าแอปแสดงเฉพาะที่เพิ่มหรือแก้หลังจากนั้น' : seen < floor ? 'อ่านรอบก่อนนานกว่า 2 วัน แสดงเฉพาะ 2 วันล่าสุด' : 'อ่านแล้วกด อ่านรอบนี้แล้ว รอบหน้าแสดงเฉพาะที่เพิ่มหรือแก้หลังจากนี้'}</p>
+      <button type="button" class="btn" data-act="odo-seen" data-at="${v.now}">${icon('check')} อ่านรอบนี้แล้ว</button></section>`;
+  }
+  /** 2.14.4 คำสั่งซื้อที่ยังไม่มีใครกดได้ของ และวันนัดก่อนวันทำงานวันนี้ */
+  function odoIsLate(b, v) { return !!b.eta && String(b.eta).slice(0, 10) < String(v.today || ymdOf(now())); }
+  /** 2.14.4 เลยวันนัดแล้วยังไม่มีใครกดได้ของ: แอปยังนับเป็นกำลังมา (หักออกจากจำนวนสั่ง) ให้ห้อง Claude ตามร้าน หรือกดยกเลิกเมื่อร้านไม่ส่ง */
+  function odoLateCard(v) {
+    var late = (v.coming || []).filter(function (b) { return odoIsLate(b, v); });
+    if (!late.length) return '';
+    return html`<section class="card od-q" id="odo-late"><div class="card-h"><span class="eyebrow">${icon('alert')} เลยวันนัด ยังไม่มีใครกด ได้ของแล้ว · ${late.length}</span></div>
+      ${late.map(function (b) { return html`<p class="small" style="margin:0 0 4px"><b>${b.store}${b.orderNo ? ' · ' + b.orderNo : ''}</b> · ${odNw('นัด' + odEta(b, true))}</p>`; })}
+      <p class="small muted" style="margin:6px 0 0">แอปยังนับว่ากำลังมา จำนวนสั่งหักออกให้ · ของมาแล้วกด ได้ของแล้ว · ร้านไม่ส่งกด ยกเลิก (กดสั่งแล้วผิด) ในแท็บกำลังมา</p></section>`;
   }
   /** In the shop, to use first (past its day, or due within two days), by what each keeps. */
   function odoUseFirst(v) {
@@ -11744,15 +11820,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <p class="small" style="margin:4px 0 4px">${a.store}: <a href="${a.link}" target="_blank" rel="noopener">${a.pname}</a> · ${odGot(a.q, a.got, a.unit)} · ${a.unit}ละ ${money(a.perUnit, true)} บาท${a.perNow ? ' (ที่ซื้ออยู่ ' + a.unit + 'ละ ' + money(a.perNow, true) + ')' : ''}${a.tier ? ' · ราคาเมื่อซื้อหลายชิ้น' : ''}${a.saving ? ' · ถูกลงราว ' + money(a.saving) + ' บาทต่อรอบ' : ''}</p>
         <p class="small muted" style="margin:0 0 8px">ตั้งไว้สั่งครั้งละไม่เกิน ${odNum(a.max)} ${a.unit} · ถ้าเปลี่ยน ต้องมีที่เก็บ ${odNum(a.got)} ${a.unit}${a.until ? ' · ใช้หมดราว ' + odDay(a.until) : ''}${a.life ? ' · ' + (a.keep ? a.keep + ' ' : '') + 'เก็บได้ ' + (a.life >= 60 ? Math.round(a.life / 30) + ' เดือน' : a.life + ' วัน') : ''}</p>
         <div class="od-yn two"><button class="btn sm" data-act="odo-big" data-id="${a.itemId}" data-p="${a.productId}" data-q="${a.q}" data-ok="0">ไม่เปลี่ยน</button><button class="btn sm primary" data-act="odo-big" data-id="${a.itemId}" data-p="${a.productId}" data-q="${a.q}" data-ok="1">ที่เก็บพอ เปลี่ยนเป็น ${odNum(a.got)} ${a.unit}</button></div></div>`;
-    })}<p class="small muted" style="margin:10px 0 0">แอปเช็กทุกขนาดและเซ็ตของทั้งสองร้านทุกเช้า · ตอบ "ไม่เปลี่ยน" แล้วแอปถามอีกเมื่อถูกลงอีก 3% ขึ้นไป · แก้จำนวนต่อครั้ง บอก Claude</p></section>`;
+    })}<p class="small muted" style="margin:10px 0 0">แอปเช็กทุกขนาดและเซ็ตของทั้งสองร้านทุกคืน · ตอบ "ไม่เปลี่ยน" แล้วแอปถามอีกเมื่อถูกลงอีก 3% ขึ้นไป · แก้จำนวนต่อครั้ง บอก Claude</p></section>`;
   }
   /** The staff's food not on the list: what, how much, the dish and the people; to find at a store, then bought or not. */
   function odoExtras(list) {
-    return html`<section class="card od-q od-extras-o"><div class="card-h"><span class="eyebrow">ของกินพนักงานนอกรายการ · ${list.length} อย่าง</span></div>${list.map(function (x) {
-      return html`<div class="od-q-row"><b>${x.name} · ${odNum(x.qty)} ${x.unit}</b>${x.over ? html` <span class="pill warn">${icon('alert')} เยอะกว่าที่เมนูใช้</span>` : ''}
-        <p class="small" style="margin:4px 0 8px">ทำ${x.menu} ${x.people || '-'} คน${x.enough != null ? ' · แอปคิดว่าพอ ' + odNum(x.enough) + ' ' + x.unit : ''} · ${x.by}</p>
+    return html`<section class="card od-q od-extras-o"><div class="card-h"><span class="eyebrow">${list.some(function (x) { return x.shop; }) ? 'ของนอกรายการ' : 'ของกินพนักงานนอกรายการ'} · ${list.length} อย่าง</span></div>${list.map(function (x) {
+      return html`<div class="od-q-row"><b>${x.name} · ${odNum(x.qty)} ${x.unit}</b>${x.shop ? html` <span class="pill">ของร้าน</span>` : ''}${x.over ? html` <span class="pill warn">${icon('alert')} เยอะกว่าที่เมนูใช้</span>` : ''}
+        ${x.shop ? html`<p class="small" style="margin:4px 0 8px">${x.menu ? x.menu + ' · ' : ''}${x.by}</p>` : html`<p class="small" style="margin:4px 0 8px">ทำ${x.menu} ${x.people || '-'} คน${x.enough != null ? ' · แอปคิดว่าพอ ' + odNum(x.enough) + ' ' + x.unit : ''} · ${x.by}</p>`}
         <div class="od-yn three"><a class="btn sm" href="${x.makro}" target="_blank" rel="noopener">${icon('search')} หาใน Makro</a><button class="btn sm ghost" data-act="odo-extra-drop" data-id="${x.id}">ไม่สั่ง</button><button class="btn sm primary" data-act="odo-extra-done" data-id="${x.id}">${icon('check')} สั่งแล้ว</button></div></div>`;
-    })}<p class="small muted" style="margin:10px 0 0">แอปยังไม่รู้ราคาของพวกนี้ · สั่งเองในเว็บ หรือตอนบอก Claude บนคอมว่า "สั่งของ" Claude หาและใส่ตะกร้าให้ด้วย · ของที่ขอบ่อย บอก Claude ให้เพิ่มเข้ารายการได้</p></section>`;
+    })}<p class="small muted" style="margin:10px 0 0">แอปยังไม่รู้ราคาของพวกนี้ · สั่งเองในเว็บ หรือตอนบอก Claude บนคอมว่า "สั่งของ" Claude หาและใส่ตะกร้าให้ด้วย · ของที่ขอบ่อย บอก Claude ให้เพิ่มเข้ารายการได้ · กด สั่งแล้ว น้องที่ขอได้แจ้งเตือน</p></section>`;
   }
   /** 2.13.7 ของแทนที่เคยตอบใช้แทนได้ แอปถามทุกครั้ง ไม่เปลี่ยนเอง: กดใช้รอบนี้ รอบหน้าถามใหม่ */
   function odoSubAsk(itemId, a) {
@@ -11807,7 +11883,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var issues = b.issues || [];
       // (what was found later: said from here in the two days after, as staff can; the server takes it longer)
       var say = done && b.fresh;
-      return html`<section class="card flush"><div class="od-store-h"><div class="grow"><b>${b.store}${b.orderNo ? ' · ' + b.orderNo : ''}</b><span class="small muted">${done ? html`${odNw('ได้ของ ' + odWhen(b.gotAt))}${b.gotBy ? html` · ${odNw(b.gotBy + 'รับ')}` : ''}` : odNw('มา' + odEta(b))}</span></div><div class="r"><div class="amt">${money(b.total)} บาท</div></div></div>
+      return html`<section class="card flush"><div class="od-store-h"><div class="grow"><b>${b.store}${b.orderNo ? ' · ' + b.orderNo : ''}</b><span class="small muted">${done ? html`${odNw('ได้ของ ' + odWhen(b.gotAt))}${b.gotBy ? html` · ${odNw(b.gotBy + 'รับ')}` : ''}` : html`${odNw('มา' + odEta(b))}${odoIsLate(b, v) ? html` <span class="pill warn">เลยวันนัด</span>` : ''}`}</span></div><div class="r"><div class="amt">${money(b.total)} บาท</div></div></div>
         <div class="list">${b.items.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.name}</div><div class="s">${x.pname} · ${odoQtyPrice(x.q, x.per, x.unit, x.price)}</div></div></div>`; })}</div>
         ${b.note ? html`<p class="small od-note">${b.note}</p>` : ''}
         ${issues.map(function (is) { var x = b.items[is.n]; return x ? html`<p class="od-issue"><span class="pill ${is.fix ? '' : 'warn'}">${x.name} ${rcSay(is, x)}</span><span class="grow small muted">${is.fix ? RC_FIXES[is.fix] + ' ' + odWhen(is.fixAt) + (is.fixBy ? ' · ' + is.fixBy : '') : 'รอร้านค้า'}</span><button class="od-plain" data-act="odo-fix-more" data-id="${b.id}" data-n="${is.n}">แก้</button></p>` : ''; })}
@@ -22166,6 +22242,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       odMealRefresh();
     },
     'od-extra-open': function () { odExtraOpen(); },
+    'od-shop-open': function (el) { odExtraOpen(true, el.dataset.name || ''); },
     'od-extra-go': function (el) {
       closeSheet();
       var row = document.getElementById('od-' + el.dataset.id);
@@ -22177,14 +22254,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var name = String(x.name || '').trim();
       if (name.length < 2) { toast('ใส่ชื่อของที่จะสั่ง', 'tip'); return; }
       if (!(qty > 0)) { toast('ใส่จำนวน "' + name + '"', 'tip'); return; }
-      if (!String(x.menu || '').trim()) { toast('บอกเมนูที่จะทำด้วย: "' + name + '"', 'tip'); return; }
+      if (!x.shop && !String(x.menu || '').trim()) { toast('บอกเมนูที่จะทำด้วย: "' + name + '"', 'tip'); return; }
       var list = odExtras().slice();
       if (list.length >= 10) { toast('ส่งรายการนี้ก่อน แล้วค่อยเพิ่มอีก', 'tip'); return; }
-      list.push({ name: name, qty: qty, unit: x.unit || 'กก.', menu: String(x.menu).trim() });
+      list.push({ name: name, qty: qty, unit: x.unit || 'กก.', menu: String(x.menu || '').trim(), shop: !!x.shop });
       odDraft()._extras = list;
       odKeep();
       closeSheet();
-      odMealRefresh();
+      odExtrasRedraw();
       var bar = document.getElementById('od-bar');
       if (bar) odRedraw(bar, String(odBar()));
       toast('เพิ่ม ' + name + ' แล้ว · กดส่งพร้อมรายการอื่น', 'ok');
@@ -22194,7 +22271,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       list.splice(+el.dataset.i, 1);
       odDraft()._extras = list;
       odKeep();
-      odMealRefresh();
+      odExtrasRedraw();
       var bar = document.getElementById('od-bar');
       if (bar) odRedraw(bar, String(odBar()));
     },
@@ -22452,6 +22529,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // ordering: the owner
     'od-owner': function () { openOrderOwner(); },
     'odo-tab': function (el) { odo.tab = el.dataset.tab; odo.pick = null; setSheetBody(odOwnerBody()); },
+    // 2.14.4 จดเวลาของข้อมูลที่เปิดอยู่ (ไม่ใช่เวลากด) ในเครื่องนี้: รอบหน้าการ์ดแสดงเฉพาะที่เพิ่มหรือแก้หลังจากนั้น
+    'odo-seen': function (el) { if (el.dataset.at) LS.set('odoSeen', el.dataset.at); setSheetBody(odOwnerBody()); },
     'od-pic': function (el) { openPic(el.dataset.img, el.dataset.name); },
     'odo-item': function (el) { odo.pick = el.dataset.id; setSheetBody(odOwnerBody()); var b = $('#odo'); if (b && b.scrollIntoView) b.scrollIntoView({ block: 'start' }); },
     'odo-item-back': function () { odo.pick = null; setSheetBody(odOwnerBody()); },
