@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.6","page":"","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"ed385bffb84f"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.7","page":"","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"86c0db70e85a"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -421,7 +421,7 @@ body.noscroll #app .btn.loading::after { display: none; }
 .top-r { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .bell-btn { position: relative; flex: none; background: transparent; }
 /* 2.13.28 เลขแจ้งเตือนตัวขาวที่กระดิ่งและแท็บใช้ --badge: จอมืด --bad เป็นแดงอ่อน #f08c82 ตัวขาวต่างสีแค่ 2.4:1 อ่านยาก จึงใช้แดงเข้ม #d33a2f (4.7:1 และยังเด่นบนพื้นมืด) · จอสว่างคงเดิม */
-.bell-btn .bell-n { position: absolute; top: 3px; right: 1px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 99px; background: var(--badge, var(--bad)); color: #fff; font-size: 10.5px; line-height: 17px; font-weight: 600; font-style: normal; text-align: center; box-shadow: 0 0 0 2px var(--bg); }
+.bell-btn .bell-n { position: absolute; top: 3px; right: 1px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 99px; background: var(--badge, var(--bad)); color: #fff; font-size: 12px; line-height: 17px; font-weight: 600; font-style: normal; text-align: center; box-shadow: 0 0 0 2px var(--bg); }
 .bell-btn.ring .bell-n { animation: bellPop .5s var(--spring) var(--bell-since, 0s) backwards; }
 .bell-btn.ring svg { animation: bellRing 1.1s ease-in-out var(--bell-since, 0s) 2; transform-origin: 50% 12%; }
 @keyframes bellPop { from { transform: scale(0); } }
@@ -507,7 +507,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .tab[aria-selected="true"] { color: var(--gold-ink); font-weight: 600; }
 .tab[aria-selected="true"]::before, .tabbar .lens { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: var(--lens); box-shadow: inset 0 1px 0 var(--rim-hi), 0 1px 3px rgba(60, 42, 20, .10), 0 6px 16px -8px rgba(60, 42, 20, .22); }
 .tab:active svg { transform: scale(.84); transition-duration: .1s; }
-.tab .badge { position: absolute; top: 4px; left: calc(50% + 5px); min-width: 17px; height: 17px; padding: 0 5px; border-radius: 99px; background: var(--badge, var(--bad)); color: #fff; font-size: 10.5px; line-height: 17px; font-weight: 600; box-shadow: 0 0 0 2px var(--surface); }
+.tab .badge { position: absolute; top: 4px; left: calc(50% + 5px); min-width: 17px; height: 17px; padding: 0 5px; border-radius: 99px; background: var(--badge, var(--bad)); color: #fff; font-size: 12px; line-height: 17px; font-weight: 600; box-shadow: 0 0 0 2px var(--surface); }
 .tabbar.min .tab { height: 44px; }
 .tabbar.min .tab .lbl { opacity: 0; margin-top: -15px; }
 /* 2.14.6 (เจ้าของร้าน 14 พ.ย. 2569 15:48): แอปที่เปิดจากหน้าจอโฮม แถบล่างวางจากบนของจอเต็ม (100lvh) แทนขอบล่างของชั้น fixed ที่ iPhone อาจค้างสั้นหลังแป้นพิมพ์ปิด
@@ -1037,6 +1037,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .mt-done > summary::-webkit-details-marker { display: none; }
 .mt-done[open] > summary { margin-bottom: 8px; }
 .mt-done[open] > summary svg:last-child { transform: rotate(90deg); }
+.mt-due > summary.mt-one { color: var(--ink); min-height: 44px; }
 .mt-waitp { margin-left: 2px; color: var(--warn); }
 .dl-fxpick { margin-top: 12px; }
 .dl-fxpick > span { display: block; margin-bottom: 6px; }
@@ -1059,7 +1060,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-status .btn { min-height: 34px; }
 .od-head .info-btn { min-width: 32px; min-height: 32px; }
 .od-tag-btn { min-height: 32px; padding: 5px 11px; }
-.od-plain { min-height: 32px; padding: 6px 2px; }
+.od-plain { min-height: 44px; min-width: 44px; padding: 6px 2px; justify-content: center; }
 .od-su.stepper button { height: 40px; }
 .od-su.stepper input { height: 40px; padding: 0 0 14px; }
 /* k107 กล่องหน่วยกว้างเท่าช่องตัวเลข ไม่คร่อมปุ่ม + − (เดิมกว้างเต็ม 120 px ทับกรอบปุ่ม · หน่วยยาวสุด แกลลอน 42 px ในช่อง 48 px) */
@@ -3005,6 +3006,9 @@ html.i3-box-s1-body.i3-box-s1-lid .bx-svg.s1 .bx-body, html.i3-box-s2-body.i3-bo
 /* (k100a) จัดหน้าชุด A: ปุ่มสามแบบ (หลัก ดำเต็ม · รอง ขอบ · ชิป) · ปุ่มกลับทุกหน้าย่อยแบบขอบเดียวกัน · ตัวหนังสือ ≥12 จุด · ปุ่ม ≥32 จุด */
 .btn.ghost[data-act="close-sub"] { background: var(--btn); box-shadow: inset 0 1px 0 var(--rim-hi), inset 0 0 0 1px var(--btn-line); }
 .board-row .bd-name { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 6px; min-width: 0; }
+/* 2.14.7 (k150 จอ 360 ภาพแถวทีม: ปุ่ม ลงเวลาแทน บนแถวบีบชื่อเหลือศูนย์ ป้ายทับชื่อ ปุ่ม ⋯ ล้นการ์ด): ปุ่มขึ้นบรรทัดของตัวเองใต้แถว ชิดขวา */
+.board-row { flex-wrap: wrap; }
+.board-row .bd-fix { order: 9; flex: 0 0 100%; display: flex; justify-content: flex-end; margin-top: -4px; }
 .ideas-h-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; }
 .ideas-pts { flex: none; }
 .me-duo-row { padding: 0 12px 0 0; }
@@ -3304,7 +3308,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 .poster .qr svg { width: 100%; height: 100%; }
 .poster h3 { font-size: 20px; margin: 0 0 6px; font-weight: 600; }
 .poster p { margin: 4px 0; color: #57504a; font-size: 14px; }
-.poster .code { font-size: 12px; color: #8a8178; margin-top: 14px; letter-spacing: 0.1em; }
+.poster .code { font-size: 12px; color: #57504a; margin-top: 14px; letter-spacing: 0.1em; }
+  .poster .brand .ko { color: #87652f; }
+  label.remember { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+  .rules-more, .menu-more { margin-top: 8px; }
+  /* (2.14.7 k150) ดูย้อนหลัง ท้ายภาพรวมเจ้าของ ห่างการ์ดก่อนหน้าเท่าระยะการ์ดปกติ (.stack 14px) · เปิดแล้วการ์ดแรกไม่ชิดหัวข้อ */
+  .back-more { margin-top: 14px; }
+  .back-more > .stack { margin-top: 6px; }
+  /* ส่วนพับที่ปิดอยู่ไม่จัดวางเลย (Chrome จัดวางของในส่วนพับที่ปิดเมื่อมีสคริปต์ถามตำแหน่ง ทำให้ปุ่มที่ซ่อนดูเหมือนอยู่ใต้แถบเมนู) */
+  .rules-more:not([open]) > :not(summary), .menu-more:not([open]) > :not(summary) { display: none; }
+  .rules-more > summary, .menu-more > summary { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; font-weight: 600; list-style: none; }
+  .rules-more > summary::-webkit-details-marker, .menu-more > summary::-webkit-details-marker { display: none; }
+  .rules-more > summary::after, .menu-more > summary::after { content: '▾'; opacity: .6; }
+  .rules-more[open] > summary::after, .menu-more[open] > summary::after { content: '▴'; }
 
 @media (max-width: 420px) {
   .stats { grid-template-columns: repeat(2, 1fr); }
@@ -9874,15 +9890,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     openSheet({ title: 'กติกา Incentive', body: html`<ul class="rules">
         <li>${icon('check')}<span>มาตรงเวลา ได้ Incentive เต็มทุกเดือน</span></li>
         <li>${icon('clock')}<span>สายไม่เกิน ${r.grace} นาที ได้ ${r.allowed} ครั้งต่อเดือน ไม่หัก Incentive${r.lateCut ? ' · เกินนั้นหักจาก Incentive ครั้งละ ' + money(r.lateCut) + ' บาท' : ''}</span></li>
-        <li>${icon('money')}<span>เข้างานช้ากว่าเวลากะ ได้เงินตามเวลาที่ทำจริง${r.lateTimeFrom && r.lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(r.lateTimeFrom) + ')' : ''}: นับทีละครึ่งชั่วโมง ปัดลง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง · เช่น กะเริ่ม 10:30 มาถึง 10:55 ค่าจ้างและ OT เท่าเดิม มาถึง 11:40 ได้น้อยลง 1 ชม. · ได้อนุญาตเข้างานช้า มาตามเวลาที่อนุญาต ไม่นับสาย ไม่หัก Incentive ได้ค่าจ้างและ OT เต็ม มาช้ากว่านั้นนับแบบนี้จากเวลาที่อนุญาต · ถึงจะช้ามาก มาทำงานแล้วได้เงินไม่น้อยกว่าแจ้งลาเช้าวันนั้น</span></li>
+        <li>${icon('money')}<span>เข้างานช้ากว่าเวลากะ ได้เงินตามเวลาที่ทำจริง${r.lateTimeFrom && r.lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(r.lateTimeFrom) + ')' : ''} นับทีละครึ่งชั่วโมง · ได้อนุญาตเข้างานช้า มาตามเวลาที่อนุญาต ไม่นับสาย ไม่หัก Incentive ได้ค่าจ้างและ OT เต็ม</span></li>
         <li>${icon('rain')}<span>วันฝนตก เผื่อเวลาเดินทาง ค่อย ๆ มาให้ปลอดภัย</span></li>
         <li>${icon('cal')}<span><b class="rules-h">ไปทำงานไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน ร้านจะได้หาคนช่วยทัน</b>
-          ${bizSub.length ? html`<span class="rules-sub"><b>ติดธุระ</b> ${bizSub.join(' · ')}${toldWhen}</span>` : ''}
+          ${bizSub.length ? html`<span class="rules-sub"><b>ติดธุระ</b> ${bizSub.map(function (s) { var k = s.indexOf(' · เช่น '); return k > 0 ? s.slice(0, k) : s; }).join(' · ')}${toldWhen}</span>` : ''}
           <span class="rules-sub"><b>ป่วย</b> ${sickCut ? (bizSub.length ? 'หัก Incentive แบบเดียวกับติดธุระ · ' : '') + 'ป่วยวันที่ ' + (r.sickNoteDay || 3) + ' ขึ้นไปมีใบรับรองแพทย์ ไม่หัก (ส่งรูปใบให้ผู้อนุมัติภายใน ' + (r.noteLateDays || 3) + ' วันหลังกลับมาทำงาน) · นอนโรงพยาบาล ไม่หัก' : 'ไม่หัก Incentive'} · มีวัน${vacationType()}เหลือ ใช้แทนได้ ไม่หัก</span>
           <span class="rules-sub"><b>บอกหลังเวลาเข้างาน</b> หักจาก Incentive ${noWord} บาท ยังได้ค่าจ้าง ทั้งป่วยและติดธุระ · ไม่ได้บอกเลย หักจาก Incentive ${noWord} บาท และไม่ได้ค่าจ้างวันนั้น${toldWhen}</span>
           ${free.length ? html`<span class="rules-sub">${free.join(', ')}ที่อนุมัติแล้ว ไม่หัก Incentive${freeNow ? ' แม้ขอในวันนั้น' : ''}</span>` : ''}</span></li>
+      </ul>
+      <details class="rules-more"><summary>ดูตัวอย่าง</summary><ul class="rules">
+        <li>${icon('money')}<span>มาช้ากว่าเวลากะ นับทีละครึ่งชั่วโมง ปัดลง ลด OT ในกะก่อน แล้วค่อยลดค่าจ้าง · เช่น กะเริ่ม 10:30 มาถึง 10:55 ค่าจ้างและ OT เท่าเดิม มาถึง 11:40 ได้น้อยลง 1 ชม. · ได้อนุญาตเข้างานช้าแล้ว มาช้ากว่านั้นนับแบบนี้จากเวลาที่อนุญาต · ถึงจะช้ามาก มาทำงานแล้วได้เงินไม่น้อยกว่าแจ้งลาเช้าวันนั้น</span></li>
+        ${bizSub.length && bizSub[0].indexOf(' · เช่น ') > 0 ? html`<li>${icon('cal')}<span>ติดธุระ ${bizSub[0].slice(bizSub[0].indexOf(' · เช่น ') + 3)}</span></li>` : ''}
         <li>${icon('shield')}<span>เดือนไหน Incentive ไม่พอหัก ส่วนที่เหลือหักจาก Incentive เดือนถัดไปครั้งเดียว ไม่หักจากค่าจ้าง</span></li>
-      </ul>`, foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
+      </ul></details>`, foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
   }
   /** 2.13.11 กติกาและวิธีใช้ที่ย้ายจากหน้าจอไปหลังปุ่ม ⓘ (เจ้าของร้านสั่ง 28 ต.ค. 2569 "เอาคลีนๆ") · rows: [[ไอคอน, ข้อความ]] */
   function infoSheet(title, rows) {
@@ -9903,7 +9923,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   /** การ์ด Incentive หน้าแรก: เหลือวันตรงเวลาติดต่อกันกับแต้มที่จะได้ และปุ่ม ⓘ กติกา · ไม่บอกยอดเงิน แถบ หรือรายการหัก (ยอดอยู่ในสลิป · 2.13.3) */
   function monthIncentive(inc, c) {
-    return html`<div class="eyebrow" style="margin-bottom:4px">Incentive เดือนนี้<button class="info-btn" data-act="open-rules" aria-label="กติกา Incentive">${icon('info')}</button></div>
+    return html`<div class="eyebrow" style="margin-bottom:4px">ตรงเวลา<button class="info-btn" data-act="open-rules" aria-label="กติกา Incentive">${icon('info')}</button></div>
       ${onTimeRun(c)}`;
   }
   function monthCard(m) {
@@ -10113,7 +10133,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // (k114) แต้มเดือนนี้เป็นข้อความ ปุ่มระดับอยู่แท็บฉันที่เดียว (เจ้าของ 11 พ.ย. 2569 "ปุ่มให้กดเยอะเกินไป")
     // (k116e) คำอธิบายเรื่องแต้มกับเจ้าของอ่านอยู่ใต้ช่องพิมพ์ที่เดียว หัวเหลือตัวเลข
     // (k116k) บรรทัดเล็กบรรทัดเดียวใต้ช่องพิมพ์ ไม่มีปุ่ม (กล่องแต้มสามช่องตัดไปแล้ว ไม่กลับมา)
-    return html`<div class="page-h ideas-h"><span class="small muted">ช่วยกันทำร้านให้ดีขึ้น${l ? ' · เดือนนี้คุณได้ ' + (l.month || 0) + ' แต้ม' : ''}${d ? ' · ร้านแก้แล้ว ' + (team.fixed || 0) + ' เรื่อง · ร้านแก้ให้ +' + (r.fixed || 5) : ''}</span></div>`;
+    return html`<div class="page-h ideas-h"><span class="small muted">ช่วยกันทำร้านให้ดีขึ้น${l ? ' · เดือนนี้คุณได้ ' + (l.month || 0) + ' แต้ม' : ''}${d ? (team.fixed ? ' · ร้านแก้แล้ว ' + team.fixed + ' เรื่อง' : '') + ' · ร้านแก้ให้ +' + (r.fixed || 5) : ''}</span></div>`;
   }
 
   /**
@@ -10138,7 +10158,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var l = S.home.level;
     var mine = [c.week && c.week.me ? 'สัปดาห์ที่แล้วคุณได้ป้ายดาวเด่น ใส่ได้ที่ ฉัน › แต่งตัว' : '', c.month && c.month.me ? 'เดือนที่แล้วคุณได้ผ้าคลุมดาวเด่น ใส่ได้ที่ ฉัน › แต่งตัว' : '', l.crown ? 'เดือนนี้คุณใส่มงกุฎแล้ว' : ''].filter(Boolean);
     var w = c.thisWeek || { mine: 0, rate: 0, need: c.weekMin || 6 };
-    openSheet({ title: 'ดาวเด่นช่วยร้าน', body: html`${mine.length ? html`<p class="mt0"><b>${mine.join(' · ')}</b></p>` : ''}<p class="mt0">สัปดาห์นี้คุณได้ ${w.mine} แต้ม · เฉลี่ย ${lvRate(w.rate)}/วัน · ${w.need ? 'อีก ' + w.need + ' แต้มได้ดาวเด่น' : 'ถึงแล้ว รักษาไว้ถึงวันอาทิตย์'}</p><p class="mt0">ได้ทุกคนที่แต้มเฉลี่ยตั้งแต่ ${c.rate || 2} แต้มต่อวันที่มาทำงาน (ราวบันทึกวันละเรื่อง) ไม่ต้องแข่งกับใคร ลา ป่วย หรือวันหยุดไม่เสียเปรียบ · ทั้งสัปดาห์ (อย่างน้อย ${c.weekMin} แต้ม) ได้ป้ายดาวเด่น · ทั้งเดือน (อย่างน้อย ${c.monthMin} แต้ม) ได้ผ้าคลุมดาวเด่น ระหว่างเดือนได้ใส่มงกุฎ${c.old ? ' · สัปดาห์นี้คนที่ได้มากสุดได้ด้วยตามกติกาเดิม' : ''} · ${got}</p>`, foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
+    openSheet({ title: 'ดาวเด่นช่วยร้าน', body: html`${mine.length ? html`<p class="mt0"><b>${mine.join(' · ')}</b></p>` : ''}<p class="mt0">สัปดาห์นี้คุณได้ ${w.mine} แต้ม · ${w.need ? 'อีก ' + w.need + ' แต้มได้ดาวเด่น' : 'ถึงแล้ว รักษาไว้ถึงวันอาทิตย์'}</p><p class="mt0">ได้ทุกคนที่แต้มเฉลี่ยตั้งแต่ ${c.rate || 2} แต้มต่อวันที่มาทำงาน (ราวบันทึกวันละเรื่อง) ไม่ต้องแข่งกับใคร ลา ป่วย หรือวันหยุดไม่เสียเปรียบ · ทั้งสัปดาห์ (อย่างน้อย ${c.weekMin} แต้ม) ได้ป้ายดาวเด่น · ทั้งเดือน (อย่างน้อย ${c.monthMin} แต้ม) ได้ผ้าคลุมดาวเด่น ระหว่างเดือนได้ใส่มงกุฎ${c.old ? ' · สัปดาห์นี้คนที่ได้มากสุดได้ด้วยตามกติกาเดิม' : ''} · ${got}</p>`, foot: html`<button class="btn primary" data-act="sheet-close">เข้าใจแล้ว</button>` });
   }
   /** Points a work day, as read: 2.5, 3, 0. */
   function lvRate(r) { r = +r || 0; return String(Math.round(r * 10) / 10); }
@@ -10692,7 +10712,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function mealCard(ask, owner) {
     if (!ask) return '';
     return html`<button class="card od-q meal-card" data-act="meal-open" data-owner="${owner ? 1 : ''}" style="width:100%;text-align:left">
-      <div class="fb-invite-h"><span class="fb-ico od">${icon('bowl')}</span><div class="grow"><span class="eyebrow">ช่วยตรวจหน่อย</span><b>ของกินพนักงาน ${ask.items.length} อย่าง ถูกไหม</b><span class="small muted">แตะเพื่อดูทีละอย่าง · ตรวจครั้งเดียว</span></div>${icon('right')}</div></button>`;
+      <div class="fb-invite-h"><span class="fb-ico od">${icon('bowl')}</span><div class="grow"><b>ของกินพนักงาน ${ask.items.length} อย่าง ถูกไหม</b></div>${icon('right')}</div></button>`;
   }
   function openMeal(owner) {
     var ask = owner ? odo.v && odo.v.staffMeal : S.home && S.home.order && S.home.order.staffMeal;
@@ -12241,7 +12261,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           <div class="tags">${lateTag(d)}${d.rain ? html`<span class="pill rain">${icon('rain')} ${d.rainForecast ? 'อาจมีฝน' : 'ฝนตก'}${d.rainOnTime && rainPts() ? ' · +' + rainPts() + ' แต้ม' : ''}</span>` : ''}${d.ot ? html`<span class="pill gold">OT ${hrs(d.ot)} ชม.</span>` : ''}</div>
           ${d.startReason ? html`<div class="s">${d.startReason}</div>` : ''}${d.otNote ? html`<div class="s">${d.otNote}</div>` : ''}${d.paidNote ? html`<div class="s">${d.paidNote}</div>` : ''}</div></div>`;
       }) : html`<div class="empty">ยังไม่มีวันทำงานในเดือนนี้</div>`}</section>
-      ${(m.entries || []).length ? html`<h3 class="h3">รายการที่ผู้อนุมัติบันทึก</h3><section class="card flush"><div class="list">${m.entries.map(function (x) {
+      ${(m.entries || []).length ? html`<h3 class="h3">รายการในรอบนี้</h3><section class="card flush"><div class="list">${m.entries.map(function (x) {
         return html`<div class="item"><div class="grow"><div class="t">${x.type}${x.kind === 'permit' ? ' ' + x.time + ' น.' : ''}</div><div class="s">${thDate(x.date)}${why(x) ? ' · ' + why(x) : ''}${x.noOt ? ' · ไม่ได้ OT' : ''}</div></div>${x.kind !== 'permit' && x.unit !== 'บาท' ? html`<div class="r amt">${x.kind === 'ot' && x.qty > 0 ? '+' : ''}${x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)} ${x.unit}</div>` : ''}</div>`;
       })}</div></section>${m.entries.some(function (x) { return x.unit === 'บาท'; }) ? html`<p class="muted small" style="margin:6px 4px 0">ยอดเงินดูได้ในสลิปเงินเดือน</p>` : ''}` : ''}
       ${(m.leave || []).length ? html`<h3 class="h3">วันลา</h3><section class="card flush"><div class="list">${m.leave.map(function (x) {
@@ -12364,7 +12384,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function leaveTypeNote(t) {
     if (!t) return '';
     var r = B.rules || {};
-    if (t.type === vacationType()) return 'พักร้อน ' + t.quota + ' วันเมื่อทำงานครบ ' + (t.minYears || 1) + ' ปี + วันหยุดตามประเพณี ' + (r.floating || 0) + ' วัน · เลือกวันหยุดเองได้ ขอก่อนวันลาไม่หัก Incentive';
+    if (t.type === vacationType()) return 'เลือกวันหยุดเองได้ ขอก่อนวันลาไม่หัก Incentive';
     var s = t.paid ? 'ลาได้ ' + t.quota + ' วัน/ปี' + (t.minYears ? ' (เมื่อทำงานครบ ' + t.minYears + ' ปี)' : '') : 'ไม่ได้ค่าจ้างวันที่ลา';
     if (t.type === sickType()) s += t.cut ? ' · สองวันแรกหัก Incentive ' + money(t.cut) + ' บาท/วัน · ตั้งแต่วันที่ ' + (r.sickNoteDay || 3) + ' มีใบรับรองแพทย์ไม่หัก · นอนโรงพยาบาลไม่หัก' : ' · ไม่หัก Incentive';
     else s += t.cut ? ' · หัก Incentive ' + money(t.cut) + ' บาท/วัน' + (t.advanceDays ? ' ถ้าแจ้งล่วงหน้าไม่ถึง ' + t.advanceDays + ' วัน' : '') : ' · ไม่หัก Incentive';
@@ -13070,7 +13090,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="stats"><div class="stat"><b>${c.in}<small class="muted" style="font-size:13px">/${c.total - c.leave - (c.off || 0)}</small></b><span>ลงเวลาแล้ว</span></div><div class="stat ${c.in - c.late ? 'ok' : ''}"><b>${c.in - c.late}</b><span>ตรงเวลา</span></div><div class="stat"><b>${c.leave + (c.off || 0)}</b><span>ลา · หยุด</span></div><div class="stat"><b>${c.absent}</b><span>ขาด</span></div></div>
       <div class="row wrapx">${otOk() ? html`<button class="btn sm" data-act="open-otday">${icon('clock')} OT หลังเลิกกะ</button>` : ''}<button class="btn sm" data-act="open-entry"${otOk() ? '' : ' data-type="ขาดงาน"'}>${icon('plus')} ${S.view === 'owner' ? 'OT / ขาด / เบิก' : otOk() ? 'OT / ขาดงาน' : 'ขาดงาน'}</button><button class="btn sm" data-act="open-entry" data-type="อนุญาตเข้างานช้า">${icon('clock')} อนุญาตเข้าช้า</button><button class="btn sm" data-act="open-rain">${icon('rain')} ฝนตก</button><button class="btn sm" data-act="open-exceptions">${icon('cal')} เวลาพิเศษ</button><button class="btn sm" data-act="photo-wall">${icon('image')} รูปวันนี้</button></div>
       <section class="card flush">${b.rows.map(function (r) {
-        return html`<div class="board-row">${avatar(r)}<div class="grow bd-name"><span class="t">${nameTag(r, r.name)}</span><span class="s">${r.dept}</span></div><div class="st">${boardState(r)}</div><button class="icon-btn" data-act="row-menu" data-id="${r.id}" aria-label="ตัวเลือกของ ${r.name}">${icon('more')}</button></div>`;
+        return html`<div class="board-row">${avatar(r)}<div class="grow bd-name"><span class="t">${nameTag(r, r.name)}</span><span class="s">${r.dept}</span></div><div class="st">${boardState(r)}</div>${r.state !== 'in' && r.state !== 'leave' && r.state !== 'absent' && r.state !== 'off' && !(S.view !== 'owner' && S.home && S.home.me && S.home.me.id === r.id && !S.team.selfOk) ? html`<div class="bd-fix"><button class="btn sm" data-act="open-fix" data-id="${r.id}">ลงเวลาแทน</button></div>` : ''}<button class="icon-btn" data-act="row-menu" data-id="${r.id}" aria-label="ตัวเลือกของ ${r.name}">${icon('more')}</button></div>`;
       })}</section>
       ${S.view === 'owner' ? html`<h3 class="h3">ปฏิทินวันลาและวันหยุด</h3>${calCard(S.cal || t.month)}` : ''}
       ${part === 'board' ? '' : teamEntries()}
@@ -13103,12 +13123,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${info}
       <button class="menu-item" data-act="open-fix" data-id="${id}">${icon('edit')} ${d ? 'แก้เวลา / กะ' : 'ลงเวลาแทน'}</button>
       ${otOk() ? html`<button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="OT เพิ่ม">${icon('plus')} OT เพิ่ม</button>` : ''}
+      <button class="menu-item" data-act="open-leave-add" data-emp="${id}">${icon('leave')} บันทึกการลา</button>
+      <details class="menu-more"><summary>อื่น ๆ</summary>
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="อนุญาตเข้างานช้า">${icon('clock')} อนุญาตเข้างานช้า</button>
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="ขาดงาน">${icon('x')} ขาดงาน</button>
       ${S.view === 'owner' ? html`<button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="หัก Incentive">${icon('alert')} หัก Incentive</button>` : ''}
-      <button class="menu-item" data-act="open-leave-add" data-emp="${id}">${icon('leave')} บันทึกการลา</button>
       ${d ? (d.rain && d.rainShop ? rainShopHint(d, r.name) : html`<button class="menu-item" data-act="rain-toggle" data-id="${d.id}" data-emp="${id}" data-on="${!d.rain}">${icon('rain')} ${d.rain ? 'ยกเลิกฝนตก' : 'ยืนยันฝนตก (ผ่อนผันสาย)'}</button>`) : ''}
       ${pics}
+      </details>
       ${d ? html`<button class="menu-item danger" data-act="delete-clock" data-id="${d.id}" data-emp="${id}">${icon('trash')} ลบเวลาวันนี้</button>` : ''}
     </div>` });
   }
@@ -13363,7 +13385,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<p class="muted small mt0">เวลาเข้างานประจำที่ต่างจากกะปกติ เช่น เข้า 18:00 วันจันทร์–ศุกร์ช่วงเปิดเทอม ใส่วันสิ้นสุดเทอมในช่อง "ถึง"</p>
       ${list.map(function (x) {
         return html`<div class="card" style="margin-top:10px"><div class="row between"><div><b>${x.name}</b> · ${x.days} ${x.shiftType ? '· กะ' + x.shiftType : ''}<div class="small muted">เข้า ${x.start} น. · ${x.from ? thShort(x.from) : 'ไม่มีวันเริ่ม'} – ${x.to ? thShort(x.to) : 'ไม่มีวันสิ้นสุด'} · ${x.ot ? 'ได้ OT ในกะ' : 'ไม่ได้ OT'}${x.note ? ' · ' + x.note : ''}</div></div>
-          <div class="row"><button class="icon-btn" data-act="edit-exception" data-row="${x.row}" aria-label="แก้ไข">${icon('edit')}</button><button class="icon-btn" data-act="delete-exception" data-row="${x.row}" data-emp="${x.empId}" data-key="${x.key}" aria-label="ลบ">${icon('trash')}</button></div></div></div>`;
+          <div class="row"><button class="btn sm" data-act="edit-exception" data-row="${x.row}">${icon('edit')} แก้</button><button class="btn sm" data-act="delete-exception" data-row="${x.row}" data-emp="${x.empId}" data-key="${x.key}">${icon('trash')} ลบ</button></div></div></div>`;
       })}
       <button class="btn block" style="margin-top:14px" data-act="edit-exception">${icon('plus')} เพิ่มเวลาเข้างานพิเศษ</button>`;
   }
@@ -13939,6 +13961,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <main class="wrap page">${body}</main>
       ${tabBar([['overview', 'home', 'ภาพรวม'], ['pay', 'money', 'เงินเดือน'], ['team', 'team', 'ทีม', o.pendingLeaves], ['staff', 'user', 'พนักงาน'], ['settings', 'settings', 'ตั้งค่า']], tab, 'owner-tab')}`;
   };
+  /** 2.14.7 (k150 ภาพรวมคลีน · ผลตรวจหน้าเจ้าของ ซ2 ซ4): กล่อง "รอคุณ" เป็นการ์ดแรกใต้คำทักทาย แถวละเรื่อง แตะเดียวถึงงาน
+   *  (น้องบอกเรื่องใหม่ · คำขอลารออนุมัติ · สิ่งที่ต้องทำเดิมทุกรายการ) · ไม่มีอะไรรอ บอกบรรทัดเดียว
+   *  · ประวัติวันฝน ใครหยุดกะทันหันบ่อย แก้เวลาและผ่อนผันสาย ผู้อนุมัติทำรายการให้ตัวเอง ย้ายลงท้ายหน้าใต้ "ดูย้อนหลัง" (แตะเปิด ปุ่มเดิม) */
+  function waitBox(o, todo) {
+    var f = o.feedback || {};
+    var rows = [];
+    if (f.fresh) rows.push(['chat', 'น้องบอกเรื่องใหม่ ' + f.fresh + ' เรื่อง', 'fb-inbox', '']);
+    if (o.pendingLeaves) rows.push(['approve', 'คำขอลารออนุมัติ ' + o.pendingLeaves + ' รายการ', 'owner-tab', 'team']);
+    todo.forEach(function (t) { rows.push([t[0], t[1], 'owner-tab', t[2]]); });
+    return html`<section class="card flush wait-box"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">รอคุณ</span></div>${rows.length ? html`<div class="list">${rows.map(function (r) { return html`<button class="item" data-act="${r[2]}" data-tab="${r[3]}">${icon(r[0])}<span class="grow">${r[1]}</span>${icon('right')}</button>`; })}</div>` : html`<p class="small muted" style="margin:6px 16px 16px">วันนี้ไม่มีอะไรรอคุณ</p>`}</section>`;
+  }
   function overview() {
     // k109 ทีมใช้แอปยังเป็นการ์ดแรกใต้คำทักทาย (กติกา 2.13.6) การ์ดอัปเดตถัดมา (เดิมเริ่มราว 2,700 px ต้องเลื่อนลง 3 จอ) · การ์ดทีมสูงราว 630 px เต็มจอแรก
     // จึงมีแถบ อัปเดตแอปแล้ว กับปุ่ม รับทราบ ในคำทักทาย กดได้ตั้งแต่เปิดหน้า · การ์ดอัปเดตยังแสดงครบทุกบรรทัด ปุ่มในการ์ดติดเหนือแถบล่างเหมือนเดิม
@@ -13970,6 +14003,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="stack">
       <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}${o.update && o.team && (o.team.list || []).length ? updateTip(o.update) : ''}</div>
       ${pushCard()}
+      ${waitBox(o, todo)}
       ${teamUseCard(o.team)}
       ${o.update ? updateCard(o.update) : ''}
       ${morningCard(o.morning)}
@@ -13993,16 +14027,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${pushTeamCard(o.push, o.pushFails)}
       ${useCard(o.usage)}
       ${(o.rainReview || []).length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ฝนตกที่ควรตรวจ</span></div><p class="small muted" style="margin:6px 16px 0">ข้อมูลอากาศไม่ตรงกับที่บันทึก บันทึกย้อนหลัง หรือปิดตอนที่ยังมีฝน · ถูกต้อง = คงไว้ · ลบ = ทุกคนที่ลงเวลาในช่วงนั้นไม่ได้ผ่อนผันฝนตก</p><div class="list">${o.rainReview.map(function (x) { return entryRow(x, true); })}</div></section>` : ''}
-      ${(o.clockFixes || []).length ? html`<section class="card flush"><button class="item" data-act="clock-fixes">${icon('clock')}<span class="grow">แก้เวลาและผ่อนผันสาย ${o.clockFixes.length} รายการ<span class="s" style="display:block">ลงแทน แก้ ลบ อนุญาตเข้าช้า ฝนตก · 45 วัน · แจ้งคุณทุกครั้งแล้ว</span></span>${icon('right')}</button></section>` : ''}
-      <section class="card flush"><button class="item" data-act="rain-history">${icon('clock')}<div class="grow"><div class="t">ประวัติวันฝน</div><div class="s">วันไหนฝนตก กะไหนมาสายได้ ใครได้ผ่อนผัน</div></div></button></section>
-      <section class="card flush"><button class="item" data-act="sudden-leave">${icon('list')}<div class="grow"><div class="t">ใครหยุดกะทันหันบ่อย</div><div class="s">ลาที่บอกไม่ถึง 3 วัน กี่ครั้งติดวันหยุด ไว้คุยเป็นรายคน</div></div></button></section>
-      ${(o.selfEdits || []).length ? html`<section class="card flush"><button class="item" data-act="self-edits">${icon('list')}<span class="grow">ผู้อนุมัติทำรายการให้ตัวเอง ${o.selfEdits.length} รายการ<span class="s" style="display:block">45 วันล่าสุด · ไว้ให้เห็นเฉย ๆ</span></span>${icon('right')}</button></section>` : ''}
-      ${todo.length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">สิ่งที่ต้องทำ</span></div><div class="list">${todo.map(function (t) { return html`<button class="item" data-act="owner-tab" data-tab="${t[2]}">${icon(t[0])}<span class="grow">${t[1]}</span>${icon('right')}</button>`; })}</div></section>` : ''}
       <h3 class="h3">เงินเดือนย้อนหลัง</h3>
       <section class="card flush"><div class="list">${o.periods.filter(function (p, i) { return i === 0 || p.status || p.hasData; }).map(function (p) {
         var st = p.status === 'paid' ? ['จ่ายแล้ว', 'ok'] : p.status === 'approved' ? ['รอจ่าย', 'gold'] : ['ยังไม่อนุมัติ', ''];
         return html`<button class="item" data-act="go-pay" data-key="${p.key}"><div class="grow"><div class="t">${p.month}</div><div class="s">${p.label}</div></div><div class="r">${p.total ? html`<div class="amt">${money(p.total)}</div>` : ''}<span class="pill ${st[1]}">${st[0]}</span></div></button>`;
       })}</div></section>
+      <details class="menu-more back-more"><summary>ดูย้อนหลัง</summary><div class="stack">
+      ${(o.clockFixes || []).length ? html`<section class="card flush"><button class="item" data-act="clock-fixes">${icon('clock')}<span class="grow">แก้เวลาและผ่อนผันสาย ${o.clockFixes.length} รายการ<span class="s" style="display:block">ลงแทน แก้ ลบ อนุญาตเข้าช้า ฝนตก · 45 วัน · แจ้งคุณทุกครั้งแล้ว</span></span>${icon('right')}</button></section>` : ''}
+      <section class="card flush"><button class="item" data-act="rain-history">${icon('clock')}<div class="grow"><div class="t">ประวัติวันฝน</div><div class="s">วันไหนฝนตก กะไหนมาสายได้ ใครได้ผ่อนผัน</div></div></button></section>
+      <section class="card flush"><button class="item" data-act="sudden-leave">${icon('list')}<div class="grow"><div class="t">ใครหยุดกะทันหันบ่อย</div><div class="s">ลาที่บอกไม่ถึง 3 วัน กี่ครั้งติดวันหยุด ไว้คุยเป็นรายคน</div></div></button></section>
+      ${(o.selfEdits || []).length ? html`<section class="card flush"><button class="item" data-act="self-edits">${icon('list')}<span class="grow">ผู้อนุมัติทำรายการให้ตัวเอง ${o.selfEdits.length} รายการ<span class="s" style="display:block">45 วันล่าสุด · ไว้ให้เห็นเฉย ๆ</span></span>${icon('right')}</button></section>` : ''}
+      </div></details>
     </div>`;
   }
 
@@ -14285,7 +14320,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <button class="btn block" style="margin-top:16px" data-act="save-settings" data-keys="backupMail,backupEmail">บันทึกการสำรอง</button>
         <div class="row wrapx" style="margin-top:12px">${o.backup && o.backup.sheet ? html`<a class="btn sm" href="${o.backup.sheet}" target="_blank" rel="noopener">${icon('sheet')} เปิด Google Sheet</a>` : ''}${o.backup && o.backup.folder ? html`<a class="btn sm" href="${o.backup.folder}" target="_blank" rel="noopener">${icon('shield')} โฟลเดอร์สำรอง</a>` : ''}<button class="btn sm" data-act="backup">สำรองตอนนี้</button><button class="btn sm danger" data-act="wipe-open">ล้างข้อมูลทดลอง</button><button class="btn sm" data-act="backup-mail">${icon('mail')} ส่งเข้าอีเมลตอนนี้</button><button class="btn sm" data-act="export-tables">${icon('download')} ส่งออกไฟล์ตาราง</button></div>
         <p class="small muted" style="margin:8px 0 0">ส่งออกไฟล์ตาราง: ไฟล์ Excel ของทุกตารางลงเครื่องนี้ (ไม่มี PIN รหัสผ่าน และกุญแจ) เปิดดูหรือเก็บไว้เองได้</p>
-        <p class="tiny muted" style="margin:10px 0 0">เวอร์ชัน ${o.version} · ตรวจฝนโดย <a href="https://www.weatherapi.com/" target="_blank" rel="noopener" title="Free Weather API">WeatherAPI.com</a></p></section>
+        <p class="tiny muted" style="margin:10px 0 0">เวอร์ชัน ${o.version} · ตรวจฝนโดย <a href="https://www.weatherapi.com/" target="_blank" rel="noopener" title="Free Weather API" style="display:inline-block;padding:13px 0">WeatherAPI.com</a></p></section>
     </div>`;
   }
   /** The latest copy and email, and what went wrong. */
@@ -14665,9 +14700,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="lv-next">${avatar(me, '', [l.lv + 1, 0])}<span>อีก <b>${l.next - l.points} แต้ม</b> ถึงระดับ${names[l.lv + 1]} · ${LV_LOOK[l.lv + 1]}</span></div>`}
       </div>
       <h3 class="h3">เดือนนี้ · ${thShort(l.period.start)} – ${thShort(l.period.end)}</h3>
-      <section class="card lv-mine"><div class="lv-month"><b>${l.month || 0}</b><span>แต้มของฉันเดือนนี้<br>เฉลี่ย ${lvRate(l.rate)} ต่อวันทำงาน</span></div><span class="pill ${l.crown ? 'ok' : ''}">${l.crown ? html`${ui3('ui-crown', '👑')} ใส่มงกุฎอยู่` : 'อีก ' + (l.crownNeed || 0) + ' แต้มได้ใส่มงกุฎ'}</span></section>
+      <section class="card lv-mine"><div class="lv-month"><b>${l.month || 0}</b><span>แต้มของฉันเดือนนี้</span></div><span class="pill ${l.crown ? 'ok' : ''}">${l.crown ? html`${ui3('ui-crown', '👑')} ใส่มงกุฎอยู่` : 'อีก ' + (l.crownNeed || 0) + ' แต้มได้ใส่มงกุฎ'}</span></section>
       ${''/* (2.14.2 ข้อ ค) รายชื่อคนใส่มงกุฎเดือนนี้ออก: ของตัวเองอยู่ในการ์ดเดือนนี้ข้างบน */}
-      <p class="small muted">ใส่มงกุฎได้ทุกคนที่แต้มเฉลี่ยตั้งแต่ ${l.starRate || 2} แต้มต่อวันที่มาทำงาน (อย่างน้อย ${l.crownFrom} แต้ม) ไม่ต้องแข่งกับใคร ลาหรือวันหยุดไม่ทำให้เสียเปรียบ${l.crownOld ? ' · เดือนนี้คนที่ได้มากสุดได้ด้วยตามกติกาเดิม' : ''} · เริ่มนับใหม่ทุกเดือน · ไม่มีใครเห็นแต้มของคนอื่น</p>
+      <p class="small muted">ใส่มงกุฎได้ทุกคนที่แต้มเฉลี่ยตั้งแต่ ${l.starRate || 2} แต้มต่อวันที่มาทำงาน (อย่างน้อย ${l.crownFrom} แต้ม) ไม่ต้องแข่งกับใคร ลาหรือวันหยุดไม่ทำให้เสียเปรียบ${l.crownOld ? ' · เดือนนี้คนที่ได้มากสุดได้ด้วยตามกติกาเดิม' : ''} · เริ่มนับใหม่ทุกเดือน · ไม่มีใครเห็นตัวเลขแต้มของคุณ</p>
       <h3 class="h3">ได้แต้มจาก</h3>
       <p class="small muted lv-money" style="margin:0 0 8px">แต้มใช้ขึ้นระดับ แต่งตัว และเปิดกล่อง ไม่เกี่ยวกับเงินเดือนหรือ Incentive</p>
       <section class="card"><ul class="lv-rules">
@@ -18282,7 +18317,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="bk-vs">${d.teams.map(function (t) { return html`<div class="bk-team ${t.id === d.team ? 'me' : ''}"><b>${t.name}</b><strong>${bkN(t.score)}</strong><small class="muted">คะแนนเฉลี่ยต่อคน · ${t.people} คน</small><div class="bk-mems">${t.members.map(function (m, i) { return html`<span class="bk-mem ${m.me ? 'me' : ''}" data-id="${t.id + '-' + i}"><i class="bk-ch" data-mv="${mvfPick(m.look)}">${raw(charOf(m.look))}</i><small>${m.me ? 'ฉัน' : m.name}</small></span>`; })}</div></div>`; })}</div>
         <small class="muted">จบสัปดาห์ ทีมที่คะแนนเฉลี่ยสูงกว่าได้กล่องสุ่มทุกคน คนละ 1 กล่อง · เสมอได้ทั้งสองทีม</small>
       </section>
-      <section class="card bk-tools"><b>ตัวช่วยที่มีวันนี้ ${d.tools.left} ชิ้น</b><span>${blockToldWords(d)}</span>${d.myParts && d.told && d.told.on ? html`<small class="muted">สัปดาห์นี้คุณบอกปัญหา ${d.myParts.told} เรื่อง · เจ้าของแก้แล้ว ${d.myParts.fixed} เรื่อง</small>` : ''}<small class="muted">ใช้เป็นค้อนทุบช่อง หรือเปลี่ยนชิ้นในมือ</small>${blockClockWords(d) ? html`<small class="bk-clk${d.clocked ? ' on' : ''}">${blockClockWords(d)}</small>` : ''}<button class="btn sm" data-act="block-note">ไปเขียนบันทึก</button></section>
+      <section class="card bk-tools"><b>ตัวช่วยที่มีวันนี้ ${d.tools.left} ชิ้น</b><span>${blockToldWords(d)}</span>${d.myParts && d.told && d.told.on ? html`<small class="muted">สัปดาห์นี้คุณบอกปัญหา ${d.myParts.told} เรื่อง${d.myParts.fixed ? ' · เจ้าของแก้แล้ว ' + d.myParts.fixed + ' เรื่อง' : ''}</small>` : ''}<small class="muted">ใช้เป็นค้อนทุบช่อง หรือเปลี่ยนชิ้นในมือ</small>${blockClockWords(d) ? html`<small class="bk-clk${d.clocked ? ' on' : ''}">${blockClockWords(d)}</small>` : ''}<button class="btn sm" data-act="block-note">ไปเขียนบันทึก</button></section>
       <section class="card bk-mine"><section class="card bk-stats"><b>สถิติส่วนตัว</b><div class="bk-st">${[[d.stats.best, 'ดีสุด'], [d.stats.today, 'วันนี้ดีสุด'], [d.stats.rounds, 'รอบที่เล่น'], [d.stats.combo, 'คอมโบสูงสุด'], [d.stats.served, 'เมนูที่เสิร์ฟ'], [d.stats.lines, 'แถวที่เคลียร์']].map(function (x) { return html`<div><b>${bkN(x[0])}</b><small>${x[1]}</small></div>`; })}</div><div class="bk-sf">${[[bkN(d.stats.fbest), 'เล่นเองแบบไฟดีสุด'], ['ระดับ ' + (d.stats.fire || 0), 'ไฟสูงสุด']].map(function (x) { return html`<div><b>${x[0]}</b><small>${x[1]}</small></div>`; })}</div></section>
       ${d.last ? blockLast(d) : ''}</section>
     </div>`;
@@ -20988,7 +21023,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   /** การ์ดหัวหน้าบนหน้าแรก (2.13.60): ประชุมที่ถึงคิวนำ ทั้งสัปดาห์จนส่งสรุป และคุยตัวต่อตัวกับทีมเดือนนี้
    *  · 2.13.62 ของที่ทำครบแล้วไม่กินที่หน้าแรก: ส่งสรุปแล้วเหลือบรรทัดเดียวบอกวันสุดท้ายที่ส่งใหม่แทนได้ (แตะเปิดดูหรือแก้)
-   *  · คุยครบทั้งทีมแล้วย่อเหลือบรรทัดเดียว แตะขยายแก้ติ๊กผิดได้ */
+   *  · คุยครบทั้งทีมแล้วย่อเหลือบรรทัดเดียว แตะขยายแก้ติ๊กผิดได้
+   *  · 2.14.7 (k150 หน้าแรกคลีน) ยังไม่ครบก็พับเป็นแถวเดียว "คุยแล้ว N/M คน" แตะเปิดเห็นชื่อ (เดือนละครั้ง ไม่ใช่งานทุกวัน) · เพิ่งแตะชื่อยังเปิดอยู่ */
   function leadCard(d) {
     var m = d && d.leadMeet && d.leadMeet.mine ? d.leadMeet : null;
     var t = d && d.talk && d.talk.head ? d.talk : null;
@@ -21004,7 +21040,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${t.of ? html`<div class="chips" role="group" aria-label="คุยตัวต่อตัวกับทีม">${t.team.map(function (p) { return talkChip('lead-talk', p); })}</div>` : ''}
       <p class="small muted" style="margin:8px 0 0">เดือนละครั้ง คนละราว 10 นาที ${TALK_Q.length} คำถาม · แตะชื่อเมื่อคุยแล้ว · คุยกับเจ้าของร้านรอบ ${thShort(t.owner.from)} – ${thShort(t.owner.to)}${t.owner.done ? ' คุยแล้ว' : ''}</p>
       <button class="btn sm" data-act="talk-open" style="margin-top:8px">${icon('chat')} ดูคำถาม</button>`;
-    var talk = !t ? '' : talkDone(t) ? html`<details class="mt-done${m ? ' mt-talk' : ''}"><summary class="mt-one">${icon('check')}<span>คุยตัวต่อตัวกับทีม · ${monthName(t.month)} · <b>ครบ ${t.of} คนแล้ว</b></span>${icon('right')}</summary>${body}</details>` : html`<div class="${m ? 'mt-talk' : ''}">${body}</div>`;
+    var talk = !t ? '' : talkDone(t) ? html`<details class="mt-done${m ? ' mt-talk' : ''}"><summary class="mt-one">${icon('check')}<span>คุยตัวต่อตัวกับทีม · ${monthName(t.month)} · <b>ครบ ${t.of} คนแล้ว</b></span>${icon('right')}</summary>${body}</details>` : html`<details class="mt-done mt-due${m ? ' mt-talk' : ''}"${TALK_JUST ? ' open' : ''}><summary class="mt-one">${icon('chat')}<span>คุยตัวต่อตัวกับทีม · ${monthName(t.month)} · <b>คุยแล้ว ${t.done}/${t.of} คน</b></span>${icon('right')}</summary>${body}</details>`;
     // หัวหน้าเพิ่งแตะคุยแล้ว (k29): ชวนเขียนเรื่องที่ร้านต้องแก้ลงบันทึกหน้างาน (ถามน้องก่อน) อยู่นอกส่วนที่พับ · เนื้อหาที่คุยไม่ส่งถึงเจ้าของร้าน
     var just = t && TALK_JUST && (t.team || []).some(function (p) { return p.id === TALK_JUST && p.done; }) ? html`<div class="mt-just"><p class="small" style="margin:10px 0 0">มีเรื่องที่ร้านต้องแก้ ถามน้องก่อน แล้วเขียนลงบันทึกหน้างาน</p><button class="btn sm" data-act="dl-all" style="margin-top:6px">${icon('note')} เปิดบันทึกหน้างาน</button></div>` : '';
     return html`<section class="card pad-lg mt-card mt-lead">${meet}${talk}${just}</section>`;
@@ -23828,7 +23864,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   document.addEventListener('change', function (ev) {
     var el = ev.target;
     if (el.id === 'cam-env' || el.id === 'cam-user' || el.id === 'face-pick') { onCameraFile(el); return; }
-    if (el.dataset.change === 'lv-type' || el.dataset.change === 'lv-cost') leaveFormSync();
+    if (el.dataset.change === 'lv-type' || el.dataset.change === 'lv-cost') { if (el.id === 'lv-from') { var lvTo = document.getElementById('lv-to'); if (lvTo && el.value && (!lvTo.value || lvTo.value < el.value)) lvTo.value = el.value; } leaveFormSync(); }
     if (el.dataset.change === 'emp-end') empEndSync(el);
     if (el.dataset.change === 'odu') oduReady();
     if (el.dataset.change === 'lf-cert' && $('#lf-days')) $('#lf-days').hidden = !el.checked;
