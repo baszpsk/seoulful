@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.4","page":"","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"5beb696c8731"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.5","page":"","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"2fae2e13eaf0"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -3446,7 +3446,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 .me-char.me-duo .me-fig { width: 48px; height: 90px; }
 .me-char.me-duo .me-pet { width: 34px; height: 34px; margin: 0 -2px 0 0; }
 /* ไอเดีย: ช่องพิมพ์ใหญ่ช่องเดียวบนสุด เต็มจอแรก ส่วนอื่นอยู่ใต้จอแรก · ปุ่มส่งอยู่เหนือช่อง แป้นพิมพ์ไม่บัง */
-.ideas-top { display: flex; flex-direction: column; gap: 14px; min-height: calc(100vh - 150px); min-height: calc(100svh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+/* (2.14.5 k138 2.1) บรรทัดแต้มเดือนนี้ (ideasHead ท้ายกล่อง) อยู่เหนือแถบแท็บในจอแรก: เว้นท้ายกล่องเท่าแถบแท็บ ช่องพิมพ์ยังยืดในที่เหลือ
+   ส่วนถัดไป (ดาวเด่น ส่งความเห็น) ยังอยู่ใต้จอแรก ของให้กดในจอแรกเท่าเดิม 3 (demo-check k116) */
+.ideas-top { display: flex; flex-direction: column; gap: 14px; min-height: calc(100vh - 150px); min-height: calc(100svh - 150px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); padding-bottom: 84px; }
 .tell-card { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 16px; }
 .tell-lbl { font-size: 18px; font-weight: 700; line-height: 1.35; color: var(--ink); }
 .tell-row { display: flex; align-items: center; gap: 8px; }
@@ -20734,6 +20736,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="card-h"><span class="eyebrow">รายงานเมื่อวาน · ${thShort(m.date)}</span>${m.stale.length ? html`<span class="pill gold">ค้าง ${m.stale.length}</span>` : ''}</div>
       ${m.empty ? html`<p class="small muted" style="margin:4px 0 0">เมื่อวานยังไม่มีการลงเวลา บันทึกหน้างาน หรือยอดขาย</p>` : html`<p style="margin:4px 0 0"><b>${mrTeamLine(m)}</b></p>
       <p class="small" style="margin:6px 0 0">${mrBits(bits)}</p>
+      ${(d.top || []).length ? html`<p class="small" style="margin:6px 0 0"><b>น้องบอกมากสุด:</b> ${d.top.map(function (x) { return x.label + (x.name ? ' · ' + x.name : '') + (x.n > 1 ? ' ×' + x.n : ''); }).join(' / ')}</p>` : ''}
       ${d.missing.length ? html`<p class="small muted" style="margin:6px 0 0">ยังไม่ส่งสรุปหน้างาน: ${d.missing.join(', ')}</p>` : ''}`}
       ${m.stale.length ? html`<p class="small" style="margin:8px 0 0"><b>งานหัวหน้าค้างเกิน 1 วัน:</b> ${mrBits(m.stale.map(function (x) { return x.who + ' ' + x.say; }))}</p>` : ''}
       <p class="small muted" style="margin:8px 0 0">แตะดูรายคน · แจ้งในแอปทุกเช้า ${m.at} น.</p>
@@ -20761,6 +20764,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <p class="mt0">${m.sales ? 'ยอดขาย ' + money(m.sales.sales) + ' บาท' + (m.sales.customers ? ' · ลูกค้า ' + m.sales.customers + ' คน' : '') : m.closed ? 'ร้านปิด' : 'ยังไม่ใส่ยอดขาย'}</p>
       <h3 class="h3">บันทึกหน้างาน</h3>
       <p class="mt0">${d.total ? mrBits([d.total + ' เรื่อง'].concat(d.topics.map(function (x) { return x.label + ' ' + x.n; }))) : 'ไม่มีเรื่อง'}</p>
+      ${(d.top || []).length ? html`<ul class="small mr-top" style="margin:0;padding-left:18px;line-height:1.6">${d.top.map(function (x) { return html`<li><b>${x.label}${x.name ? ' · ' + x.name : ''}${x.n > 1 ? ' ×' + x.n : ''}</b>${x.say ? ' “' + x.say + '”' : ''}<br>${x.fix ? 'วิธีแก้: ' + x.fix : html`<span class="muted">รอ Claude สรุป</span>`}</li>`; })}</ul>` : ''}
       ${d.missing.length ? html`<p class="small muted mt0">ยังไม่ส่งสรุป: ${d.missing.join(', ')} · แอปเตือนให้แล้ว</p>` : ''}
       <h3 class="h3">เช็กมาตรฐาน</h3>
       <p class="mt0">${c ? 'เช็กแล้ว ' + c.done + '/' + c.due + ' รอบ' : 'ไม่มีรอบที่ต้องเช็ก'}</p>
