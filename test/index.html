@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.9","page":"","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"b4dce489e124"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.10","page":"","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"1423a7728e82"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -3216,6 +3216,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 .live-bar i { display: block; height: 100%; background: linear-gradient(90deg, #b8894a, #e9cc92); transform-origin: left; }
 @keyframes live-bar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 @media (max-width: 640px) { .kiosk .live-qr { flex-direction: column; text-align: center; } .live-qr-box { width: 250px; height: 250px; } }
+/* (2.14.10) จอแคบที่รายชื่อขึ้นก่อน: QR ต่อท้ายรายชื่อ */
+.kiosk #k-names + .live-qr { margin: 22px auto 0; }
 /* The screen's camera beside its QR: whoever scans sees themselves, and the picture is kept. */
 .live-cam { position: relative; flex: none; width: 190px; aspect-ratio: 3 / 4; border-radius: 18px; overflow: hidden; background: #000; box-shadow: inset 0 0 0 1px var(--k-line); }
 .live-cam video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); display: block; }
@@ -9243,7 +9245,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       body = html`<div class="k-wait" aria-busy="true"><div class="skel" style="height:300px"></div><div class="names">${[0, 1, 2, 3, 4, 5].map(function () { return html`<div class="skel tile"></div>`; })}</div></div>`;
     } else if (k.step === 'names') {
       var pinHere = kioskPinOn();
-      body = html`${S.k.newVersion && B.appUrl ? html`<a class="k-update" href="${freshUrl(B.appUrl)}" target="_top">${icon('refresh')} มีแอปรุ่นใหม่ — แตะเพื่อเปิดจอใหม่</a>` : ''}${rainBanner(B.rain, 'kiosk')}${liveQrPanel()}<div class="k-prompt">${!pinHere ? 'ใครลงเวลาแล้วขึ้น ✓ · ลืมมือถือหรือแบตหมด บอกผู้อนุมัติให้ลงเวลาแทน' : liveQrOn() ? 'ไม่มีมือถือ? แตะชื่อแล้วใส่ PIN ที่เครื่องนี้' : 'แตะชื่อของคุณเพื่อลงเวลาเข้างาน'}</div><div id="k-names">${nameTiles(pinHere ? 'k-pick' : 'k-nopin', k.done)}</div>`;
+      // (2.14.10 k153 · เจ้าของร้าน 15 พ.ย. 2569 00:19 ให้น้องลงด้วยเครื่องมือถือร้าน) จอแคบแบบมือถือที่แตะชื่อ+PIN ได้: รายชื่อขึ้นก่อน QR
+      // เดิม QR กับกล้องของจอดันรายชื่อลงไปใต้จอแรก (390x844 แผ่นแรกเริ่มราว 1,100 px) · จอกว้างแบบแท็บเล็ตเหมือนเดิม
+      var namesFirst = pinHere && liveQrOn() && !!(window.matchMedia && window.matchMedia('(max-width: 640px)').matches);
+      body = html`${S.k.newVersion && B.appUrl ? html`<a class="k-update" href="${freshUrl(B.appUrl)}" target="_top">${icon('refresh')} มีแอปรุ่นใหม่ — แตะเพื่อเปิดจอใหม่</a>` : ''}${rainBanner(B.rain, 'kiosk')}${namesFirst ? '' : liveQrPanel()}<div class="k-prompt">${!pinHere ? 'ใครลงเวลาแล้วขึ้น ✓ · ลืมมือถือหรือแบตหมด บอกผู้อนุมัติให้ลงเวลาแทน' : liveQrOn() && !namesFirst ? 'ไม่มีมือถือ? แตะชื่อแล้วใส่ PIN ที่เครื่องนี้' : 'แตะชื่อของคุณเพื่อลงเวลาเข้างาน'}</div><div id="k-names">${nameTiles(pinHere ? 'k-pick' : 'k-nopin', k.done)}</div>${namesFirst ? liveQrPanel() : ''}`;
     } else if (k.step === 'pin') {
       var e = empById(k.emp) || {};
       body = html`<div class="pin-wrap">${avatar(e, 'lg', kioskLv(e))}<div class="hello" style="font-size:26px;margin-top:18px">${ownName(e)}</div><div class="muted">ใส่ PIN ของคุณ</div>${pinPad(e.pinLen || 4, k.pin, k.err)}
@@ -12686,10 +12691,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var today = workDate();
     openSheet({ use: 'วันลา', title: b.type + ' ' + (+today.slice(0, 4) + 543), body: html`<div class="stack">
       <div class="stats" style="grid-template-columns:repeat(3,1fr)"><div class="stat"><b>${b.quota}</b><span>ได้ปีนี้</span></div><div class="stat"><b>${b.used}</b><span>ใช้แล้ว</span></div><div class="stat"><b>${b.remaining}</b><span>เหลือ</span></div></div>
-      ${b.cashed ? html`<div class="hint">${icon('money')}<span>ปีนี้ที่เหลือคิดเป็นเงินในเงินเดือนแล้ว ลาพักร้อนวันในปีนี้เพิ่มไม่ได้</span></div>` : ''}
       <section class="card flush"><div class="list">
         <div class="item"><div class="grow"><div class="t">พักร้อนประจำปี</div><div class="s">${b.annual ? (b.annualOn ? 'ทำงานครบ ' + b.annualYears + ' ปี วันที่ ' + thShort(b.annualOn) + ' ใช้ได้ตั้งแต่วันนั้น' : 'ทำงานครบ ' + b.annualYears + ' ปีแล้ว') : b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ได้เมื่อทำงานครบ ' + b.annualYears + ' ปี'}</div></div><div class="r amt">${b.annual} วัน</div></div>
         <div class="item"><div class="grow"><div class="t">วันหยุดตามประเพณี เลือกวันหยุดเอง</div><div class="s">${b.setMissing ? 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน' : 'ได้ 1 วันต่อวันหยุดตามประเพณี 1 วันที่ร้านเปิดทำการ'}</div><div class="s">ลาพักร้อนแต่ละวัน นับเป็นวันหยุดตามประเพณีที่เหลือก่อน หมดแล้วค่อยนับเป็นพักร้อนประจำปี</div></div><div class="r amt">${b.credits.length} วัน</div></div>${(b.offCredits || []).length ? html`<div class="item"><div class="grow"><div class="t">ร้านปิดตรงวันหยุดประจำ</div><div class="s">ใช้วันหยุดแล้ว ได้พักร้อนเพิ่มวันละ 1 วัน</div></div><div class="r amt">${b.offCredits.length} วัน</div></div>` : ''}
+        ${b.carried > 0 ? html`<div class="item"><div class="grow"><div class="t">ทบมาจากปี ${+b.carriedFrom + 543}</div><div class="s">${b.carried} วันที่ยังไม่ได้ใช้ ทบมาให้เอง</div></div></div>` : ''}
       </div></section>
       ${b.credits.concat(b.offCredits || []).length ? html`<section class="card flush"><div class="list">${b.credits.concat(b.offCredits || []).sort().map(function (d) {
         return html`<div class="item"><div class="grow"><div class="t">${thDate(d)}</div><div class="s">${(b.creditNames || {})[d] || (b.offCreditNames || {})[d] || 'วันหยุดตามประเพณี'}</div></div>${d <= today ? html`<span class="pill ok">${icon('check')} ได้แล้ว</span>` : html`<span class="pill">จะได้</span>`}</div>`;
@@ -13146,7 +13151,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function entryForm(o) {
     o = o || {};
     // (รายการที่เป็นเงิน เจ้าของร้านบันทึกเอง 25 ต.ค. 2569)
-    var types = (B.entryTypes || []).filter(function (t) { return t.kind !== 'rain' && (S.view === 'owner' || t.unit !== 'บาท') && (t.kind !== 'ot' || otOk()); });
+    // (2.14.10 ค่าวันลาที่เหลือ ค่าวันหยุดประเพณีที่เหลือ ใส่จากการ์ดคนออกเท่านั้น ไม่มีในตัวเลือก · คนที่ยังทำงาน วันที่เหลือทบไปปีหน้าเอง)
+    var types = (B.entryTypes || []).filter(function (t) { return t.kind !== 'rain' && (S.view === 'owner' || t.unit !== 'บาท') && (t.kind !== 'ot' || otOk()) && (['ค่าวันลาที่เหลือ', 'ค่าวันหยุดประเพณีที่เหลือ'].indexOf(t.type) < 0 || t.type === o.type); });
     var type = o.type || (otOk() ? 'OT เพิ่ม' : 'ขาดงาน');
     var def = types.filter(function (t) { return t.type === type; })[0] || types[0];
     var kind = def.kind;
@@ -13516,86 +13522,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         </div>`;
       })}</div></section>`;
   }
-  /** วันหยุดที่เหลือสิ้นปีที่ยังไม่ได้ใส่ เป็นรายการเงิน คนละไม่เกิน 2 รายการ (2.13.18) · คนที่มีคำขอลาพักร้อนรออนุมัติข้ามไว้ก่อน เว้นแต่ all (2.13.21) */
-  function yearEndOwe(list, all) {
-    var r2 = function (n) { return Math.round(n * 100) / 100; };
-    var out = [];
-    list.forEach(function (x) {
-      if (!all && (x.pending || []).length) return;
-      var hol = r2(x.hol - (x.holPaid || 0));
-      var rest = r2(x.rest - (x.paid || 0));
-      if (hol > 0) out.push({ kind: 'hol', x: x, type: 'ค่าวันหยุดประเพณีที่เหลือ', empId: x.id, date: x.date, qty: hol, reason: 'วันหยุดตามประเพณีที่ยังไม่ได้หยุด สิ้นปี ' + x.holDays + ' วัน × ' + money(x.rate) + ' บาท' });
-      if (rest > 0) out.push({ kind: 'rest', x: x, type: 'ค่าวันลาที่เหลือ', empId: x.id, date: x.date, qty: rest, reason: 'วันพักร้อนที่เหลือ สิ้นปี ' + x.restDays + ' วัน × ' + money(x.rate) + ' บาท' });
-    });
-    return out;
-  }
-  /** คนที่ยังมียอดสิ้นปีต้องใส่ แต่มีคำขอลาพักร้อนรออนุมัติ: ตัดสินคำขอก่อน ใส่ทุกคนข้ามไว้ (2.13.21) */
-  function yearEndWait(list) {
-    var owe = yearEndOwe(list, true);
-    return list.filter(function (x) { return (x.pending || []).length && owe.some(function (e) { return e.x === x; }); });
-  }
-  /** งวดสุดท้ายของปี: วันหยุดที่น้องยังเหลือ จ่ายเป็นเงินในงวดนี้ ไม่ยกข้ามปี (2.13.18 เจ้าของร้านเท่านั้น) */
+  /** งวดสุดท้ายของปี (2.14.10 · เจ้าของร้าน 15 พ.ย. 2569 00:19): ใครยังเหลือวันพักร้อนกี่วัน ทบไปปีหน้าให้เอง ไม่มีปุ่ม ไม่มีเงิน (เดิม 2.13.18 จ่ายเป็นเงิน เจ้าของร้านกดใส่) */
   function yearEndCard(d) {
     var list = d.yearEnd;
-    if (!list) return '';
-    var open = !d.period.status;
-    var owe = yearEndOwe(list, true);
-    var ready = yearEndOwe(list);
-    var wait = yearEndWait(list);
-    var sum = ready.reduce(function (a, e) { return a + e.qty; }, 0);
-    return html`<section class="card flush ye-card"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">วันหยุดที่เหลือสิ้นปี · จ่ายเป็นเงินในงวดนี้</span></div>
-      <p class="small muted" style="margin:6px 16px 0">ไม่ยกข้ามปี วันที่ยังไม่ได้หยุดคิดวันละค่าแรง 1 วัน</p>
-      ${list.length ? html`<div class="list">${list.map(function (x) {
-        var mine = owe.filter(function (e) { return e.x === x; });
-        var hol = mine.filter(function (e) { return e.kind === 'hol'; })[0];
-        var rest = mine.filter(function (e) { return e.kind === 'rest'; })[0];
-        var asks = mine.length ? x.pending || [] : [];
-        var off = asks.length ? 'disabled' : '';
-        return html`<div class="item" style="display:block">
-          <div class="row between"><b>${x.name}</b>${mine.length ? '' : html`<span class="pill ok">${icon('check')} ใส่ครบแล้ว</span>`}</div>
-          ${x.holDays ? html`<div class="s" style="margin-top:4px">วันหยุดตามประเพณี ${x.holDays} วัน = ${money(x.hol)} บาท${x.holPaid ? ' · ใส่แล้ว ' + money(x.holPaid) + ' บาท' : ''}</div>` : ''}
-          ${x.restDays ? html`<div class="s" style="margin-top:4px">พักร้อน ${x.restDays} วัน = ${money(x.rest)} บาท${x.paid ? ' · ใส่แล้ว ' + money(x.paid) + ' บาท' : ''}</div>` : ''}
-          <div class="s" style="margin-top:4px">${x.detail}</div>
-          ${asks.length ? html`<div class="hint warn" style="margin-top:8px">${icon('alert')}<span>รออนุมัติลาพักร้อน ${asks.map(function (l) { return thRange(l.from, l.to); }).join(' · ')} · ตัดสินคำขอก่อน ปุ่มใส่ยอดของ${x.name}กดได้หลังตัดสิน</span></div>` : ''}
-          ${open && mine.length ? html`<div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${asks.length ? html`<button class="btn sm" data-act="owner-tab" data-tab="team">${icon('approve')} ไปตัดสินคำขอ</button>` : ''}${hol ? html`<button class="btn sm primary" data-act="ye-pay" data-id="${x.id}" data-kind="hol" ${off}>ใส่วันประเพณี ${money(hol.qty)} บาท</button>` : ''}${rest ? html`<button class="btn sm primary" data-act="ye-pay" data-id="${x.id}" data-kind="rest" ${off}>ใส่พักร้อน ${money(rest.qty)} บาท</button>` : ''}</div>` : ''}
-        </div>`;
-      })}</div>` : html`<p class="small muted" style="margin:8px 16px 16px">ทุกคนใช้วันหยุดปีนี้ครบแล้ว</p>`}
-      ${open && ready.length > 1 ? html`<div style="padding:4px 16px 16px"><button class="btn primary" style="width:100%" data-act="ye-pay-all">ใส่ทุกคน ${ready.length} รายการ รวม ${money(sum)} บาท</button>${wait.length ? html`<p class="small muted" style="margin:6px 0 0">ข้าม ${wait.map(function (x) { return x.name; }).join(' ')} ที่รอตัดสินคำขอลา</p>` : ''}</div>` : ''}
-    </section>`;
-  }
-  function yearEndPayAsk() {
-    var list = (S.pay || {}).yearEnd || [];
-    var owe = yearEndOwe(list);
-    if (!owe.length) return;
-    var wait = yearEndWait(list);
-    var sum = owe.reduce(function (a, e) { return a + e.qty; }, 0);
-    openSheet({ title: 'ใส่วันหยุดที่เหลือสิ้นปี', body: html`<p class="small muted" style="margin:0 2px 12px">ใส่เป็นรายการในเงินเดือนงวดนี้ ${owe.length} รายการ รวม ${money(sum)} บาท${wait.length ? ' · ข้าม ' + wait.map(function (x) { return x.name; }).join(' ') + ' ที่รอตัดสินคำขอลา' : ''}</p>
-      <section class="card flush"><div class="list">${owe.map(function (e) {
-        return html`<div class="item"><div class="grow"><div class="t">${e.x.name}</div><div class="s">${e.reason}</div></div><div class="r amt">${money(e.qty)}</div></div>`;
-      })}</div></section>`,
-      foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="ye-pay-go">ใส่ทุกคน</button>` });
-  }
-  /** ใส่ทีละรายการตามลำดับ ใส่แล้วจำไว้ในหน้า กดซ้ำหลังพลาดกลางทางไม่ใส่ซ้ำ (2.13.18) */
-  function yearEndPayGo(btn) {
-    var owe = yearEndOwe((S.pay || {}).yearEnd || []);
-    var done = owe.reduce(function (p, e) {
-      return p.then(function () {
-        return call('entrySave', { type: e.type, empId: e.empId, date: e.date, reason: e.reason, qty: e.qty }, actorAuth()).then(function () {
-          if (e.kind === 'hol') e.x.holPaid = (e.x.holPaid || 0) + e.qty;
-          else e.x.paid = (e.x.paid || 0) + e.qty;
-        });
-      });
-    }, Promise.resolve());
-    run(btn, done).then(function () { closeSheet(); toast('ใส่วันหยุดที่เหลือสิ้นปีแล้ว ' + owe.length + ' รายการ'); loadPay(); });
-  }
-  /** หน้าแรกเจ้าของร้าน 1 ธ.ค. ถึงวันปิดงวดสุดท้ายของปี: ใครยังเหลือวันหยุดกี่วัน ให้จัดวันหยุดก่อนสิ้นปี (2.13.18) */
-  function yearEndWarnCard(w) {
-    if (!w || !w.people.length) return '';
-    return html`<section class="card ye-warn"><span class="eyebrow">วันหยุดที่น้องยังเหลือปีนี้</span>
-      <p class="small" style="margin:6px 0 4px">จัดให้หยุดก่อนสิ้นปี ที่ยังเหลือแอปคิดเป็นเงินในงวดที่ปิด ${thShort(w.end)} ไม่ยกข้ามปี</p>
-      <div class="list">${w.people.map(function (x) {
-        return html`<div class="item"><div class="grow"><div class="t">${x.name}</div><div class="s">${[x.hol ? 'วันหยุดตามประเพณี ' + x.hol + ' วัน' : '', x.rest ? 'พักร้อน ' + x.rest + ' วัน' : ''].filter(Boolean).join(' · ')}</div></div></div>`;
-      })}</div></section>`;
+    if (!list || !list.length) return '';
+    return html`<section class="card flush ye-card"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">วันหยุดที่เหลือ · ทบไปปี ${+list[0].to + 543} ให้เอง</span></div>
+      <p class="small muted" style="margin:6px 16px 0">ไม่ต้องกดอะไร วันที่ยังไม่ได้ใช้ทบไปปีหน้าเอง ไม่มีเพดาน · คนออกได้เป็นเงินในงวดสุดท้าย</p>
+      <div class="list">${list.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.name}</div></div><span class="s">${x.days} วัน</span></div>`; })}</div></section>`;
   }
   function payView() {
     var d = S.pay;
@@ -14024,7 +13957,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${morningCard(o.morning)}
       ${meetCard(o.meet, o.talk)}
       ${pinLocksCard(o.pinLocks)}
-      ${turnoverCard(o.turnover)}${yearEndWarnCard(o.yearEnd)}
+      ${turnoverCard(o.turnover)}
       ${dailyOwnerCard(o.daily)}
       ${feedbackCard(o.feedback)}
       ${tempUp ? tempOwnerCard(o.temp) : ''}
@@ -14319,7 +14252,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           ${o.kiosks.map(function (k) { return html`<div class="item" style="padding-left:0;padding-right:0">${icon('tablet')}<div class="grow"><div class="t">${k.name}${thisKiosk && thisKiosk.id === k.id ? ' (เครื่องนี้)' : ''}</div><div class="s">ตั้งเมื่อ ${isoDate(k.createdAt)}${k.lastSeen ? ' · ใช้ล่าสุด ' + isoDate(k.lastSeen) : ''}</div>${k.current === false ? html`<div class="review-why">ยังเป็นแอปรุ่นเก่า — เปิดจอนี้ใหม่ 1 ครั้ง (รีเฟรช) แล้วกดอนุญาตกล้อง</div>` : ''}</div><button class="icon-btn" data-act="kiosk-remove" data-id="${k.id}" aria-label="ยกเลิกเครื่องนี้">${icon('trash')}</button></div>`; })}
         </div>
         <button class="btn block" style="margin-top:8px" data-act="kiosk-add">${icon('tablet')} ตั้งเครื่องนี้เป็นจอลงเวลาในร้าน</button>
-        <p class="small muted" style="margin:8px 0 0"><b>กันโกงดีที่สุด:</b> ใช้มือถือหรือแท็บเล็ตเครื่องเก่า (ไม่ใช่โทรศัพท์ร้าน) ติดผนังด้านในร้าน สูงระดับหน้าอก มองไม่เห็นจากนอกร้าน เปิดหน้านี้บนเครื่องนั้นแล้วกดปุ่มด้านบน จอแสดง QR ที่เปลี่ยนทุก 5 วินาที และกล้องหน้าของจอเก็บภาพคนที่สแกนทุกครั้ง พนักงานสแกนด้วยแอปในมือถือตัวเอง รูปที่ถ่ายส่งต่อกันใช้ไม่ได้ · เสียบชาร์จไว้ ต่อ Wi-Fi และตั้งไม่ให้จอดับ</p></section>
+        <p class="small muted" style="margin:8px 0 0"><b>จอลงเวลาในร้าน:</b> ใช้มือถือร้านหรือแท็บเล็ต วางหรือติดผนังด้านในร้าน สูงระดับหน้าอก มองไม่เห็นจากนอกร้าน เปิดหน้านี้บนเครื่องนั้นแล้วกดปุ่มด้านบน น้องแตะชื่อแล้วใส่ PIN ที่จอ และกล้องหน้าของจอเก็บภาพตอนลงเวลา · ถ้าอยากให้น้องสแกน QR บนจอ (เปลี่ยนทุก 5 วินาที) ด้วยแอปในมือถือตัวเองแทน ติ๊ก "ใช้จอนี้แทนป้าย QR กระดาษ" ตอนตั้งเครื่อง รูปที่ถ่ายส่งต่อกันใช้ไม่ได้ · เสียบชาร์จไว้ ต่อ Wi-Fi และตั้งไม่ให้จอดับ</p></section>
       ${SETTING_GROUPS.map(function (g) {
         return html`<section class="card"><div class="card-h"><span class="eyebrow">${g[0]}</span></div>${g[2] ? g[2](o) : ''}${g[1].map(function (k) { return settingField(set[k]); })}
           ${g[1].length ? html`<button class="btn block" style="margin-top:16px" data-act="save-settings" data-keys="${g[1].join(',')}">บันทึก${g[0]}</button>` : ''}</section>`;
@@ -23416,13 +23349,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var qty = Math.round((x.hol - (x.holPaid || 0)) * 100) / 100;
       openEntryForm({ type: 'ค่าวันหยุดประเพณีที่เหลือ', emp: x.id, date: x.date, qty: qty, reason: 'วันหยุดตามประเพณีที่ยังไม่ได้หยุด ' + x.holDays + ' วัน × ' + money(x.rate) + ' บาท', more: [{ id: x.id, name: x.name }] });
     },
-    // วันหยุดที่เหลือสิ้นปี ใส่ทีละคน หรือใส่ทุกคน (2.13.18)
-    'ye-pay': function (el) {
-      var e = yearEndOwe((S.pay || {}).yearEnd || []).filter(function (y) { return y.empId === el.dataset.id && y.kind === el.dataset.kind; })[0];
-      if (e) openEntryForm({ type: e.type, emp: e.empId, date: e.date, qty: e.qty, reason: e.reason, more: [{ id: e.empId, name: e.x.name }] });
-    },
-    'ye-pay-all': function () { yearEndPayAsk(); },
-    'ye-pay-go': function (el) { yearEndPayGo(el); },
     'submit-entry': function (el) {
       run(el, call('entrySave', entryValues(), actorAuth())).then(function (d) { closeSheet(); toast('บันทึก ' + d.entry.type + ' ของ ' + d.entry.name + ' แล้ว' + (d.told ? ' · ' + d.told : ''), 'ok'); loadTeam(); if (S.pay) loadPay(); }, function () {});
     },
@@ -23765,8 +23691,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       run(el, call('shopCode', {}, ownerAuth()), 'เปลี่ยน QR แล้ว ป้ายเก่าใช้ไม่ได้ — พิมพ์ป้ายใหม่').then(function (d) { S.ownerHome.qr = d.qr; ownerChanged(); closeSheet(); setTimeout(qrPoster, 240); }, function () {});
     },
     'kiosk-add': function () {
-      openSheet({ title: 'ตั้งเครื่องนี้เป็นจอลงเวลาในร้าน', body: html`<p class="muted small mt0">เครื่องนี้จะเปิดเป็นจอลงเวลาของร้านทุกครั้ง แสดง QR ที่เปลี่ยนทุก 5 วินาที และใช้กล้องหน้าเก็บภาพคนที่สแกน (เครื่องจะถามอนุญาตใช้กล้อง กด "อนุญาต") ใช้กับมือถือหรือแท็บเล็ตที่ติดไว้ในร้านเท่านั้น (ไม่ใช่โทรศัพท์ร้าน)</p><label class="field"><span>ชื่อจอ</span><input class="input" id="kiosk-name" value="จอหลังร้าน" autofocus></label>
-        <label class="check"><input type="checkbox" id="kiosk-live" checked><span><b>ใช้จอนี้แทนป้าย QR กระดาษ (แนะนำ)</b><small>ลงเวลาได้เฉพาะ QR บนจอนี้ที่เปลี่ยนทุก 5 วินาที ป้ายที่พิมพ์ รูปที่ถ่ายไว้ หรือลิงก์ที่ส่งต่อ ใช้ไม่ได้ และปิดการใส่ PIN ที่จอ (กันใช้ PIN ของคนอื่นลงแทน)</small></span></label>`,
+      openSheet({ title: 'ตั้งเครื่องนี้เป็นจอลงเวลาในร้าน', body: html`<p class="muted small mt0">เครื่องนี้จะเปิดเป็นจอลงเวลาของร้านทุกครั้ง น้องแตะชื่อแล้วใส่ PIN ที่จอนี้ และกล้องหน้าเก็บภาพตอนลงเวลา (เครื่องจะถามอนุญาตใช้กล้อง กด "อนุญาต") ใช้กับมือถือร้านหรือแท็บเล็ตที่วางไว้ในร้าน</p><label class="field"><span>ชื่อจอ</span><input class="input" id="kiosk-name" value="จอหลังร้าน" autofocus></label>
+        <label class="check"><input type="checkbox" id="kiosk-live"><span><b>ใช้จอนี้แทนป้าย QR กระดาษ</b><small>ติ๊กเมื่ออยากให้น้องสแกน QR บนจอนี้ด้วยแอปในมือถือตัวเองแทน: ลงเวลาได้เฉพาะ QR บนจอนี้ที่เปลี่ยนทุก 5 วินาที ป้ายที่พิมพ์ รูปที่ถ่ายไว้ หรือลิงก์ที่ส่งต่อ ใช้ไม่ได้ และปิดการใส่ PIN ที่จอ (กันใช้ PIN ของคนอื่นลงแทน)</small></span></label>`,
         foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="kiosk-add-go">ตั้งเป็นจอลงเวลา</button>` });
     },
     'kiosk-add-go': function (el) {
