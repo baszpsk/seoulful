@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.7","page":"owner","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"68fbb5d11bc4"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.8","page":"owner","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"a7e74c67815e"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -3313,8 +3313,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   label.remember { display: flex; align-items: center; gap: 8px; min-height: 44px; }
   .rules-more, .menu-more { margin-top: 8px; }
   /* (2.14.7 k150) ดูย้อนหลัง ท้ายภาพรวมเจ้าของ ห่างการ์ดก่อนหน้าเท่าระยะการ์ดปกติ (.stack 14px) · เปิดแล้วการ์ดแรกไม่ชิดหัวข้อ */
-  .back-more { margin-top: 14px; }
-  .back-more > .stack { margin-top: 6px; }
+  /* k151: nums-more = ส่วนพับตัวเลข (ตัวเลขร้านในภาพรวมเจ้าของ เงินเดือนของทีมในแท็บทีม) · back-more เหลือแค่ ดูย้อนหลัง ที่ dev/clean.js ตรวจว่าเป็นส่วนพับท้ายหน้า */
+  .back-more, .nums-more { margin-top: 14px; }
+  .back-more > .stack, .nums-more > .stack { margin-top: 6px; }
   /* ส่วนพับที่ปิดอยู่ไม่จัดวางเลย (Chrome จัดวางของในส่วนพับที่ปิดเมื่อมีสคริปต์ถามตำแหน่ง ทำให้ปุ่มที่ซ่อนดูเหมือนอยู่ใต้แถบเมนู) */
   .rules-more:not([open]) > :not(summary), .menu-more:not([open]) > :not(summary) { display: none; }
   .rules-more > summary, .menu-more > summary { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; font-weight: 600; list-style: none; }
@@ -10390,7 +10391,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${row('data-act="refresh-home"', 'refresh', 'รีเฟรชข้อมูล', '')}
         <button class="item danger" data-act="logout-staff"><span class="me-ic">${icon('logout')}</span><div class="grow"><div class="t">ออกจากระบบในเครื่องนี้</div></div></button>
       </div></section>
-      <button class="use-note" data-act="use-about">${icon('info')}<span>ร้านเก็บสถิติการใช้แอป (เปิดหน้าไหน กดปุ่มไหน เริ่มกรอกแล้วส่งไหม แอปตอบเร็วไหม) เพื่อปรับปรุงแอปให้เร็วและใช้ง่ายขึ้น ไม่เก็บสิ่งที่พิมพ์ · <u>ดูรายละเอียด</u></span></button>
+      <button class="use-note" data-act="use-about">${icon('info')}<span>ร้านเก็บว่าเปิดหน้าไหน กดปุ่มไหน เริ่มกรอกแล้วส่งไหม แอปตอบเร็วไหม เพื่อดูว่าตรงไหนใช้ยากแล้วปรับให้ง่ายขึ้น · ไม่เก็บสิ่งที่พิมพ์ · <u>ดูรายละเอียด</u></span></button>
     </div>`;
   }
 
@@ -13298,7 +13299,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var recent = S.leaves && S.leaves.recent && S.leaves.recent.length;
     // (k100a) คำขอที่รออนุมัติบนสุดเมื่อมี › ทีมวันนี้ › การลาล่าสุด › เงินเดือน (เนื้อหาเดิม)
     // k107 คำขอที่รอขึ้นก่อนการ์ดเปิดแจ้งเตือน · รายการเดือนนี้ย้ายลงใต้การลาล่าสุด (เดิมอยู่ท้ายทีมวันนี้ ขึ้นก่อนการลา)
-    return html`<div class="stack">${pend ? html`${leaveApprovals('wait')}<div class="divider"></div>` : ''}${pushTeamCard(S.home && S.home.approver && S.home.approver.push)}${teamView('board')}<div class="divider"></div>${pend ? (recent ? html`${leaveApprovals('recent')}<div class="divider"></div>` : '') : html`${leaveApprovals()}<div class="divider"></div>`}${teamEntries()}<div class="divider"></div>${payView()}</div>`;
+    return html`<div class="stack">${pend ? html`${leaveApprovals('wait')}<div class="divider"></div>` : ''}${pushTeamCard(S.home && S.home.approver && S.home.approver.push)}${teamView('board')}<div class="divider"></div>${pend ? (recent ? html`${leaveApprovals('recent')}<div class="divider"></div>` : '') : html`${leaveApprovals()}<div class="divider"></div>`}${teamEntries()}<div class="divider"></div>${teamPayFold(payView())}</div>`;
+  }
+  /** k151 ผู้อนุมัติ › ทีม: เงินเดือนของทีม (เดือนก่อน/ถัดไป การ์ดรายคน) พับใต้หัวเดิม แตะเปิด ไม่ลบ (คำเจ้าของ 14 พ.ย. 16:01 "อยากได้แบบคลีนอะปุ่มน้อยๆกดง่ายๆ")
+   *  · รอบที่ถึงวันอนุมัติแล้วยังไม่อนุมัติ หรือข้อมูลเปลี่ยนหลังอนุมัติ เปิดไว้เอง งานที่รอไม่ถูกพับ · แท็บเงินเดือนของเจ้าของร้านคงเดิม
+   *  · teamApproveView เรียก payView() เองแล้วส่งมา ลำดับส่วนในแท็บทีมยังเป็น รายการเดือนนี้ › เงินเดือน ตามที่ test/tabs-order.test.js ตรวจ */
+  function teamPayFold(pay) {
+    var d = S.pay;
+    var p = d && d.period;
+    var open = !!(d && ((d.canApprove && !p.status) || (d.changes && d.changes.length)));
+    var head = d ? 'เงินเดือน' + d.payroll.period.month + ' · ' + statusText(p)[0] : 'เงินเดือนของทีม';
+    return html`<details class="menu-more nums-more tm-pay"${open ? ' open' : ''}><summary>${head}</summary>${pay}</details>`;
   }
 
   /** A leave that costs nothing off the Incentive: a doctor's note seen, or beyond anyone's control (#256, #257). */
@@ -14000,6 +14011,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if ((rem.rateMissing || []).length) todo.unshift(['money', 'ใส่เงินเดือนหลังผ่านโปร ' + rem.rateMissing.length + ' คน (' + rem.rateMissing.join(', ') + ')', 'staff']);
     if (rem.leadsGone) todo.unshift(['team', 'ตั้งคนส่งบันทึกหน้างานใหม่ — คนที่ตั้งไว้ออกแล้ว ระหว่างนี้ผู้อนุมัติและหัวหน้าส่งแทน', 'settings']);
     if (rem.keepersGone) todo.unshift(['team', 'ตั้งคนดูแล PAR ใหม่ — คนที่ตั้งไว้ออกแล้ว ระหว่างนี้หัวหน้าครัวดูแทน', 'settings']);
+    // k151 (คำเจ้าของ 14 พ.ย. 16:01 "อยากได้แบบคลีนอะปุ่มน้อยๆกดง่ายๆ"): ตัวเลขร้านที่ซ้ำกับที่อื่นพับท้ายหน้าใต้ ตัวเลขร้าน แตะเปิด ไม่ลบ
+    //   (เดือนนี้ถึงวันนี้และเงินเดือนย้อนหลัง = แท็บเงินเดือน · ลงเวลา ตรงเวลา ลา หยุดวันนี้ = แท็บทีม · รออนุมัติลา = กล่อง รอคุณ)
     return html`<div class="stack">
       <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}${o.update && o.team && (o.team.list || []).length ? updateTip(o.update) : ''}</div>
       ${pushCard()}
@@ -14015,11 +14028,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${tempUp ? tempOwnerCard(o.temp) : ''}
       ${due ? html`<section class="card hero pad-lg"><span class="eyebrow">ต้องจ่าย · เงินเดือน${due.month}${due.payDue ? ' · วันที่ ' + thShort(due.payDue) : ''}</span><div class="big" style="margin-top:6px">${money(due.total)}<small>บาท</small></div>
         <p class="small muted">อนุมัติโดย ${due.approvedBy} ${isoDate(due.approvedAt)}</p><div class="row" style="margin-top:12px"><button class="btn primary grow" data-act="go-pay" data-key="${due.key}">${icon('money')} ดูรายละเอียดและยืนยันจ่าย</button></div></section>` : ''}
-      <section class="card pad-lg"><div class="card-h"><span class="eyebrow">เดือนนี้ถึงวันนี้ · ${cur.period.month}</span><span class="pill">ประมาณการ</span></div>
-        <div class="big">${cnt('net', cur.totals.net, 'm')}<small>บาท</small></div>
-        <div class="row wrapx small muted" style="margin-top:10px;gap:14px"><span>OT ${hrs(cur.totals.otHours)} ชม.</span>${onTimeRate(cur.totals) != null ? html`<span>ตรงเวลา ${onTimeRate(cur.totals)}%</span>` : ''}<span>ลา ${cur.totals.leaveDays} วัน</span>${cur.totals.warnings ? html`<span style="color:var(--warn)">ต้องตรวจ ${cur.totals.warnings} จุด</span>` : ''}</div>
-        <button class="btn block" style="margin-top:14px" data-act="go-pay" data-key="${cur.period.key}">ดูรายคน</button></section>
-      <div class="stats"><div class="stat"><b>${cnt('in', c.in)}<small class="muted" style="font-size:13px">/${c.total - c.leave - (c.off || 0)}</small></b><span>ลงเวลาวันนี้</span></div><div class="stat ${c.in - c.late ? 'ok' : ''}"><b>${c.in - c.late}</b><span>ตรงเวลาวันนี้</span></div><div class="stat"><b>${c.leave + (c.off || 0)}</b><span>ลา · หยุด</span></div><button class="stat ${o.pendingLeaves ? 'warn' : ''}" data-act="owner-tab" data-tab="team"><b>${o.pendingLeaves}</b><span>รออนุมัติลา</span></button></div>
       ${tempUp ? '' : tempOwnerCard(o.temp)}
       ${checkOwnerCard(o.check)}
       ${salesOwnerCard(o.sales)}
@@ -14027,11 +14035,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${pushTeamCard(o.push, o.pushFails)}
       ${useCard(o.usage)}
       ${(o.rainReview || []).length ? html`<section class="card flush"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ฝนตกที่ควรตรวจ</span></div><p class="small muted" style="margin:6px 16px 0">ข้อมูลอากาศไม่ตรงกับที่บันทึก บันทึกย้อนหลัง หรือปิดตอนที่ยังมีฝน · ถูกต้อง = คงไว้ · ลบ = ทุกคนที่ลงเวลาในช่วงนั้นไม่ได้ผ่อนผันฝนตก</p><div class="list">${o.rainReview.map(function (x) { return entryRow(x, true); })}</div></section>` : ''}
+      <details class="menu-more nums-more"><summary>ตัวเลขร้าน</summary><div class="stack">
+      <section class="card pad-lg"><div class="card-h"><span class="eyebrow">เดือนนี้ถึงวันนี้ · ${cur.period.month}</span><span class="pill">ประมาณการ</span></div>
+        <div class="big">${cnt('net', cur.totals.net, 'm')}<small>บาท</small></div>
+        <div class="row wrapx small muted" style="margin-top:10px;gap:14px"><span>OT ${hrs(cur.totals.otHours)} ชม.</span>${onTimeRate(cur.totals) != null ? html`<span>ตรงเวลา ${onTimeRate(cur.totals)}%</span>` : ''}<span>ลา ${cur.totals.leaveDays} วัน</span>${cur.totals.warnings ? html`<span style="color:var(--warn)">ต้องตรวจ ${cur.totals.warnings} จุด</span>` : ''}</div>
+        <button class="btn block" style="margin-top:14px" data-act="go-pay" data-key="${cur.period.key}">ดูรายคน</button></section>
+      <div class="stats"><div class="stat"><b>${cnt('in', c.in)}<small class="muted" style="font-size:13px">/${c.total - c.leave - (c.off || 0)}</small></b><span>ลงเวลาวันนี้</span></div><div class="stat ${c.in - c.late ? 'ok' : ''}"><b>${c.in - c.late}</b><span>ตรงเวลาวันนี้</span></div><div class="stat"><b>${c.leave + (c.off || 0)}</b><span>ลา · หยุด</span></div><button class="stat ${o.pendingLeaves ? 'warn' : ''}" data-act="owner-tab" data-tab="team"><b>${o.pendingLeaves}</b><span>รออนุมัติลา</span></button></div>
       <h3 class="h3">เงินเดือนย้อนหลัง</h3>
       <section class="card flush"><div class="list">${o.periods.filter(function (p, i) { return i === 0 || p.status || p.hasData; }).map(function (p) {
         var st = p.status === 'paid' ? ['จ่ายแล้ว', 'ok'] : p.status === 'approved' ? ['รอจ่าย', 'gold'] : ['ยังไม่อนุมัติ', ''];
         return html`<button class="item" data-act="go-pay" data-key="${p.key}"><div class="grow"><div class="t">${p.month}</div><div class="s">${p.label}</div></div><div class="r">${p.total ? html`<div class="amt">${money(p.total)}</div>` : ''}<span class="pill ${st[1]}">${st[0]}</span></div></button>`;
       })}</div></section>
+      </div></details>
       <details class="menu-more back-more"><summary>ดูย้อนหลัง</summary><div class="stack">
       ${(o.clockFixes || []).length ? html`<section class="card flush"><button class="item" data-act="clock-fixes">${icon('clock')}<span class="grow">แก้เวลาและผ่อนผันสาย ${o.clockFixes.length} รายการ<span class="s" style="display:block">ลงแทน แก้ ลบ อนุญาตเข้าช้า ฝนตก · 45 วัน · แจ้งคุณทุกครั้งแล้ว</span></span>${icon('right')}</button></section>` : ''}
       <section class="card flush"><button class="item" data-act="rain-history">${icon('clock')}<div class="grow"><div class="t">ประวัติวันฝน</div><div class="s">วันไหนฝนตก กะไหนมาสายได้ ใครได้ผ่อนผัน</div></div></button></section>
