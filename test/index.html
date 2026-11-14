@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.5","page":"","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"2fae2e13eaf0"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.6","page":"","e3":"ee3ddf40","edge":true,"test":true,"store":"test.","build":"ed385bffb84f"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -414,7 +414,7 @@ button.card:active { transform: scale(.975); transition-duration: .12s; }
 body.noscroll #app .btn.loading { animation: none; }
 body.noscroll #app .btn.loading::after { display: none; }
 .icon-btn { width: 44px; height: 44px; flex-shrink: 0; display: inline-grid; place-items: center; border-radius: 50%; border: 0; background: var(--inset); color: var(--ink-2); transition: transform .45s var(--spring), background-color .2s; }
-.icon-btn:hover { background: var(--line); }
+@media (hover: hover) and (pointer: fine) { .icon-btn:hover { background: var(--line); } } /* 2.14.6 จอสัมผัสไม่มีเมาส์ชี้ สีพื้นตอนชี้ค้างหลังแตะจนแตะที่อื่น จึงใช้เฉพาะเครื่องที่มีเมาส์ */
 .icon-btn:active { transform: scale(.9); transition-duration: .1s, .2s; }
 .icon-btn svg { width: 20px; height: 20px; }
 /* The bell (Push.gs): what this person was told, a red count while any is new (it rings when it goes up). */
@@ -484,7 +484,7 @@ body.noscroll #app .btn.loading::after { display: none; }
 /* (a picture in a row: room above it for a tall hat up out of it, the row's card clipping it or the row above near, #233) */
 .item > .av { margin-top: 10px; }
 .item:first-child { border-top: 0; }
-button.item:hover { background: var(--surface-2); }
+@media (hover: hover) and (pointer: fine) { button.item:hover { background: var(--surface-2); } }
 button.item:active { background: var(--inset); transition-duration: 0s; }
 .item .t { font-weight: 500; }
 .item .s { font-size: 13px; color: var(--muted); }
@@ -510,6 +510,12 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .tab .badge { position: absolute; top: 4px; left: calc(50% + 5px); min-width: 17px; height: 17px; padding: 0 5px; border-radius: 99px; background: var(--badge, var(--bad)); color: #fff; font-size: 10.5px; line-height: 17px; font-weight: 600; box-shadow: 0 0 0 2px var(--surface); }
 .tabbar.min .tab { height: 44px; }
 .tabbar.min .tab .lbl { opacity: 0; margin-top: -15px; }
+/* 2.14.6 (เจ้าของร้าน 14 พ.ย. 2569 15:48): แอปที่เปิดจากหน้าจอโฮม แถบล่างวางจากบนของจอเต็ม (100lvh) แทนขอบล่างของชั้น fixed ที่ iPhone อาจค้างสั้นหลังแป้นพิมพ์ปิด
+   พื้นหลังสูงเต็มจอแบบเดียวกัน (ชั้นดูรูป 2.13.27) · เปิดในเบราว์เซอร์คงแบบเดิม เพราะแถบเครื่องมือของ Safari ทำให้ 100lvh เลยขอบจอที่มองเห็น */
+@supports (height: 100lvh) {
+  html.home-app .tabbar { top: calc(100lvh - max(10px, calc(env(safe-area-inset-bottom) - 12px))); bottom: auto; translate: 0 -100%; }
+  html.home-app body::before { bottom: auto; height: 100lvh; }
+}
 .seg { position: relative; isolation: isolate; display: flex; background: var(--inset); border-radius: 14px; padding: 3px; gap: 3px; }
 .seg button { position: relative; z-index: 1; flex: 1; border: 0; background: transparent; border-radius: 11px; padding: 8px 10px; font-size: 14px; font-weight: 500; color: var(--ink-2); transition: color .2s; }
 .seg button[aria-pressed="true"] { color: var(--ink); }
@@ -537,7 +543,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .names { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
 .name-tile { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: var(--r-lg); border: 0; background: var(--card); box-shadow: var(--card-shadow); text-align: left; color: inherit; transition: transform .45s var(--spring), background-color .2s; }
 .name-tile:active { transform: scale(.955); transition-duration: .1s, .2s; }
-.name-tile:hover { background: var(--surface-2); }
+@media (hover: hover) and (pointer: fine) { .name-tile:hover { background: var(--surface-2); } }
 .name-tile .grow b { display: block; font-weight: 600; font-size: 16px; line-height: 1.3; }
 .name-tile .grow > span { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.3; }
 .group-h { margin: 22px 4px 10px; }
@@ -3015,7 +3021,7 @@ html.i3-box-s1-body.i3-box-s1-lid .bx-svg.s1 .bx-body, html.i3-box-s2-body.i3-bo
 .cal-dow { text-align: center; font-size: 11.5px; font-weight: 600; color: var(--muted); padding-bottom: 2px; }
 .cal-dow.sun { color: var(--bad); }
 .cal-day { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 4px; min-width: 0; min-height: 62px; padding: 5px 2px 4px; border-radius: 11px; border: 0; background: var(--surface-2); text-align: left; color: inherit; transition: background-color .15s, transform .4s var(--spring); }
-.cal-day:hover { background: var(--card); }
+@media (hover: hover) and (pointer: fine) { .cal-day:hover { background: var(--card); } }
 .cal-day:active { transform: scale(.93); transition-duration: .15s, .1s; }
 .cal-day .n { align-self: flex-start; min-width: 20px; padding: 3px 5px; border-radius: 99px; font-size: 12.5px; font-weight: 600; line-height: 1; text-align: center; font-variant-numeric: tabular-nums; color: var(--ink-2); }
 .cal-day.sun .n { color: var(--bad); }
@@ -3219,7 +3225,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 @media (max-width: 640px) { .live-cam { width: 170px; } }
 .kiosk .names { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
 .kiosk .name-tile { background: var(--k-surface); box-shadow: var(--k-rim); color: var(--k-ink); padding: 18px; }
-.kiosk .name-tile:hover { background: rgba(255, 248, 238, .08); }
+@media (hover: hover) and (pointer: fine) { .kiosk .name-tile:hover { background: rgba(255, 248, 238, .08); } }
 .kiosk .name-tile .grow > span { color: var(--k-muted); }
 .kiosk .name-tile.done { opacity: 0.55; }
 .kiosk .name-tile .ok { margin-left: auto; color: #7fc9a0; }
@@ -3517,6 +3523,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 <div id="toasts" role="status" aria-live="polite"></div>
 <input type="file" id="cam-env" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
 <input type="file" id="cam-user" class="visually-hidden" accept="image/*" capture="user" tabindex="-1" aria-hidden="true">
+<input type="file" id="face-pick" class="visually-hidden" accept="image/*" tabindex="-1" aria-hidden="true">
 <script>
 (function () {
   'use strict';
@@ -6451,7 +6458,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         cv.getContext('2d').drawImage(img, (w - side) / 2, (h - side) * 0.35, side, side, 0, 0, 256, 256);
         resolve(cv.toDataURL('image/jpeg', 0.82));
       };
-      img.onerror = function () { reject(new Error('อ่านรูปไม่ได้ ลองถ่ายใหม่')); };
+      img.onerror = function () { reject(new Error('อ่านรูปไม่ได้ ลองรูปอื่น')); };
       img.src = src;
     });
   }
@@ -7683,9 +7690,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     });
   }
   var pendingCamera = null;
+  // 2.14.6 (เจ้าของร้าน 14 พ.ย. 2569 15:54 "ปุ่มถ่ายรูปเซลฟี่กดแล้วเหมือนบั๊กบางทีกดแล้วไม่ขึ้น"): 'pick' = รูปโปรไฟล์ เลือกจากคลังรูปหรือถ่ายใหม่
+  // (ช่องไม่มี capture iPhone ขึ้นเมนูให้เลือก) · เปิดใหม่ตอนครั้งก่อนยังค้าง (ปิดหน้ากล้องหรือคลังรูปโดยไม่เลือก iPhone ไม่ส่งเหตุการณ์กลับเสมอ)
+  // ครั้งก่อนจบเป็น ยังไม่ได้ถ่ายรูป ไม่ค้างคำขอเก่า
   function takePhoto(which) {
     return new Promise(function (resolve, reject) {
-      var input = $(which === 'user' ? '#cam-user' : '#cam-env');
+      var input = $(which === 'user' ? '#cam-user' : which === 'pick' ? '#face-pick' : '#cam-env');
+      var was = pendingCamera;
+      pendingCamera = null;
+      if (was) was.reject(new Error('ยังไม่ได้ถ่ายรูป'));
       input.value = '';
       pendingCamera = { resolve: resolve, reject: reject };
       input.click();
@@ -7699,6 +7712,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!file) { p.reject(new Error('ยังไม่ได้ถ่ายรูป')); return; }
     p.resolve(file);
   }
+  // 2.14.6: ปิดหน้ากล้องหรือคลังรูปโดยไม่เลือก (เหตุการณ์ cancel ของช่องเลือกไฟล์ Safari 16.4 ขึ้นไป) จบคำขอทันที ปุ่มกดใหม่ได้
+  document.addEventListener('cancel', function (ev) {
+    var el = ev.target;
+    if (el && /^(cam-env|cam-user|face-pick)$/.test(el.id)) onCameraFile(el);
+  }, true);
   /** Where the shop's QR is, as the person is told: on its screen, or the poster when there is no screen. */
   // (Thai puts a space before a Latin word, so the screen's starts with one.)
   function qrPlace() { return B.clock && B.clock.qrLive ? ' QR บนจอในร้าน' : 'ป้าย QR ที่ติดในร้าน'; }
@@ -10341,7 +10359,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${row('data-act="thx-mine"', 'heart', 'คำขอบคุณจากเพื่อน', thxOf().n ? thxOf().n + ' ครั้ง · เห็นแค่คุณ' : 'ขอบคุณเพื่อนได้ที่แท็บเพื่อน', thxNew() ? html`<span class="pill gold">ใหม่ ${thxNew()}</span>` : '')}
       </div></section>
       <section class="card flush"><div class="list">
-        ${row('data-act="face-take"', 'camera', face ? 'เปลี่ยนรูปโปรไฟล์' : 'ใส่รูปโปรไฟล์ (ถ่ายเซลฟี่)', 'ขึ้นเฉพาะในแอปหลังเข้าระบบ')}
+        ${row('data-act="face-take"', 'camera', face ? 'เปลี่ยนรูปโปรไฟล์' : 'ใส่รูปโปรไฟล์', 'จากคลังรูปหรือถ่ายใหม่ · ขึ้นเฉพาะในแอป')}
         ${face ? row('data-act="face-remove"', 'trash', 'เอารูปโปรไฟล์ออก', '') : ''}
         ${row('data-act="snd-toggle"', SOUND.on ? 'sound' : 'mute', 'เสียงในแอป', 'เปิดกล่อง ลูบหัวสัตว์เลี้ยง เล่นในลาน', html`<span class="pill ${SOUND.on ? 'gold' : ''}">${SOUND.on ? 'เปิด' : 'ปิด'}</span>`)}
         ${l ? row('data-act="calm-toggle"', 'shield', 'เล่นกับเพื่อน', l.calm ? 'ตอนนี้รับแค่โบกมือกับไฮไฟว์' : 'ปาหมอน ลูกโป่งน้ำ ส่งหัวใจ และท่าตลก', html`<span class="pill ${l.calm ? '' : 'gold'}">${l.calm ? 'แค่ทักทาย' : 'เล่นได้'}</span>`) : ''}
@@ -10791,7 +10809,36 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function odTapScroll() { return odDownMoving && Date.now() - odDownAt < 1000; }
   // iPhone ค้างความสูงจอตอนแป้นพิมพ์ปิด (แถบล่างลอยกลางจอ ชั้นมืดคลุมครึ่งจอ): ปิดแป้นพิมพ์ก่อนเปิดชั้น และเลื่อน 0 ให้จอคำนวณที่ใหม่
   function odBlurField() { var f = document.activeElement; if (f && f.blur && /^(INPUT|TEXTAREA|SELECT)$/.test(f.tagName)) f.blur(); }
-  document.addEventListener('focusout', function (ev) { var t = ev.target; if (t && t.dataset && t.dataset.od) setTimeout(function () { window.scrollTo(window.scrollX, window.scrollY); }, 80); });
+  // 2.14.6 (เจ้าของร้าน 14 พ.ย. 2569 15:48 ภาพแท็บ ฉัน แถบเมนูลอยกลางจอ พื้นหลังจบครึ่งจอ หลังส่งเรื่องในแท็บไอเดียแล้วสลับแท็บ): ทุกช่องพิมพ์ ไม่ใช่แค่หน้านับของ
+  // ออกจากช่อง หรือจอที่มองเห็นสูงขึ้นเพราะแป้นพิมพ์ปิด (ช่องถูกวาดใหม่ตอนยังโฟกัสไม่มี focusout) เลื่อน 0 ให้จอคำนวณที่ของแถบล่างและพื้นหลังใหม่ สองครั้งเผื่อแป้นพิมพ์ปิดช้า
+  // (แป้นพิมพ์ยังเปิดอยู่ในช่องอื่นไม่เลื่อน · จอสูงขึ้นจากแถบเครื่องมือเบราว์เซอร์ตอนเลื่อนไม่นับ เพราะไม่มีช่องพิมพ์ที่เพิ่งโฟกัส)
+  function textField(f) {
+    if (!f || !f.tagName) return false;
+    if (f.isContentEditable || /^(TEXTAREA|SELECT)$/.test(f.tagName)) return true;
+    return f.tagName === 'INPUT' && !/^(button|submit|reset|checkbox|radio|file|range|color|image|hidden)$/i.test(f.type || '');
+  }
+  var kbUp = false;
+  function settleView() {
+    [80, 450].forEach(function (ms, i) {
+      setTimeout(function () {
+        if (textField(document.activeElement)) return;
+        if (i) kbUp = false;
+        window.scrollTo(window.scrollX, window.scrollY);
+      }, ms);
+    });
+  }
+  document.addEventListener('focusin', function (ev) { if (textField(ev.target)) kbUp = true; });
+  document.addEventListener('focusout', function (ev) { if (textField(ev.target)) settleView(); });
+  if (window.visualViewport) {
+    var vvH = window.visualViewport.height;
+    window.visualViewport.addEventListener('resize', function () {
+      var h = window.visualViewport.height;
+      if (kbUp && h > vvH + 120) settleView();
+      vvH = h;
+    });
+  }
+  // เปิดจากหน้าจอโฮม: แถบล่างและพื้นหลังวางด้วยความสูงจอเต็ม (CSS html.home-app)
+  document.documentElement.classList.toggle('home-app', fromHome());
   // 2.13.28 k-count2 (เจ้าของ 30 ต.ค. 2569 "ถ้าเราไปกดโดนกะหล่ำปลีแต่เรานับอย่างอื่นอยู่มันบังคับให้เราต้องใส่จำนวนกะหล่ำปลีที่มีก่อนถึงจะไปทำอย่างอื่นต่อได้"): แตะโดนช่องเลขของที่ไม่ได้ตั้งใจ ออกได้ทันที
   // แตะที่อื่น (ปุ่มของอื่น ชื่อ ที่ว่าง แถบ) หรือลากนิ้วเลื่อนจอ ปิดแป้นพิมพ์ของช่องนั้น (iPhone ไม่ปิดแป้นตัวเลขเองเมื่อแตะปุ่มหรือที่ว่าง) · ช่องที่ยังว่างไม่บันทึกอะไร ยังไม่นับคงยังไม่นับ
   // 2.13.28 k-count3 (เจ้าของ 30 ต.ค. 2569 iPhone แตะที่ว่างแล้วแป้นพิมพ์ไม่ปิดเอง แป้นตัวเลขไม่มีปุ่มเสร็จ จึงรู้สึกว่าต้องใส่จำนวนก่อน): แอปปิดแป้นพิมพ์เอง ไม่พึ่งเบราว์เซอร์
@@ -12170,8 +12217,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
 
   // ---- history ------------------------------------------------------------
+  /** 2.14.6 (ข้อ 4): ตัวเลขเงินในเหตุของรายการเงินของตัวเอง (เช่น × 400 บาท) ไม่ขึ้นนอกสลิป · แบบเดียวกับหลังบ้าน noMoneyAmount_ */
+  function noBaht(s) {
+    return String(s || '').replace(/\s*[×x*]\s*[0-9][0-9,]*(\.[0-9]+)?\s*บาท/g, '').replace(/฿\s*[0-9][0-9,]*(\.[0-9]+)?|[0-9][0-9,]*(\.[0-9]+)?\s*(บาท|\.-)/g, '').replace(/\s{2,}/g, ' ').replace(/[\s·:,]+$/, '').trim();
+  }
   function historyView() {
     var m = S.month;
+    // 2.14.6 (เจ้าของร้าน 14 พ.ย. 2569 15:52 ภาพหน้านี้ ค่าวันลาที่เหลือ 2,400 บาท): รายการเงินของตัวเองบอกแค่ชื่อรายการและวันที่ ยอดอยู่ในสลิปที่ใส่ PIN (2.14.2)
+    var why = function (x) { return x.unit === 'บาท' ? noBaht(x.reason) : x.reason || ''; };
     if (!m) return waiting('month');
     var key = m.period.key;
     var cur = S.home && S.home.month ? S.home.month.period.key : key;
@@ -12189,8 +12242,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           ${d.startReason ? html`<div class="s">${d.startReason}</div>` : ''}${d.otNote ? html`<div class="s">${d.otNote}</div>` : ''}${d.paidNote ? html`<div class="s">${d.paidNote}</div>` : ''}</div></div>`;
       }) : html`<div class="empty">ยังไม่มีวันทำงานในเดือนนี้</div>`}</section>
       ${(m.entries || []).length ? html`<h3 class="h3">รายการที่ผู้อนุมัติบันทึก</h3><section class="card flush"><div class="list">${m.entries.map(function (x) {
-        return html`<div class="item"><div class="grow"><div class="t">${x.type}${x.kind === 'permit' ? ' ' + x.time + ' น.' : ''}</div><div class="s">${thDate(x.date)}${x.reason ? ' · ' + x.reason : ''}${x.noOt ? ' · ไม่ได้ OT' : ''}</div></div>${x.kind !== 'permit' ? html`<div class="r amt">${x.kind === 'ot' && x.qty > 0 ? '+' : ''}${x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)} ${x.unit}</div>` : ''}</div>`;
-      })}</div></section>` : ''}
+        return html`<div class="item"><div class="grow"><div class="t">${x.type}${x.kind === 'permit' ? ' ' + x.time + ' น.' : ''}</div><div class="s">${thDate(x.date)}${why(x) ? ' · ' + why(x) : ''}${x.noOt ? ' · ไม่ได้ OT' : ''}</div></div>${x.kind !== 'permit' && x.unit !== 'บาท' ? html`<div class="r amt">${x.kind === 'ot' && x.qty > 0 ? '+' : ''}${x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)} ${x.unit}</div>` : ''}</div>`;
+      })}</div></section>${m.entries.some(function (x) { return x.unit === 'บาท'; }) ? html`<p class="muted small" style="margin:6px 4px 0">ยอดเงินดูได้ในสลิปเงินเดือน</p>` : ''}` : ''}
       ${(m.leave || []).length ? html`<h3 class="h3">วันลา</h3><section class="card flush"><div class="list">${m.leave.map(function (x) {
         return html`<div class="item"><div class="grow"><div class="t">${x.type}${x.day ? ' · วันที่ ' + x.day + ' ของการป่วย' : ''}</div><div class="s">${thDate(x.date)}${leaveDayWhy(x)}</div></div><div class="r">${x.paid ? html`<span class="pill ok">ได้ค่าจ้าง</span>` : html`<span class="pill">ไม่ได้ค่าจ้าง</span>`}</div></div>`;
       })}</div></section>` : ''}
@@ -12204,7 +12257,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (x.lateTold) s.push('บอกหลังเวลาเข้างาน');
     if (x.ill) s.push('ไม่สบาย ใช้แทน' + sickType());
     if (x.waive) s.push('ไม่หัก Incentive');
-    if (x.cut > 0) s.push('หัก Incentive ' + money(x.cut) + ' บาท');
+    if (x.cutOn || x.cut > 0) s.push('หัก Incentive'); // 2.14.6 ยอดอยู่ในสลิปที่ใส่ PIN
     return s.length ? ' · ' + s.join(' · ') : '';
   }
   // 2.14.2 (ข้อ ช): ช่องที่ 4 เป็นวันลา แทนยอด Incentive เป็นเงิน (ยอดเงินอยู่ในสลิปที่เปิดด้วย PIN)
@@ -22171,7 +22224,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // staff
     'tab': function (el) {
       if (el.dataset.tab !== 'me' && el.dataset.tab !== 'slips') slipBy = {}; // 2.14.2 (ข้อ ช) สลิปที่เปิดแล้วล้างเมื่อออกจากแท็บฉัน
-      S.tab = el.dataset.tab; S.sub = null; (window.scrollTo(0, 0), scrollNow = 0); render();
+      odBlurField(); // 2.14.6 ปิดแป้นพิมพ์ก่อนวาดแท็บใหม่ แล้วให้จอคำนวณที่ของแถบล่างใหม่
+      S.tab = el.dataset.tab; S.sub = null; (window.scrollTo(0, 0), scrollNow = 0); render(); settleView();
       if (S.tab === 'team') loadTeam('open');
       if (S.tab === 'approve' || (S.tab === 'team' && isApprover())) { loadLeaves('open'); loadPay(null, 'open'); }
       if (S.tab === 'friends') loadFriends();
@@ -22858,11 +22912,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (S.home) { ACTIONS.tab({ dataset: { tab: 'me' } }); ACTIONS['me-go']({ dataset: { sub: 'settings' } }); }
     },
     'refresh-home': function () { closeSheet(); loadHome(false, true); },
-    // one's own picture: a selfie, made small and square here; everyone signed in sees it
+    // one's own picture: from the phone's photos or taken now, made small and square here; everyone signed in sees it
+    // 2.14.6 (เจ้าของร้าน 14 พ.ย. 2569 15:54): เลือกจากคลังรูปหรือถ่ายใหม่ (รูปนี้ใช้แสดงในแอปอย่างเดียว ไม่ใช้ตรวจตอนลงเวลา)
+    // แถวขึ้นกำลังบันทึกเมื่อได้รูปแล้วเท่านั้น: เดิมปิดแถวตั้งแต่แตะ ยกเลิกหน้ากล้องแล้ว iPhone ไม่ส่งเหตุการณ์กลับ แถวค้างสีเทาและกดซ้ำไม่ขึ้น
     'face-take': function (el) {
-      var shot = takeSelfie(false); // the camera opens from this very tap
-      spin(el, true);
-      shot.then(function (me) { return squareFace(me.photo); }).then(function (photo) {
+      var shot = HOOKS.selfie ? HOOKS.selfie(false).then(function (me) { spin(el, true); return me.photo; }) : takePhoto('pick').then(function (file) { // the picker opens from this very tap
+        spin(el, true);
+        return fileImage(file).then(function (r) {
+          var photo = drawScaled(r.img, r.img.naturalWidth, r.img.naturalHeight, 640).toDataURL('image/jpeg', 0.75);
+          r.done();
+          return photo;
+        });
+      });
+      shot.then(function (photo) { return squareFace(photo); }).then(function (photo) {
         return call('avatarSet', { photo: photo }, staffAuth());
       }).then(function (d) {
         spin(el, false);
@@ -23514,7 +23576,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
     // owner
     'owner-tab': function (el) {
-      S.ownerTab = el.dataset.tab; (window.scrollTo(0, 0), scrollNow = 0); render();
+      odBlurField(); // 2.14.6 แบบเดียวกับแท็บของน้อง
+      S.ownerTab = el.dataset.tab; (window.scrollTo(0, 0), scrollNow = 0); render(); settleView();
       if (S.ownerTab === 'pay') loadPay(null, 'open');
       if (S.ownerTab === 'team') { loadTeam('open'); loadLeaves('open'); }
       if (S.ownerTab === 'staff') loadEmployees('open');
@@ -23764,7 +23827,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   });
   document.addEventListener('change', function (ev) {
     var el = ev.target;
-    if (el.id === 'cam-env' || el.id === 'cam-user') { onCameraFile(el); return; }
+    if (el.id === 'cam-env' || el.id === 'cam-user' || el.id === 'face-pick') { onCameraFile(el); return; }
     if (el.dataset.change === 'lv-type' || el.dataset.change === 'lv-cost') leaveFormSync();
     if (el.dataset.change === 'emp-end') empEndSync(el);
     if (el.dataset.change === 'odu') oduReady();
@@ -23822,7 +23885,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   window.addEventListener('focus', function () {
     // The camera app closed without a picture: release the pending promise.
     setTimeout(function () {
-      if (pendingCamera && !($('#cam-env').files || []).length && !($('#cam-user').files || []).length) {
+      if (pendingCamera && !($('#cam-env').files || []).length && !($('#cam-user').files || []).length && !($('#face-pick').files || []).length) {
         var p = pendingCamera; pendingCamera = null; p.reject(new Error('ยังไม่ได้ถ่ายรูป'));
       }
     }, 1200);
