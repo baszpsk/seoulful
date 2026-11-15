@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.12","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"925ffc94054b"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.13","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"68333835aeeb"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -9938,8 +9938,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<span class="streak">${icon('spark')} ${run ? html`ตรงเวลาติดต่อกัน ${cnt('run', run)} วัน${next ? ' · ' + next : ''}` : 'ตรงเวลาติดต่อกัน' + next}</span>`;
   }
   /** การ์ด Incentive หน้าแรก: เหลือวันตรงเวลาติดต่อกันกับแต้มที่จะได้ และปุ่ม ⓘ กติกา · ไม่บอกยอดเงิน แถบ หรือรายการหัก (ยอดอยู่ในสลิป · 2.13.3) */
+  // 2.14.13 (เจ้าของร้าน 15 พ.ย. 2569 10:17 "หน้าน้องไม่ควรโชว์อะไรเลยให้ฉันเป็นคนอนุมัติก่อนค่อยโชว์"): ปุ่ม ⓘ กติกา Incentive เฉพาะเจ้าของร้าน แผ่นกติกาคงเดิม
   function monthIncentive(inc, c) {
-    return html`<div class="eyebrow" style="margin-bottom:4px">ตรงเวลา<button class="info-btn" data-act="open-rules" aria-label="กติกา Incentive">${icon('info')}</button></div>
+    return html`<div class="eyebrow" style="margin-bottom:4px">ตรงเวลา${S.view === 'owner' ? html`<button class="info-btn" data-act="open-rules" aria-label="กติกา Incentive">${icon('info')}</button>` : ''}</div>
       ${onTimeRun(c)}`;
   }
   function monthCard(m) {
@@ -9953,7 +9954,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="card-h"><span class="eyebrow">${m.period.month}</span><span class="small muted">${payDueText(m.period.payDue) || m.period.label}</span></div>
       ${inc
         ? monthIncentive(inc, c)
-        : html`<div class="hello" style="font-size:20px;margin:0 0 4px">ช่วงทดลองงาน</div><p class="muted small mt0">ค่าจ้างรายวันตามวันทำงานจริง${me.probationEnd ? ' · ผ่านโปร ' + thShort(me.probationEnd) : ''} · Incentive เริ่มหลังผ่านโปร</p>`}
+        : html`<div class="hello" style="font-size:20px;margin:0 0 4px">ช่วงทดลองงาน</div>${me.probationEnd ? html`<p class="muted small mt0">ผ่านโปร ${thShort(me.probationEnd)}</p>` : ''}`}
     </section>`;
   }
   // 2.13.11 หน้าแรกไม่มีการ์ด ไอเดียของคุณใช้ได้แล้ว (ซ้ำกับแท็บไอเดีย ซึ่งมีตัวเลขบนแท็บบอกอยู่แล้ว)
@@ -11186,7 +11187,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="odu-list" id="odu-list">${oduList()}</div>
       <label class="check"><input type="checkbox" id="odu-a" data-change="odu"><span>ไม่พอใช้ถึงปิดร้านวันนี้</span></label>
       <label class="check"><input type="checkbox" id="odu-b" data-change="odu"><span>ไม่มีของมาส่งวันนี้</span></label>
-      <p class="small muted" style="margin:0">สั่งด่วนราคาสูงกว่าปกติ ใช้เมื่อจำเป็นนะ</p></div>`,
+      <p class="small muted" style="margin:0">สั่งด่วนใช้เมื่อจำเป็นนะ</p></div>`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" id="odu-go" data-act="od-urgent-send" disabled>แจ้งเจ้าของ</button>` });
   }
   /** 2.13.11 ของที่ชื่อมีคำที่พิมพ์ เรียงตามชื่อ · ตัวที่แตะเลือกแล้วอยู่บนสุดเสมอ */
@@ -12304,7 +12305,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return html`<div class="item"><div class="grow"><div class="t">${x.type}${x.kind === 'permit' ? ' ' + x.time + ' น.' : ''}</div><div class="s">${thDate(x.date)}${why(x) ? ' · ' + why(x) : ''}${x.noOt ? ' · ไม่ได้ OT' : ''}</div></div>${x.kind !== 'permit' && x.unit !== 'บาท' ? html`<div class="r amt">${x.kind === 'ot' && x.qty > 0 ? '+' : ''}${x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)} ${x.unit}</div>` : ''}</div>`;
       })}</div></section>${m.entries.some(function (x) { return x.unit === 'บาท'; }) ? html`<p class="muted small" style="margin:6px 4px 0">ยอดเงินดูได้ในสลิปเงินเดือน</p>` : ''}` : ''}
       ${(m.leave || []).length ? html`<h3 class="h3">วันลา</h3><section class="card flush"><div class="list">${m.leave.map(function (x) {
-        return html`<div class="item"><div class="grow"><div class="t">${x.type}${x.day ? ' · วันที่ ' + x.day + ' ของการป่วย' : ''}</div><div class="s">${thDate(x.date)}${leaveDayWhy(x)}</div></div><div class="r">${x.paid ? html`<span class="pill ok">ได้ค่าจ้าง</span>` : html`<span class="pill">ไม่ได้ค่าจ้าง</span>`}</div></div>`;
+        return html`<div class="item"><div class="grow"><div class="t">${x.type}${x.day ? ' · วันที่ ' + x.day + ' ของการป่วย' : ''}</div><div class="s">${thDate(x.date)}${leaveDayWhy(x)}</div></div></div>`;
       })}</div></section>` : ''}
     </div>`;
   }
@@ -12315,8 +12316,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     else if (x.note && x.free) s.push('มีใบรับรองแพทย์');
     if (x.lateTold) s.push('บอกหลังเวลาเข้างาน');
     if (x.ill) s.push('ไม่สบาย ใช้แทน' + sickType());
-    if (x.waive) s.push('ไม่หัก Incentive');
-    if (x.cutOn || x.cut > 0) s.push('หัก Incentive'); // 2.14.6 ยอดอยู่ในสลิปที่ใส่ PIN
+    if (x.waive) s.push('เหตุสุดวิสัย');
+    // 2.14.13 (เจ้าของร้าน 15 พ.ย. 2569 10:17) ไม่บอกว่าวันไหนหักหรือได้เงิน ยอดอยู่หน้าเจ้าของร้านและสลิปหลังจ่าย
     return s.length ? ' · ' + s.join(' · ') : '';
   }
   // 2.14.2 (ข้อ ช): ช่องที่ 4 เป็นวันลา แทนยอด Incentive เป็นเงิน (ยอดเงินอยู่ในสลิปที่เปิดด้วย PIN)
@@ -12360,7 +12361,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var mine = html`<h3 class="h3">คำขอของฉัน</h3>
       <section class="card flush">${(L.requests || []).length ? html`<div class="list">${L.requests.map(function (l) {
         var st = LEAVE_STATUS[l.status] || [l.status, ''];
-        return html`<div class="item"><div class="grow"><div class="t">${l.type} · ${leaveWhen(l)}</div><div class="s">${l.swap ? 'มาทำได้ค่าแรงเพิ่ม 1 วัน · วันหยุดแทนไม่รับค่าจ้าง' : l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}${l.decisionNote ? ' · ' + l.decisionNote : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}${leaveFreeTag(l)}</div>
+        return html`<div class="item"><div class="grow"><div class="t">${l.type} · ${leaveWhen(l)}</div><div class="s">${l.swap ? (S.view === 'owner' ? 'มาทำได้ค่าแรงเพิ่ม 1 วัน · วันหยุดแทนไม่รับค่าจ้าง' : 'มาทำวันหยุดประจำ แล้วหยุดวันอื่นแทน') : l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}${l.decisionNote ? ' · ' + l.decisionNote : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}${leaveFreeTag(l)}</div>
           <div class="r"><span class="pill ${st[1]}">${st[0]}</span>${l.status === 'pending' ? html`<div><button class="btn sm lv-cancel" data-act="cancel-leave" data-id="${l.id}">ยกเลิก</button></div>` : ''}</div></div>`;
       })}</div>` : html`<div class="empty">ยังไม่มีคำขอลา</div>`}</section>`;
     var asked = (L.requests || []).length;
@@ -12398,25 +12399,25 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var myOff = S.home && S.home.me ? S.home.me.dayOff : null;
     // (k-q1b คำในฟอร์มที่ผู้อนุมัติลงแทนถูกทั้งแบบเดิมและแบบหักตามเวลาที่บอก ยอดหักและค่าจ้างจริงขึ้นในกล่อง lv-cost ตามแบบที่ใช้กับวันลานั้น)
     return html`${opts.pickEmp ? html`<label class="field"><span>พนักงาน</span><select class="input" id="lv-emp" data-change="lv-cost">${(B.employees || []).map(function (e) { return html`<option value="${e.id}">${e.name}</option>`; })}</select></label>` : ''}
-      <label class="field"><span>ประเภทการลา</span><select class="input" id="lv-type" data-change="lv-type">${types.map(function (t) { return html`<option value="${t.type}">${t.type}</option>`; })}${opts.pickEmp || myOff != null ? html`<option value="${swapType()}">${swapType()}</option>` : ''}</select><small id="lv-note">${leaveTypeNote(types[0])}</small></label>
+      <label class="field"><span>ประเภทการลา</span><select class="input" id="lv-type" data-change="lv-type">${types.map(function (t) { return html`<option value="${t.type}">${t.type}</option>`; })}${opts.pickEmp || myOff != null ? html`<option value="${swapType()}">${swapType()}</option>` : ''}</select><small id="lv-note">${S.view === 'owner' ? leaveTypeNote(types[0]) : ''}</small></label>
       <label class="field" id="lv-work-row" hidden><span>มาทำงานวันหยุดประจำวันที่</span><input class="input" type="date" id="lv-work" data-change="lv-cost"><small id="lv-work-note"></small></label>
       <div class="two"><label class="field"><span id="lv-from-label">ตั้งแต่</span><input class="input" type="date" id="lv-from" data-change="lv-cost" value="${opts.from || today}"></label>
       <label class="field" id="lv-to-row"><span>ถึง</span><input class="input" type="date" id="lv-to" data-change="lv-cost" value="${opts.to || today}"></label></div>
-      <label class="check" id="lv-ill-row" hidden><input type="checkbox" id="lv-ill" data-change="lv-cost"><span>ไม่สบาย ใช้แทน${sickType()}<small>ไม่หัก Incentive แม้ลาในวันนั้น</small></span></label>
-      ${opts.pickEmp ? html`<label class="field" id="lv-asked-row"><span>แจ้งลาเมื่อ</span><input class="input" type="date" id="lv-asked" data-change="lv-cost" value="${today}" max="${today}"><small>วันที่พนักงานบอกว่าจะลา ใช้คิดยอดหัก · ดูยอดในกล่องล่างสุด</small></label>
+      <label class="check" id="lv-ill-row" hidden><input type="checkbox" id="lv-ill" data-change="lv-cost"><span>ไม่สบาย ใช้แทน${sickType()}${S.view === 'owner' ? html`<small>ไม่หัก Incentive แม้ลาในวันนั้น</small>` : ''}</span></label>
+      ${opts.pickEmp ? html`<label class="field" id="lv-asked-row"><span>แจ้งลาเมื่อ</span><input class="input" type="date" id="lv-asked" data-change="lv-cost" value="${today}" max="${today}"><small>วันที่พนักงานบอกว่าจะลา${S.view === 'owner' ? ' ใช้คิดยอดหัก · ดูยอดในกล่องล่างสุด' : ''}</small></label>
         <div class="field" id="lv-told-row"><span>บอกก่อนเวลาเข้างานไหม</span>
           <div class="chips"><button type="button" class="chip" aria-pressed="false" data-act="lv-told" data-v="before">บอกก่อนเวลาเข้างาน</button><button type="button" class="chip" aria-pressed="false" data-act="lv-told" data-v="after">บอกหลังเวลาเข้างาน</button><button type="button" class="chip" aria-pressed="false" data-act="lv-told" data-v="none">ไม่ได้บอกเลย</button></div>
-          <small>ป่วยให้เลือก${sickType()} · เหตุสุดวิสัยติ๊กด้านล่าง · ยอดหักและค่าจ้างดูในกล่องล่างสุด</small></div>
+          <small>ป่วยให้เลือก${sickType()} · เหตุสุดวิสัยติ๊กด้านล่าง${S.view === 'owner' ? ' · ยอดหักและค่าจ้างดูในกล่องล่างสุด' : ''}</small></div>
         <div id="lv-cert-row" ${sick ? '' : 'hidden'}>
-          <label class="check"><input type="checkbox" id="lv-cert" data-change="lv-cost"><span>เห็นใบรับรองแพทย์แล้ว<small>ตั้งแต่วันที่ ${r.sickNoteDay || 3} ของการป่วย วันที่ใบให้หยุดไม่หัก Incentive · ดูตัวจริงหรือรูปที่ส่งมา ไม่ต้องเก็บไว้ในแอป</small></span></label>
+          <label class="check"><input type="checkbox" id="lv-cert" data-change="lv-cost"><span>เห็นใบรับรองแพทย์แล้ว<small>${S.view === 'owner' ? 'ตั้งแต่วันที่ ' + (r.sickNoteDay || 3) + ' ของการป่วย วันที่ใบให้หยุดไม่หัก Incentive · ' : ''}ดูตัวจริงหรือรูปที่ส่งมา ไม่ต้องเก็บไว้ในแอป</small></span></label>
           <div class="two" id="lv-cert-days" hidden><label class="field"><span>ใบให้หยุดตั้งแต่</span><input class="input" type="date" id="lv-cert-from" data-change="lv-cost"></label><label class="field"><span>ถึง</span><input class="input" type="date" id="lv-cert-to" data-change="lv-cost"></label></div>
-          <label class="check"><input type="checkbox" id="lv-hospital" data-change="lv-cost"><span>นอนโรงพยาบาล<small>ไม่หัก Incentive ทั้งครั้ง · ดูใบรับรองแพทย์หรือเอกสารโรงพยาบาล</small></span></label>
+          <label class="check"><input type="checkbox" id="lv-hospital" data-change="lv-cost"><span>นอนโรงพยาบาล<small>${S.view === 'owner' ? 'ไม่หัก Incentive ทั้งครั้ง · ' : ''}ดูใบรับรองแพทย์หรือเอกสารโรงพยาบาล</small></span></label>
         </div>
-        <label class="check" id="lv-waive-row"><input type="checkbox" id="lv-waive-on" data-change="lv-cost"><span>เหตุสุดวิสัย ไม่หัก Incentive<small>เช่น อุบัติเหตุ น้ำท่วมบ้าน คนในบ้านป่วยหนัก · ดูหลักฐานก่อน</small></span></label>
+        <label class="check" id="lv-waive-row"><input type="checkbox" id="lv-waive-on" data-change="lv-cost"><span>เหตุสุดวิสัย${S.view === 'owner' ? ' ไม่หัก Incentive' : ''}<small>เช่น อุบัติเหตุ น้ำท่วมบ้าน คนในบ้านป่วยหนัก · ดูหลักฐานก่อน</small></span></label>
         <input class="input" id="lv-waive" maxlength="200" placeholder="เหตุผลและหลักฐานที่เห็น (คุณและเจ้าของร้านเห็น)" hidden style="margin-top:8px">` : ''}
       <label class="field"><span>เหตุผล</span><textarea class="input" id="lv-reason" maxlength="300" placeholder="เช่น กลับบ้านต่างจังหวัด, ไม่สบาย"></textarea></label>
-      ${opts.pickEmp ? '' : html`<div class="hint" id="lv-vac" ${sick && vacationLeft() > 0 ? '' : 'hidden'} style="margin-top:12px">${icon('heart')}<span class="grow">${vacationType()}เหลือ ${vacationLeft()} วัน ใช้แทน${sickType()}ได้ ไม่หัก Incentive</span><button type="button" class="btn sm" data-act="lv-use-vac">ใช้วันพักร้อนแทน</button></div>`}
-      <div class="hint" id="lv-cost" style="margin-top:12px">${icon('info')}<span>${leaveCostText(types[0], opts.from || today, opts.to || today, today, { runs: opts.pickEmp ? [] : (S.home && S.home.leave && S.home.leave.runs) || [] })}</span></div>`;
+      ${opts.pickEmp ? '' : html`<div class="hint" id="lv-vac" ${sick && vacationLeft() > 0 ? '' : 'hidden'} style="margin-top:12px">${icon('heart')}<span class="grow">${vacationType()}เหลือ ${vacationLeft()} วัน ใช้แทน${sickType()}ได้</span><button type="button" class="btn sm" data-act="lv-use-vac">ใช้วันพักร้อนแทน</button></div>`}
+      <div class="hint" id="lv-cost" ${S.view === 'owner' ? '' : 'hidden'} style="margin-top:12px">${icon('info')}<span>${S.view !== 'owner' ? '' : leaveCostText(types[0], opts.from || today, opts.to || today, today, { runs: opts.pickEmp ? [] : (S.home && S.home.leave && S.home.leave.runs) || [] })}</span></div>`;
   }
   function sickType() { return (B.rules && B.rules.sickType) || 'ลาป่วย'; }
   function leaveTypeOf(name) { return (B.leaveTypes || []).filter(function (x) { return x.type === name; })[0]; }
@@ -12581,17 +12582,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     var work = workIn.value, off = $('#lv-from').value;
     var note = $('#lv-note');
-    if (note) note.textContent = 'มาทำงานวันหยุดประจำ แล้วหยุดวันอื่นแทน ก่อนหรือหลังก็ได้ ข้ามรอบเงินเดือนได้ · วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · วันหยุดประจำที่ร้านปิดสลับไม่ได้ ได้พักร้อนเพิ่ม 1 วันแทน';
+    // 2.14.13 คำค่าแรงและวันพักร้อนที่ได้เพิ่ม เฉพาะเจ้าของร้าน
+    if (note) note.textContent = S.view === 'owner' ? 'มาทำงานวันหยุดประจำ แล้วหยุดวันอื่นแทน ก่อนหรือหลังก็ได้ ข้ามรอบเงินเดือนได้ · วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · วันหยุดประจำที่ร้านปิดสลับไม่ได้ ได้พักร้อนเพิ่ม 1 วันแทน' : 'มาทำงานวันหยุดประจำ แล้วหยุดวันอื่นแทน ก่อนหรือหลังก็ได้ · วันหยุดประจำที่ร้านปิดสลับไม่ได้';
     var wn = $('#lv-work-note');
     if (wn) wn.textContent = dayOff != null ? 'วันหยุดประจำ: วัน' + TH_DAYS_LONG[dayOff] : $('#lv-emp') && S.leaves ? (S.view === 'owner' ? 'ยังไม่ได้ตั้งวันหยุดประจำ — ตั้งได้ที่ พนักงาน' : 'ยังไม่ได้ตั้งวันหยุดประจำ') : '';
     var r = B.rules || {};
-    var text = 'มาทำได้ค่าแรงเพิ่ม 1 วัน · วันหยุดแทนไม่รับค่าจ้าง';
+    var text = 'มาทำได้ค่าแรงเพิ่ม 1 วัน · วันหยุดแทนไม่รับค่าจ้าง', warn = '';
     if (dayOff != null && work && off && dowOf(work) === dayOff && dowOf(off) !== dayOff) {
       var n = swapRun(dayOff, work, off, lvReqs());
-      if (n > (r.maxRun || 6) && r.swapWarn) text = String(r.swapWarn).replace('{N}', n);
+      if (n > (r.maxRun || 6) && r.swapWarn) text = warn = String(r.swapWarn).replace('{N}', n);
     }
-    var c = $('#lv-cost');
-    if (c) c.lastElementChild.textContent = text;
+    lvCostPut($('#lv-cost'), text, warn);
     return true;
   }
   /** The leave form as it is filled in: what shows for the type and the days, what it costs. */
@@ -12628,7 +12629,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var why = $('#lv-waive'), on = $('#lv-waive-on');
     if (why) why.hidden = !(on && on.checked);
     var n = $('#lv-note');
-    if (n) n.textContent = leaveTypeNote(t);
+    if (n) n.textContent = S.view === 'owner' ? leaveTypeNote(t) : ''; // 2.14.13 คำอธิบายเงินของประเภทลาเฉพาะเจ้าของร้าน
     var o = { runs: lvRuns(), told: told, ill: !!(illRow && !illRow.hidden && ill.checked), waive: !!(on && on.checked) };
     if (sick && cert) {
       o.cert = cert.checked;
@@ -12639,13 +12640,21 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var c = $('#lv-cost');
     // k-q1d ฟอร์มลงแทนที่ยังไม่เลือกว่าบอกเมื่อไร: ชวนเลือกก่อน ยังไม่บอกยอด (ยอดต่างกันมากตามปุ่มที่เลือก) และไม่ถามหลังบ้าน
     var ask = !!(toldRow && !toldRow.hidden && !told && t);
-    if (c) c.lastElementChild.textContent = ask ? 'เลือกก่อนว่าพนักงานบอกเมื่อไร แล้วจะขึ้นยอดหักและค่าจ้างของแต่ละวัน' : leaveCostText(t, from, to, asked, o);
+    lvCostPut(c, ask ? 'เลือกก่อนว่าพนักงานบอกเมื่อไร แล้วจะขึ้นยอดหักและค่าจ้างของแต่ละวัน' : leaveCostText(t, from, to, asked, o), '');
     lvCostAsk(ask ? null : t);
     var vac = $('#lv-vac');
     if (vac) vac.hidden = !(sick && vacationLeft() > 0);
   }
   // k-q1c ยอดหักและค่าจ้างในกล่องล่างสุดจากผลคิดเงินจริงของวันนั้น: หลังบ้านคิดแบบเดียวกับตอนส่ง ไม่บันทึก (leaveCost · leaveAddCost) ·
   // ข้อความที่หน้าแอปคิดขึ้นก่อน แล้วแทนด้วยของหลังบ้านเมื่อได้คำตอบ เช่น ลากิจเกินวันที่ได้ค่าจ้าง · ถามไม่ได้ (ยังเลือกไม่ครบ เน็ตหลุด) คงข้อความเดิม
+  // 2.14.13 (เจ้าของร้าน 15 พ.ย. 2569 10:17 "...หน้าน้องไม่ควรโชว์อะไรเลยให้ฉันเป็นคนอนุมัติก่อนค่อยโชว์น่าจะดีกว่า..."): กล่องล่างสุดของฟอร์มลา
+  // ยอดหักและค่าจ้างขึ้นเฉพาะหน้าเจ้าของร้าน · น้องและผู้อนุมัติเห็นแค่เหตุที่ส่งไม่ได้และคำเตือนวันทำงานติดกัน (plain) ไม่มีก็ซ่อนกล่อง
+  function lvCostPut(c, full, plain) {
+    if (!c) return;
+    if (S.view === 'owner') { c.lastElementChild.textContent = full; return; }
+    c.lastElementChild.textContent = plain || '';
+    c.hidden = !plain;
+  }
   var lvCostSeq = 0, lvCostTimer = null;
   function lvCostAsk(t) {
     var mine = ++lvCostSeq;
@@ -12653,15 +12662,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!t || !$('#lv-cost') || !$('#lv-from').value) return;
     var pick = !!$('#lv-emp');
     lvCostTimer = setTimeout(function () {
+      // 2.14.13 (k156 15 พ.ย. 2569): ปิดฟอร์มก่อนครบเวลาหน่วง ไม่ต้องคิดยอด (เดิมอ่านช่องของฟอร์มที่ปิดไปแล้ว หน้าแจ้งผิดพลาด)
+      if (!$('#lv-cost') || !$('#lv-from')) return;
       var v = leaveValues(pick);
       if (pick && !v.empId) return;
       call(pick ? 'leaveAddCost' : 'leaveCost', v, pick ? actorAuth() : staffAuth()).then(function (d) {
         var box = $('#lv-cost');
-        if (mine === lvCostSeq && box && d) box.lastElementChild.textContent = d.text || 'ไม่หัก Incentive';
+        if (mine === lvCostSeq && box && d) lvCostPut(box, d.text || 'ไม่หัก Incentive', '');
       }, function (e) {
         // k34: เหตุที่หลังบ้านไม่รับ (วันทับการลาเดิม วันหยุดประจำ เกินช่วงที่ขอได้) ขึ้นในกล่องก่อนกดส่ง ไม่คงยอดที่คิดจากวันเดิม · เน็ตหลุดคงยอดเดิม
         var box = $('#lv-cost');
-        if (mine === lvCostSeq && box && e && !e.network && !e.transient) box.lastElementChild.textContent = e.message;
+        if (mine === lvCostSeq && box && e && !e.network && !e.transient) lvCostPut(box, e.message, e.message);
       });
     }, 350);
   }
@@ -12722,15 +12733,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!b) return;
     var today = workDate();
     openSheet({ use: 'วันลา', title: b.type + ' ' + (+today.slice(0, 4) + 543), body: html`<div class="stack">
-      <div class="stats" style="grid-template-columns:repeat(3,1fr)"><div class="stat"><b>${b.quota}</b><span>ได้ปีนี้</span></div><div class="stat"><b>${b.used}</b><span>ใช้แล้ว</span></div><div class="stat"><b>${b.remaining}</b><span>เหลือ</span></div></div>
-      <section class="card flush"><div class="list">
-        <div class="item"><div class="grow"><div class="t">พักร้อนประจำปี</div><div class="s">${b.annual ? (b.annualOn ? 'ทำงานครบ ' + b.annualYears + ' ปี วันที่ ' + thShort(b.annualOn) + ' ใช้ได้ตั้งแต่วันนั้น' : 'ทำงานครบ ' + b.annualYears + ' ปีแล้ว') : b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ได้เมื่อทำงานครบ ' + b.annualYears + ' ปี'}</div></div><div class="r amt">${b.annual} วัน</div></div>
-        <div class="item"><div class="grow"><div class="t">วันหยุดตามประเพณี เลือกวันหยุดเอง</div><div class="s">${b.setMissing ? 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน' : 'ได้ 1 วันต่อวันหยุดตามประเพณี 1 วันที่ร้านเปิดทำการ'}</div><div class="s">ลาพักร้อนแต่ละวัน นับเป็นวันหยุดตามประเพณีที่เหลือก่อน หมดแล้วค่อยนับเป็นพักร้อนประจำปี</div></div><div class="r amt">${b.credits.length} วัน</div></div>${(b.offCredits || []).length ? html`<div class="item"><div class="grow"><div class="t">ร้านปิดตรงวันหยุดประจำ</div><div class="s">ใช้วันหยุดแล้ว ได้พักร้อนเพิ่มวันละ 1 วัน</div></div><div class="r amt">${b.offCredits.length} วัน</div></div>` : ''}
-        ${b.carried > 0 ? html`<div class="item"><div class="grow"><div class="t">ทบมาจากปี ${+b.carriedFrom + 543}</div><div class="s">${b.carried} วันที่ยังไม่ได้ใช้ ทบมาให้เอง</div></div></div>` : ''}
-      </div></section>
-      ${b.credits.concat(b.offCredits || []).length ? html`<section class="card flush"><div class="list">${b.credits.concat(b.offCredits || []).sort().map(function (d) {
-        return html`<div class="item"><div class="grow"><div class="t">${thDate(d)}</div><div class="s">${(b.creditNames || {})[d] || (b.offCreditNames || {})[d] || 'วันหยุดตามประเพณี'}</div></div>${d <= today ? html`<span class="pill ok">${icon('check')} ได้แล้ว</span>` : html`<span class="pill">จะได้</span>`}</div>`;
-      })}</div></section>` : ''}
+        ${S.view === 'owner' ? html`<div class="item"><div class="grow"><div class="t">พักร้อนประจำปี</div><div class="s">${b.annual ? (b.annualOn ? 'ทำงานครบ ' + b.annualYears + ' ปี วันที่ ' + thShort(b.annualOn) + ' ใช้ได้ตั้งแต่วันนั้น' : 'ทำงานครบ ' + b.annualYears + ' ปีแล้ว') : b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ได้เมื่อทำงานครบ ' + b.annualYears + ' ปี'}</div></div><div class="r amt">${b.annual} วัน</div></div>` : ''}
+        ${S.view === 'owner' ? html`<div class="item"><div class="grow"><div class="t">วันหยุดตามประเพณี เลือกวันหยุดเอง</div><div class="s">${b.setMissing ? 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน' : 'ได้ 1 วันต่อวันหยุดตามประเพณี 1 วันที่ร้านเปิดทำการ'}</div><div class="s">ลาพักร้อนแต่ละวัน นับเป็นวันหยุดตามประเพณีที่เหลือก่อน หมดแล้วค่อยนับเป็นพักร้อนประจำปี</div></div><div class="r amt">${b.credits.length} วัน</div></div>${(b.offCredits || []).length ? html`<div class="item"><div class="grow"><div class="t">ร้านปิดตรงวันหยุดประจำ</div><div class="s">ใช้วันหยุดแล้ว ได้พักร้อนเพิ่มวันละ 1 วัน</div></div><div class="r amt">${b.offCredits.length} วัน</div></div>` : ''}` : ''}
+      <div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>${b.remaining}</b><span>วันที่เหลือ</span></div></div>
+      ${b.noStart || b.setMissing ? html`<div class="hint">${icon('info')}<span>${b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน'}</span></div>` : ''}
       <div class="hint">${icon('cal')}<span><b>ร้านปิดทุกปี</b> ${fixedHolidayText()} — ไม่ต้องลา</span></div>
     </div>`, foot: html`<button class="btn primary" data-act="sheet-close">ปิด</button>` });
   }
@@ -12760,8 +12766,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     });
     var detail = html`<div class="cal-sel"><div class="cal-sel-h"><b>${thDateLong(day.date)}</b>${day.closed ? html`<span class="pill">ร้านปิด</span>` : day.credit ? html`<span class="pill gold">วันหยุดตามประเพณี</span>` : ''}</div>
       ${day.name ? html`<p class="cal-hname">${day.name}</p>` : ''}
-      ${day.closed ? html`<p class="small muted" style="margin:0 16px 14px">${day.holiday ? 'วันหยุดตามประเพณี ร้านปิดทั้งร้าน' : 'ร้านปิดทั้งร้าน'} ทุกคนหยุดและได้ค่าจ้างตามปกติ</p>` : ''}
-      ${day.credit ? html`<p class="small muted" style="margin:0 16px 12px">ร้านเปิดทำการตามปกติ — พนักงานทุกคนในวันนี้ได้วันพักร้อนเพิ่ม 1 วัน ไว้หยุดวันอื่น</p>` : ''}
+      ${day.closed ? html`<p class="small muted" style="margin:0 16px 14px">${day.holiday ? 'วันหยุดตามประเพณี ร้านปิดทั้งร้าน' : 'ร้านปิดทั้งร้าน'} ทุกคนหยุด${S.view === 'owner' ? 'และได้ค่าจ้างตามปกติ' : ''}</p>` : ''}
+      ${day.credit ? html`<p class="small muted" style="margin:0 16px 12px">ร้านเปิดทำการตามปกติ${S.view === 'owner' ? ' — พนักงานทุกคนในวันนี้ได้วันพักร้อนเพิ่ม 1 วัน ไว้หยุดวันอื่น' : ''}</p>` : ''}
       ${day.items.length ? html`<div class="list">${day.items.map(function (x) {
         var p = who(x.id);
         return html`<div class="item">${avatar(p)}<div class="grow"><div class="t">${p.name}</div></div><span class="pill ${x.kind === 'leave' ? 'gold' : 'dash'}">${calItemLabel(x)}</span></div>`;
@@ -13193,7 +13199,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <label class="field"><span>วันที่</span><input class="input" type="date" id="en-date" data-change="en-room" value="${o.date || workDate()}"></label>
       ${kind === 'permit'
         ? html`<label class="field"><span>เวลาที่อนุญาตให้เข้างาน</span><input class="input" type="time" id="en-time" value="${o.time || ''}"></label><label class="check"><input type="checkbox" id="en-noot" ${o.noOt ? 'checked' : ''}><span>วันนี้ไม่ได้ OT ในกะ</span></label>
-          <p class="muted small" style="margin:-4px 0 10px">มาตามเวลาที่อนุญาต ไม่นับสาย ไม่หัก Incentive ได้ค่าจ้างและ OT เต็ม · มาช้ากว่านั้นนับสายจากเวลาที่อนุญาต</p>`
+          <p class="muted small" style="margin:-4px 0 10px">มาตามเวลาที่อนุญาต ไม่นับสาย${S.view === 'owner' ? ' ไม่หัก Incentive ได้ค่าจ้างและ OT เต็ม' : ''} · มาช้ากว่านั้นนับสายจากเวลาที่อนุญาต</p>`
         : html`<label class="field"><span>จำนวน (${def.unit})</span><input class="input" type="number" inputmode="decimal" step="${kind === 'ot' ? '0.5' : def.unit === 'บาท' ? '0.01' : '1'}" id="en-qty" value="${o.qty || (kind === 'absent' ? 1 : kind === 'incentiveCut' ? (B.rules || {}).lateCut || '' : '')}"></label>
           ${kind === 'advance' ? html`<p class="muted small" id="en-room" style="margin:-4px 0 10px">กำลังดูยอดที่เบิกได้…</p>` : ''}
           ${kind === 'incentiveCut' ? html`<p class="muted small" style="margin:-4px 0 10px">หักจาก Incentive ไม่หักเงินเดือน · ถ้า Incentive ไม่พอ ส่วนที่เหลือยกไปหักรอบหน้าครั้งเดียว</p>` : ''}
@@ -13354,15 +13360,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   /** A leave that costs nothing off the Incentive: a doctor's note seen, or beyond anyone's control (#256, #257). */
   /** What the approver marked on a leave (#256, #274): beyond anyone's control, a doctor's note, a stay in hospital, told late. */
+  // 2.14.13 (เจ้าของร้าน 15 พ.ย. 2569 10:17): คำ Incentive และค่าจ้างบนป้ายการลา เฉพาะหน้าเจ้าของร้าน น้องและผู้อนุมัติเห็นแค่เหตุ
   function leaveFreeTag(l) {
-    if (l.waive) return html`<div class="s ok-text">${icon('check')} ไม่หัก Incentive · ${l.waive}</div>`;
+    if (l.waive) return html`<div class="s ok-text">${icon('check')} ${S.view === 'owner' ? 'ไม่หัก Incentive' : 'เหตุสุดวิสัย'} · ${l.waive}</div>`;
     var sick = l.type === sickType();
-    if (sick && l.hospital) return html`<div class="s ok-text">${icon('check')} นอนโรงพยาบาล · ไม่หัก Incentive</div>`;
+    if (sick && l.hospital) return html`<div class="s ok-text">${icon('check')} นอนโรงพยาบาล${S.view === 'owner' ? ' · ไม่หัก Incentive' : ''}</div>`;
     var tags = [];
-    if (sick && l.cert) tags.push(html`<div class="s ok-text">${icon('check')} ใบรับรองแพทย์ให้หยุด ${thRange(l.certFrom || l.from, l.certTo || l.to)} · ตั้งแต่วันที่ ${(B.rules && B.rules.sickNoteDay) || 3} ของการป่วย ไม่หัก Incentive</div>`);
+    if (sick && l.cert) tags.push(html`<div class="s ok-text">${icon('check')} ใบรับรองแพทย์ให้หยุด ${thRange(l.certFrom || l.from, l.certTo || l.to)}${S.view === 'owner' ? ' · ตั้งแต่วันที่ ' + ((B.rules && B.rules.sickNoteDay) || 3) + ' ของการป่วย ไม่หัก Incentive' : ''}</div>`);
     // (k-q1b ลาไม่รับค่าจ้างที่บอกหลังเวลาเข้างานไม่ได้ค่าจ้าง จึงไม่บอกว่าได้)
-    if (l.lateTold) tags.push(html`<div class="s">บอกหลังเวลาเข้างาน${(leaveTypeOf(l.type) || {}).paid === false ? '' : ' · ยังได้ค่าจ้าง'}</div>`);
-    if (l.ill) tags.push(html`<div class="s ok-text">${icon('check')} ไม่สบาย ใช้แทน${sickType()} · ไม่หัก Incentive</div>`);
+    if (l.lateTold) tags.push(html`<div class="s">บอกหลังเวลาเข้างาน${S.view !== 'owner' || (leaveTypeOf(l.type) || {}).paid === false ? '' : ' · ยังได้ค่าจ้าง'}</div>`);
+    if (l.ill) tags.push(html`<div class="s ok-text">${icon('check')} ไม่สบาย ใช้แทน${sickType()}${S.view === 'owner' ? ' · ไม่หัก Incentive' : ''}</div>`);
     return tags;
   }
   /** Asked on the day itself (or recorded after it): the team found out that day (the work day it was asked, as the payroll counts it). */
@@ -13374,16 +13381,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var recent = L.recent.length ? html`<details class="card flush"><summary class="item" style="cursor:pointer"><span class="grow t">การลาล่าสุด (${L.recent.length})</span></summary><div class="list">${L.recent.map(function (l) {
         var st = LEAVE_STATUS[l.status] || [l.status, ''];
         var mine = S.view !== 'owner' && S.home && S.home.me && l.empId === S.home.me.id;
-        return html`<div class="item"><div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${l.swap ? leaveWhen(l) : thRange(l.from, l.to) + ' · ' + l.days + ' วัน'}${l.decidedBy ? ' · ' + l.decidedBy : ''}</div>${leaveFreeTag(l)}</div><span class="pill ${st[1]}">${st[0]}</span>${l.status === 'approved' && !mine && !l.swap ? html`<button class="icon-btn" data-act="open-leave-free" data-id="${l.id}" aria-label="${l.type === sickType() ? 'ใบรับรองแพทย์ นอนโรงพยาบาล หรือไม่หัก Incentive' : 'ไม่หัก Incentive'}">${icon('note')}</button>` : ''}${l.status === 'approved' ? html`<button class="icon-btn" data-act="revoke-leave" data-id="${l.id}" aria-label="ยกเลิกการลา">${icon('x')}</button>` : ''}</div>`;
+        return html`<div class="item"><div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${l.swap ? leaveWhen(l) : thRange(l.from, l.to) + ' · ' + l.days + ' วัน'}${l.decidedBy ? ' · ' + l.decidedBy : ''}</div>${leaveFreeTag(l)}</div><span class="pill ${st[1]}">${st[0]}</span>${l.status === 'approved' && !mine && !l.swap ? html`<button class="icon-btn" data-act="open-leave-free" data-id="${l.id}" aria-label="${(l.type === sickType() ? 'ใบรับรองแพทย์ นอนโรงพยาบาล หรือ' : '') + (S.view === 'owner' ? 'ไม่หัก Incentive' : 'เหตุสุดวิสัย')}">${icon('note')}</button>` : ''}${l.status === 'approved' ? html`<button class="icon-btn" data-act="revoke-leave" data-id="${l.id}" aria-label="ยกเลิกการลา">${icon('x')}</button>` : ''}</div>`;
       })}</div></details>` : '';
     if (part === 'recent') return recent;
     return html`<div class="row between"><div class="hello" style="font-size:24px;margin:0">คำขอลา</div><button class="btn sm" data-act="open-leave-add">${icon('plus')} บันทึกการลา</button></div>
       <section class="card flush">${L.pending.length ? html`<div class="list">${L.pending.map(function (l) {
         var mine = S.view !== 'owner' && S.home && S.home.me && l.empId === S.home.me.id;
-        return html`<div class="item stacked">${avatar(empById(l.empId) || { name: l.name })}<div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${l.swap ? leaveWhen(l) + ' · วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง' : thRange(l.from, l.to) + ' · ' + l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}<div class="s">ขอเมื่อ ${whenAt(l.requestedAt)}${!l.swap && leaveAskedOnDay(l) && l.type !== sickType() && !l.ill ? ' · ขอในวันลา' : ''}</div>${leaveFreeTag(l)}</div>
+        return html`<div class="item stacked">${avatar(empById(l.empId) || { name: l.name })}<div class="grow"><div class="t">${l.name} · ${l.type}</div><div class="s">${l.swap ? leaveWhen(l) + (S.view === 'owner' ? ' · วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง' : '') : thRange(l.from, l.to) + ' · ' + l.days + ' วัน'}${l.reason ? ' · ' + l.reason : ''}</div>${l.warn ? html`<div class="s" style="color:var(--warn)">${l.warn}</div>` : ''}<div class="s">ขอเมื่อ ${whenAt(l.requestedAt)}${!l.swap && leaveAskedOnDay(l) && l.type !== sickType() && !l.ill ? ' · ขอในวันลา' : ''}</div>${leaveFreeTag(l)}</div>
           <div class="row" style="width:100%;justify-content:flex-end">${mine
             ? html`<span class="pill">รอเจ้าของร้านอนุมัติ</span>`
-            : html`${l.swap ? '' : html`<button class="btn sm tap" data-act="open-leave-free" data-id="${l.id}" data-decide="1">${l.type === sickType() ? 'ใบแพทย์ / ' : ''}ไม่หัก…</button>`}<button class="btn sm tap" data-act="decide-leave" data-id="${l.id}" data-ok="false">ไม่อนุมัติ</button><button class="btn sm tap" data-act="decide-leave" data-id="${l.id}" data-ok="true">อนุมัติ</button>`}</div></div>`;
+            : html`${l.swap ? '' : html`<button class="btn sm tap" data-act="open-leave-free" data-id="${l.id}" data-decide="1">${l.type === sickType() ? 'ใบแพทย์…' : S.view === 'owner' ? 'ไม่หัก…' : 'มีเหตุ…'}</button>`}<button class="btn sm tap" data-act="decide-leave" data-id="${l.id}" data-ok="false">ไม่อนุมัติ</button><button class="btn sm tap" data-act="decide-leave" data-id="${l.id}" data-ok="true">อนุมัติ</button>`}</div></div>`;
       })}</div>` : html`<div class="empty">ไม่มีคำขอรออนุมัติ</div>`}</section>
       ${part === 'wait' ? '' : recent}`;
   }
@@ -13400,10 +13407,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var sick = l.type === sickType();
     var r = B.rules || {};
     openSheet({ use: 'การลา · รายละเอียด', title: (decide ? 'อนุมัติ · ' : '') + l.name + ' · ' + l.type, body: html`<p class="muted small mt0">${thRange(l.from, l.to)} · ${l.days} วัน${l.requestedAt ? ' · ขอเมื่อ ' + whenAt(l.requestedAt) : ''}</p>
-      ${sick ? html`<label class="check"><input type="checkbox" id="lf-cert" data-change="lf-cert" ${l.cert ? 'checked' : ''}><span>เห็นใบรับรองแพทย์แล้ว<small>ตั้งแต่วันที่ ${r.sickNoteDay || 3} ของการป่วย วันที่ใบให้หยุดไม่หัก Incentive · ดูตัวจริงหรือรูปที่ส่งมา ไม่ต้องเก็บไว้ในแอป · ส่งหลังอนุมัติเงินเดือนแล้ว คืนในเดือนถัดไปถ้าภายใน ${r.noteLateDays || 3} วันหลังกลับมาทำงาน · ใบที่นับในเงินเดือนที่อนุมัติแล้ว เจ้าของร้านแก้ได้ ส่วนต่างปรับในเดือนถัดไป</small></span></label>
+      ${sick ? html`<label class="check"><input type="checkbox" id="lf-cert" data-change="lf-cert" ${l.cert ? 'checked' : ''}><span>เห็นใบรับรองแพทย์แล้ว<small>${S.view === 'owner' ? 'ตั้งแต่วันที่ ' + (r.sickNoteDay || 3) + ' ของการป่วย วันที่ใบให้หยุดไม่หัก Incentive · ' : ''}ดูตัวจริงหรือรูปที่ส่งมา ไม่ต้องเก็บไว้ในแอป${S.view === 'owner' ? ' · ส่งหลังอนุมัติเงินเดือนแล้ว คืนในเดือนถัดไปถ้าภายใน ' + (r.noteLateDays || 3) + ' วันหลังกลับมาทำงาน · ใบที่นับในเงินเดือนที่อนุมัติแล้ว เจ้าของร้านแก้ได้ ส่วนต่างปรับในเดือนถัดไป' : ''}</small></span></label>
         <div class="two" id="lf-days" ${l.cert ? '' : 'hidden'}><label class="field"><span>ใบให้หยุดตั้งแต่</span><input class="input" type="date" id="lf-from" value="${l.certFrom || l.from}"></label><label class="field"><span>ถึง</span><input class="input" type="date" id="lf-to" value="${l.certTo || l.to}"></label></div>
-        <label class="check"><input type="checkbox" id="lf-hospital" ${l.hospital ? 'checked' : ''}><span>นอนโรงพยาบาล<small>ไม่หัก Incentive ทั้งครั้ง · ดูใบรับรองแพทย์หรือเอกสารโรงพยาบาล</small></span></label>` : ''}
-      <label class="field"><span>เหตุสุดวิสัย ไม่หัก Incentive</span><input class="input" id="lf-waive" maxlength="200" value="${l.waive || ''}" placeholder="เหตุผลและหลักฐานที่เห็น เช่น อุบัติเหตุระหว่างทาง มีใบโรงพยาบาล"><small>เว้นว่าง = หักตามกติกา · ${l.name} คุณ และเจ้าของร้านเห็นเหตุผลนี้</small></label>`,
+        <label class="check"><input type="checkbox" id="lf-hospital" ${l.hospital ? 'checked' : ''}><span>นอนโรงพยาบาล<small>${S.view === 'owner' ? 'ไม่หัก Incentive ทั้งครั้ง · ' : ''}ดูใบรับรองแพทย์หรือเอกสารโรงพยาบาล</small></span></label>` : ''}
+      <label class="field"><span>เหตุสุดวิสัย${S.view === 'owner' ? ' ไม่หัก Incentive' : ''}</span><input class="input" id="lf-waive" maxlength="200" value="${l.waive || ''}" placeholder="เหตุผลและหลักฐานที่เห็น เช่น อุบัติเหตุระหว่างทาง มีใบโรงพยาบาล"><small>${S.view === 'owner' ? 'เว้นว่าง = หักตามกติกา · ' : ''}${l.name} คุณ และเจ้าของร้านเห็นเหตุผลนี้</small></label>`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="leave-free" data-id="${l.id}" data-decide="${decide ? '1' : ''}">${decide ? 'อนุมัติ' : 'บันทึก'}</button>` });
   }
   /** Show the leave list where it is: in the page, and in the owner's sheet when that is open. */
@@ -14248,7 +14255,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   /** The types of leave (the sheet "ประเภทการลา"): each to change, those the app does not know by name to delete, and one to add. */
   function leaveTypesBox() {
-    return html`<p class="small muted mt0">สิทธิ์ต่อปี ค่าจ้าง และการหัก Incentive ของการลาแต่ละแบบ พนักงานเห็นตอนขอลา · แก้แล้วมีผลกับการลาทั้งปีนี้และเงินเดือนรอบที่ยังไม่อนุมัติ</p>
+    return html`<p class="small muted mt0">สิทธิ์ต่อปี ค่าจ้าง และการหัก Incentive ของการลาแต่ละแบบ เห็นเฉพาะคุณ พนักงานเห็นแค่ชื่อประเภทลา · แก้แล้วมีผลกับการลาทั้งปีนี้และเงินเดือนรอบที่ยังไม่อนุมัติ · กติกา Incentive <button class="info-btn" data-act="open-rules" aria-label="กติกา Incentive">${icon('info')}</button></p>
       <div class="list">${(B.leaveTypes || []).map(function (t) {
         return html`<button class="item" style="padding-left:0;padding-right:0;width:100%;text-align:left" data-act="ltype-open" data-id="${t.type}">${icon('leave')}<div class="grow"><div class="t">${t.type}</div><div class="s">${leaveTypeLine(t)}</div></div>${icon('right')}</button>`;
       })}</div>
@@ -14686,7 +14693,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${''/* (2.14.2 ข้อ ค) รายชื่อคนใส่มงกุฎเดือนนี้ออก: ของตัวเองอยู่ในการ์ดเดือนนี้ข้างบน */}
       <p class="small muted">ใส่มงกุฎได้ทุกคนที่แต้มเฉลี่ยตั้งแต่ ${l.starRate || 2} แต้มต่อวันที่มาทำงาน (อย่างน้อย ${l.crownFrom} แต้ม) ไม่ต้องแข่งกับใคร ลาหรือวันหยุดไม่ทำให้เสียเปรียบ${l.crownOld ? ' · เดือนนี้คนที่ได้มากสุดได้ด้วยตามกติกาเดิม' : ''} · เริ่มนับใหม่ทุกเดือน · ไม่มีใครเห็นตัวเลขแต้มของคุณ</p>
       <h3 class="h3">ได้แต้มจาก</h3>
-      <p class="small muted lv-money" style="margin:0 0 8px">แต้มใช้ขึ้นระดับ แต่งตัว และเปิดกล่อง ไม่เกี่ยวกับเงินเดือนหรือ Incentive</p>
+      <p class="small muted lv-money" style="margin:0 0 8px">แต้มใช้ขึ้นระดับ แต่งตัว และเปิดกล่อง</p>
       <section class="card"><ul class="lv-rules">
         <li>${icon('note')}<span>บันทึกหน้างาน 1 เรื่อง<small>บันทึกได้ไม่จำกัด · เรื่องเดียวกันเพื่อนบันทึกด้วยได้ ได้แต้มเท่ากันทุกคน · ไม่ต้องรีบ ทำงานก่อน บันทึกหลังเลิกงานได้แต้มเท่ากัน · คนเดิมบันทึกเรื่องเดิมซ้ำในวันเดียวกันนับครั้งเดียว</small></span><b>+${r.note}</b></li>
         <li>${icon('tool')}<span>เรื่องที่ร้านกำลังแก้ แล้ววันนี้เจออีก<small>กด "วันนี้เจออีก" ในการ์ดบันทึกหน้างาน วันละครั้ง ไม่ต้องพิมพ์ใหม่ · ช่วยให้ร้านรู้ว่าวิธีแก้ได้ผลหรือยัง</small></span><b>+${r.again || 1}</b></li>
@@ -22787,7 +22794,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         loadOrderOwner();
       }, function () { it.saving = false; });
     },
-    'open-rules': function () { openRules(); },
+    'open-rules': function () { if (S.view === 'owner') openRules(); }, // 2.14.13 แผ่นกติกา Incentive เปิดได้เฉพาะเจ้าของร้าน
     'howto-open': function (el) { openHowTo(el); },
     'rain-history': function (el) { openRainHistory(el, el.dataset.key || ''); },
     'sudden-leave': function (el) { openSuddenLeave(el, +el.dataset.days || 0, el.dataset.who); },
