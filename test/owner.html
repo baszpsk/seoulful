@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.13","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"68333835aeeb"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.14","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"4aa7ea57488a"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -9306,7 +9306,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <p class="muted" style="margin:4px 0 16px">เลือกกะที่เข้าทำงานวันนี้</p>
         ${st.leaveToday ? html`<div class="hint warn" style="margin-bottom:12px">${icon('info')}<span>วันนี้มี${st.leaveToday.type}อยู่ — มาทำงานแล้วก็ลงเวลาได้เลย</span></div>` : ''}
         <div class="chips" style="flex-direction:column">${checking ? [0, 1, 2].map(function () { return html`<div class="skel chip-skel"></div>`; }) : shifts.map(function (s) {
-          return html`<button class="chip" aria-pressed="${k.shift === s.code}" data-act="k-shift" data-code="${s.code}"><b>${s.type} · เริ่ม ${s.start} น.${st.suggested === s.code ? html`<span class="tag">แนะนำ</span>` : ''}</b><span>${s.reason || (s.normalStart !== s.start ? 'ปกติ ' + s.normalStart : 'เลิก ' + s.end)}${s.ot ? ' · OT ' + hrs(s.ot) + ' ชม.' : ' · ไม่มี OT ในกะ'}</span></button>`;
+          return html`<button class="chip" aria-pressed="${k.shift === s.code}" data-act="k-shift" data-code="${s.code}"><b>${s.type} · เริ่ม ${s.start} น.${st.suggested === s.code ? html`<span class="tag">แนะนำ</span>` : ''}</b><span>${s.reason || (s.normalStart !== s.start ? 'ปกติ ' + s.normalStart : 'เลิก ' + s.end)}</span></button>`;
         })}</div>
         <button class="btn primary xl block" style="margin-top:18px" data-act="k-clock" ${k.busy || checking ? 'disabled' : ''}>${icon('clock')} ลงเวลาเข้างาน</button>
         <button class="btn ghost block" style="margin-top:8px" data-act="k-cancel">ยกเลิก</button>
@@ -9706,7 +9706,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   /**
    * โหมดฝน: น้องเห็นแค่ "อาจมีฝน เผื่อเวลาเดินทาง" ไม่บอกเวลาที่สายได้หรือครั้งที่ผ่อนผันเหลือ (2.13.3) ·
-   * จอในร้านแค่ขอบคุณ · ทีม (ผู้อนุมัติ) เห็นเวลาที่สายได้ของแต่ละกะ
+   * จอในร้านแค่ขอบคุณ · ทีม: เจ้าของร้านเห็นเวลาที่สายได้ของแต่ละกะ ผู้อนุมัติเห็นแค่เวลาเข้า (2.14.14 เจ้าของร้าน 15 พ.ย. 2569 16:54)
    */
   function rainBanner(r, mode) {
     if (!r || !r.starts || !r.starts.length) return '';
@@ -9717,8 +9717,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       head = r.forecast ? 'อาจมีฝนแถวร้าน' : 'ฝนตกแถวร้าน';
       sub = r.forecast ? 'ขอบคุณที่เผื่อเวลามาทำงานนะ' : 'ขอบคุณที่ฝ่าฝนมาทำงานนะ';
     } else if (mode === 'team') {
-      head = where + ' · ' + r.starts.map(function (x) { return 'กะ' + x.label + ' เข้า ' + x.start + ' สายได้ถึง ' + x.until + ' น.'; }).join(' · ');
-      sub = (r.forecast ? 'ระบบผ่อนผันให้ตามพยากรณ์ คนที่น่าจะเข้ากะได้แจ้งเตือนให้เผื่อเวลา' : r.auto ? 'ระบบตรวจพบฝน แจ้งน้องในแอปให้เผื่อเวลาเดินทางแล้ว' : 'บันทึกฝนตกแล้ว') + ' · ถ้าฝนหยุด หรือที่ร้านไม่ได้ตก กด "ฝนหยุดแล้ว" กะที่เข้าไปแล้วยังได้ผ่อนผันตามเดิม';
+      head = where + ' · ' + r.starts.map(function (x) { return 'กะ' + x.label + ' เข้า ' + x.start + (S.view === 'owner' ? ' สายได้ถึง ' + x.until : '') + ' น.'; }).join(' · ');
+      sub = S.view === 'owner' ? (r.forecast ? 'ระบบผ่อนผันให้ตามพยากรณ์ คนที่น่าจะเข้ากะได้แจ้งเตือนให้เผื่อเวลา' : r.auto ? 'ระบบตรวจพบฝนแถวร้าน' : 'บันทึกฝนตกแล้ว') + ' · ถ้าฝนหยุด หรือที่ร้านไม่ได้ตก กด "ฝนหยุดแล้ว" กะที่เข้าไปแล้วยังได้ผ่อนผันตามเดิม' : (r.forecast ? 'พยากรณ์บอกว่าอาจมีฝนช่วงเข้ากะ' : r.auto ? 'ระบบเห็นฝนแถวร้าน' : 'บันทึกฝนตกแล้ว') + ' · ถ้าฝนหยุด หรือที่ร้านไม่ได้ตก กด "ฝนหยุดแล้ว"';
     } else {
       // (น้องเห็นแค่ให้เผื่อเวลา ไม่บอกเวลาที่สายได้หรือครั้งที่ผ่อนผันเหลือ · 2.13.3)
       head = 'อาจมีฝน เผื่อเวลาเดินทาง';
@@ -9744,6 +9744,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (d.late === 'ok') return html`<span class="pill ok">${icon('check')} ตรงเวลา</span>`;
     return today ? '' : html`<span class="pill">สาย ${dur(d.lateMin)}</span>`;
   }
+  // 2.14.14 (k160 · เจ้าของร้าน 15 พ.ย. 2569 10:17 16:54): การ์ดวันนี้ไม่มีชั่วโมง OT และป้ายเวลาที่ได้ค่าจ้าง ชั่วโมงและยอดขึ้นในสลิปหลังเจ้าของร้านยืนยันจ่าย
   function todayCard() {
     var h = S.home;
     var st = h.status || {};
@@ -9752,7 +9753,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return html`<section class="card pad-lg">
         <div class="card-h"><span class="eyebrow">วันนี้ · ${thDate(st.workDate)}</span>${d.rain ? html`<span class="pill rain">${icon('rain')} ${d.rainForecast ? 'อาจมีฝน' : 'ฝนตก'}</span>` : ''}</div>
         <div class="row" style="align-items:flex-end;gap:14px"><div class="today-time">${String(d.in).slice(0, 5)}</div><div class="muted" style="padding-bottom:6px">เข้างาน · ${d.shiftName}</div></div>
-        <div class="state-line">${lateTag(d, true)}${d.ot ? html`<span class="pill gold">OT ${hrs(d.ot)} ชม.</span>` : d.otNote ? html`<span class="pill">${d.otNote}</span>` : ''}${d.startReason ? html`<span class="pill">เริ่ม ${d.startUsed} · ${d.startReason}</span>` : ''}${d.paidNote ? html`<span class="pill">${d.paidNote}</span>` : ''}</div>
+        <div class="state-line">${lateTag(d, true)}${!d.ot && d.otNote ? html`<span class="pill">${d.otNote}</span>` : ''}${d.startReason ? html`<span class="pill">เริ่ม ${d.startUsed} · ${d.startReason}</span>` : ''}</div>
         ${d.rain ? html`<p class="rain-thanks">${d.rainOnTime && rainPts() ? (d.rainForecast ? 'มาตรงเวลาวันที่อาจมีฝน' : 'มาตรงเวลาวันฝนตก') + ' ได้แต้มพิเศษ +' + rainPts() + ' ' : ''}${d.rainForecast ? 'ขอบคุณที่เผื่อเวลามาทำงานนะ' : 'ขอบคุณที่ฝ่าฝนมาทำงานนะ'}</p>` : ''}
       </section>`;
     }
@@ -9846,10 +9847,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     var shifts = st.shifts || [];
     // (k114) เจ้าของ 11 พ.ย. 2569 "ปุ่มให้กดเยอะเกินไป": กะที่เลือกไว้ (กะที่แนะนำ) บรรทัดเดียว · แตะ เปลี่ยนกะ แล้วเห็นทุกกะให้เลือก (2 แตะ)
+    // 2.14.14 (k160 · เจ้าของร้าน 15 พ.ย. 2569 16:54): ชิปกะบอกชื่อกะ เวลาเริ่ม เวลาเลิก ไม่บอกชั่วโมง OT (มือถือและจอในร้าน)
     var cur = !S.shiftOpen && shifts.filter(function (s) { return s.code === S.shift; })[0];
-    var chips = cur ? html`<div class="shift-one"><span class="shift-now"><b>กะ${cur.type}</b> · ${cur.start} น.${cur.ot ? ' · OT ' + hrs(cur.ot) + ' ชม.' : ''}</span>${shifts.length > 1 ? html`<button class="btn sm" data-act="shift-more">เปลี่ยนกะ</button>` : ''}</div>${shiftHint(st)}` : html`<p class="muted small" style="margin:2px 0 10px">เลือกกะที่เข้าทำงาน</p>
+    var chips = cur ? html`<div class="shift-one"><span class="shift-now"><b>กะ${cur.type}</b> · ${cur.start} น.</span>${shifts.length > 1 ? html`<button class="btn sm" data-act="shift-more">เปลี่ยนกะ</button>` : ''}</div>${shiftHint(st)}` : html`<p class="muted small" style="margin:2px 0 10px">เลือกกะที่เข้าทำงาน</p>
       <div class="chips fill">${shifts.map(function (s) {
-        return html`<button class="chip" aria-pressed="${S.shift === s.code}" data-act="pick-shift" data-code="${s.code}"><b>${s.type}${st.suggested === s.code ? html`<span class="tag">แนะนำ</span>` : ''}</b><span>${s.start} น.</span><span>${s.ot ? 'OT ' + hrs(s.ot) + ' ชม.' : '\u00a0'}</span></button>`;
+        return html`<button class="chip" aria-pressed="${S.shift === s.code}" data-act="pick-shift" data-code="${s.code}"><b>${s.type}${st.suggested === s.code ? html`<span class="tag">แนะนำ</span>` : ''}</b><span>${s.start} น.</span><span>${s.end ? 'เลิก ' + s.end + ' น.' : '\u00a0'}</span></button>`;
       })}</div>${shiftHint(st)}`;
     if (B.clock.poster) {
       // The QR reader is fetched while the person picks a shift, not after the photo.
@@ -10348,7 +10350,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var me = h.me;
     var l = h.level;
     var slip = (h.payslips || [])[0];
-    var vac = ((h.leave && h.leave.balance) || []).filter(function (b) { return b.vacation; })[0];
     var fbN = fbHome(h.feedback).count;
     var fbNew = fbNews(h.feedback).length;
     var shNote = shelfNote(l);
@@ -10366,7 +10367,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <section class="card flush"><div class="list">
         ${row('data-act="me-go" data-sub="history"', 'list', 'ประวัติการทำงาน', 'เวลาเข้า-ออก สาย OT รายเดือน')}
         ${slip ? duo('data-act="open-slip" data-key="' + String(slip.key).replace(/[^\w-]/g, '') + '"', 'slip', 'สลิปเงินเดือน', 'ล่าสุด ' + slip.month, 'เปิดสลิปล่าสุด ' + slip.month, html`<button class="btn sm me-side" data-act="me-go" data-sub="slips">ทุกเดือน ${icon('right')}</button>`) : row('data-act="me-go" data-sub="slips"', 'slip', 'สลิปเงินเดือน', 'ยังไม่มีสลิป')}
-        ${duo('data-act="me-go" data-sub="leave"', 'leave', 'วันลา', vac ? 'พักร้อนเหลือ ' + vac.remaining + ' วัน' : 'ดูวันลาที่เหลือ', 'วันลา ดูวันลาที่เหลือและปฏิทินของทีม', html`<button class="btn sm primary me-side" data-act="open-leave">${icon('plus')} ขอลา</button>`)}
+        ${duo('data-act="me-go" data-sub="leave"', 'leave', 'วันลา', 'ขอลาและดูปฏิทินของทีม', 'วันลา ขอลาและดูปฏิทินของทีม', html`<button class="btn sm primary me-side" data-act="open-leave">${icon('plus')} ขอลา</button>`)}
       </div></section>
       ${l ? dayFold(l.day) : ''}
       ${monthCard(h.month)}
@@ -12298,8 +12299,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <section class="card flush">${days.length ? days.map(function (d) {
         return html`<div class="day"><div class="d ${d.weekend ? 'we' : ''}"><b>${+d.date.slice(8, 10)}</b><span>${TH_DAYS[dowOf(d.date)]}</span></div>
           <div class="m"><b>${d.in ? String(d.in).slice(0, 5) : '-'}</b> <span class="s">น. · กะ${d.shiftType || d.shiftName} เริ่ม ${d.startUsed}</span>
-          <div class="tags">${lateTag(d)}${d.rain ? html`<span class="pill rain">${icon('rain')} ${d.rainForecast ? 'อาจมีฝน' : 'ฝนตก'}${d.rainOnTime && rainPts() ? ' · +' + rainPts() + ' แต้ม' : ''}</span>` : ''}${d.ot ? html`<span class="pill gold">OT ${hrs(d.ot)} ชม.</span>` : ''}</div>
-          ${d.startReason ? html`<div class="s">${d.startReason}</div>` : ''}${d.otNote ? html`<div class="s">${d.otNote}</div>` : ''}${d.paidNote ? html`<div class="s">${d.paidNote}</div>` : ''}</div></div>`;
+          <div class="tags">${lateTag(d)}${d.rain ? html`<span class="pill rain">${icon('rain')} ${d.rainForecast ? 'อาจมีฝน' : 'ฝนตก'}${d.rainOnTime && rainPts() ? ' · +' + rainPts() + ' แต้ม' : ''}</span>` : ''}${S.view === 'owner' && d.ot ? html`<span class="pill gold">OT ${hrs(d.ot)} ชม.</span>` : ''}</div>
+          ${d.startReason ? html`<div class="s">${d.startReason}</div>` : ''}${d.otNote ? html`<div class="s">${d.otNote}</div>` : ''}${S.view === 'owner' && d.paidNote ? html`<div class="s">${d.paidNote}</div>` : ''}</div></div>`;
       }) : html`<div class="empty">ยังไม่มีวันทำงานในเดือนนี้</div>`}</section>
       ${(m.entries || []).length ? html`<h3 class="h3">รายการในรอบนี้</h3><section class="card flush"><div class="list">${m.entries.map(function (x) {
         return html`<div class="item"><div class="grow"><div class="t">${x.type}${x.kind === 'permit' ? ' ' + x.time + ' น.' : ''}</div><div class="s">${thDate(x.date)}${why(x) ? ' · ' + why(x) : ''}${x.noOt ? ' · ไม่ได้ OT' : ''}</div></div>${x.kind !== 'permit' && x.unit !== 'บาท' ? html`<div class="r amt">${x.kind === 'ot' && x.qty > 0 ? '+' : ''}${x.unit === 'บาท' ? money(x.qty) : hrs(x.qty)} ${x.unit}</div>` : ''}</div>`;
@@ -12321,11 +12322,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return s.length ? ' · ' + s.join(' · ') : '';
   }
   // 2.14.2 (ข้อ ช): ช่องที่ 4 เป็นวันลา แทนยอด Incentive เป็นเงิน (ยอดเงินอยู่ในสลิปที่เปิดด้วย PIN)
+  // 2.14.14 (k160 · เจ้าของร้าน 15 พ.ย. 2569 10:17): ช่อง OT (ชม.) ขึ้นเฉพาะหน้าเจ้าของร้าน หน้าอื่นเหลือ 3 ช่องเต็มแถว
   function monthCardCompact(m) {
     var c = m.counts;
-    return html`<div class="stats">
+    return html`<div class="stats" style="${S.view === 'owner' ? '' : 'grid-template-columns:repeat(3,1fr)'}">
       <div class="stat"><b>${c.workDays}</b><span>วันทำงาน</span></div>
-      <div class="stat"><b>${hrs(m.ot.hours)}</b><span>OT (ชม.)</span></div>
+      ${S.view === 'owner' ? html`<div class="stat"><b>${hrs(m.ot.hours)}</b><span>OT (ชม.)</span></div>` : ''}
       <div class="stat ${c.onTime ? 'ok' : ''}"><b>${c.onTime != null ? c.onTime : Math.max(0, c.workDays - c.lateMinor - c.lateMajor)}</b><span>ตรงเวลา (วัน)</span></div>
       <div class="stat"><b>${c.leaveDays || 0}</b><span>ลา (วัน)</span></div></div>`;
   }
@@ -12355,6 +12357,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   // ---- leave --------------------------------------------------------------
   var LEAVE_STATUS = { pending: ['รออนุมัติ', ''], approved: ['อนุมัติแล้ว', 'ok'], rejected: ['อนุมัติไม่ได้', ''], cancelled: ['ยกเลิก', ''] };
+  // 2.14.14 (k160 · เจ้าของร้าน 15 พ.ย. 2569 10:17 16:54): กล่องตัวเลขวันลาขึ้นเฉพาะหน้าเจ้าของร้าน น้องเห็นรายการลาของตัวเอง ปฏิทินทีม และปุ่มขอลา · วันหยุดตามประเพณีของร้านคงเดิม
   function leaveView() {
     var L = S.home.leave;
     // (k100a) คำขอของฉันขึ้นใต้หัว เห็นทันทีว่ารออนุมัติไหม แล้วสิทธิ์ ร้านปิด ปฏิทินของทีม · ไม่มีคำขอ บรรทัดเดิมอยู่ท้าย · คำทุกคำคงเดิม
@@ -12370,15 +12373,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="row between"><div class="hello" style="font-size:24px;margin:0">วันลา ${+workDate().slice(0, 4) + 543}</div><button class="btn primary" data-act="open-leave">${icon('plus')} ขอลา</button></div>
       ${noApproverCard(S.home.welcome)}
       ${asked ? mine : ''}
-      <div class="stats" style="grid-template-columns:repeat(2,1fr)">${(L.balance || []).filter(function (b) { return b.paid || b.used; }).map(function (b) {
+      ${S.view === 'owner' ? html`<div class="stats" style="grid-template-columns:repeat(2,1fr)">${(L.balance || []).filter(function (b) { return b.paid || b.used; }).map(function (b) {
         var body = b.paid
           ? html`<b style="font-size:24px">${b.remaining}<small class="muted" style="font-size:14px"> / ${b.quota} วัน</small></b><span>ใช้ไป ${b.used}${b.pending ? ' · รออนุมัติ ' + b.pending : ''}${b.eligible ? '' : ' · ยังใช้ไม่ได้'}${b.cashed ? ' · ที่เหลือคิดเป็นเงินแล้ว' : ''}</span>`
           : html`<b style="font-size:24px">${b.used}<small class="muted" style="font-size:14px"> วัน</small></b><span>ใช้ไปปีนี้</span>`;
         return b.vacation
           ? html`<button class="stat" style="text-align:left;padding:14px" data-act="vacation-info"><span>${b.type} ${icon('info')}</span>${body}</button>`
           : html`<div class="stat" style="text-align:left;padding:14px"><span>${b.type}</span>${body}</div>`;
-      })}</div>
-      <div class="hint">${icon('cal')}<span>${S.home.me && S.home.me.dayOff != null ? 'วันหยุดประจำ: วัน' + TH_DAYS_LONG[S.home.me.dayOff] + ' · ' : ''}ร้านปิด ${fixedHolidayText()} ไม่ต้องลา · แตะลาพักร้อนเพื่อดูว่าได้กี่วัน</span></div>
+      })}</div>` : ''}
+      <div class="hint">${icon('cal')}<span>${S.home.me && S.home.me.dayOff != null ? 'วันหยุดประจำ: วัน' + TH_DAYS_LONG[S.home.me.dayOff] + ' · ' : ''}ร้านปิด ${fixedHolidayText()} ไม่ต้องลา${S.view === 'owner' ? ' · แตะลาพักร้อนเพื่อดูว่าได้กี่วัน' : ''}</span></div>
       <h3 class="h3">ปฏิทินของทีม</h3>
       ${calCard(S.cal || L.calendar)}
       ${asked ? '' : mine}
@@ -12416,7 +12419,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <label class="check" id="lv-waive-row"><input type="checkbox" id="lv-waive-on" data-change="lv-cost"><span>เหตุสุดวิสัย${S.view === 'owner' ? ' ไม่หัก Incentive' : ''}<small>เช่น อุบัติเหตุ น้ำท่วมบ้าน คนในบ้านป่วยหนัก · ดูหลักฐานก่อน</small></span></label>
         <input class="input" id="lv-waive" maxlength="200" placeholder="เหตุผลและหลักฐานที่เห็น (คุณและเจ้าของร้านเห็น)" hidden style="margin-top:8px">` : ''}
       <label class="field"><span>เหตุผล</span><textarea class="input" id="lv-reason" maxlength="300" placeholder="เช่น กลับบ้านต่างจังหวัด, ไม่สบาย"></textarea></label>
-      ${opts.pickEmp ? '' : html`<div class="hint" id="lv-vac" ${sick && vacationLeft() > 0 ? '' : 'hidden'} style="margin-top:12px">${icon('heart')}<span class="grow">${vacationType()}เหลือ ${vacationLeft()} วัน ใช้แทน${sickType()}ได้</span><button type="button" class="btn sm" data-act="lv-use-vac">ใช้วันพักร้อนแทน</button></div>`}
       <div class="hint" id="lv-cost" ${S.view === 'owner' ? '' : 'hidden'} style="margin-top:12px">${icon('info')}<span>${S.view !== 'owner' ? '' : leaveCostText(types[0], opts.from || today, opts.to || today, today, { runs: opts.pickEmp ? [] : (S.home && S.home.leave && S.home.leave.runs) || [] })}</span></div>`;
   }
   function sickType() { return (B.rules && B.rules.sickType) || 'ลาป่วย'; }
@@ -12572,7 +12574,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var lab = $('#lv-from-label');
     if (lab) lab.textContent = swap ? 'หยุดแทนวันที่' : 'ตั้งแต่';
     if (!swap) return false;
-    ['#lv-ill-row', '#lv-told-row', '#lv-cert-row', '#lv-vac', '#lv-waive'].forEach(function (id) { show(id, false); });
+    ['#lv-ill-row', '#lv-told-row', '#lv-cert-row', '#lv-waive'].forEach(function (id) { show(id, false); });
     var dayOff = lvDayOff();
     var workIn = $('#lv-work');
     if (dayOff != null && !workIn.value) {
@@ -12642,8 +12644,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var ask = !!(toldRow && !toldRow.hidden && !told && t);
     lvCostPut(c, ask ? 'เลือกก่อนว่าพนักงานบอกเมื่อไร แล้วจะขึ้นยอดหักและค่าจ้างของแต่ละวัน' : leaveCostText(t, from, to, asked, o), '');
     lvCostAsk(ask ? null : t);
-    var vac = $('#lv-vac');
-    if (vac) vac.hidden = !(sick && vacationLeft() > 0);
+    // 2.14.14 (k160 · เจ้าของร้าน 15 พ.ย. 2569 16:54): ฟอร์มลาไม่บอกวันพักร้อนที่เหลือ ไม่มีกล่องใช้วันพักร้อนแทน (เลือกประเภทลาพักร้อนเองได้ตามเดิม)
   }
   // k-q1c ยอดหักและค่าจ้างในกล่องล่างสุดจากผลคิดเงินจริงของวันนั้น: หลังบ้านคิดแบบเดียวกับตอนส่ง ไม่บันทึก (leaveCost · leaveAddCost) ·
   // ข้อความที่หน้าแอปคิดขึ้นก่อน แล้วแทนด้วยของหลังบ้านเมื่อได้คำตอบ เช่น ลากิจเกินวันที่ได้ค่าจ้าง · ถามไม่ได้ (ยังเลือกไม่ครบ เน็ตหลุด) คงข้อความเดิม
@@ -12735,7 +12736,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     openSheet({ use: 'วันลา', title: b.type + ' ' + (+today.slice(0, 4) + 543), body: html`<div class="stack">
         ${S.view === 'owner' ? html`<div class="item"><div class="grow"><div class="t">พักร้อนประจำปี</div><div class="s">${b.annual ? (b.annualOn ? 'ทำงานครบ ' + b.annualYears + ' ปี วันที่ ' + thShort(b.annualOn) + ' ใช้ได้ตั้งแต่วันนั้น' : 'ทำงานครบ ' + b.annualYears + ' ปีแล้ว') : b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ได้เมื่อทำงานครบ ' + b.annualYears + ' ปี'}</div></div><div class="r amt">${b.annual} วัน</div></div>` : ''}
         ${S.view === 'owner' ? html`<div class="item"><div class="grow"><div class="t">วันหยุดตามประเพณี เลือกวันหยุดเอง</div><div class="s">${b.setMissing ? 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน' : 'ได้ 1 วันต่อวันหยุดตามประเพณี 1 วันที่ร้านเปิดทำการ'}</div><div class="s">ลาพักร้อนแต่ละวัน นับเป็นวันหยุดตามประเพณีที่เหลือก่อน หมดแล้วค่อยนับเป็นพักร้อนประจำปี</div></div><div class="r amt">${b.credits.length} วัน</div></div>${(b.offCredits || []).length ? html`<div class="item"><div class="grow"><div class="t">ร้านปิดตรงวันหยุดประจำ</div><div class="s">ใช้วันหยุดแล้ว ได้พักร้อนเพิ่มวันละ 1 วัน</div></div><div class="r amt">${b.offCredits.length} วัน</div></div>` : ''}` : ''}
-      <div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>${b.remaining}</b><span>วันที่เหลือ</span></div></div>
+      ${S.view === 'owner' ? html`<div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>${b.remaining}</b><span>วันที่เหลือ</span></div></div>` : ''}
       ${b.noStart || b.setMissing ? html`<div class="hint">${icon('info')}<span>${b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน'}</span></div>` : ''}
       <div class="hint">${icon('cal')}<span><b>ร้านปิดทุกปี</b> ${fixedHolidayText()} — ไม่ต้องลา</span></div>
     </div>`, foot: html`<button class="btn primary" data-act="sheet-close">ปิด</button>` });
@@ -13173,7 +13174,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="อนุญาตเข้างานช้า">${icon('clock')} อนุญาตเข้างานช้า</button>
       <button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="ขาดงาน">${icon('x')} ขาดงาน</button>
       ${S.view === 'owner' ? html`<button class="menu-item" data-act="open-entry" data-emp="${id}" data-type="หัก Incentive">${icon('alert')} หัก Incentive</button>` : ''}
-      ${d ? (d.rain && d.rainShop ? rainShopHint(d, r.name) : html`<button class="menu-item" data-act="rain-toggle" data-id="${d.id}" data-emp="${id}" data-on="${!d.rain}">${icon('rain')} ${d.rain ? 'ยกเลิกฝนตก' : 'ยืนยันฝนตก (ผ่อนผันสาย)'}</button>`) : ''}
+      ${d ? (d.rain && d.rainShop ? rainShopHint(d, r.name) : html`<button class="menu-item" data-act="rain-toggle" data-id="${d.id}" data-emp="${id}" data-on="${!d.rain}">${icon('rain')} ${d.rain ? 'ยกเลิกฝนตก' : S.view === 'owner' ? 'ยืนยันฝนตก (ผ่อนผันสาย)' : 'ยืนยันฝนตก'}</button>`) : ''}
       ${pics}
       </details>
       ${d ? html`<button class="menu-item danger" data-act="delete-clock" data-id="${d.id}" data-emp="${id}">${icon('trash')} ลบเวลาวันนี้</button>` : ''}
@@ -13270,7 +13271,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return v;
   }
   function openRainForm() {
-    openSheet({ title: 'ฝนตก — ผ่อนผันสาย', body: html`<p class="muted small mt0">ทุกคนที่กะเข้างานในช่วงนี้ได้ผ่อนผันสายถึง ${(B.rules || {}).rainGrace} นาที เช่น ใส่ 10:00–11:00 = กะเช้า 10:30 สายได้ถึง 10:50 · เว้นว่าง = ทุกกะของวันนั้น · ใช้ปุ่มนี้เมื่อฝนตก</p>
+    openSheet({ title: S.view === 'owner' ? 'ฝนตก — ผ่อนผันสาย' : 'ฝนตก', body: html`<p class="muted small mt0">${S.view === 'owner' ? 'ทุกคนที่กะเข้างานในช่วงนี้ได้ผ่อนผันสายถึง ' + (B.rules || {}).rainGrace + ' นาที เช่น ใส่ 10:00–11:00 = กะเช้า 10:30 สายได้ถึง 10:50' : 'ใส่ช่วงเวลาที่ฝนตก เช่น 10:00–11:00'} · เว้นว่าง = ทุกกะของวันนั้น · ใช้ปุ่มนี้เมื่อฝนตก</p>
       <label class="field"><span>วันที่</span><input class="input" type="date" id="rn-date" value="${workDate()}"></label>
       <div class="two"><label class="field"><span>กะที่เข้าตั้งแต่ (ไม่บังคับ)</span><input class="input" type="time" id="rn-from"></label><label class="field"><span>ถึง</span><input class="input" type="time" id="rn-to"></label></div>
       <label class="field"><span>หลักฐาน / เหตุผล</span><input class="input" id="rn-reason" placeholder="เช่น ฝนตกหนัก มีรูปในกลุ่ม LINE"></label>`,
@@ -13296,7 +13297,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function clockTellText(empId, del) {
     var e = empById(empId) || {};
     var self = S.view !== 'owner' && S.home && S.home.me && S.home.me.id === empId;
-    var who = [self ? '' : e.name || 'คนนั้น', S.view === 'owner' ? '' : 'เจ้าของร้าน'].filter(Boolean);
+    // 2.14.14 (เจ้าของร้าน 15 พ.ย. 2569 16:54): ยืนยันฝนตกไม่แจ้งคนนั้น บอกแค่ว่าแจ้งเจ้าของร้าน
+    var who = [self || del === 'rain' ? '' : e.name || 'คนนั้น', S.view === 'owner' ? '' : 'เจ้าของร้าน'].filter(Boolean);
     var what = del === 'permit' ? 'เวลาที่อนุญาต' : del === 'rain' ? 'เวลาเข้างาน' : del ? 'เวลาที่ลบ' : 'เวลาเดิม เวลาใหม่';
     return who.length ? 'แอปแจ้ง' + who.join('และ') + 'ทุกครั้ง พร้อม' + what + ' และเหตุผล' : '';
   }
@@ -13313,7 +13315,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var e = empById(empId) || {};
     var r = B.rules || {};
     var verb = on ? 'ยืนยันฝนตก' : 'ยกเลิกฝนตก';
-    openSheet({ use: verb, title: verb + (e.name ? ' · ' + e.name : ''), body: html`<p class="muted small mt0">${on ? 'การลงเวลานี้สายได้ถึง ' + r.rainGrace + ' นาที (วันปกติ ' + r.grace + ' นาที) · ใช้เมื่อฝนตกจริงแต่แอปไม่เห็น' : 'การลงเวลานี้กลับไปสายได้ ' + r.grace + ' นาทีเหมือนวันปกติ'}</p>
+    openSheet({ use: verb, title: verb + (e.name ? ' · ' + e.name : ''), body: html`<p class="muted small mt0">${S.view === 'owner' ? (on ? 'การลงเวลานี้สายได้ถึง ' + r.rainGrace + ' นาที (วันปกติ ' + r.grace + ' นาที) · ใช้เมื่อฝนตกจริงแต่แอปไม่เห็น' : 'การลงเวลานี้กลับไปสายได้ ' + r.grace + ' นาทีเหมือนวันปกติ') : on ? 'ใช้เมื่อฝนตกจริงแต่แอปไม่เห็น' : 'ยกเลิกฝนตกของการลงเวลานี้'}</p>
       <label class="field"><span>เหตุผล</span><input class="input" id="rs-reason" maxlength="200" placeholder="${on ? 'เช่น ฝนตกหนักระหว่างทาง มีรูปในกลุ่ม LINE' : 'เช่น กดผิดคน'}"></label>
       <p class="muted small clock-tell" style="margin:-4px 0 0">${clockTellText(empId, 'rain')}</p>`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="submit-rain-set" data-id="${recId}" data-on="${on}">${verb}</button>` });
@@ -13324,7 +13326,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    * it the same way (rainShopDrop_).
    */
   function rainShopHint(d, name) {
-    return html`<div class="hint" style="margin:4px 0 8px">${icon('rain')}<span>อยู่ในช่วงฝนตกของทั้งร้าน (${d.rainShop}) ทุกคนที่เข้ากะช่วงนี้สายได้ ${d.grace} นาทีเท่ากัน จึงยกเลิกฝนตกเฉพาะ${name}ไม่ได้ · ${S.view === 'owner' ? 'ถ้าฝนไม่ได้ตก ลบทั้งช่วงที่ รายการเดือนนี้ (ด้านล่าง) › ทุกคน · ฝนตก' : 'ถ้าฝนไม่ได้ตก บอกเจ้าของร้านให้ลบทั้งช่วง'}</span></div>`;
+    return html`<div class="hint" style="margin:4px 0 8px">${icon('rain')}<span>อยู่ในช่วงฝนตกของทั้งร้าน (${d.rainShop}) ${S.view === 'owner' ? 'ทุกคนที่เข้ากะช่วงนี้สายได้ ' + d.grace + ' นาทีเท่ากัน ' : ''}จึงยกเลิกฝนตกเฉพาะ${name}ไม่ได้ · ${S.view === 'owner' ? 'ถ้าฝนไม่ได้ตก ลบทั้งช่วงที่ รายการเดือนนี้ (ด้านล่าง) › ทุกคน · ฝนตก' : 'ถ้าฝนไม่ได้ตก บอกเจ้าของร้านให้ลบทั้งช่วง'}</span></div>`;
   }
   /** Taking back a later start allowed: why, for the owner and the person told (2.12.8). */
   function permitDeleteForm(entryId, empId) {
@@ -14148,7 +14150,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // ---- settings -----------------------------------------------------------
   var SETTING_GROUPS = [
     ['บริษัท (หัวสลิป)', ['brandName', 'companyTh', 'companyEn', 'branch', 'taxId', 'address']],
-    ['การลงเวลา', ['clockMode', 'phoneQr', 'qrScanInApp', 'qrLive', 'screenCam', 'phoneLock', 'shiftCheck', 'approverSelf', 'otAsk', 'kioskPin', 'phoneSelfie', 'posterSelfie', 'kioskPhoto', 'radius']],
+    ['การลงเวลา', ['clockMode', 'phoneQr', 'qrScanInApp', 'qrLive', 'screenCam', 'phoneLock', 'shiftCheck', 'approverSelf', 'kioskPin', 'phoneSelfie', 'posterSelfie', 'kioskPhoto', 'radius']],
     ['กะงาน', [], shiftsBox],
     ['มาสายและฝนตก', ['lateGraceMin', 'lateAllowed', 'lateCut', 'lateTimeFrom', 'rainGraceMin', 'rainLateMin', 'rainMinMm', 'rainLookbackMin', 'rainSoonChance', 'weatherKey']],
     ['ลาและขาดงาน', ['absentCut', 'noShowCut', 'suddenLeaveCut', 'suddenFrom']],
@@ -20019,7 +20021,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <main class="wrap page"><div class="stack home-stack push-lock">
         ${!st.checkedIn && !st.leaveToday && !st.closedToday ? rainBanner(h.rain, 'home') : ''}
         ${todayCard()}
-        <section class="card pad-lg"><b>เปิดแจ้งเตือนก่อนใช้แอป</b><p class="small" style="margin:6px 0 0">เรื่องจากร้าน วันลาที่อนุมัติ และฝนตกแถวร้าน มาทางแจ้งเตือนของแอป เปิดครั้งเดียว แล้วใช้แอปได้ทุกอย่าง · ระหว่างนี้ลงเวลาได้ตามปกติ</p></section>
+        <section class="card pad-lg"><b>เปิดแจ้งเตือนก่อนใช้แอป</b><p class="small" style="margin:6px 0 0">เรื่องจากร้านและวันลาที่อนุมัติ มาทางแจ้งเตือนของแอป เปิดครั้งเดียว แล้วใช้แอปได้ทุกอย่าง · ระหว่างนี้ลงเวลาได้ตามปกติ</p></section>
         ${card}
         ${isApprover() ? html`<button class="btn block" data-act="tab" data-tab="team">${icon('team')} ลงเวลาแทนน้อง (หน้าทีม)</button>` : ''}
         <button class="btn block" data-act="logout-staff">ออกจากระบบในเครื่องนี้</button>
@@ -23425,7 +23427,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     'submit-rain': function (el) {
       var from = $('#rn-from').value, to = $('#rn-to').value;
-      run(el, call('entrySave', { type: 'ฝนตก (ผ่อนผันสาย)', date: $('#rn-date').value, time: from && to ? from + '-' + to : '', reason: $('#rn-reason').value }, actorAuth())).then(function () { closeSheet(); toast('บันทึกฝนตกแล้ว คนที่มาช่วงนั้นได้ผ่อนผันสาย', 'ok'); loadTeam(); }, function () {});
+      run(el, call('entrySave', { type: 'ฝนตก (ผ่อนผันสาย)', date: $('#rn-date').value, time: from && to ? from + '-' + to : '', reason: $('#rn-reason').value }, actorAuth())).then(function () { closeSheet(); toast(S.view === 'owner' ? 'บันทึกฝนตกแล้ว คนที่มาช่วงนั้นได้ผ่อนผันสาย' : 'บันทึกฝนตกแล้ว', 'ok'); loadTeam(); }, function () {});
     },
     'open-fix': function (el) { closeSheet(); setTimeout(function () { fixForm(el.dataset.id); }, 230); },
     'submit-fix': function (el) {
