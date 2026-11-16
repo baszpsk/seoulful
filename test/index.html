@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.14","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"065c96ae80a3"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.15","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"68571cac2554"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -1328,7 +1328,8 @@ html.i3-ui-coin .coin::before { content: none; }
 .shop-top.stage .shop-name { margin: 0; font-size: 20px; }
 .shop-top.stage .shop-chips { grid-column: 1 / -1; margin-top: 14px; }
 @media (max-height: 700px) { .shop-top.stage .shop-char { width: 78px; height: 146px; } }
-.shop-chips { position: relative; display: flex; gap: 6px; margin: 10px -2px 0; padding: 2px; overflow-x: auto; scrollbar-width: none; }
+/* (k162f) ชิปหมวดขึ้นบรรทัดใหม่เมื่อไม่พอ เห็นครบทุกหมวดบนจอแคบ ไม่ต้องเลื่อนข้างหา */
+.shop-chips { position: relative; display: flex; flex-wrap: wrap; gap: 6px; margin: 10px -2px 0; padding: 2px; }
 .shop-chips::-webkit-scrollbar { display: none; }
 .shop-chips .chip { flex: none; padding: 7px 14px; font-size: 13.5px; font-weight: 600; }
 /* กล่องร้าน: ป้ายมุมซ้ายบนและกุญแจมุมขวาบนลงมาถึง 28px จากขอบบน รูปตัวอย่างทุกแบบเริ่มส่วนที่วาดใต้ 30px
@@ -1487,6 +1488,9 @@ html.i3-ui-coin .coin::before { content: none; }
 .char-svg.go.mv-m-tease .cp-armL { animation-name: mt-armL; }
 .char-svg.go.mv-m-tease .cp-armR { animation-name: mt-armR; }
 .char-svg.go.mv-m-tease .fx1 { animation-name: fx-bubble; }
+/* k162 ขา F3: ตอนแลบลิ้น ตัวโยกรอบเท้า คำพูด แบร่~ บนหัวเลยเหวี่ยงเลยกรอบการ์ดเพื่อน (จอ 360 ขวาเกิน 6 พิกเซล) · กลุ่มคำพูดหมุนกลับเท่ากันทุกจังหวะ (คีย์เฟรม จุดหมุน และจังหวะเร่งเดียวกับ mt-all) คำพูดจึงลอยอยู่ที่เดิมเหนือหัว ท่าตัวละครและคำคงเดิม */
+.char-svg.go.mv-m-tease .cp-fx { animation-name: mt-all-fx; transform-origin: 60px 188px; }
+@keyframes mt-all-fx { 0%, 100% { transform: none; } 22% { transform: rotate(5deg); } 40% { transform: rotate(-4deg); } 58% { transform: rotate(5deg); } 76% { transform: rotate(-3deg); } 88% { transform: none; } }
 @keyframes mt-all { 0%, 100% { transform: none; } 22% { transform: rotate(-5deg); } 40% { transform: rotate(4deg); } 58% { transform: rotate(-5deg); } 76% { transform: rotate(3deg); } 88% { transform: none; } }
 @keyframes mt-head { 0%, 100% { transform: none; } 14%, 84% { transform: rotate(-8deg); } }
 @keyframes mt-armL { 0%, 100% { transform: none; } 14% { transform: rotate(118deg); } 30% { transform: rotate(104deg); } 46% { transform: rotate(120deg); } 62% { transform: rotate(104deg); } 78% { transform: rotate(118deg); } 90% { transform: none; } }
@@ -1647,7 +1651,20 @@ html.i3-ui-coin .coin::before { content: none; }
 .char-svg.go.mv-m-balloon .cp-armR { animation-name: mbl-armR; }
 .char-svg.go.mv-m-balloon .fx1 { animation-name: fx-string; }
 .char-svg.go.mv-m-balloon .fx2 { animation-name: fx-puff; transform-origin: 60px 180px; }
-.char-svg.go.mv-m-balloon .fx3 { animation-name: fx-bubble2; }
+.char-svg.go.mv-m-balloon .fx3 { animation-name: fx-bubble2s; transform-origin: 60px 188px; }
+/* k162 ขา F2: ตอนลูกโป่งแฟบ ตัวหมุนรอบเท้า คำพูด ฟิ้ววว~ บนหัวเลยเหวี่ยงเลยกรอบการ์ดเพื่อน (จอ 360 ขวาเกิน 52 พิกเซล) · คำพูดหมุนกลับเท่ากันทุกจังหวะของท่า จึงลอยอยู่ที่เดิมเหนือหัว ท่าตัวละครและคำคงเดิม */
+@keyframes fx-bubble2s {
+  0%, 68% { opacity: 0; }
+  72%, 88% { opacity: 1; }
+  94%, 100% { opacity: 0; }
+  0% { transform: scale(1, 1) rotate(0deg) translate(0px, 0px) translateY(6px); }
+  68% { transform: scale(.8197, .8929) rotate(3deg) translate(0px, 24px) translateY(6px); }
+  72% { transform: scale(.9091, .9524) rotate(-20deg) translate(-8px, 22px) translateY(0px); }
+  76% { transform: scale(.9804, .9804) rotate(24deg) translate(8px, 16px) translateY(0px); }
+  80% { transform: scale(1, 1) rotate(-16deg) translate(-6px, 8px) translateY(0px); }
+  86% { transform: scale(.9434, 1.087) rotate(0deg) translate(0px, 0px) translateY(0px); }
+  92%, 100% { transform: scale(1, 1) rotate(0deg) translate(0px, 0px) translateY(0px); }
+}
 @keyframes mbl-all { 0%, 100% { transform: none; } 12% { transform: scale(1.06, .95); } 26% { transform: scale(1.26, 1.14); } 34% { transform: translateY(-8px) scale(1.26, 1.14); } 46% { transform: translateY(-24px) rotate(-5deg) scale(1.26, 1.14); } 58% { transform: translateY(-28px) rotate(5deg) scale(1.26, 1.14); } 68% { transform: translateY(-24px) rotate(-3deg) scale(1.22, 1.12); } 72% { transform: translate(8px, -22px) rotate(20deg) scale(1.1, 1.05); } 76% { transform: translate(-8px, -16px) rotate(-24deg) scale(1.02); } 80% { transform: translate(6px, -8px) rotate(16deg); } 86% { transform: scale(1.06, .92); } 92% { transform: none; } }
 @keyframes mbl-shadow { 0%, 26%, 92%, 100% { transform: none; opacity: 1; } 46%, 68% { transform: scale(.5); opacity: .4; } 86% { transform: scale(1.1); opacity: 1; } }
 @keyframes mbl-armL { 0%, 100% { transform: none; } 26%, 68% { transform: rotate(70deg); } 76% { transform: rotate(120deg); } 86% { transform: none; } }
@@ -3120,6 +3137,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 #sheet-root.closing .scrim { transition-duration: .25s; }
 .sheet.swap .sheet-h h2, .sheet.swap .sheet-b, .sheet.swap .sheet-f { animation: sign-in .22s ease both; }
 #sheet-root.closing .sheet { transition: transform .28s cubic-bezier(.4, 0, .9, .5); }
+/* (k162f) แผ่นที่สั่งปิดแล้วและกำลังเลื่อนลงไม่รับแตะ: แตะปุ่มหรือแท็บข้างหลังได้ทันที ไม่โดนแผ่นที่ยังเลื่อนอยู่ */
+#sheet-root.closing .scrim, #sheet-root.closing .sheet { pointer-events: none; }
+/* (k162f) ของตกแต่งที่ยื่นเลยขอบจอ เช่นแสงรอบวงรูปที่หมุน ไม่ทำให้หน้าเลื่อนข้างได้: ตัดเฉพาะแนวนอนที่ขอบจอ แนวตั้งและแถบติดขอบคงเดิม */
+#app { overflow-x: clip; }
 .sheet .grab { flex: none; width: 38px; height: 5px; margin: 8px auto 0; border-radius: 3px; background: var(--line-strong); }
 .sheet .grab, .sheet-h { touch-action: none; cursor: grab; }
 .sheet-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 12px 8px 22px; }
@@ -7339,6 +7360,31 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     nextFrame(function () { nextFrame(arm); });
   }
   var sheetState = null;
+  // (k162f) ปุ่มย้อนกลับของเครื่อง (และปัดย้อนกลับ) ปิดแผ่นที่เปิดอยู่แทนการออกจากแอป: แผ่นขึ้นจดหนึ่งก้าวในประวัติ
+  // ปิดแผ่นด้วยปุ่มหรือแตะพื้นหลัง ก้าวนั้นถอยคืนเอง · แผ่นเปลี่ยนเนื้อหาหรือปิดแล้วเปิดแผ่นใหม่ทันที ใช้ก้าวเดิม
+  var sheetHist = { on: false, skip: 0, t: 0 };
+  function sheetHistPush() {
+    if (sheetHist.on) return;
+    // (k162 ขา D3) ถอยคืนตอนปิดแผ่นไม่คืนตำแหน่งเลื่อนที่จดไว้ตอนเปิดแผ่น: แอปเลื่อนหน้าระหว่างแผ่นเปิด (เช่น เปิดแจ้งเตือนจากหน้าสอนแล้วหน้าแรกเริ่มบนสุด) ปิดแผ่นแล้วหน้าไม่กระโดดกลับตำแหน่งเดิม
+    try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) { /* เลื่อนตามเดิม */ }
+    try { history.pushState({ sfSheet: 1 }, ''); sheetHist.on = true; } catch (e) { /* แผ่นเปิดได้ตามเดิม */ }
+  }
+  function sheetHistPop() {
+    if (!sheetHist.on) return;
+    clearTimeout(sheetHist.t);
+    sheetHist.t = setTimeout(function () {
+      if (!sheetHist.on || sheetState) return;
+      sheetHist.on = false;
+      sheetHist.skip++;
+      try { history.back(); } catch (e) { sheetHist.skip--; }
+    }, 0);
+  }
+  window.addEventListener('popstate', function () {
+    if (sheetHist.skip) { sheetHist.skip--; return; }
+    if (!sheetHist.on) return;
+    sheetHist.on = false;
+    if (sheetState || $('#sheet-root.open')) closeSheet();
+  });
   function openSheet(o) {
     odBlurField(); // 2.13.27 k-tap: แป้นพิมพ์ปิดก่อน ชั้นคลุมได้ความสูงจอเต็ม
     sheetState = o;
@@ -7346,6 +7392,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var root = $('#sheet-root');
     // A sheet already up takes the new content in place: it fades in, the sheet stays.
     var swap = root.classList.contains('open') && !root.classList.contains('closing');
+    sheetHistPush();
     // (as it slides up, or its content changes: no 3D picture made meanwhile, its stage held still)
     if (C3.mod && C3.mod.calm) C3.mod.calm(swap ? 350 : 650);
     busyFor(swap ? QUIET.swap : QUIET.up);
@@ -7547,6 +7594,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     root.classList.remove('open');
     bksSync();
     document.body.classList.remove('noscroll');
+    sheetHistPop();
     // Once it is down (not a set while: it starts sliding only after what this tap does, however long that
     // takes), what it held goes, and the numbers under it count. #227: taken away mid-slide, it stopped.
     var down = false;
@@ -9876,12 +9924,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   /** Whether this person has clocked in with this phone before (the how-to is for the first time). */
   function clockedHere() { return !!LS.get('seoulful.clocked.' + ((S.staff && S.staff.empId) || '')); }
-  /** "เงินเข้าอีก 6 วัน": the day pay arrives, counted down. */
-  function payDueText(due) {
-    if (!due) return '';
-    var n = Math.round((Date.parse(due + 'T00:00:00Z') - Date.parse(workDate() + 'T00:00:00Z')) / 864e5);
-    return n > 1 ? 'เงินเข้าอีก ' + n + ' วัน' : n === 1 ? 'เงินเข้าพรุ่งนี้' : n === 0 ? 'เงินเข้าวันนี้' : 'เงินเข้า ' + thShort(due);
-  }
   /**
    * The Incentive's rules, when the person asks (the home screen keeps to what is good to see), said as
    * what to do (#255–#262, #274): coming, late or not, always costs less than not coming; ill, say so at once
@@ -9897,7 +9939,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var suddenList = (B.leaveTypes || []).filter(function (x) { return x.type !== sickType() && x.type !== vacationType() && (x.cut > 0 || x.advanceDays > 0); }).map(function (x) { return x.type; });
     var sudden = suddenList.join(' หรือ ') || 'ลา';
     // (2.13.26 ไปทำงานไม่ได้ รวมเป็นหัวข้อเดียว แยกบรรทัด ป่วย ติดธุระ บอกหลังเวลาเข้างาน พักร้อน · กติกาเงินเท่าเดิม · เจ้าของร้านตอบ 30 ต.ค. 2569 "7 ok")
-    // 2.13.28 หักตามเวลาที่บอก ไม่ดูว่าป่วยหรือธุระ (เจ้าของร้านตอบ "7 ok" 30 ต.ค. 2569) · ประโยคสั้น ตัวอย่างคนสมมติ (เจ้าของร้านสั่ง 30 ต.ค. 2569) · คำเดียวกับ Line.gs toldAheadText_ staffNews212_
+    // 2.13.28 หักตามเวลาที่บอก ไม่ดูว่าป่วยหรือธุระ (เจ้าของร้านตอบ "7 ok" 30 ต.ค. 2569) · ประโยคสั้น ตัวอย่างคนสมมติ (เจ้าของร้านสั่ง 30 ต.ค. 2569) · คำเดียวกับ Line.gs staffNews212_
     var toldN = r.toldAhead || 3;
     var dayCut = (biz[0] || {}).cut || sickCut;
     var toldWhen = r.toldFrom && r.toldFrom > workDate() ? ' (เริ่ม ' + thShort(r.toldFrom) + ')' : '';
@@ -9953,7 +9995,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // 2.13.11 ตัวเลขเดือนนี้อยู่ในการ์ดเดียวกับ Incentive (เจ้าของร้านสั่ง 28 ต.ค. 2569 "พอตัดแล้วไม่รู้จะแสดงอะไร") เลขทุกช่องขนาดเท่ากัน
     // (2.14.2 ข้อ จ ห้องตัดสิน 13 พ.ย. 2569) ตัดแถวตัวเลขที่ซ้ำ: วันทำงาน OT ตรงเวลา ลา อยู่ในประวัติการทำงาน · พักร้อนเหลืออยู่แถววันลา (คำอธิบายเปิดจากหน้าวันลา)
     return html`<section class="card ${inc ? 'hero' : ''} pad-lg month-card">
-      <div class="card-h"><span class="eyebrow">${m.period.month}</span><span class="small muted">${payDueText(m.period.payDue) || m.period.label}</span></div>
+      <div class="card-h"><span class="eyebrow">${m.period.month}</span><span class="small muted">${m.period.label}</span></div>
       ${inc
         ? monthIncentive(inc, c)
         : html`<div class="hello" style="font-size:20px;margin:0 0 4px">ช่วงทดลองงาน</div>${me.probationEnd ? html`<p class="muted small mt0">ผ่านโปร ${thShort(me.probationEnd)}</p>` : ''}`}
@@ -10363,9 +10405,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     //   ห้องและแต่งตัวย้ายจากแถวของเล่นหน้าแรกมาเป็นแถว บรรทัดเล็กและชื่อปุ่มบอกเรื่องใหม่ในห้องแบบไทล์เดิม · เลขบนแท็บฉัน meNews
     return html`<div class="stack me-page">
       <section class="card me-top"><div class="me-id">${avatar(me, 'lg')}<div class="grow"><b class="me-name">${nameTag(me, ownName(me))}</b><span class="small muted">${me.fullName || ''}</span></div></div>${me.nameSent ? html`<button class="btn sm block me-name-wait" data-act="name-edit">${icon('edit')} แก้ชื่อ · รอเจ้าของร้านยืนยัน</button>` : ''}${levelChip(l)}</section>
-      <h3 class="me-h">งานและเงิน</h3>
+      <h3 class="me-h">${slip ? 'งานและสลิป' : 'งานของฉัน'}</h3>
       <section class="card flush"><div class="list">
-        ${row('data-act="me-go" data-sub="history"', 'list', 'ประวัติการทำงาน', 'เวลาเข้า-ออก สาย OT รายเดือน')}
+        ${row('data-act="me-go" data-sub="history"', 'list', 'ประวัติการทำงาน', 'เวลาเข้า-ออกรายเดือน')}
         ${slip ? duo('data-act="open-slip" data-key="' + String(slip.key).replace(/[^\w-]/g, '') + '"', 'slip', 'สลิปเงินเดือน', 'ล่าสุด ' + slip.month, 'เปิดสลิปล่าสุด ' + slip.month, html`<button class="btn sm me-side" data-act="me-go" data-sub="slips">ทุกเดือน ${icon('right')}</button>`) : row('data-act="me-go" data-sub="slips"', 'slip', 'สลิปเงินเดือน', 'ยังไม่มีสลิป')}
         ${duo('data-act="me-go" data-sub="leave"', 'leave', 'วันลา', 'ขอลาและดูปฏิทินของทีม', 'วันลา ขอลาและดูปฏิทินของทีม', html`<button class="btn sm primary me-side" data-act="open-leave">${icon('plus')} ขอลา</button>`)}
       </div></section>
@@ -12664,7 +12706,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var pick = !!$('#lv-emp');
     lvCostTimer = setTimeout(function () {
       // 2.14.13 (k156 15 พ.ย. 2569): ปิดฟอร์มก่อนครบเวลาหน่วง ไม่ต้องคิดยอด (เดิมอ่านช่องของฟอร์มที่ปิดไปแล้ว หน้าแจ้งผิดพลาด)
-      if (!$('#lv-cost') || !$('#lv-from')) return;
+      // 2.14.15 (k162 · k161b ข้อ 2): ปิดฟอร์มแล้วเปิดฟอร์มอีกแบบ (มีหรือไม่มีช่องเลือกน้อง) ก่อนครบเวลาหน่วง ไม่ต้องคิดยอด (เดิมอ่านช่องเลือกน้องที่ไม่มีแล้ว หน้าแจ้งผิดพลาด)
+      if (!$('#lv-cost') || !$('#lv-from') || pick !== !!$('#lv-emp')) return;
       var v = leaveValues(pick);
       if (pick && !v.empId) return;
       call(pick ? 'leaveAddCost' : 'leaveCost', v, pick ? actorAuth() : staffAuth()).then(function (d) {
@@ -12736,6 +12779,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     openSheet({ use: 'วันลา', title: b.type + ' ' + (+today.slice(0, 4) + 543), body: html`<div class="stack">
         ${S.view === 'owner' ? html`<div class="item"><div class="grow"><div class="t">พักร้อนประจำปี</div><div class="s">${b.annual ? (b.annualOn ? 'ทำงานครบ ' + b.annualYears + ' ปี วันที่ ' + thShort(b.annualOn) + ' ใช้ได้ตั้งแต่วันนั้น' : 'ทำงานครบ ' + b.annualYears + ' ปีแล้ว') : b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ได้เมื่อทำงานครบ ' + b.annualYears + ' ปี'}</div></div><div class="r amt">${b.annual} วัน</div></div>` : ''}
         ${S.view === 'owner' ? html`<div class="item"><div class="grow"><div class="t">วันหยุดตามประเพณี เลือกวันหยุดเอง</div><div class="s">${b.setMissing ? 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน' : 'ได้ 1 วันต่อวันหยุดตามประเพณี 1 วันที่ร้านเปิดทำการ'}</div><div class="s">ลาพักร้อนแต่ละวัน นับเป็นวันหยุดตามประเพณีที่เหลือก่อน หมดแล้วค่อยนับเป็นพักร้อนประจำปี</div></div><div class="r amt">${b.credits.length} วัน</div></div>${(b.offCredits || []).length ? html`<div class="item"><div class="grow"><div class="t">ร้านปิดตรงวันหยุดประจำ</div><div class="s">ใช้วันหยุดแล้ว ได้พักร้อนเพิ่มวันละ 1 วัน</div></div><div class="r amt">${b.offCredits.length} วัน</div></div>` : ''}` : ''}
+        ${S.view === 'owner' && b.bonus ? html`<div class="item"><div class="grow"><div class="t">วันแถม ${b.bonusLeft} วัน ใช้ได้ถึง 31 ธ.ค. ${+String(b.bonusUntil).slice(0, 4) + 543}</div><div class="s">ร้านแถมจากพักร้อนที่เหลือปีก่อน ใช้เป็นลำดับสุดท้าย ไม่คิดเป็นเงิน หมดเมื่อออก</div></div></div>` : ''}
       ${S.view === 'owner' ? html`<div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>${b.remaining}</b><span>วันที่เหลือ</span></div></div>` : ''}
       ${b.noStart || b.setMissing ? html`<div class="hint">${icon('info')}<span>${b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน'}</span></div>` : ''}
       <div class="hint">${icon('cal')}<span><b>ร้านปิดทุกปี</b> ${fixedHolidayText()} — ไม่ต้องลา</span></div>
@@ -12810,7 +12854,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="stack">
       ${S.sub === 'slips' ? html`<button class="btn ghost sm" data-act="close-sub">${icon('left')} กลับ</button>` : ''}
       <div class="hello" style="font-size:24px">สลิปเงินเดือน</div>
-      <p class="muted small mt0">สลิปออกหลังผู้อนุมัติตรวจและเจ้าของร้านยืนยันการจ่ายเงิน บันทึกเป็นรูปหรือพิมพ์ได้</p>
+      <p class="muted small mt0">สลิปออกหลังเจ้าของร้านยืนยันการจ่ายเงิน บันทึกเป็นรูปหรือพิมพ์ได้</p>
       <section class="card flush">${list.length ? html`<div class="list">${list.map(function (p) {
         return html`<button class="item" data-act="open-slip" data-key="${p.key}"><span class="av">${icon('slip')}</span><div class="grow"><div class="t">${p.month}</div><div class="s">${p.payDate ? 'จ่ายวันที่ ' + thShort(p.payDate) : ''}</div></div>${icon('right')}</button>`;
       })}</div>` : html`<div class="empty">ยังไม่มีสลิป</div>`}</section></div>`;
@@ -12932,7 +12976,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return geoFresh().then(function (g) {
         var data = { shift: S.shift, device: deviceId(), qr: q.qr || '', scannedInApp: !!q.inApp, qrPhoto: !!q.fromPhoto, qrReadAt: q.readAt || '', photo: me ? me.photo : q.photo || '', photoAge: me ? me.age : q.age };
         if (g) { data.lat = g.lat; data.lng = g.lng; data.acc = g.acc; }
-        return clockWatched(call('clock', data, staffAuth()), before);
+        return clockWatched(call('clock', data, staffAuth()), before, q.qr ? 'สแกน QR ใหม่อีกครั้ง' : '');
       });
     }).then(function (res) {
       spin(btn, false);
@@ -12946,7 +12990,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }, function (e) {
       spin(btn, false);
       savingDone();
-      if (e.code === 'QR' || e.code === 'QR_OLD' || e.code === 'CLOCK') { S.scanCode = ''; S.scanInApp = false; S.scanReadAt = ''; render(); }
+      if (e.code === 'QR' || e.code === 'QR_OLD' || e.code === 'CLOCK' || e.code === 'NET') { S.scanCode = ''; S.scanInApp = false; S.scanReadAt = ''; render(); }
       if (e.message === 'ยังไม่ได้สแกน') return;
       if (e.message === 'ยังไม่ได้ถ่ายรูป') { if (selfie) toast('ถ่ายรูปตัวเองแล้วลงเวลาได้เลย — กดอีกครั้ง', 'bad'); return; }
       toast(e.message, qrTone(e));
@@ -13003,7 +13047,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    * `before`: in already when they tapped (a status cannot tell this one apart then: its answer only).
    */
   var CLOCK_ASK_AGAIN_MS = 8000;
-  function clockWatched(sent, before) {
+  // (2.14.15 k162) again = ขั้นต่อไปเมื่อยังไม่ได้ลงเวลา เช่น สแกน QR ใหม่ (QR เดิมใช้ไม่ได้แล้วหลังเน็ตกลับ)
+  function clockWatched(sent, before, again) {
     return new Promise(function (resolve, reject) {
       var over = false, lost = false, asked = 0, timer = 0;
       var end = function (ok, v) {
@@ -13019,13 +13064,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         if (!lost && document.visibilityState === 'hidden') { timer = setTimeout(ask, 1000); return; }
         var decides = lost;
         var unsure = function () {
-          if (decides) end(false, { message: 'เน็ตสะดุด ยังตรวจไม่ได้ว่าลงเวลาแล้วหรือยัง — รอสักครู่แล้วเปิดแอปใหม่ก่อนกดอีกครั้ง' });
+          if (decides) end(false, { code: 'NET', message: 'เน็ตสะดุด ยังไม่รู้ว่าลงเวลาแล้วหรือยัง — รอเน็ตกลับมาแล้วเปิดแอปใหม่ ถ้ายังไม่ขึ้นว่าลงเวลาแล้ว ' + (again || 'กดลงเวลาอีกครั้ง') + ' · เน็ตไม่มา บอกผู้อนุมัติให้ลงเวลาแทน' });
           else if (!lost && ++asked < 2) timer = setTimeout(ask, CLOCK_ASK_AGAIN_MS);
         };
         call('status', {}, staffAuth(), { fresh: true }).then(function (d) {
           var st = d && d.status;
           if (st && st.checkedIn && !before) end(true, { status: st, me: d.me, result: d.clock || savedResult(st) });
-          else if (st && decides && !before) end(false, { message: 'ยังไม่ได้ลงเวลา (เน็ตสะดุด) — กดลงเวลาอีกครั้ง' });
+          else if (st && decides && !before) end(false, { code: 'NET', message: 'ยังไม่ได้ลงเวลา (เน็ตสะดุด) — ' + (again || 'กดลงเวลาอีกครั้ง') });
           else unsure();
         }, unsure);
       };
@@ -13338,7 +13383,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
 
   function approveView() {
-    return html`<div class="stack">${leaveApprovals()}<div class="divider"></div>${payView()}</div>`;
+    return html`<div class="stack">${leaveApprovals()}</div>`;
   }
   /** The approvers' ทีม tab: leave waiting for them first (when there is), the day's board, then the pay. */
   function teamApproveView() {
@@ -13346,18 +13391,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var recent = S.leaves && S.leaves.recent && S.leaves.recent.length;
     // (k100a) คำขอที่รออนุมัติบนสุดเมื่อมี › ทีมวันนี้ › การลาล่าสุด › เงินเดือน (เนื้อหาเดิม)
     // k107 คำขอที่รอขึ้นก่อนการ์ดเปิดแจ้งเตือน · รายการเดือนนี้ย้ายลงใต้การลาล่าสุด (เดิมอยู่ท้ายทีมวันนี้ ขึ้นก่อนการลา)
-    return html`<div class="stack">${pend ? html`${leaveApprovals('wait')}<div class="divider"></div>` : ''}${pushTeamCard(S.home && S.home.approver && S.home.approver.push)}${teamView('board')}<div class="divider"></div>${pend ? (recent ? html`${leaveApprovals('recent')}<div class="divider"></div>` : '') : html`${leaveApprovals()}<div class="divider"></div>`}${teamEntries()}<div class="divider"></div>${teamPayFold(payView())}</div>`;
-  }
-  /** k151 ผู้อนุมัติ › ทีม: เงินเดือนของทีม (เดือนก่อน/ถัดไป การ์ดรายคน) พับใต้หัวเดิม แตะเปิด ไม่ลบ (คำเจ้าของ 14 พ.ย. 16:01 "อยากได้แบบคลีนอะปุ่มน้อยๆกดง่ายๆ")
-   *  · รอบที่ถึงวันอนุมัติแล้วยังไม่อนุมัติ หรือข้อมูลเปลี่ยนหลังอนุมัติ เปิดไว้เอง งานที่รอไม่ถูกพับ · แท็บเงินเดือนของเจ้าของร้านคงเดิม
-   *  · teamApproveView เรียก payView() เองแล้วส่งมา ลำดับส่วนในแท็บทีมยังเป็น รายการเดือนนี้ › เงินเดือน ตามที่ test/tabs-order.test.js ตรวจ */
-  function teamPayFold(pay) {
-    var d = S.pay;
-    var p = d && d.period;
-    var open = !!(d && ((d.canApprove && !p.status) || (d.changes && d.changes.length)));
-    // 2.14.9 หัวพับไม่ซ้ำหัวเดือนข้างใน: เดือนและสถานะต่อท้ายเฉพาะตอนพับ เปิดแล้วหัวเดือนกับแถบสถานะข้างในบอกแทน
-    var now = d ? html`<span class="tm-pay-now"> · ${d.payroll.period.month} · ${statusText(p)[0]}</span>` : '';
-    return html`<details class="menu-more nums-more tm-pay"${open ? ' open' : ''}><summary><span>เงินเดือนของทีม${now}</span></summary>${pay}</details>`;
+    return html`<div class="stack">${pend ? html`${leaveApprovals('wait')}<div class="divider"></div>` : ''}${pushTeamCard(S.home && S.home.approver && S.home.approver.push)}${teamView('board')}<div class="divider"></div>${pend ? (recent ? html`${leaveApprovals('recent')}<div class="divider"></div>` : '') : html`${leaveApprovals()}<div class="divider"></div>`}${teamEntries()}</div>`;
   }
 
   /** A leave that costs nothing off the Incentive: a doctor's note seen, or beyond anyone's control (#256, #257). */
@@ -13480,6 +13514,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    * nothing else is.
    */
   function loadPay(key, mode) {
+    if (S.view !== 'owner') return Promise.resolve(null); // (k162 ขา G) เงินเดือนเจ้าของร้านเท่านั้น หน้าผู้อนุมัติไม่โหลด
     var bg = mode === 'bg';
     var tag = key || (bg ? '' : S.payKey || '');
     if (bg && (S.pay || payBy[tag])) return Promise.resolve(null);
@@ -13568,8 +13603,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var list = d.yearEnd;
     if (!list || !list.length) return '';
     return html`<section class="card flush ye-card"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">วันหยุดที่เหลือ · ทบไปปี ${+list[0].to + 543} ให้เอง</span></div>
-      <p class="small muted" style="margin:6px 16px 0">ไม่ต้องกดอะไร วันที่ยังไม่ได้ใช้ทบไปปีหน้าเอง ไม่มีเพดาน · คนออกได้เป็นเงินในงวดสุดท้าย</p>
-      <div class="list">${list.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.name}</div></div><span class="s">${x.days} วัน</span></div>`; })}</div></section>`;
+      <p class="small muted" style="margin:6px 16px 0">ไม่ต้องกดอะไร วันประเพณีที่ยังไม่ได้ใช้ทบไปปีหน้าเอง ไม่มีเพดาน คนออกได้เป็นเงินในงวดสุดท้าย · พักร้อนที่เหลือร้านแถมเป็นวันแถม ใช้ได้ถึงสิ้นปีหน้า ไม่คิดเป็นเงิน</p>
+      <div class="list">${list.map(function (x) { return html`<div class="item"><div class="grow"><div class="t">${x.name}</div></div><span class="s">${x.days ? 'ทบ ' + x.days + ' วัน' : ''}${x.days && x.bonus ? ' · ' : ''}${x.bonus ? 'วันแถม ' + x.bonus + ' วัน ใช้ได้ถึง 31 ธ.ค. ' + (+x.to + 543) : ''}</span></div>`; })}</div></section>`;
   }
   function payView() {
     var d = S.pay;
@@ -23412,7 +23447,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'open-rain': function () { openRainForm(); },
     'rain-end': function (el) {
       // (2.13.42 g-c1) ถามแล้วรอบันทึกในชีต: ปุ่มยืนยันหมุน กดซ้ำไม่ส่งซ้ำ ผลขึ้นเมื่อบันทึกสำเร็จ ล้มแล้วชีตยังเปิด บอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
-      confirmThen({ title: 'ฝนหยุดแล้ว', text: 'ปิดโหมดฝนตกตั้งแต่ตอนนี้ คนที่ลงเวลาหลังจากนี้ใช้เวลาปกติ คนที่ลงเวลาไปแล้วยังได้ผ่อนผันตามเดิม', yes: 'ปิดโหมดฝนตก',
+      confirmThen({ title: 'ฝนหยุดแล้ว', text: 'ปิดโหมดฝนตกตั้งแต่ตอนนี้ คนที่ลงเวลาหลังจากนี้ใช้เวลาปกติ' + (S.view === 'owner' ? ' คนที่ลงเวลาไปแล้วยังได้ผ่อนผันตามเดิม' : ''), yes: 'ปิดโหมดฝนตก',
         work: function () { return call('rainEnd', {}, actorAuth()); },
         done: function (d) { closeSheet(); toast(d.notice, 'ok'); loadTeam(); } });
     },
@@ -23739,7 +23774,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     'kiosk-add': function () {
       openSheet({ title: 'ตั้งเครื่องนี้เป็นจอลงเวลาในร้าน', body: html`<p class="muted small mt0">เครื่องนี้จะเปิดเป็นจอลงเวลาของร้านทุกครั้ง น้องแตะชื่อแล้วใส่ PIN ที่จอนี้ และกล้องหน้าเก็บภาพตอนลงเวลา (เครื่องจะถามอนุญาตใช้กล้อง กด "อนุญาต") ใช้กับมือถือร้านหรือแท็บเล็ตที่วางไว้ในร้าน</p><label class="field"><span>ชื่อจอ</span><input class="input" id="kiosk-name" value="จอหลังร้าน" autofocus></label>
-        <label class="check"><input type="checkbox" id="kiosk-live"><span><b>ใช้จอนี้แทนป้าย QR กระดาษ</b><small>ติ๊กเมื่ออยากให้น้องสแกน QR บนจอนี้ด้วยแอปในมือถือตัวเองแทน: ลงเวลาได้เฉพาะ QR บนจอนี้ที่เปลี่ยนทุก 5 วินาที ป้ายที่พิมพ์ รูปที่ถ่ายไว้ หรือลิงก์ที่ส่งต่อ ใช้ไม่ได้ และปิดการใส่ PIN ที่จอ (กันใช้ PIN ของคนอื่นลงแทน)</small></span></label>`,
+        <label class="check"><input type="checkbox" id="kiosk-live"><span><b>ใช้จอนี้แทนป้าย QR กระดาษ</b><small>ติ๊กเมื่ออยากให้น้องสแกน QR บนจอนี้ด้วยแอปในมือถือตัวเองแทน: ลงเวลาได้เฉพาะ QR บนจอนี้ ป้ายที่พิมพ์ รูปที่ถ่ายไว้ หรือลิงก์ที่ส่งต่อ ใช้ไม่ได้ และปิดการใส่ PIN ที่จอ (กันใช้ PIN ของคนอื่นลงแทน)</small></span></label>`,
         foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="kiosk-add-go">ตั้งเป็นจอลงเวลา</button>` });
     },
     'kiosk-add-go': function (el) {
@@ -24209,7 +24244,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         remember('home', h, homeTag(who, h));
         if (h.me.role !== 'approver') return;
       }
-      keepPart('pay', ask('payroll', { period: null }, auth), '', who);
+      if (p.owner) keepPart('pay', ask('payroll', { period: null }, auth), '', who); // (k162 ขา G) เงินเดือนเจ้าของร้านเท่านั้น
       keepPart('team', { team: ask('team', {}, auth), entries: ask('entries', {}, auth) }, '', who);
       keepPart('leaves', ask('leaves', {}, auth), '', who);
       if (p.owner) keepPart('employees', ask('employees', {}, auth), '', who);
