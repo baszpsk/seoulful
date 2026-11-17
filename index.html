@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.15","page":"","e3":"7294d0dd","edge":true,"build":"3dd322894b1a"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.16","page":"","e3":"7294d0dd","edge":true,"build":"e379e9deaa2d"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="Seoulful">
@@ -3810,20 +3810,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return h ? h + ' ชม.' + (m ? ' ' + m + ' นาที' : '') : m + ' นาที';
   }
   function initial(name) { return String(name || '?').replace(/^(นาย|นางสาว|นาง)/, '').replace(/^[\u0E40-\u0E44]/, '').trim().charAt(0) || '?'; }
-  function empById(id) { return (B.employees || []).concat(B.slipNames || []).filter(function (e) { return e.id === id; })[0] || null; }
+  function empById(id) { return (B.employees || []).filter(function (e) { return e.id === id; })[0] || null; }
   /**
-   * ข้อมูลบูตชุดใหม่หรือชุดที่เครื่องจำไว้ ทับของเดิม (2.13.28 เจ้าของร้าน 30 ต.ค. 2569: แพรวเลื่อนวันสุดท้ายไปเดือนหน้า
-   * แล้วยังอยู่กลุ่ม ออกแล้ว) · หลังบ้านไม่ส่ง slipNames เมื่อไม่มีใครในช่วงดูสลิป กลุ่มเดิมจึงต้องหายตาม ไม่งั้นค้าง
-   * จนเปิดแอปใหม่สองรอบ · คนในรายชื่อทำงานไม่ขึ้นในกลุ่มออกแล้ว กลุ่มตรงกับสิทธิ์เข้าแอป (หลังบ้าน isActiveOn_)
+   * ข้อมูลบูตชุดใหม่หรือชุดที่เครื่องจำไว้ ทับของเดิม · 2.14.16 (k163): หน้าเลือกชื่อไม่มีกลุ่มคนออกแล้ว หลังบ้านไม่ส่ง slipNames แล้ว
+   * ข้อมูลที่เครื่องจำไว้จากรุ่นก่อนอาจยังมีชื่อคนออก ทิ้งทุกครั้ง (คนออกเข้าดูสลิปจากเครื่องที่จำไว้ ไม่ต้องมีชื่อในรายการ)
    */
   function takeBoot(b) {
-    if (!b || !Object.prototype.hasOwnProperty.call(b, 'slipNames')) delete B.slipNames;
     B = Object.assign(B, b || {});
-    if (B.slipNames && B.employees) {
-      var on = {};
-      B.employees.forEach(function (e) { on[e.id] = 1; });
-      B.slipNames = B.slipNames.filter(function (e) { return !on[e.id]; });
-    }
+    delete B.slipNames;
     return B;
   }
   function isKitchen(dept) { return /ครัว/.test(dept || ''); }
@@ -8739,9 +8733,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="hello center" style="font-size:22px;margin-top:14px">เลือกชื่อของคุณ</div>
       <p class="muted center small mt0">เข้าครั้งแรกใส่ PIN ครั้งเดียว เครื่องนี้จะจำไว้</p>
       ${B.employees ? nameTiles('pick') : html`<div class="eyebrow group-h">&nbsp;</div><div class="names" aria-busy="true">${[0, 1, 2, 3, 4, 5].map(function () { return html`<div class="skel tile"></div>`; })}</div>`}
-      ${(B.slipNames || []).length ? html`<div class="eyebrow group-h">ดูสลิปเงินเดือนย้อนหลัง</div><div class="names">${B.slipNames.map(function (e) {
-        return html`<button class="name-tile" data-act="pick" data-id="${e.id}">${avatar(e)}<div class="grow"><b>${nameTag(e, ownName(e))}</b>${e.pin ? html`<span>PIN ${e.pin}</span>` : ''}</div></button>`;
-      })}</div>` : ''}
       <div class="foot-links"><button class="link" data-act="go-owner">เจ้าของร้าน</button></div>
     </div>`;
   };
@@ -9657,7 +9648,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var e = empById(staffId()) || { name: (S.staff && S.staff.name) || '' };
     var err = !S.login && (S.homeErr || S.bootErr);
     // 2.13.13: คนที่ออกแล้วดูได้แค่สลิป ระหว่างโหลดจึงไม่ขึ้นคำทักและแถบล่างของคนทำงาน (หน้าตาเดียวกับ slipOnlyView)
-    var gone = (B.slipNames || []).some(function (x) { return x.id === staffId(); });
+    // (2.14.16 k163: หน้าเลือกชื่อไม่มีคนออกแล้ว · คนออก = ชื่อไม่อยู่ในรายชื่อคนทำงานที่โหลดแล้ว เข้ามาจากเครื่องที่จำไว้เท่านั้น)
+    var gone = !!(B.employees && B.employees.length) && !empById(staffId());
     return html`<div class="outline">${topbar({ name: ownName(e), sub: '', av: avatar(e) }, '')}
       <main class="wrap page"><div class="stack" aria-busy="${err ? 'false' : 'true'}">
         ${gone ? '' : html`<div class="hello-row"><div class="hello">${greeting()}<br>${ownName(e)}</div>${B.levels ? html`<div class="me-duo" aria-hidden="true"><span class="me-char"></span></div>` : ''}</div>`}
@@ -20824,6 +20816,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (t.wait) bits.push('รออนุมัติ ' + t.wait);
     if (t.absent) bits.push('ขาด ' + t.absent);
     if (t.none) bits.push('ไม่ได้ลงเวลา ' + t.none);
+    // (2.14.16 k164 เริ่มทีละคน) คนที่ยังไม่เริ่มใช้แอปไม่อยู่ในตัวหาร (Line.gs mrTeam_) รวมเป็นท่อนเดียว
+    if (t.notYet) bits.push('ยังไม่เริ่มใช้แอป ' + t.notYet + ' คน');
     if (t.ot) bits.push('OT ' + hrs(t.ot) + ' ชม.');
     return mrBits(bits);
   }
