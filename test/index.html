@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.16","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"c7b851dad40f"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.17","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"55337b773895"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -3035,6 +3035,9 @@ html.i3-box-s1-body.i3-box-s1-lid .bx-svg.s1 .bx-body, html.i3-box-s2-body.i3-bo
 /* 2.14.7 (k150 จอ 360 ภาพแถวทีม: ปุ่ม ลงเวลาแทน บนแถวบีบชื่อเหลือศูนย์ ป้ายทับชื่อ ปุ่ม ⋯ ล้นการ์ด): ปุ่มขึ้นบรรทัดของตัวเองใต้แถว ชิดขวา */
 .board-row { flex-wrap: wrap; }
 .board-row .bd-fix { order: 9; flex: 0 0 100%; display: flex; justify-content: flex-end; margin-top: -4px; }
+/* 2.14.17 (k165) คนที่ยังไม่เริ่มใช้แอป: กล่องพับบรรทัดเดียวท้ายกระดาน แตะดูรายชื่อ แถวในกล่องไม่มีปุ่มลงเวลาแทน */
+.bd-notyet { border-top: 1px solid var(--line); }
+.bd-notyet > summary { cursor: pointer; padding: 13px 16px; color: var(--muted); font-size: 14px; }
 .ideas-h-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; }
 .ideas-pts { flex: none; }
 .me-duo-row { padding: 0 12px 0 0; }
@@ -13144,6 +13147,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     if (r.state === 'leave') return html`<span class="pill gold">${r.leave}</span>`;
     if (r.state === 'absent') return html`<span class="pill">ขาดงาน</span>`;
+    // (2.14.17 k165) ยังไม่เริ่มใช้แอป (แถวในกล่องพับท้ายกระดาน): ไม่ทักว่ายังไม่ลงเวลา
+    if (r.notYet) return html`<span class="pill">ยังไม่เริ่มใช้แอป</span>`;
     if (r.state === 'off') return html`<span class="pill">ร้านปิด</span>`;
     return html`<span class="pill">ยังไม่ลงเวลา</span>`;
   }
@@ -13164,6 +13169,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!t) return waiting('team', html`<div class="stack" aria-busy="true"><div class="skel" style="height:44px"></div><div class="skel" style="height:360px"></div><div class="skel" style="height:220px"></div></div>`);
     var b = t.board;
     var c = b.counts;
+    // (2.14.17 k165 เริ่มทีละคน) คนที่ยังไม่เริ่มใช้แอป (ธง notYet ของหลังบ้าน) ไม่อยู่ในรายการและตัวเลข รวมเป็นกล่องพับบรรทัดเดียวท้ายกระดาน
+    //   แตะกางดูรายชื่อ ปุ่ม ⋯ ของแต่ละคนยังอยู่ (บันทึกการลา ลงเวลาแทนวันที่เริ่มมาทำงาน) · ร้านที่ไม่เคยล้างข้อมูล ไม่มีกล่องนี้
+    var later = b.rows.filter(function (r) { return r.notYet; });
     var entries = (S.entries && S.entries.entries) || [];
     // (k100a) ผู้อนุมัติ: ชื่อกับแผนกบรรทัดเดียว · รายการเดือนนี้พับแบบเดียวกับการลาล่าสุด แตะกางที่เดิม · หน้าเจ้าของคงเดิม
     return html`<div class="stack">
@@ -13172,9 +13180,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${reviewCard(t.reviews || [])}
       <div class="stats"><div class="stat"><b>${c.in}<small class="muted" style="font-size:13px">/${c.total - c.leave - (c.off || 0)}</small></b><span>ลงเวลาแล้ว</span></div><div class="stat ${c.in - c.late ? 'ok' : ''}"><b>${c.in - c.late}</b><span>ตรงเวลา</span></div><div class="stat"><b>${c.leave + (c.off || 0)}</b><span>ลา · หยุด</span></div><div class="stat"><b>${c.absent}</b><span>ขาด</span></div></div>
       <div class="row wrapx">${otOk() ? html`<button class="btn sm" data-act="open-otday">${icon('clock')} OT หลังเลิกกะ</button>` : ''}<button class="btn sm" data-act="open-entry"${otOk() ? '' : ' data-type="ขาดงาน"'}>${icon('plus')} ${S.view === 'owner' ? 'OT / ขาด / เบิก' : otOk() ? 'OT / ขาดงาน' : 'ขาดงาน'}</button><button class="btn sm" data-act="open-entry" data-type="อนุญาตเข้างานช้า">${icon('clock')} อนุญาตเข้าช้า</button><button class="btn sm" data-act="open-rain">${icon('rain')} ฝนตก</button><button class="btn sm" data-act="open-exceptions">${icon('cal')} เวลาพิเศษ</button><button class="btn sm" data-act="photo-wall">${icon('image')} รูปวันนี้</button></div>
-      <section class="card flush">${b.rows.map(function (r) {
+      <section class="card flush">${b.rows.filter(function (r) { return !r.notYet; }).map(function (r) {
         return html`<div class="board-row">${avatar(r)}<div class="grow bd-name"><span class="t">${nameTag(r, r.name)}</span><span class="s">${r.dept}</span></div><div class="st">${boardState(r)}</div>${r.state !== 'in' && r.state !== 'leave' && r.state !== 'absent' && r.state !== 'off' && !(S.view !== 'owner' && S.home && S.home.me && S.home.me.id === r.id && !S.team.selfOk) ? html`<div class="bd-fix"><button class="btn sm" data-act="open-fix" data-id="${r.id}">ลงเวลาแทน</button></div>` : ''}<button class="icon-btn" data-act="row-menu" data-id="${r.id}" aria-label="ตัวเลือกของ ${r.name}">${icon('more')}</button></div>`;
-      })}</section>
+      })}${later.length ? html`<details class="bd-notyet"><summary>ยังไม่เริ่มใช้แอป ${later.length} คน</summary>${later.map(function (r) {
+        return html`<div class="board-row">${avatar(r)}<div class="grow bd-name"><span class="t">${nameTag(r, r.name)}</span><span class="s">${r.dept}</span></div><div class="st">${boardState(r)}</div><button class="icon-btn" data-act="row-menu" data-id="${r.id}" aria-label="ตัวเลือกของ ${r.name}">${icon('more')}</button></div>`;
+      })}</details>` : ''}</section>
       ${S.view === 'owner' ? html`<h3 class="h3">ปฏิทินวันลาและวันหยุด</h3>${calCard(S.cal || t.month)}` : ''}
       ${part === 'board' ? '' : teamEntries()}
     </div>`;
@@ -14043,7 +14053,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="big">${cnt('net', cur.totals.net, 'm')}<small>บาท</small></div>
         <div class="row wrapx small muted" style="margin-top:10px;gap:14px"><span>OT ${hrs(cur.totals.otHours)} ชม.</span>${onTimeRate(cur.totals) != null ? html`<span>ตรงเวลา ${onTimeRate(cur.totals)}%</span>` : ''}<span>ลา ${cur.totals.leaveDays} วัน</span>${cur.totals.warnings ? html`<span style="color:var(--warn)">ต้องตรวจ ${cur.totals.warnings} จุด</span>` : ''}</div>
         <button class="btn block" style="margin-top:14px" data-act="go-pay" data-key="${cur.period.key}">ดูรายคน</button></section>
-      <div class="stats"><div class="stat"><b>${cnt('in', c.in)}<small class="muted" style="font-size:13px">/${c.total - c.leave - (c.off || 0)}</small></b><span>ลงเวลาวันนี้</span></div><div class="stat ${c.in - c.late ? 'ok' : ''}"><b>${c.in - c.late}</b><span>ตรงเวลาวันนี้</span></div><div class="stat"><b>${c.leave + (c.off || 0)}</b><span>ลา · หยุด</span></div><button class="stat ${o.pendingLeaves ? 'warn' : ''}" data-act="owner-tab" data-tab="team"><b>${o.pendingLeaves}</b><span>รออนุมัติลา</span></button></div>
+      <div class="stats"><div class="stat"><b>${cnt('in', c.in)}<small class="muted" style="font-size:13px">/${c.total - c.leave - (c.off || 0)}</small></b><span>ลงเวลาวันนี้</span></div><div class="stat ${c.in - c.late ? 'ok' : ''}"><b>${c.in - c.late}</b><span>ตรงเวลาวันนี้</span></div><div class="stat"><b>${c.leave + (c.off || 0)}</b><span>ลา · หยุด</span></div><button class="stat ${o.pendingLeaves ? 'warn' : ''}" data-act="owner-tab" data-tab="team"><b>${o.pendingLeaves}</b><span>รออนุมัติลา</span></button></div>${c.notYet ? html`<p class="small muted" style="margin:6px 2px 0">ยังไม่เริ่มใช้แอป ${c.notYet} คน (ไม่นับในตัวเลขวันนี้)</p>` : ''}
       <h3 class="h3">เงินเดือนย้อนหลัง</h3>
       <section class="card flush"><div class="list">${o.periods.filter(function (p, i) { return i === 0 || p.status || p.hasData; }).map(function (p) {
         var st = p.status === 'paid' ? ['จ่ายแล้ว', 'ok'] : p.status === 'approved' ? ['รอจ่าย', 'gold'] : ['ยังไม่อนุมัติ', ''];
