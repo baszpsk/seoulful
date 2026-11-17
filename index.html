@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.17","page":"","e3":"7294d0dd","edge":true,"build":"0053ebd7046f"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.19","page":"","e3":"7294d0dd","edge":true,"build":"fdfc74ec9425"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="Seoulful">
@@ -6982,7 +6982,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // (one sent but not heard of goes again this long on: 20 s on the server on Cloudflare, where it goes while the app is on screen, useNow)
   var USE_AGAIN = EDGE ? 20000 : 600000;
   var USE = { cur: null, page: '', act: null, wait: {}, seq: 0, dev: '', last: '', seen: {}, go: '' };
-  var USE_VIEW = { loading: 'กำลังเปิด', moved: 'แอปย้ายที่', error: 'เปิดไม่ได้', offline: 'ไม่มีเน็ต', start: 'เลือกชื่อ', pin: 'ใส่ PIN', ownerLogin: 'ใส่รหัสเจ้าของร้าน', ownerCode: 'ใส่รหัสจากอีเมล' };
+  var USE_VIEW = { kioskSetup: 'หน้าตั้งจอจากลิงก์', loading: 'กำลังเปิด', moved: 'แอปย้ายที่', error: 'เปิดไม่ได้', offline: 'ไม่มีเน็ต', start: 'เลือกชื่อ', pin: 'ใส่ PIN', ownerLogin: 'ใส่รหัสเจ้าของร้าน', ownerCode: 'ใส่รหัสจากอีเมล' };
   var USE_TAB = { home: 'หน้าแรก', team: 'ทีม', friends: 'เพื่อน', ideas: 'ไอเดีย', me: 'ฉัน', settings: 'บัญชีและตั้งค่า', history: 'ประวัติการทำงาน', slips: 'สลิปเงินเดือน', leave: 'วันลา', order: 'สั่งของ', approve: 'อนุมัติ' };
   var USE_OWNER_TAB = { overview: 'ภาพรวม', pay: 'เงินเดือน', team: 'ทีม', staff: 'พนักงาน', settings: 'ตั้งค่า' };
   var USE_KIOSK = { names: 'เลือกชื่อ', pin: 'ใส่ PIN', confirm: 'ยืนยัน', result: 'ลงเวลาแล้ว' };
@@ -8707,6 +8707,41 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <button class="btn" data-act="retry-boot">${icon('refresh')} ลองตอนนี้</button></div></div>`;
   };
 
+  // ---- ลิงก์ตั้งจอ (2.14.19 k172) ----------------------------------------------
+  // เปิดจากลิงก์ที่เจ้าของร้านส่งมา (?setup=รหัส): ขึ้นหน้าถามก่อนเสมอ รหัสถูกใช้เมื่อคนถือเครื่องกดปุ่มเท่านั้น (แอปแชตเปิดลิงก์ไปทำ
+  // ตัวอย่างเองได้) · ไม่ต้องใช้รหัสเจ้าของ และไม่เก็บอะไรของเจ้าของร้านในเครื่องนี้
+  /** The setup code in the address, if any (kept there until the screen is set up: dropSetup). */
+  function setupCode() {
+    try { return String(new URLSearchParams(location.search).get('setup') || '').trim().slice(0, 80); } catch (e) { return ''; }
+  }
+  function takeSetup() {
+    var code = setupCode();
+    if (!code) return false;
+    S.setup = { code: code, err: '' };
+    S.view = 'kioskSetup';
+    render();
+    return true;
+  }
+  /** The address without its setup code, once it was used (or set aside). */
+  function dropSetup() {
+    S.setup = null;
+    var q = new URLSearchParams(location.search);
+    q.delete('setup');
+    try { history.replaceState(null, '', location.pathname + (String(q) ? '?' + q : '') + location.hash); } catch (e) { /* the address keeps it */ }
+  }
+  /** The link for the shop's phone: the first page of this same site (the real app, or the test one), and the code. */
+  function setupUrl(code) { return location.href.replace(/[?#].*$/, '').replace(/[^\/]*$/, '') + '?setup=' + encodeURIComponent(code); }
+  /** When a link runs out: its day and time. */
+  function linkUntil(iso) { return iso ? isoDate(iso) + ' ' + hmOf(new Date(iso)) + ' น.' : ''; }
+  VIEWS.kioskSetup = function () {
+    var st = S.setup || {};
+    return html`<div class="wrap page"><div class="start-head">${brand(true)}</div>
+      <div class="card pad-lg center"><h2 class="title">ตั้งเครื่องนี้เป็นจอลงเวลาในร้าน</h2><p class="muted mt0">เปิดลิงก์นี้บนมือถือร้าน แล้วกดปุ่มด้านล่าง</p>
+      <div class="pin-err" role="alert">${st.err || ''}</div>
+      <button class="btn primary block" data-act="kiosk-setup-go">${icon('tablet')} ตั้งเป็นจอลงเวลา</button></div>
+      <div class="foot-links"><button class="link" data-act="kiosk-setup-skip">ไม่ใช่มือถือร้าน เปิดแอปตามปกติ</button></div></div>`;
+  };
+
   // ---- start screen: pick your name ----------------------------------------
   function groupedEmployees() {
     var groups = {};
@@ -9552,6 +9587,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (runner) { runStop(); runner = null; }
     // (k116l) กะที่กางเลือกอยู่ (k114 เปลี่ยนกะ) เป็นของคน: คนถัดไปเห็นกะบรรทัดเดียว
     S.shiftOpen = false;
+    // (2.14.19 k172) ลิงก์ตั้งจอในแผ่นผลของเจ้าของร้าน (ลิงก์ลับ) และรหัสลิงก์ที่เครื่องเปิดอยู่ ไม่ค้างถึงคนถัดไป · ปุ่มตั้งเป็นจออ่านรหัสจากที่อยู่ได้เอง (setupCode)
+    S.kioskLinkUrl = ''; S.setup = null;
   }
   function logoutStaff(msg) {
     // (ล้างการแจ้งเตือนในเครื่องไม่สำเร็จ ยังออกจากระบบได้เสมอ)
@@ -14007,8 +14044,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     o.kiosks.filter(function (k) { return k.current === false; }).forEach(function (k) { todo.unshift(['tablet', 'เปิด' + k.name + 'ใหม่ 1 ครั้ง (รีเฟรช) แล้วกดอนุญาตกล้อง — จอยังเป็นแอปรุ่นเก่า', 'settings']); });
     if (o.approverReviews) todo.unshift(['team', 'ตรวจการลงเวลาของผู้อนุมัติ ' + o.approverReviews + ' รายการ (ผู้อนุมัติตรวจของตัวเองไม่ได้)', 'team']);
     if (!o.settings.weatherKey.set) todo.push(['rain', 'ใส่ WeatherAPI key เพื่อตรวจฝนอัตโนมัติ', 'settings']);
-    var cantN = ((o.team && o.team.list) || []).filter(function (x) { return x.cant; }).length;
-    if (!o.line.groupLinked && cantN) todo.push(['chat', 'เชื่อมกลุ่ม LINE ให้น้องที่มือถือรับแจ้งเตือนไม่ได้ ' + cantN + ' คน (ไม่บังคับ · คนอื่นได้เรื่องจากร้านในแอปครบ)', 'settings']);
     var bk = o.backup || {};
     if (bk.error || bk.stale) todo.unshift(['shield', bk.error ? 'สำรองข้อมูลอัตโนมัติไม่สำเร็จ — ดูสาเหตุ แล้วกด "สำรองตอนนี้"' : 'ไม่ได้สำรองข้อมูลมา 3 วันแล้ว — ดูสาเหตุ แล้วกด "สำรองตอนนี้"', 'settings']);
     if (bk.mailOn && bk.to && !bk.offAccount) todo.push(['mail', 'ให้ส่งไฟล์สำรองไปอีเมลของบัญชีอื่น (ข้อมูลไม่หายแม้เข้าบัญชี Google ของร้านไม่ได้)', 'settings']);
@@ -14077,11 +14112,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var n = up.news;
     var when = function (iso) { return isoDate(iso) + ' ' + isoTime(iso) + ' น.'; }; // k107 เวลากับ น. ไม่แยกบรรทัด
     var pending = !!n && n.state === 'pending';
-    var status = !n ? '' : n.state === 'sent' ? 'ประกาศกติกาใหม่ในแอปแล้ว (กระดิ่งและแจ้งเตือนของน้องทุกคน) ' + when(n.sentAt) + (n.line ? ' · ส่งเข้ากลุ่ม LINE ด้วย เพราะมีน้องที่มือถือรับแจ้งเตือนไม่ได้' : '')
+    var status = !n ? '' : n.state === 'sent' ? 'ประกาศกติกาใหม่ในแอปแล้ว (กระดิ่งและแจ้งเตือนของน้องทุกคน) ' + when(n.sentAt)
       : n.state === 'done' ? 'โพสต์ประกาศเองแล้ว'
       : n.state === 'skipped' ? 'ไม่ได้ประกาศกติกาใหม่'
-      : n.auto ? 'แอปจะประกาศกติกาใหม่ให้น้องทุกคนในแอปเอง ช่วง 9:00–20:00 น.' + (n.error ? ' (ครั้งก่อนส่ง LINE ไม่สำเร็จ: ' + n.error + ')' : '')
-      : n.error ? 'ส่งเข้ากลุ่ม LINE ไม่สำเร็จ (' + n.error + ') — กดประกาศอีกครั้ง'
+      : n.auto ? 'แอปจะประกาศกติกาใหม่ให้น้องทุกคนในแอปเอง ช่วง 9:00–20:00 น.' + (n.error ? ' (ครั้งก่อนประกาศไม่สำเร็จ: ' + n.error + ')' : '')
+      : n.error ? 'ประกาศไม่สำเร็จ (' + n.error + ') — กดประกาศอีกครั้ง'
       : 'ยังไม่ได้ประกาศกติกาใหม่ — กดประกาศในแอปตอนนี้';
     return html`<section class="card pad-lg"><div class="card-h"><span class="eyebrow">อัปเดตแอปแล้ว · รุ่น ${up.to}</span><span class="small muted">${when(up.at)}</span></div>
       ${up.report.length ? html`<ul class="small" style="margin:6px 0 0;padding-left:18px;line-height:1.6">${up.report.map(function (x) { return html`<li>${x}</li>`; })}</ul>` : ''}
@@ -14192,7 +14227,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     ['ประเภทการลา', [], leaveTypesBox],
     ['วันหยุดและวันจ่ายเงิน', ['daysOffPerMonth', 'fixedHolidays', 'floatingHolidays', 'setHolidays', 'closedDates', 'payUnusedDaysOff', 'autoAbsent', 'payDay']],
     ['ประกันสังคม', ['ssoRate', 'ssoMin', 'ssoMax']],
-    ['แจ้งเตือน', ['emailOnApprove', 'ownerEmail', 'lineHour', 'lineNews', 'lineToken', 'lineAnnounceLeave', 'lineRainNotice'], dailyBox],
+    ['แจ้งเตือน', ['emailOnApprove', 'ownerEmail', 'lineHour', 'lineNews', 'lineAnnounceLeave', 'lineRainNotice'], dailyBox],
     ['ความคิดเห็นจากพนักงาน', [], githubHelp],
     ['บันทึกหน้างาน', ['dailyLeads', 'dailyAsk']],
     ['เกมของทีม', ['gameClosed']],
@@ -14326,18 +14361,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           <div class="item" style="padding-left:0;padding-right:0">${icon('pin')}<div class="grow"><div class="t">พิกัดร้าน</div><div class="s">${o.shop.lat != null ? o.shop.lat.toFixed(5) + ', ' + o.shop.lng.toFixed(5) + ' · รัศมี ' + o.shop.radius + ' ม.' : 'ยังไม่ได้ตั้ง'}</div></div><button class="btn sm" data-act="set-location">ใช้ตำแหน่งตอนนี้</button></div>
           <div class="item" style="padding-left:0;padding-right:0">${icon('qr')}<div class="grow"><div class="t">ป้าย QR กระดาษ</div><div class="s">${set.qrLive && set.qrLive.value === 'ใช่' ? 'ตอนนี้ใช้ QR บนจอในร้าน ป้ายกระดาษใช้ได้เมื่อปิด "QR ต้องมาจากจอในร้าน"' : 'สำหรับลงเวลาด้วยมือถือ · รหัส ' + o.qr.code}</div></div><button class="btn sm" data-act="qr-poster">เปิดป้าย</button></div>
           ${o.kiosks.map(function (k) { return html`<div class="item" style="padding-left:0;padding-right:0">${icon('tablet')}<div class="grow"><div class="t">${k.name}${thisKiosk && thisKiosk.id === k.id ? ' (เครื่องนี้)' : ''}</div><div class="s">ตั้งเมื่อ ${isoDate(k.createdAt)}${k.lastSeen ? ' · ใช้ล่าสุด ' + isoDate(k.lastSeen) : ''}</div>${k.current === false ? html`<div class="review-why">ยังเป็นแอปรุ่นเก่า — เปิดจอนี้ใหม่ 1 ครั้ง (รีเฟรช) แล้วกดอนุญาตกล้อง</div>` : ''}</div><button class="icon-btn" data-act="kiosk-remove" data-id="${k.id}" aria-label="ยกเลิกเครื่องนี้">${icon('trash')}</button></div>`; })}
+          ${o.kioskLink && Date.parse(o.kioskLink.until) > now().getTime() ? html`<div class="item" style="padding-left:0;padding-right:0">${icon('link')}<div class="grow"><div class="t">ลิงก์ตั้งจอที่ยังไม่ใช้</div><div class="s">หมดอายุ ${linkUntil(o.kioskLink.until)}</div></div><button class="btn sm" data-act="kiosk-link-cancel">ยกเลิกลิงก์</button></div>` : ''}
         </div>
+        <button class="btn block" style="margin-top:8px" data-act="kiosk-link">${icon('send')} สร้างลิงก์ตั้งจอ</button>
         <button class="btn block" style="margin-top:8px" data-act="kiosk-add">${icon('tablet')} ตั้งเครื่องนี้เป็นจอลงเวลาในร้าน</button>
         <p class="small muted" style="margin:8px 0 0"><b>จอลงเวลาในร้าน:</b> ใช้มือถือร้านหรือแท็บเล็ต วางหรือติดผนังด้านในร้าน สูงระดับหน้าอก มองไม่เห็นจากนอกร้าน เปิดหน้านี้บนเครื่องนั้นแล้วกดปุ่มด้านบน น้องแตะชื่อแล้วใส่ PIN ที่จอ และกล้องหน้าของจอเก็บภาพตอนลงเวลา · ถ้าอยากให้น้องสแกน QR บนจอ (เปลี่ยนทุก 5 วินาที) ด้วยแอปในมือถือตัวเองแทน ติ๊ก "ใช้จอนี้แทนป้าย QR กระดาษ" ตอนตั้งเครื่อง รูปที่ถ่ายส่งต่อกันใช้ไม่ได้ · เสียบชาร์จไว้ ต่อ Wi-Fi และตั้งไม่ให้จอดับ</p></section>
       ${SETTING_GROUPS.map(function (g) {
         return html`<section class="card"><div class="card-h"><span class="eyebrow">${g[0]}</span></div>${g[2] ? g[2](o) : ''}${g[1].map(function (k) { return settingField(set[k]); })}
           ${g[1].length ? html`<button class="btn block" style="margin-top:16px" data-act="save-settings" data-keys="${g[1].join(',')}">บันทึก${g[0]}</button>` : ''}</section>`;
       })}
-      <section class="card"><div class="card-h"><span class="eyebrow">LINE</span></div>
-        <div class="small" style="line-height:2.25">กลุ่มพนักงาน: ${o.line.groupLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`} · LINE เจ้าของร้าน: ${o.line.ownerLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`}</div>
-        <p class="small muted" style="margin:6px 0 0">ไม่บังคับ · ทุกเรื่องแจ้งในแอปเอง LINE ใช้ส่งแทนเฉพาะมือถือที่รับแจ้งเตือนของแอปไม่ได้เลย (กลุ่มพนักงาน และ LINE เจ้าของร้าน)</p>
-        <ol class="small muted" style="padding-left:18px;margin:10px 0 0"><li>สร้าง LINE Official Account (ฟรี) เปิด Messaging API แล้ววาง Channel access token ในช่อง "แจ้งเตือน" ด้านบน</li><li>ตั้ง Webhook URL เป็นลิงก์แอปนี้ (${o.links.app || 'ลิงก์เว็บแอป'})</li><li>เชิญบอทเข้ากลุ่มพนักงาน แล้วพิมพ์ <b>เชื่อมระบบ ${o.line.linkCode}</b> ในกลุ่ม (เจ้าของร้านพิมพ์ในแชตกับบอทอีกครั้งด้วยรหัสใหม่)</li></ol>
-        <div class="row wrapx" style="margin-top:10px"><button class="btn sm" data-act="line-code">สร้างรหัสใหม่</button>${o.line.ownerLinked ? html`<button class="btn sm" data-act="line-try">${icon('send')} ส่งข้อความทดสอบ</button>` : ''}</div></section>
       <section class="card"><div class="card-h"><span class="eyebrow">ข้อมูลและการสำรอง</span></div>
         <p class="small muted mt0">${o.backup && o.backup.sheetIsCopy ? 'ข้อมูลทั้งหมดอยู่ในระบบของร้าน · ทุกคืนตอนตี 4 คัดลอกลง Google Sheet ของร้านไว้เปิดดู (แก้ในชีตไม่มีผลกับแอป) แล้วสำรองทั้งไฟล์ (สำเนารายวันเก็บ 30 วัน สำเนาวันที่ 1 ของเดือนเก็บตลอด)' : 'ข้อมูลทั้งหมดอยู่ใน Google Sheet ของร้าน · สำรองทั้งไฟล์ให้เองทุกคืนตอนตี 4 (สำเนารายวันเก็บ 30 วัน สำเนาวันที่ 1 ของเดือนและก่อนอัปเดตทุกครั้งเก็บตลอด)'} · ส่งไฟล์ Excel ของข้อมูลทั้งหมดเข้าอีเมลสัปดาห์ละครั้ง · เงินเดือนที่อนุมัติแล้วเก็บแยกไว้ ไม่เปลี่ยนแม้แก้โปรแกรม</p>
         ${backupStatus(o.backup)}
@@ -20483,7 +20515,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var st = pushState();
     if (st === 'on' || st === 'wait') return '';
     var head = function (t) { return html`<div class="fb-invite-h"><span class="fb-ico">${icon('bell')}</span><div class="grow"><span class="eyebrow">แจ้งเตือน</span><b>${t}</b></div></div>`; };
-    var what = html`<div class="push-what">${pushWhat().map(function (w) { return html`<span>${w}</span>`; })}</div>${S.view === 'owner' ? html`<p class="push-hint">เรื่องถึงคุณมาทางแจ้งเตือนของแอป LINE ส่งแทนเฉพาะมือถือที่รับแจ้งเตือนไม่ได้เลย</p>` : ''}`;
+    var what = html`<div class="push-what">${pushWhat().map(function (w) { return html`<span>${w}</span>`; })}</div>${S.view === 'owner' ? html`<p class="push-hint">เรื่องถึงคุณมาทางแจ้งเตือนของแอป</p>` : ''}`;
     var later = html`<p class="push-hint">ระหว่างนี้ดูเรื่องใหม่ได้ที่กระดิ่ง ${icon('bell')} มุมบน</p>`;
     if (st === 'home') {
       return html`<section class="card push-card">${head('iPhone: เพิ่มแอปลงหน้าจอโฮมก่อน แล้วเปิดแจ้งเตือน')}
@@ -20529,7 +20561,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   // -- the bell: what this person was told (the last 30 days)
   var bellList = null; // {notes, unread, phones} as last fetched
-  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', 'daily-new': 'note', 'daily-seen': 'check', 'daily-ask': 'note', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', 'order-edit': 'edit', 'order-wait': 'cart', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', 'pin-lock': 'lock', 'self-name': 'team', test: 'bell', battle: 'shield', 'ot-ask': 'clock', 'ot-add': 'clock' };
+  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', 'daily-new': 'note', 'daily-seen': 'check', 'daily-ask': 'note', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', 'order-edit': 'edit', 'order-wait': 'cart', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', 'pin-lock': 'lock', 'self-name': 'team', test: 'bell', battle: 'shield', 'ot-ask': 'clock', 'ot-add': 'clock', 'kiosk-link': 'tablet' };
   function noteWhen(iso) {
     var ms = now().getTime() - Date.parse(iso);
     if (ms < 60000) return 'เมื่อสักครู่';
@@ -20609,6 +20641,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (go === 'temp') { openTemp(); return; }
       if (go === 'clock-fix') { openClockFixes(); return; }
       if (/^ot-day(:|$)/.test(go)) { if (sheetState) closeSheet(); openOtDay(go.slice(7)); return; }
+      // (2.14.19 k172) ตั้งจอจากลิงก์แล้ว: แท็บตั้งค่าที่มีรายการจอ
+      if (go === 'settings') { if (sheetState) closeSheet(); ACTIONS['owner-tab']({ dataset: { tab: 'settings' } }); return; }
       if (sheetState) closeSheet();
       ACTIONS['owner-tab']({ dataset: { tab: go === 'leaves' || go === 'team' ? 'team' : 'overview' } });
       return;
@@ -21500,7 +21534,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <p class="small muted team-sum">${fresh ? (zero ? 'ยังไม่ได้บอกเรื่อง ' + zero + ' คน · ' : 'บอกเรื่องครบทุกคน · ') : ''}แจ้งเตือนเปิดแล้ว ${on}/${list.length} คน</p>
       <div class="list">${list.map(function (x) {
         return html`<button class="item team-row ${fresh && !x.told ? 'zero' : ''}" data-act="team-one" data-id="${x.id}"><div class="grow"><div class="t">${x.name}${x.newDay ? html` <span class="pill new-day">เพิ่งเริ่ม ${x.newDay} วัน</span>` : ''}${fresh ? html` · <b>${x.told ? 'บอก ' + x.told + ' เรื่อง' : 'ยังไม่ได้บอก'}</b>` : ''}</div>
-          <div class="s">${fresh ? teamSeen(x.last) + ' · ' : ''}${x.push ? 'แจ้งเตือนเปิดแล้ว' : x.cant ? 'มือถือรับแจ้งเตือนไม่ได้ · ได้ LINE แทน' : html`<span class="team-off">ยังไม่เปิดแจ้งเตือน</span>`}</div>
+          <div class="s">${fresh ? teamSeen(x.last) + ' · ' : ''}${x.push ? 'แจ้งเตือนเปิดแล้ว' : x.cant ? 'มือถือรับแจ้งเตือนไม่ได้' : html`<span class="team-off">ยังไม่เปิดแจ้งเตือน</span>`}</div>
           </div>${icon('right')}</button>`;
       })}</div>
       ${on < list.length ? html`<p class="small muted" style="margin:0 16px 14px">คนที่ยังไม่เปิด เข้าแอปแล้วเจอหน้าสอนเปิดแจ้งเตือนทีละขั้น ลงเวลาได้ตามปกติ ส่วนอื่นเปิดหลังเปิดแจ้งเตือน</p>` : ''}</section>`;
@@ -21514,7 +21548,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     openSheet({ title: x.name + ' · 7 วันถึงเมื่อคืน', body: html`<div class="stack">
       ${fresh ? html`<div class="hint">${icon('note')}<span><b>บอกเจ้าของ ${x.told} เรื่อง</b> · บันทึกหน้างาน ${x.notes} · ความคิดเห็น ${x.fb}</span></div>
       <div class="hint">${icon('phone')}<span><b>${teamSeen(x.last)}</b> · เข้าแอป ${x.opens} ครั้ง · ใช้ ${x.min} นาที · เล่นเกม ${x.game} นาที</span></div>` : html`<p class="small muted mt0">ตัวเลขการใช้แอปมาหลังสรุปคืนนี้</p>`}
-      <div class="hint">${icon('bell')}<span>${x.push ? 'แจ้งเตือนเปิดแล้ว' : x.cant ? 'มือถือเครื่องนี้รับแจ้งเตือนไม่ได้ ร้านส่ง LINE แทน' : 'ยังไม่เปิดแจ้งเตือน: ชวนกด "เปิดแจ้งเตือน" บนหน้าแรก (iPhone เพิ่มแอปลงหน้าจอโฮมก่อน)'}</span></div>
+      <div class="hint">${icon('bell')}<span>${x.push ? 'แจ้งเตือนเปิดแล้ว' : x.cant ? 'มือถือเครื่องนี้รับแจ้งเตือนไม่ได้ · เรื่องใหม่ดูที่กระดิ่งตอนเปิดแอป' : 'ยังไม่เปิดแจ้งเตือน: ชวนกด "เปิดแจ้งเตือน" บนหน้าแรก (iPhone เพิ่มแอปลงหน้าจอโฮมก่อน)'}</span></div>
       <div class="hint">${icon('spark')}<span><b>${x.lv ? 'ระดับ' + LV_NAMES[x.lv] : 'ยังไม่มีระดับ'}${x.crown ? ' · ใส่มงกุฎเดือนนี้' : ''}</b> · แต้มเดือนนี้ ${x.month} · สะสมทั้งหมด ${x.all} แต้ม</span></div>
       ${fresh ? html`<div class="hint">${icon('spark')}<span><b>ของสะสม</b> · ฟิกเกอร์ ${x.figs || 0}/${x.figAll || 0} ตัว · ของแต่งตัว ${x.looks || 0} ชิ้น</span></div>` : ''}
       <p class="small muted mt0">หน้าที่เปิด ปุ่มที่กด และความเร็วของแอปรายคน ดูได้ที่ การใช้แอป</p></div>`,
@@ -23663,12 +23697,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         }, function () {});
       };
       if (what !== 'skip') return go();
-      confirmSheet({ title: 'ไม่ประกาศกติกาใหม่?', text: 'น้องจะไม่เห็นประกาศนี้ ทั้งในแอปและกลุ่ม LINE', yes: 'ไม่ต้องประกาศ' }).then(function (ok) { if (ok) go(); });
+      confirmSheet({ title: 'ไม่ประกาศกติกาใหม่?', text: 'น้องจะไม่เห็นประกาศนี้ในแอป', yes: 'ไม่ต้องประกาศ' }).then(function (ok) { if (ok) go(); });
     },
     'update-text': function () {
       var n = S.ownerHome.update && S.ownerHome.update.news;
       if (!n) return;
-      openSheet({ title: 'ประกาศถึงพนักงาน', body: html`<p class="small muted mt0">ข้อความที่${n.state === 'sent' ? 'ประกาศ' : 'จะประกาศ'}ถึงน้องในแอป (กลุ่ม LINE ได้ด้วยเมื่อมีน้องที่มือถือรับแจ้งเตือนไม่ได้)</p><div class="card" style="white-space:pre-wrap;font-size:14px;line-height:1.65">${n.text}</div>`, foot: html`<button class="btn" data-act="update-copy">${icon('chat')} คัดลอก</button><button class="btn primary" data-act="sheet-close">ปิด</button>` });
+      openSheet({ title: 'ประกาศถึงพนักงาน', body: html`<p class="small muted mt0">ข้อความที่${n.state === 'sent' ? 'ประกาศ' : 'จะประกาศ'}ถึงน้องในแอป</p><div class="card" style="white-space:pre-wrap;font-size:14px;line-height:1.65">${n.text}</div>`, foot: html`<button class="btn" data-act="update-copy">${icon('chat')} คัดลอก</button><button class="btn primary" data-act="sheet-close">ปิด</button>` });
     },
     'update-copy': function () { var n = S.ownerHome.update && S.ownerHome.update.news; if (n) copyText(n.text); },
     'logout-owner': function () { closeSheet(); logoutOwner(); },
@@ -23795,7 +23829,41 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         work: function () { return call('kioskRemove', { id: el.dataset.id }, ownerAuth()); },
         done: function (d) { closeSheet(); ownerChanged(d); render(); toast('ยกเลิกแล้ว', 'ok'); } });
     },
-    'line-code': function (el) { run(el, call('lineCode', {}, ownerAuth())).then(function (d) { S.ownerHome.line.linkCode = d.linkCode; ownerChanged(); render(); }, function () {}); },
+    // (2.14.19 k172 · เจ้าของร้าน 17 พ.ย. 2569) ลิงก์ตั้งจอ: เจ้าของร้านอยู่บ้านส่งลิงก์ให้น้องเปิดบนมือถือร้าน น้องไม่ต้องรู้รหัสเจ้าของ
+    // · ใช้ได้ครั้งเดียวภายใน 24 ชม. มีได้ทีละลิงก์ (สร้างใหม่ ลิงก์เดิมใช้ไม่ได้) · หลังบ้านเก็บเฉพาะแฮชของรหัส จึงเปิดดูลิงก์เดิมซ้ำไม่ได้
+    'kiosk-link': function (el) {
+      run(el, call('kioskLinkMake', {}, ownerAuth())).then(function (d) {
+        S.ownerHome.kioskLink = d.kioskLink; ownerChanged(); render();
+        S.kioskLinkUrl = setupUrl(d.code);
+        openSheet({ use: 'ลิงก์ตั้งจอลงเวลา', title: 'ลิงก์ตั้งจอลงเวลา', body: html`<p class="muted small mt0">ใช้ได้ครั้งเดียว ถึง ${linkUntil(d.kioskLink.until)} · เปิดบนมือถือร้านแล้วกดตั้งเป็นจอ</p>
+          <input class="input" id="kiosk-link-url" readonly value="${S.kioskLinkUrl}">`,
+          foot: html`${navigator.share ? html`<button class="btn" data-act="kiosk-link-share">${icon('share')} แชร์ลิงก์</button>` : ''}<button class="btn primary" data-act="kiosk-link-copy">${icon('copy')} คัดลอกลิงก์</button>` });
+      }, function () {});
+    },
+    'kiosk-link-share': function () {
+      var url = S.kioskLinkUrl;
+      if (!url || !navigator.share) return;
+      navigator.share({ title: 'ตั้งจอลงเวลาในร้าน', url: url }).catch(function (e) { if (!e || e.name !== 'AbortError') copyText(url, 'คัดลอกลิงก์แล้ว ส่งให้น้องเปิดบนมือถือร้าน'); });
+    },
+    'kiosk-link-copy': function () { if (S.kioskLinkUrl) copyText(S.kioskLinkUrl, 'คัดลอกลิงก์แล้ว ส่งให้น้องเปิดบนมือถือร้าน'); },
+    'kiosk-link-cancel': function () {
+      confirmThen({ title: 'ยกเลิกลิงก์ตั้งจอ', text: 'ลิงก์ที่ส่งไปแล้วจะใช้ไม่ได้', yes: 'ยกเลิกลิงก์', danger: true,
+        work: function () { return call('kioskLinkCancel', {}, ownerAuth()); },
+        done: function (d) { S.kioskLinkUrl = ''; closeSheet(); ownerChanged(d); render(); toast('ยกเลิกลิงก์แล้ว', 'ok'); } });
+    },
+    // มือถือร้านที่เปิดลิงก์: กดแล้วจึงใช้รหัส · เก็บกุญแจจอแบบ kiosk-add-go ไม่มีอะไรของเจ้าของร้านในเครื่องนี้ · ที่อยู่ไม่มีรหัสแล้ว
+    'kiosk-setup-go': function (el) {
+      var code = (S.setup && S.setup.code) || setupCode();
+      run(el, call('kioskSetup', { code: code })).then(function (d) {
+        dropSetup();
+        S.kiosk = { token: d.token, id: d.kiosk.id, name: d.kiosk.name };
+        LS.set(KEY.kiosk, S.kiosk);
+        LS.del(KEY.owner); forget('owner'); forget('parts'); S.owner = null;
+        start();
+        toast('เครื่องนี้เป็นจอลงเวลาแล้ว', 'ok');
+      }, function (e) { S.setup = { code: code, err: e.message }; if (S.view === 'kioskSetup') render(); });
+    },
+    'kiosk-setup-skip': function () { dropSetup(); location.reload(); },
     'backup': function (el) { run(el, call('backup', {}, ownerAuth())).then(function (d) { backupDone(d); }, function () {}); },
     'backup-mail': function (el) { run(el, call('backupMail', {}, ownerAuth())).then(function (d) { backupDone(d); }, function () {}); },
     // what the sheet held, changed here (ย้ายหลังบ้าน task 7): the shifts, the types of leave, the daily summary
@@ -23831,7 +23899,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'line-daily': function (el) {
       run(el, call('lineDaily', { on: !!el.dataset.on }, ownerAuth())).then(function (d) { S.ownerHome.line = d.line; ownerChanged(); render(); toast(d.notice, 'ok'); }, function () {});
     },
-    'line-try': function (el) { run(el, call('lineTry', {}, ownerAuth())).then(function (d) { toast(d.notice, 'ok'); }, function () {}); },
     'export-tables': function (el) {
       run(el, call('exportTables', {}, ownerAuth()).then(function (d) {
         return xlsxFile(d).then(function (bytes) { downloadBlob(d.name + '.xlsx', new Blob([bytes], { type: XLSX_TYPE })); return d; });
@@ -24090,6 +24157,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     takeHandoff();
     takeOwnerKey();
     pageInit();
+    // (2.14.19 k172) ลิงก์ตั้งจอจากเจ้าของร้าน: หน้าถามก่อน แม้เครื่องนี้เป็นจอหรือเข้าระบบไว้แล้ว (takeSetup)
+    if (takeSetup()) return;
     // The shop's screen asks for its own (start).
     if (S.kiosk && S.kiosk.token) { start(); return; }
     pushInit();
