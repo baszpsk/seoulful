@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.17","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"55337b773895"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.18","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"5d5cbf516002"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -14009,8 +14009,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     o.kiosks.filter(function (k) { return k.current === false; }).forEach(function (k) { todo.unshift(['tablet', 'เปิด' + k.name + 'ใหม่ 1 ครั้ง (รีเฟรช) แล้วกดอนุญาตกล้อง — จอยังเป็นแอปรุ่นเก่า', 'settings']); });
     if (o.approverReviews) todo.unshift(['team', 'ตรวจการลงเวลาของผู้อนุมัติ ' + o.approverReviews + ' รายการ (ผู้อนุมัติตรวจของตัวเองไม่ได้)', 'team']);
     if (!o.settings.weatherKey.set) todo.push(['rain', 'ใส่ WeatherAPI key เพื่อตรวจฝนอัตโนมัติ', 'settings']);
-    var cantN = ((o.team && o.team.list) || []).filter(function (x) { return x.cant; }).length;
-    if (!o.line.groupLinked && cantN) todo.push(['chat', 'เชื่อมกลุ่ม LINE ให้น้องที่มือถือรับแจ้งเตือนไม่ได้ ' + cantN + ' คน (ไม่บังคับ · คนอื่นได้เรื่องจากร้านในแอปครบ)', 'settings']);
     var bk = o.backup || {};
     if (bk.error || bk.stale) todo.unshift(['shield', bk.error ? 'สำรองข้อมูลอัตโนมัติไม่สำเร็จ — ดูสาเหตุ แล้วกด "สำรองตอนนี้"' : 'ไม่ได้สำรองข้อมูลมา 3 วันแล้ว — ดูสาเหตุ แล้วกด "สำรองตอนนี้"', 'settings']);
     if (bk.mailOn && bk.to && !bk.offAccount) todo.push(['mail', 'ให้ส่งไฟล์สำรองไปอีเมลของบัญชีอื่น (ข้อมูลไม่หายแม้เข้าบัญชี Google ของร้านไม่ได้)', 'settings']);
@@ -14079,11 +14077,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var n = up.news;
     var when = function (iso) { return isoDate(iso) + ' ' + isoTime(iso) + ' น.'; }; // k107 เวลากับ น. ไม่แยกบรรทัด
     var pending = !!n && n.state === 'pending';
-    var status = !n ? '' : n.state === 'sent' ? 'ประกาศกติกาใหม่ในแอปแล้ว (กระดิ่งและแจ้งเตือนของน้องทุกคน) ' + when(n.sentAt) + (n.line ? ' · ส่งเข้ากลุ่ม LINE ด้วย เพราะมีน้องที่มือถือรับแจ้งเตือนไม่ได้' : '')
+    var status = !n ? '' : n.state === 'sent' ? 'ประกาศกติกาใหม่ในแอปแล้ว (กระดิ่งและแจ้งเตือนของน้องทุกคน) ' + when(n.sentAt)
       : n.state === 'done' ? 'โพสต์ประกาศเองแล้ว'
       : n.state === 'skipped' ? 'ไม่ได้ประกาศกติกาใหม่'
-      : n.auto ? 'แอปจะประกาศกติกาใหม่ให้น้องทุกคนในแอปเอง ช่วง 9:00–20:00 น.' + (n.error ? ' (ครั้งก่อนส่ง LINE ไม่สำเร็จ: ' + n.error + ')' : '')
-      : n.error ? 'ส่งเข้ากลุ่ม LINE ไม่สำเร็จ (' + n.error + ') — กดประกาศอีกครั้ง'
+      : n.auto ? 'แอปจะประกาศกติกาใหม่ให้น้องทุกคนในแอปเอง ช่วง 9:00–20:00 น.' + (n.error ? ' (ครั้งก่อนประกาศไม่สำเร็จ: ' + n.error + ')' : '')
+      : n.error ? 'ประกาศไม่สำเร็จ (' + n.error + ') — กดประกาศอีกครั้ง'
       : 'ยังไม่ได้ประกาศกติกาใหม่ — กดประกาศในแอปตอนนี้';
     return html`<section class="card pad-lg"><div class="card-h"><span class="eyebrow">อัปเดตแอปแล้ว · รุ่น ${up.to}</span><span class="small muted">${when(up.at)}</span></div>
       ${up.report.length ? html`<ul class="small" style="margin:6px 0 0;padding-left:18px;line-height:1.6">${up.report.map(function (x) { return html`<li>${x}</li>`; })}</ul>` : ''}
@@ -14194,7 +14192,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     ['ประเภทการลา', [], leaveTypesBox],
     ['วันหยุดและวันจ่ายเงิน', ['daysOffPerMonth', 'fixedHolidays', 'floatingHolidays', 'setHolidays', 'closedDates', 'payUnusedDaysOff', 'autoAbsent', 'payDay']],
     ['ประกันสังคม', ['ssoRate', 'ssoMin', 'ssoMax']],
-    ['แจ้งเตือน', ['emailOnApprove', 'ownerEmail', 'lineHour', 'lineNews', 'lineToken', 'lineAnnounceLeave', 'lineRainNotice'], dailyBox],
+    ['แจ้งเตือน', ['emailOnApprove', 'ownerEmail', 'lineHour', 'lineNews', 'lineAnnounceLeave', 'lineRainNotice'], dailyBox],
     ['ความคิดเห็นจากพนักงาน', [], githubHelp],
     ['บันทึกหน้างาน', ['dailyLeads', 'dailyAsk']],
     ['เกมของทีม', ['gameClosed']],
@@ -14335,11 +14333,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return html`<section class="card"><div class="card-h"><span class="eyebrow">${g[0]}</span></div>${g[2] ? g[2](o) : ''}${g[1].map(function (k) { return settingField(set[k]); })}
           ${g[1].length ? html`<button class="btn block" style="margin-top:16px" data-act="save-settings" data-keys="${g[1].join(',')}">บันทึก${g[0]}</button>` : ''}</section>`;
       })}
-      <section class="card"><div class="card-h"><span class="eyebrow">LINE</span></div>
-        <div class="small" style="line-height:2.25">กลุ่มพนักงาน: ${o.line.groupLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`} · LINE เจ้าของร้าน: ${o.line.ownerLinked ? html`<span class="pill ok">เชื่อมแล้ว</span>` : html`<span class="pill">ยังไม่เชื่อม</span>`}</div>
-        <p class="small muted" style="margin:6px 0 0">ไม่บังคับ · ทุกเรื่องแจ้งในแอปเอง LINE ใช้ส่งแทนเฉพาะมือถือที่รับแจ้งเตือนของแอปไม่ได้เลย (กลุ่มพนักงาน และ LINE เจ้าของร้าน)</p>
-        <ol class="small muted" style="padding-left:18px;margin:10px 0 0"><li>สร้าง LINE Official Account (ฟรี) เปิด Messaging API แล้ววาง Channel access token ในช่อง "แจ้งเตือน" ด้านบน</li><li>ตั้ง Webhook URL เป็นลิงก์แอปนี้ (${o.links.app || 'ลิงก์เว็บแอป'})</li><li>เชิญบอทเข้ากลุ่มพนักงาน แล้วพิมพ์ <b>เชื่อมระบบ ${o.line.linkCode}</b> ในกลุ่ม (เจ้าของร้านพิมพ์ในแชตกับบอทอีกครั้งด้วยรหัสใหม่)</li></ol>
-        <div class="row wrapx" style="margin-top:10px"><button class="btn sm" data-act="line-code">สร้างรหัสใหม่</button>${o.line.ownerLinked ? html`<button class="btn sm" data-act="line-try">${icon('send')} ส่งข้อความทดสอบ</button>` : ''}</div></section>
       <section class="card"><div class="card-h"><span class="eyebrow">ข้อมูลและการสำรอง</span></div>
         <p class="small muted mt0">${o.backup && o.backup.sheetIsCopy ? 'ข้อมูลทั้งหมดอยู่ในระบบของร้าน · ทุกคืนตอนตี 4 คัดลอกลง Google Sheet ของร้านไว้เปิดดู (แก้ในชีตไม่มีผลกับแอป) แล้วสำรองทั้งไฟล์ (สำเนารายวันเก็บ 30 วัน สำเนาวันที่ 1 ของเดือนเก็บตลอด)' : 'ข้อมูลทั้งหมดอยู่ใน Google Sheet ของร้าน · สำรองทั้งไฟล์ให้เองทุกคืนตอนตี 4 (สำเนารายวันเก็บ 30 วัน สำเนาวันที่ 1 ของเดือนและก่อนอัปเดตทุกครั้งเก็บตลอด)'} · ส่งไฟล์ Excel ของข้อมูลทั้งหมดเข้าอีเมลสัปดาห์ละครั้ง · เงินเดือนที่อนุมัติแล้วเก็บแยกไว้ ไม่เปลี่ยนแม้แก้โปรแกรม</p>
         ${backupStatus(o.backup)}
@@ -20485,7 +20478,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var st = pushState();
     if (st === 'on' || st === 'wait') return '';
     var head = function (t) { return html`<div class="fb-invite-h"><span class="fb-ico">${icon('bell')}</span><div class="grow"><span class="eyebrow">แจ้งเตือน</span><b>${t}</b></div></div>`; };
-    var what = html`<div class="push-what">${pushWhat().map(function (w) { return html`<span>${w}</span>`; })}</div>${S.view === 'owner' ? html`<p class="push-hint">เรื่องถึงคุณมาทางแจ้งเตือนของแอป LINE ส่งแทนเฉพาะมือถือที่รับแจ้งเตือนไม่ได้เลย</p>` : ''}`;
+    var what = html`<div class="push-what">${pushWhat().map(function (w) { return html`<span>${w}</span>`; })}</div>${S.view === 'owner' ? html`<p class="push-hint">เรื่องถึงคุณมาทางแจ้งเตือนของแอป</p>` : ''}`;
     var later = html`<p class="push-hint">ระหว่างนี้ดูเรื่องใหม่ได้ที่กระดิ่ง ${icon('bell')} มุมบน</p>`;
     if (st === 'home') {
       return html`<section class="card push-card">${head('iPhone: เพิ่มแอปลงหน้าจอโฮมก่อน แล้วเปิดแจ้งเตือน')}
@@ -21502,7 +21495,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <p class="small muted team-sum">${fresh ? (zero ? 'ยังไม่ได้บอกเรื่อง ' + zero + ' คน · ' : 'บอกเรื่องครบทุกคน · ') : ''}แจ้งเตือนเปิดแล้ว ${on}/${list.length} คน</p>
       <div class="list">${list.map(function (x) {
         return html`<button class="item team-row ${fresh && !x.told ? 'zero' : ''}" data-act="team-one" data-id="${x.id}"><div class="grow"><div class="t">${x.name}${x.newDay ? html` <span class="pill new-day">เพิ่งเริ่ม ${x.newDay} วัน</span>` : ''}${fresh ? html` · <b>${x.told ? 'บอก ' + x.told + ' เรื่อง' : 'ยังไม่ได้บอก'}</b>` : ''}</div>
-          <div class="s">${fresh ? teamSeen(x.last) + ' · ' : ''}${x.push ? 'แจ้งเตือนเปิดแล้ว' : x.cant ? 'มือถือรับแจ้งเตือนไม่ได้ · ได้ LINE แทน' : html`<span class="team-off">ยังไม่เปิดแจ้งเตือน</span>`}</div>
+          <div class="s">${fresh ? teamSeen(x.last) + ' · ' : ''}${x.push ? 'แจ้งเตือนเปิดแล้ว' : x.cant ? 'มือถือรับแจ้งเตือนไม่ได้' : html`<span class="team-off">ยังไม่เปิดแจ้งเตือน</span>`}</div>
           </div>${icon('right')}</button>`;
       })}</div>
       ${on < list.length ? html`<p class="small muted" style="margin:0 16px 14px">คนที่ยังไม่เปิด เข้าแอปแล้วเจอหน้าสอนเปิดแจ้งเตือนทีละขั้น ลงเวลาได้ตามปกติ ส่วนอื่นเปิดหลังเปิดแจ้งเตือน</p>` : ''}</section>`;
@@ -21516,7 +21509,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     openSheet({ title: x.name + ' · 7 วันถึงเมื่อคืน', body: html`<div class="stack">
       ${fresh ? html`<div class="hint">${icon('note')}<span><b>บอกเจ้าของ ${x.told} เรื่อง</b> · บันทึกหน้างาน ${x.notes} · ความคิดเห็น ${x.fb}</span></div>
       <div class="hint">${icon('phone')}<span><b>${teamSeen(x.last)}</b> · เข้าแอป ${x.opens} ครั้ง · ใช้ ${x.min} นาที · เล่นเกม ${x.game} นาที</span></div>` : html`<p class="small muted mt0">ตัวเลขการใช้แอปมาหลังสรุปคืนนี้</p>`}
-      <div class="hint">${icon('bell')}<span>${x.push ? 'แจ้งเตือนเปิดแล้ว' : x.cant ? 'มือถือเครื่องนี้รับแจ้งเตือนไม่ได้ ร้านส่ง LINE แทน' : 'ยังไม่เปิดแจ้งเตือน: ชวนกด "เปิดแจ้งเตือน" บนหน้าแรก (iPhone เพิ่มแอปลงหน้าจอโฮมก่อน)'}</span></div>
+      <div class="hint">${icon('bell')}<span>${x.push ? 'แจ้งเตือนเปิดแล้ว' : x.cant ? 'มือถือเครื่องนี้รับแจ้งเตือนไม่ได้ · เรื่องใหม่ดูที่กระดิ่งตอนเปิดแอป' : 'ยังไม่เปิดแจ้งเตือน: ชวนกด "เปิดแจ้งเตือน" บนหน้าแรก (iPhone เพิ่มแอปลงหน้าจอโฮมก่อน)'}</span></div>
       <div class="hint">${icon('spark')}<span><b>${x.lv ? 'ระดับ' + LV_NAMES[x.lv] : 'ยังไม่มีระดับ'}${x.crown ? ' · ใส่มงกุฎเดือนนี้' : ''}</b> · แต้มเดือนนี้ ${x.month} · สะสมทั้งหมด ${x.all} แต้ม</span></div>
       ${fresh ? html`<div class="hint">${icon('spark')}<span><b>ของสะสม</b> · ฟิกเกอร์ ${x.figs || 0}/${x.figAll || 0} ตัว · ของแต่งตัว ${x.looks || 0} ชิ้น</span></div>` : ''}
       <p class="small muted mt0">หน้าที่เปิด ปุ่มที่กด และความเร็วของแอปรายคน ดูได้ที่ การใช้แอป</p></div>`,
@@ -23665,12 +23658,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         }, function () {});
       };
       if (what !== 'skip') return go();
-      confirmSheet({ title: 'ไม่ประกาศกติกาใหม่?', text: 'น้องจะไม่เห็นประกาศนี้ ทั้งในแอปและกลุ่ม LINE', yes: 'ไม่ต้องประกาศ' }).then(function (ok) { if (ok) go(); });
+      confirmSheet({ title: 'ไม่ประกาศกติกาใหม่?', text: 'น้องจะไม่เห็นประกาศนี้ในแอป', yes: 'ไม่ต้องประกาศ' }).then(function (ok) { if (ok) go(); });
     },
     'update-text': function () {
       var n = S.ownerHome.update && S.ownerHome.update.news;
       if (!n) return;
-      openSheet({ title: 'ประกาศถึงพนักงาน', body: html`<p class="small muted mt0">ข้อความที่${n.state === 'sent' ? 'ประกาศ' : 'จะประกาศ'}ถึงน้องในแอป (กลุ่ม LINE ได้ด้วยเมื่อมีน้องที่มือถือรับแจ้งเตือนไม่ได้)</p><div class="card" style="white-space:pre-wrap;font-size:14px;line-height:1.65">${n.text}</div>`, foot: html`<button class="btn" data-act="update-copy">${icon('chat')} คัดลอก</button><button class="btn primary" data-act="sheet-close">ปิด</button>` });
+      openSheet({ title: 'ประกาศถึงพนักงาน', body: html`<p class="small muted mt0">ข้อความที่${n.state === 'sent' ? 'ประกาศ' : 'จะประกาศ'}ถึงน้องในแอป</p><div class="card" style="white-space:pre-wrap;font-size:14px;line-height:1.65">${n.text}</div>`, foot: html`<button class="btn" data-act="update-copy">${icon('chat')} คัดลอก</button><button class="btn primary" data-act="sheet-close">ปิด</button>` });
     },
     'update-copy': function () { var n = S.ownerHome.update && S.ownerHome.update.news; if (n) copyText(n.text); },
     'logout-owner': function () { closeSheet(); logoutOwner(); },
@@ -23797,7 +23790,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         work: function () { return call('kioskRemove', { id: el.dataset.id }, ownerAuth()); },
         done: function (d) { closeSheet(); ownerChanged(d); render(); toast('ยกเลิกแล้ว', 'ok'); } });
     },
-    'line-code': function (el) { run(el, call('lineCode', {}, ownerAuth())).then(function (d) { S.ownerHome.line.linkCode = d.linkCode; ownerChanged(); render(); }, function () {}); },
     'backup': function (el) { run(el, call('backup', {}, ownerAuth())).then(function (d) { backupDone(d); }, function () {}); },
     'backup-mail': function (el) { run(el, call('backupMail', {}, ownerAuth())).then(function (d) { backupDone(d); }, function () {}); },
     // what the sheet held, changed here (ย้ายหลังบ้าน task 7): the shifts, the types of leave, the daily summary
@@ -23833,7 +23825,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'line-daily': function (el) {
       run(el, call('lineDaily', { on: !!el.dataset.on }, ownerAuth())).then(function (d) { S.ownerHome.line = d.line; ownerChanged(); render(); toast(d.notice, 'ok'); }, function () {});
     },
-    'line-try': function (el) { run(el, call('lineTry', {}, ownerAuth())).then(function (d) { toast(d.notice, 'ok'); }, function () {}); },
     'export-tables': function (el) {
       run(el, call('exportTables', {}, ownerAuth()).then(function (d) {
         return xlsxFile(d).then(function (bytes) { downloadBlob(d.name + '.xlsx', new Blob([bytes], { type: XLSX_TYPE })); return d; });
