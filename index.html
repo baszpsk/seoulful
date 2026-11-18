@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.21","page":"","e3":"7294d0dd","edge":true,"build":"a34821bfc67d"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.22","page":"","e3":"7294d0dd","edge":true,"build":"cb6a79ca3031"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="Seoulful">
@@ -34,7 +34,8 @@
   var STORE = site.store || '';
   function get(k) { try { return JSON.parse(localStorage.getItem(STORE + k)); } catch (e) { return null; } }
   // (มือถือจำ PIN มีหมดอายุ ดู liveSession 25 ต.ค. 2569)
-  function live(v) { return v && !(v.seen && Date.now() - v.seen > (v.idle || 2592000000)) ? v : null; }
+  // (k176: min = อายุต่ำสุดของช่องนั้น น้องที่ใส่ PIN ไว้ก่อนอัปเดตเก็บอายุ 30 นาทีไว้ในเครื่อง ใช้ 30 วันตามช่องของน้องเสมอ)
+  function live(v, min) { return v && !(v.seen && Date.now() - v.seen > Math.max(v.idle || 2592000000, min || 0)) ? v : null; }
   function stable(v) {
     if (Array.isArray(v)) return '[' + v.map(stable).join(',') + ']';
     if (v && typeof v === 'object') return '{' + Object.keys(v).sort().map(function (k) { return JSON.stringify(k) + ':' + stable(v[k]); }).join(',') + '}';
@@ -43,7 +44,7 @@
   function keyOf(body) { try { var r = JSON.parse(body); return r.action + '|' + stable(r.auth || {}) + '|' + stable(r.data || {}); } catch (e) { return ''; } }
   if ((get('seoulful.kiosk') || {}).token) return;
   var q = new URLSearchParams(location.search);
-  var page = String(site.page || q.get('page') || '').toLowerCase(), staff = live(get('seoulful.staff')), owner = live(get('seoulful.owner'));
+  var page = String(site.page || q.get('page') || '').toLowerCase(), staff = live(get('seoulful.staff'), 2592000000), owner = live(get('seoulful.owner'));
   var list = [{ action: 'boot', auth: {}, data: { page: page, scan: q.get('in') || q.get('qr') || '', v: site.version || '' } }];
   if (page === 'owner' || (owner && !staff)) { if (owner && owner.pin) list.push({ action: 'owner', auth: { ownerPin: owner.pin }, data: {} }); }
   else if (staff && staff.empId) list.push({ action: 'home', auth: { empId: staff.empId, pin: staff.pin }, data: {} });
@@ -3624,8 +3625,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     del: function (k) { try { window.localStorage.removeItem(STORE + k); } catch (e) { /* storage unavailable */ } },
   };
   var HOOKS = window.__SEOULFUL_HOOKS__ || {};
-  // (มือถือจำ PIN มีหมดอายุ 25 ต.ค. 2569: ผู้อนุมัติและเจ้าของร้านไม่ได้ใช้ 30 นาที น้องไม่ได้เปิดแอป 30 วัน
-  // ใส่ PIN ใหม่ · การแจ้งเตือนในมือถือยังอยู่)
+  // (มือถือจำ PIN มีหมดอายุ 25 ต.ค. 2569: เจ้าของร้านที่ไม่ติ๊กจำไม่ได้ใช้ 30 นาที น้องและผู้อนุมัติไม่ได้เปิดแอป 30 วัน
+  // ใส่ PIN ใหม่ · 18 พ.ย. 2569 ผู้อนุมัติใช้ 30 วันเหมือนน้อง ใส่ PIN ครั้งเดียวต่อเครื่อง · การแจ้งเตือนในมือถือยังอยู่)
   var IDLE_MS = { short: 30 * 60000, long: 30 * 86400000 };
   // (2.13.54 g-k10 · เจ้าของร้านตอบ "85 ok ไม่มีใครใช้คอมฉัน" 3 พ.ย. 2569) หน้าเจ้าของร้านที่ติ๊ก จำไว้ในเครื่องนี้ จำรหัส 30 วันนับจาก
   // ใส่รหัสครั้งล่าสุด (keep: ใช้แอปไม่ยืด ออกจากหน้าไม่ทำให้หมด) · ไม่ติ๊ก = ไม่เก็บในเครื่อง แบบเดิม · กดออกหรือรหัสใช้ไม่ได้ ลืมทันที
@@ -3637,7 +3638,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function liveSession(key) {
     var v = LS.get(key);
-    if (!v || !v.seen || Date.now() - v.seen <= (v.idle || IDLE_MS.long)) return v;
+    // k176: ช่องของน้องใช้อายุไม่ต่ำกว่า IDLE_MS.long เสมอ (น้องที่ใส่ PIN ไว้ก่อนอัปเดตเก็บ 30 นาที ไม่หลุดอีกรอบ) · ช่องเจ้าของร้านใช้ค่าที่เก็บ
+    var age = v && v.idle || IDLE_MS.long;
+    if (key === KEY.staff && age < IDLE_MS.long) age = IDLE_MS.long;
+    if (!v || !v.seen || Date.now() - v.seen <= age) return v;
     LS.del(key);
     forget(key === KEY.owner ? 'owner' : 'home');
     forget('parts');
@@ -8842,7 +8846,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (S.pinBusy) return;
     var kiosk = S.view === 'kiosk';
     var typed = kiosk ? S.k.pin : S.pin;
-    var len = kiosk ? (empById(S.k.emp) || {}).pinLen || 4 : S.view === 'pin' ? (empById(S.pickId) || {}).pinLen || 0 : S.view === 'ownerCode' ? 6 : 0;
+    var len = kiosk ? (empById(S.k.emp) || {}).pinLen || 0 : S.view === 'pin' ? (empById(S.pickId) || {}).pinLen || 0 : S.view === 'ownerCode' ? 6 : 0;
     if (k === 'del') typed = typed.slice(0, -1);
     else if (k === 'ok') { submitPin(typed); return; }
     else if (typed.length < (len || 12)) typed += k;
@@ -8872,7 +8876,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     call('home', {}, { empId: id, pin: pin }, { once: true }).then(function (data) {
       S.pinBusy = false;
       S.login = null;
-      S.staff = { empId: id, pin: pin, name: ownName(e0), seen: Date.now(), idle: data && data.me && data.me.role === 'approver' ? IDLE_MS.short : IDLE_MS.long };
+      S.staff = { empId: id, pin: pin, name: ownName(e0), seen: Date.now(), idle: IDLE_MS.long };
       LS.set(KEY.staff, S.staff);
       // (2.13.44 g-b3 A4-7) คำตอบไม่มีข้อมูลหน้าแรก: PIN ถูกแล้ว อยู่หน้าน้อง บอกว่าระบบตอบผิดพลาดพร้อมปุ่มลองอีกครั้ง ไม่ค้างเงียบ
       try { applyHome(data); } catch (err) { S.home = null; S.homeErr = BAD_ANSWER; S.pin = ''; if (S.view === 'staff') render(); return; }
@@ -9340,7 +9344,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       body = html`${S.k.newVersion && B.appUrl ? html`<a class="k-update" href="${freshUrl(B.appUrl)}" target="_top">${icon('refresh')} มีแอปรุ่นใหม่ — แตะเพื่อเปิดจอใหม่</a>` : ''}${rainBanner(B.rain, 'kiosk')}${namesFirst ? '' : liveQrPanel()}<div class="k-prompt">${!pinHere ? 'ใครลงเวลาแล้วขึ้น ✓ · ลืมมือถือหรือแบตหมด บอกผู้อนุมัติให้ลงเวลาแทน' : liveQrOn() && !namesFirst ? 'ไม่มีมือถือ? แตะชื่อแล้วใส่ PIN ที่เครื่องนี้' : 'แตะชื่อของคุณเพื่อลงเวลาเข้างาน'}</div><div id="k-names">${nameTiles(pinHere ? 'k-pick' : 'k-nopin', k.done)}</div>${namesFirst ? liveQrPanel() : ''}`;
     } else if (k.step === 'pin') {
       var e = empById(k.emp) || {};
-      body = html`<div class="pin-wrap">${avatar(e, 'lg', kioskLv(e))}<div class="hello" style="font-size:26px;margin-top:18px">${ownName(e)}</div><div class="muted">ใส่ PIN ของคุณ</div>${pinPad(e.pinLen || 4, k.pin, k.err)}
+      body = html`<div class="pin-wrap">${avatar(e, 'lg', kioskLv(e))}<div class="hello" style="font-size:26px;margin-top:18px">${ownName(e)}</div><div class="muted">ใส่ PIN ของคุณ</div>${pinPad(e.pinLen || 0, k.pin, k.err)}
         <button class="btn ghost" style="margin-top:18px" data-act="k-cancel">ยกเลิก</button><p class="muted small" style="margin:16px 0 0">ลืม PIN? ${forgotPinText(e)}</p></div>`;
     } else if (k.step === 'confirm') {
       body = kioskConfirm();
@@ -9633,7 +9637,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (force !== true && now - touchedAt < 15000) return;
     touchedAt = now;
     if (S.owner && !S.owner.keep && LS.get(KEY.owner)) { S.owner.seen = now; S.owner.idle = IDLE_MS.short; LS.set(KEY.owner, S.owner); }
-    if (S.staff && LS.get(KEY.staff)) { S.staff.seen = now; S.staff.idle = isApprover() ? IDLE_MS.short : IDLE_MS.long; LS.set(KEY.staff, S.staff); }
+    if (S.staff && LS.get(KEY.staff)) { S.staff.seen = now; S.staff.idle = IDLE_MS.long; LS.set(KEY.staff, S.staff); }
   }
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'visible') lockIfIdle();
@@ -12975,9 +12979,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }, function (e) {
       if (SP !== sp) return;
       sp.busy = false;
+      if (e.code === 'AUTH') { logoutStaff(e.message); return; }
       sp.err = e.message || 'ลองใหม่อีกครั้ง';
       if (sheetState === sp.o) setSheetBody(slipPinBody());
-      if (e.code === 'AUTH' && S.view === 'staff') logoutStaff();
     });
     pin = '';
   }
@@ -14403,7 +14407,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         </div>
         <button class="btn block" style="margin-top:8px" data-act="kiosk-link">${icon('send')} สร้างลิงก์ตั้งจอ</button>
         <button class="btn block" style="margin-top:8px" data-act="kiosk-add">${icon('tablet')} ตั้งเครื่องนี้เป็นจอลงเวลาในร้าน</button>
-        <details class="menu-more"><summary>วิธีตั้งจอ</summary><p class="small muted" style="margin:4px 0 0"><b>จอลงเวลาในร้าน:</b> ใช้มือถือร้านหรือแท็บเล็ต วางหรือติดผนังด้านในร้าน สูงระดับหน้าอก มองไม่เห็นจากนอกร้าน เปิดหน้านี้บนเครื่องนั้นแล้วกดปุ่มด้านบน น้องแตะชื่อแล้วใส่ PIN ที่จอ และกล้องหน้าของจอเก็บภาพตอนลงเวลา · ถ้าอยากให้น้องสแกน QR บนจอ (เปลี่ยนทุก 5 วินาที) ด้วยแอปในมือถือตัวเองแทน ติ๊ก "ใช้จอนี้แทนป้าย QR กระดาษ" ตอนตั้งเครื่อง รูปที่ถ่ายส่งต่อกันใช้ไม่ได้ · เสียบชาร์จไว้ ต่อ Wi-Fi และตั้งไม่ให้จอดับ</p></details></section>
+        <details class="menu-more"><summary>วิธีตั้งจอ</summary><p class="small muted" style="margin:4px 0 0"><b>จอลงเวลาในร้าน:</b> ใช้มือถือร้านหรือแท็บเล็ต วางหรือติดผนังด้านในร้าน สูงระดับหน้าอก มองไม่เห็นจากนอกร้าน เปิดหน้านี้บนเครื่องนั้นแล้วกดปุ่มด้านบน น้องสแกน QR บนจอ (เปลี่ยนทุก 5 วินาที) ด้วยแอปในมือถือตัวเอง ไม่ต้องกดรหัส และกล้องหน้าของจอเก็บภาพตอนลงเวลา รูปที่ถ่ายส่งต่อกันใช้ไม่ได้ · ตอนตั้งเครื่องกล่อง "ใช้จอนี้แทนป้าย QR กระดาษ" ติ๊กไว้ให้แล้ว เอาติ๊กออกเฉพาะเมื่ออยากให้น้องแตะชื่อแล้วใส่ PIN ที่จอ · เสียบชาร์จไว้ ต่อ Wi-Fi และตั้งไม่ให้จอดับ</p></details></section>
       <section class="card"><div class="card-h"><span class="eyebrow">รหัสเจ้าของร้าน</span></div>${settingField(set.ownerPin)}
         <button class="btn block" style="margin-top:16px" data-act="save-settings" data-keys="ownerPin">บันทึกรหัสเจ้าของร้าน</button></section>
       <details class="menu-more set-more" ${S.setMore ? raw('open') : ''}><summary data-act="set-more">ค่าตั้งอื่น ๆ</summary><div class="stack">
@@ -23853,8 +23857,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       run(el, call('shopCode', {}, ownerAuth()), 'เปลี่ยน QR แล้ว ป้ายเก่าใช้ไม่ได้ — พิมพ์ป้ายใหม่').then(function (d) { S.ownerHome.qr = d.qr; ownerChanged(); closeSheet(); setTimeout(qrPoster, 240); }, function () {});
     },
     'kiosk-add': function () {
-      openSheet({ title: 'ตั้งเครื่องนี้เป็นจอลงเวลาในร้าน', body: html`<p class="muted small mt0">เครื่องนี้จะเปิดเป็นจอลงเวลาของร้านทุกครั้ง น้องแตะชื่อแล้วใส่ PIN ที่จอนี้ และกล้องหน้าเก็บภาพตอนลงเวลา (เครื่องจะถามอนุญาตใช้กล้อง กด "อนุญาต") ใช้กับมือถือร้านหรือแท็บเล็ตที่วางไว้ในร้าน</p><label class="field"><span>ชื่อจอ</span><input class="input" id="kiosk-name" value="จอหลังร้าน" autofocus></label>
-        <label class="check"><input type="checkbox" id="kiosk-live"><span><b>ใช้จอนี้แทนป้าย QR กระดาษ</b><small>ติ๊กเมื่ออยากให้น้องสแกน QR บนจอนี้ด้วยแอปในมือถือตัวเองแทน: ลงเวลาได้เฉพาะ QR บนจอนี้ ป้ายที่พิมพ์ รูปที่ถ่ายไว้ หรือลิงก์ที่ส่งต่อ ใช้ไม่ได้ และปิดการใส่ PIN ที่จอ (กันใช้ PIN ของคนอื่นลงแทน)</small></span></label>`,
+      openSheet({ title: 'ตั้งเครื่องนี้เป็นจอลงเวลาในร้าน', body: html`<p class="muted small mt0">เครื่องนี้จะเปิดเป็นจอลงเวลาของร้านทุกครั้ง น้องสแกน QR บนจอนี้ด้วยแอปในมือถือตัวเอง (เอาติ๊กด้านล่างออก = น้องแตะชื่อแล้วใส่ PIN ที่จอนี้) และกล้องหน้าเก็บภาพตอนลงเวลา (เครื่องจะถามอนุญาตใช้กล้อง กด "อนุญาต") ใช้กับมือถือร้านหรือแท็บเล็ตที่วางไว้ในร้าน</p><label class="field"><span>ชื่อจอ</span><input class="input" id="kiosk-name" value="จอหลังร้าน" autofocus></label>
+        <label class="check"><input type="checkbox" id="kiosk-live" checked><span><b>ใช้จอนี้แทนป้าย QR กระดาษ</b><small>ติ๊กไว้ให้ก่อน เพื่อให้น้องสแกน QR บนจอนี้ด้วยแอปในมือถือตัวเองแทน: ลงเวลาได้เฉพาะ QR บนจอนี้ ป้ายที่พิมพ์ รูปที่ถ่ายไว้ หรือลิงก์ที่ส่งต่อ ใช้ไม่ได้ และปิดการใส่ PIN ที่จอ (กันใช้ PIN ของคนอื่นลงแทน)</small></span></label>`,
         foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn primary" data-act="kiosk-add-go">ตั้งเป็นจอลงเวลา</button>` });
     },
     'kiosk-add-go': function (el) {
