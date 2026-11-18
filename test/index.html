@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.20","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"9e2bb0e660ab"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.21","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"2eaeb12c7afa"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -3347,6 +3347,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   .poster .brand .ko { color: #87652f; }
   label.remember { display: flex; align-items: center; gap: 8px; min-height: 44px; }
   .rules-more, .menu-more { margin-top: 8px; }
+  /* (2.14.21 k175) ค่าตั้งอื่น ๆ ในแท็บตั้งค่าเจ้าของร้าน: กล่องพับ ห่างการ์ดก่อนหน้าเท่าระยะการ์ดปกติ */
+  .set-more { margin-top: 14px; }
+  .set-more > .stack { margin-top: 6px; }
   /* (2.14.7 k150) ดูย้อนหลัง ท้ายภาพรวมเจ้าของ ห่างการ์ดก่อนหน้าเท่าระยะการ์ดปกติ (.stack 14px) · เปิดแล้วการ์ดแรกไม่ชิดหัวข้อ */
   /* k151: nums-more = ส่วนพับตัวเลข (ตัวเลขร้านในภาพรวมเจ้าของ เงินเดือนของทีมในแท็บทีม) · back-more เหลือแค่ ดูย้อนหลัง ที่ dev/clean.js ตรวจว่าเป็นส่วนพับท้ายหน้า */
   .back-more, .nums-more { margin-top: 14px; }
@@ -9593,6 +9596,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.shiftOpen = false;
     // (2.14.19 k172) ลิงก์ตั้งจอในแผ่นผลของเจ้าของร้าน (ลิงก์ลับ) และรหัสลิงก์ที่เครื่องเปิดอยู่ ไม่ค้างถึงคนถัดไป · ปุ่มตั้งเป็นจออ่านรหัสจากที่อยู่ได้เอง (setupCode)
     S.kioskLinkUrl = ''; S.setup = null;
+    // (2.14.21 k175) กล่อง ค่าตั้งอื่น ๆ ที่กางค้างในหน้าเจ้าของเป็นของคน: คนถัดไปเห็นกล่องพับ
+    S.setMore = false;
   }
   function logoutStaff(msg) {
     // (ล้างการแจ้งเตือนในเครื่องไม่สำเร็จ ยังออกจากระบบได้เสมอ)
@@ -13911,7 +13916,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return go().then(function (d) {
       S.forgot = null;
       ownerIn(d.pin, d.home, true);
-      toast('เข้าหน้าเจ้าของร้านแล้ว เครื่องนี้จำไว้ · ตั้งรหัสใหม่ได้ที่ ตั้งค่า › ความปลอดภัย', 'ok');
+      toast('เข้าหน้าเจ้าของร้านแล้ว เครื่องนี้จำไว้ · ตั้งรหัสใหม่ได้ที่ ตั้งค่า › รหัสเจ้าของร้าน', 'ok');
     }, function (e) {
       S.pinBusy = false;
       S.login = null;
@@ -14060,8 +14065,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var rows = [];
     if (f.fresh) rows.push(['chat', 'น้องบอกเรื่องใหม่ ' + f.fresh + ' เรื่อง', 'fb-inbox', '']);
     if (o.pendingLeaves) rows.push(['approve', 'คำขอลารออนุมัติ ' + o.pendingLeaves + ' รายการ', 'owner-tab', 'team']);
-    todo.forEach(function (t) { rows.push([t[0], t[1], 'owner-tab', t[2]]); });
-    return html`<section class="card flush wait-box"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">รอคุณ</span></div>${rows.length ? html`<div class="list">${rows.map(function (r) { return html`<button class="item" data-act="${r[2]}" data-tab="${r[3]}">${icon(r[0])}<span class="grow">${r[1]}</span>${icon('right')}</button>`; })}</div>` : html`<p class="small muted" style="margin:6px 16px 16px">วันนี้ไม่มีอะไรรอคุณ</p>`}</section>`;
+    todo.forEach(function (t) { rows.push([t[0], t[1], 'owner-tab', t[2], t[3]]); }); // (2.14.21 k175) t[3] = 'more' ค่าที่แก้อยู่ในกล่อง ค่าตั้งอื่น ๆ กางกล่องให้
+    return html`<section class="card flush wait-box"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">รอคุณ</span></div>${rows.length ? html`<div class="list">${rows.map(function (r) { return html`<button class="item" data-act="${r[2]}" data-tab="${r[3]}" data-more="${r[4] ? '1' : ''}">${icon(r[0])}<span class="grow">${r[1]}</span>${icon('right')}</button>`; })}</div>` : html`<p class="small muted" style="margin:6px 16px 16px">วันนี้ไม่มีอะไรรอคุณ</p>`}</section>`;
   }
   function overview() {
     // k109 ทีมใช้แอปยังเป็นการ์ดแรกใต้คำทักทาย (กติกา 2.13.6) การ์ดอัปเดตถัดมา (เดิมเริ่มราว 2,700 px ต้องเลื่อนลง 3 จอ) · การ์ดทีมสูงราว 630 px เต็มจอแรก
@@ -14075,20 +14080,20 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!o.kiosks.length && o.settings.qrLive && o.settings.qrLive.value === 'ใช่') todo.unshift(['tablet', 'ตั้งจอลงเวลาในร้าน (มือถือ/แท็บเล็ตเครื่องเก่า) — พนักงานสแกน QR จากจอนี้', 'settings']);
     o.kiosks.filter(function (k) { return k.current === false; }).forEach(function (k) { todo.unshift(['tablet', 'เปิด' + k.name + 'ใหม่ 1 ครั้ง (รีเฟรช) แล้วกดอนุญาตกล้อง — จอยังเป็นแอปรุ่นเก่า', 'settings']); });
     if (o.approverReviews) todo.unshift(['team', 'ตรวจการลงเวลาของผู้อนุมัติ ' + o.approverReviews + ' รายการ (ผู้อนุมัติตรวจของตัวเองไม่ได้)', 'team']);
-    if (!o.settings.weatherKey.set) todo.push(['rain', 'ใส่ WeatherAPI key เพื่อตรวจฝนอัตโนมัติ', 'settings']);
+    if (!o.settings.weatherKey.set) todo.push(['rain', 'ใส่ WeatherAPI key เพื่อตรวจฝนอัตโนมัติ', 'settings', 'more']);
     var bk = o.backup || {};
-    if (bk.error || bk.stale) todo.unshift(['shield', bk.error ? 'สำรองข้อมูลอัตโนมัติไม่สำเร็จ — ดูสาเหตุ แล้วกด "สำรองตอนนี้"' : 'ไม่ได้สำรองข้อมูลมา 3 วันแล้ว — ดูสาเหตุ แล้วกด "สำรองตอนนี้"', 'settings']);
-    if (bk.mailOn && bk.to && !bk.offAccount) todo.push(['mail', 'ให้ส่งไฟล์สำรองไปอีเมลของบัญชีอื่น (ข้อมูลไม่หายแม้เข้าบัญชี Google ของร้านไม่ได้)', 'settings']);
+    if (bk.error || bk.stale) todo.unshift(['shield', bk.error ? 'สำรองข้อมูลอัตโนมัติไม่สำเร็จ — ดูสาเหตุ แล้วกด "สำรองตอนนี้"' : 'ไม่ได้สำรองข้อมูลมา 3 วันแล้ว — ดูสาเหตุ แล้วกด "สำรองตอนนี้"', 'settings', 'more']);
+    if (bk.mailOn && bk.to && !bk.offAccount) todo.push(['mail', 'ให้ส่งไฟล์สำรองไปอีเมลของบัญชีอื่น (ข้อมูลไม่หายแม้เข้าบัญชี Google ของร้านไม่ได้)', 'settings', 'more']);
     var rem = o.reminders || {};
     var tempUp = !!(o.temp && o.temp.need && !o.temp.booked && !o.temp.closed);
-    (rem.setMissing || []).forEach(function (y) { todo.unshift(['cal', 'ใส่วันหยุดตามประเพณีปี ' + (+y + 543) + ' (ตามประกาศวันหยุดสถาบันการเงิน)', 'settings']); });
+    (rem.setMissing || []).forEach(function (y) { todo.unshift(['cal', 'ใส่วันหยุดตามประเพณีปี ' + (+y + 543) + ' (ตามประกาศวันหยุดสถาบันการเงิน)', 'settings', 'more']); });
     if ((rem.dayOffMissing || []).length) todo.push(['cal', 'ตั้งวันหยุดประจำ ' + rem.dayOffMissing.length + ' คน (' + rem.dayOffMissing.join(', ') + ') — ระหว่างนี้หยุดได้ตามวันหยุดต่อรอบแบบเดิม', 'staff']);
     if ((rem.nameSent || []).length) todo.unshift(['team', 'คนใหม่ตั้งชื่อแล้ว ' + rem.nameSent.length + ' คน (' + rem.nameSent.join(', ') + ') รอยืนยัน — แตะเพื่อตรวจชื่อจริงที่ขึ้นสลิปแล้วกดยืนยันชื่อ', 'staff']);
     if ((rem.startMissing || []).length) todo.unshift(['team', 'ใส่วันเริ่มงาน ' + rem.startMissing.length + ' คน (' + rem.startMissing.join(', ') + ') — ระหว่างนี้ยังไม่ได้พักร้อนตามอายุงาน', 'staff']);
     if ((rem.probEndMissing || []).length) todo.unshift(['team', 'ใส่วันผ่านโปร ' + rem.probEndMissing.length + ' คน (' + rem.probEndMissing.join(', ') + ') — ไม่ใส่ = ทดลองงานไปตลอด', 'staff']);
     if ((rem.rateMissing || []).length) todo.unshift(['money', 'ใส่เงินเดือนหลังผ่านโปร ' + rem.rateMissing.length + ' คน (' + rem.rateMissing.join(', ') + ')', 'staff']);
-    if (rem.leadsGone) todo.unshift(['team', 'ตั้งคนส่งบันทึกหน้างานใหม่ — คนที่ตั้งไว้ออกแล้ว ระหว่างนี้ผู้อนุมัติและหัวหน้าส่งแทน', 'settings']);
-    if (rem.keepersGone) todo.unshift(['team', 'ตั้งคนดูแล PAR ใหม่ — คนที่ตั้งไว้ออกแล้ว ระหว่างนี้หัวหน้าครัวดูแทน', 'settings']);
+    if (rem.leadsGone) todo.unshift(['team', 'ตั้งคนส่งบันทึกหน้างานใหม่ — คนที่ตั้งไว้ออกแล้ว ระหว่างนี้ผู้อนุมัติและหัวหน้าส่งแทน', 'settings', 'more']);
+    if (rem.keepersGone) todo.unshift(['team', 'ตั้งคนดูแล PAR ใหม่ — คนที่ตั้งไว้ออกแล้ว ระหว่างนี้หัวหน้าครัวดูแทน', 'settings', 'more']);
     // k151 (คำเจ้าของ 14 พ.ย. 16:01 "อยากได้แบบคลีนอะปุ่มน้อยๆกดง่ายๆ"): ตัวเลขร้านที่ซ้ำกับที่อื่นพับท้ายหน้าใต้ ตัวเลขร้าน แตะเปิด ไม่ลบ
     //   (เดือนนี้ถึงวันนี้และเงินเดือนย้อนหลัง = แท็บเงินเดือน · ลงเวลา ตรงเวลา ลา หยุดวันนี้ = แท็บทีม · รออนุมัติลา = กล่อง รอคุณ)
     return html`<div class="stack">
@@ -14136,8 +14141,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   /** k109 แถบในคำทักทาย: บอกว่ามีอัปเดต กับปุ่ม รับทราบ ตัวเดียวกับในการ์ด (การ์ดเต็มอยู่ถัดการ์ดทีมใช้แอป) */
   function updateTip(up) {
+    // (2.14.21 k175) คำเหมือนกันทุกสถานะ ประกาศค้างก็ไม่เร่งให้เลือก · ปุ่ม รับทราบ ในแถบนี้มีเฉพาะตอนไม่มีประกาศค้าง
+    //   เพราะรับทราบตอนประกาศค้าง = ไม่ประกาศถึงน้อง ปุ่มที่บอกคำนี้เต็ม ๆ อยู่ในการ์ด (ติดขอบล่างของจอ)
     var pending = !!up.news && up.news.state === 'pending';
-    return html`<div class="upd-tip"><span>อัปเดตแอปแล้ว · รุ่น ${up.to}<small>${pending ? 'ยังไม่ได้ประกาศกติกาใหม่ · ดูการ์ดอัปเดตข้างล่าง' : 'เปลี่ยนอะไรบ้าง ดูการ์ดอัปเดตข้างล่าง'}</small></span>${pending ? '' : html`<button class="btn sm tap" data-act="update-news" data-do="seen">รับทราบ</button>`}</div>`;
+    return html`<div class="upd-tip"><span>อัปเดตแอปแล้ว · รุ่น ${up.to}<small>เปลี่ยนอะไรบ้าง ดูการ์ดอัปเดตข้างล่าง</small></span>${pending ? '' : html`<button class="btn sm tap" data-act="update-news" data-do="seen">รับทราบ</button>`}</div>`;
   }
   /** What the last update changed, and the new rules' announcement to staff in the app (the LINE group too when a phone cannot). */
   function updateCard(up) {
@@ -14152,14 +14159,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       : 'ยังไม่ได้ประกาศกติกาใหม่ — กดประกาศในแอปตอนนี้';
     return html`<section class="card pad-lg"><div class="card-h"><span class="eyebrow">อัปเดตแอปแล้ว · รุ่น ${up.to}</span><span class="small muted">${when(up.at)}</span></div>
       ${up.report.length ? html`<ul class="small" style="margin:6px 0 0;padding-left:18px;line-height:1.6">${up.report.map(function (x) { return html`<li>${x}</li>`; })}</ul>` : ''}
-      ${n ? html`<p class="small" style="margin:12px 0 0">${status}</p>
+      ${n ? html`<details class="menu-more"><summary>ประกาศถึงน้อง</summary><p class="small" style="margin:4px 0 0">${status}</p>
         <div class="row wrapx" style="margin-top:10px;gap:8px">
           <button class="btn" data-act="update-text">${icon('chat')} ${pending ? 'ดู / คัดลอกข้อความ' : 'ดูข้อความ'}</button>
           ${pending ? html`<button class="btn primary" data-act="update-news" data-do="send">ประกาศในแอปตอนนี้</button>` : ''}
           ${pending && !n.auto ? html`<button class="btn" data-act="update-news" data-do="done">โพสต์เองแล้ว</button>` : ''}
           ${pending ? html`<button class="btn" data-act="update-news" data-do="skip">ไม่ต้องประกาศ</button>` : ''}
-        </div>` : ''}
-      ${pending ? '' : html`<button class="btn block upd-ack" style="margin-top:12px" data-act="update-news" data-do="seen">รับทราบ</button>`}
+        </div></details>` : ''}
+      <button class="btn block upd-ack" style="margin-top:12px" data-act="update-news" data-do="seen">${pending ? 'รับทราบ · ไม่ประกาศถึงน้อง' : 'รับทราบ'}</button>
     </section>`;
   }
 
@@ -14265,7 +14272,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     ['เกมของทีม', ['gameClosed']],
     ['เช็กมาตรฐาน (หัวหน้าเช็ก)', ['checkTimes', 'checkFront', 'checkKitchen']],
     ['เป้ายอดขายทีม (แต้มทุกคน)', ['salesTarget', 'salesPoints']],
-    ['ความปลอดภัย', ['ownerPin']],
   ];
   /**
    * GitHub for Claude's tasks: the shop's own app on GitHub, made and installed from the connect page on the
@@ -14382,6 +14388,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   /** A type of leave as its form's fields have it. */
   function leaveTypeWas(t) { return { quota: t.quota, paid: t.paid ? 'ใช่' : 'ไม่', cut: t.cut, advanceDays: t.advanceDays, minYears: t.minYears, note: t.note || '' }; }
+  /** (2.14.21 k175 · เจ้าของร้าน 18 พ.ย. 2569 09:42 "ทำให้แอปของฉันมันคลีนหน่อย") บนสุดเหลือจอลงเวลากับรหัสเจ้าของร้าน
+   *  ค่าตั้งทุกกลุ่มและการสำรองพับในกล่อง ค่าตั้งอื่น ๆ (S.setMore คุมเปิดปิด ตัววาดหน้าลบ open ที่ไม่ได้วาด) ไม่ตัดช่องหรือปุ่มใด */
   function settingsView() {
     var o = S.ownerHome;
     var set = o.settings;
@@ -14397,7 +14405,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         </div>
         <button class="btn block" style="margin-top:8px" data-act="kiosk-link">${icon('send')} สร้างลิงก์ตั้งจอ</button>
         <button class="btn block" style="margin-top:8px" data-act="kiosk-add">${icon('tablet')} ตั้งเครื่องนี้เป็นจอลงเวลาในร้าน</button>
-        <p class="small muted" style="margin:8px 0 0"><b>จอลงเวลาในร้าน:</b> ใช้มือถือร้านหรือแท็บเล็ต วางหรือติดผนังด้านในร้าน สูงระดับหน้าอก มองไม่เห็นจากนอกร้าน เปิดหน้านี้บนเครื่องนั้นแล้วกดปุ่มด้านบน น้องแตะชื่อแล้วใส่ PIN ที่จอ และกล้องหน้าของจอเก็บภาพตอนลงเวลา · ถ้าอยากให้น้องสแกน QR บนจอ (เปลี่ยนทุก 5 วินาที) ด้วยแอปในมือถือตัวเองแทน ติ๊ก "ใช้จอนี้แทนป้าย QR กระดาษ" ตอนตั้งเครื่อง รูปที่ถ่ายส่งต่อกันใช้ไม่ได้ · เสียบชาร์จไว้ ต่อ Wi-Fi และตั้งไม่ให้จอดับ</p></section>
+        <details class="menu-more"><summary>วิธีตั้งจอ</summary><p class="small muted" style="margin:4px 0 0"><b>จอลงเวลาในร้าน:</b> ใช้มือถือร้านหรือแท็บเล็ต วางหรือติดผนังด้านในร้าน สูงระดับหน้าอก มองไม่เห็นจากนอกร้าน เปิดหน้านี้บนเครื่องนั้นแล้วกดปุ่มด้านบน น้องแตะชื่อแล้วใส่ PIN ที่จอ และกล้องหน้าของจอเก็บภาพตอนลงเวลา · ถ้าอยากให้น้องสแกน QR บนจอ (เปลี่ยนทุก 5 วินาที) ด้วยแอปในมือถือตัวเองแทน ติ๊ก "ใช้จอนี้แทนป้าย QR กระดาษ" ตอนตั้งเครื่อง รูปที่ถ่ายส่งต่อกันใช้ไม่ได้ · เสียบชาร์จไว้ ต่อ Wi-Fi และตั้งไม่ให้จอดับ</p></details></section>
+      <section class="card"><div class="card-h"><span class="eyebrow">รหัสเจ้าของร้าน</span></div>${settingField(set.ownerPin)}
+        <button class="btn block" style="margin-top:16px" data-act="save-settings" data-keys="ownerPin">บันทึกรหัสเจ้าของร้าน</button></section>
+      <details class="menu-more set-more" ${S.setMore ? raw('open') : ''}><summary data-act="set-more">ค่าตั้งอื่น ๆ</summary><div class="stack">
       ${SETTING_GROUPS.map(function (g) {
         return html`<section class="card"><div class="card-h"><span class="eyebrow">${g[0]}</span></div>${g[2] ? g[2](o) : ''}${g[1].map(function (k) { return settingField(set[k]); })}
           ${g[1].length ? html`<button class="btn block" style="margin-top:16px" data-act="save-settings" data-keys="${g[1].join(',')}">บันทึก${g[0]}</button>` : ''}</section>`;
@@ -14409,8 +14420,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${settingField(set.backupMail)}${settingField(set.backupEmail)}
         <button class="btn block" style="margin-top:16px" data-act="save-settings" data-keys="backupMail,backupEmail">บันทึกการสำรอง</button>
         <div class="row wrapx" style="margin-top:12px">${o.backup && o.backup.sheet ? html`<a class="btn sm" href="${o.backup.sheet}" target="_blank" rel="noopener">${icon('sheet')} เปิด Google Sheet</a>` : ''}${o.backup && o.backup.folder ? html`<a class="btn sm" href="${o.backup.folder}" target="_blank" rel="noopener">${icon('shield')} โฟลเดอร์สำรอง</a>` : ''}<button class="btn sm" data-act="backup">สำรองตอนนี้</button><button class="btn sm danger" data-act="wipe-open">ล้างข้อมูลทดลอง</button><button class="btn sm" data-act="backup-mail">${icon('mail')} ส่งเข้าอีเมลตอนนี้</button><button class="btn sm" data-act="export-tables">${icon('download')} ส่งออกไฟล์ตาราง</button></div>
-        <p class="small muted" style="margin:8px 0 0">ส่งออกไฟล์ตาราง: ไฟล์ Excel ของทุกตารางลงเครื่องนี้ (ไม่มี PIN รหัสผ่าน และกุญแจ) เปิดดูหรือเก็บไว้เองได้</p>
-        <p class="tiny muted" style="margin:10px 0 0">เวอร์ชัน ${o.version} · ตรวจฝนโดย <a href="https://www.weatherapi.com/" target="_blank" rel="noopener" title="Free Weather API" style="display:inline-block;padding:13px 0">WeatherAPI.com</a></p></section>
+        <p class="small muted" style="margin:8px 0 0">ส่งออกไฟล์ตาราง: ไฟล์ Excel ของทุกตารางลงเครื่องนี้ (ไม่มี PIN รหัสผ่าน และกุญแจ) เปิดดูหรือเก็บไว้เองได้</p></section>
+      </div></details>
+      <p class="tiny muted" style="margin:10px 0 0">เวอร์ชัน ${o.version} · ตรวจฝนโดย <a href="https://www.weatherapi.com/" target="_blank" rel="noopener" title="Free Weather API" style="display:inline-block;padding:13px 0">WeatherAPI.com</a></p>
     </div>`;
   }
   /** The latest copy and email, and what went wrong. */
@@ -23704,8 +23716,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
 
     // owner
+    'set-more': function () { S.setMore = !S.setMore; render(); }, // (2.14.21 k175) กล่อง ค่าตั้งอื่น ๆ
     'owner-tab': function (el) {
       odBlurField(); // 2.14.6 แบบเดียวกับแท็บของน้อง
+      S.setMore = !!el.dataset.more; // (2.14.21 k175) เข้าจากแถบล่างพับเสมอ · แถว รอคุณ ที่ชี้ค่าในกล่องกางให้
       S.ownerTab = el.dataset.tab; (window.scrollTo(0, 0), scrollNow = 0); render(); settleView();
       if (S.ownerTab === 'pay') loadPay(null, 'open');
       if (S.ownerTab === 'team') { loadTeam('open'); loadLeaves('open'); }
