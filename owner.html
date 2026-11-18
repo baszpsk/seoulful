@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.19","page":"owner","e3":"7294d0dd","edge":true,"build":"75b288ec5f49"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.20","page":"owner","e3":"7294d0dd","edge":true,"build":"9f2710e7f00b"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="เจ้าของร้าน">
@@ -8269,6 +8269,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var side = tabWas >= 0 && tabNow >= 0 && tabNow !== tabWas ? (tabNow > tabWas ? 'from-r' : 'from-l') : '';
     lastScreen = screen;
     if (motion === 'enter') barsMin = false;
+    // (2.14.20 k174) หน้าเต็มจอ (เลือกชื่อ PIN รหัสเจ้าของร้าน) เข้าจากทางไหนก็เริ่มจากบนสุด: ออกจากระบบตอนหน้าเดิมเลื่อนลงอยู่ โลโก้ไม่ค้างเหนือจอ
+    if (motion === 'enter' && /^(start|pin|ownerLogin|ownerCode)$/.test(S.view)) (window.scrollTo(0, 0), scrollNow = 0);
     if (motion && S.view === 'kiosk') { moveOff(app, 'enter'); moveOff(app, 'fill'); }
     else if (motion) {
       if (motion === 'enter') moveOff(app, 'fill');
@@ -10934,15 +10936,43 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return f.tagName === 'INPUT' && !/^(button|submit|reset|checkbox|radio|file|range|color|image|hidden)$/i.test(f.type || '');
   }
   var kbUp = false;
+  // 2.14.20 k174 (เจ้าของร้าน 18 พ.ย. 2569 09:36 "รูปหมาป่าโลโก้มันขึ้นไปข้างบนเลยเอาลงมาไม่ได้ต้องออกเราเข้าใหม่" ภาพหน้าเลือกชื่อบน iPhone ทั้งหน้าเลื่อนขึ้นค้างใต้แถบเวลา):
+  // หน้าเลือกชื่อสูงเท่าจอพอดี นิ้วเลื่อนกลับเองไม่ได้ ตำแหน่งเลื่อนที่ iPhone ค้างไว้เกินหน้าจึงค้างจนปิดแอป · เดิม settleView เลื่อนไปที่เดิม ค่าค้างก็ย้ำค่าค้าง
+  // ตำแหน่งที่ถูกคืออยู่ในหน้า (0 ถึงล่างสุดของหน้า): หน้าเท่าจอ = 0 เสมอ · หน้ายาวที่อยู่ในหน้าคงที่เดิม
+  function viewY() {
+    var max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    return Math.min(Math.max(0, window.scrollY), max);
+  }
   function settleView() {
     [80, 450].forEach(function (ms, i) {
       setTimeout(function () {
         if (textField(document.activeElement)) return;
         if (i) kbUp = false;
-        window.scrollTo(window.scrollX, window.scrollY);
+        window.scrollTo(window.scrollX, viewY());
       }, ms);
     });
   }
+  // ตัวพากลับ: ตำแหน่งเลื่อนค้างเกินหน้า หรือจอที่มองเห็นค้างเลื่อนจากหน้า (ไม่ได้ซูม แป้นพิมพ์ปิดแล้ว) พากลับเข้าหน้า · อยู่ในหน้าแล้วไม่แตะ · กำลังพิมพ์ไม่แตะ (iPhone เลื่อนให้เห็นช่องเอง)
+  // ซูมดูอยู่ไม่แตะ · จอยังเลื่อนอยู่ (เลื่อนใน 150 มิลลิวินาทีล่าสุด เช่น จังหวะเด้งตอนเลื่อนแรง) ไม่ตัดจังหวะ นัดเช็กใหม่อีก 200 มิลลิวินาที ไม่เกิน 10 ครั้ง
+  function viewBack(n) {
+    if (textField(document.activeElement)) return;
+    var vv = window.visualViewport;
+    if (vv && vv.scale > 1.01) return;
+    n = n > 0 ? n : 0;
+    if (n < 10 && performance.now() - nmScrollAt < 150) { setTimeout(function () { viewBack(n + 1); }, 200); return; }
+    var to = viewY();
+    var off = !!vv && !kbUp && vv.offsetTop > 1;
+    var at = Math.abs(window.scrollY - to) <= 1;
+    if (at && !off) return;
+    // จอที่มองเห็นค้างแต่ตำแหน่งเลื่อนอยู่ที่เป้าหมายแล้ว: สั่งไปที่เดิมเครื่องไม่ทำอะไร จึงขยับ 1 จุดแล้วกลับ ให้เครื่องคำนวณที่ของจอใหม่
+    if (at) window.scrollTo(window.scrollX, to + 1);
+    window.scrollTo(window.scrollX, to);
+    scrollNow = to;
+  }
+  // ยกนิ้วแล้วรอจอเด้งกลับเองก่อน (700 มิลลิวินาที) ยังค้างจึงพากลับ · กลับเข้าแอปและหน้าแสดงใหม่ตรวจอีกครั้ง
+  ['touchend', 'touchcancel'].forEach(function (t) { document.addEventListener(t, function () { setTimeout(viewBack, 700); }, { passive: true, capture: true }); });
+  window.addEventListener('pageshow', function () { viewBack(); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) viewBack(); });
   document.addEventListener('focusin', function (ev) { if (textField(ev.target)) kbUp = true; });
   document.addEventListener('focusout', function (ev) { if (textField(ev.target)) settleView(); });
   if (window.visualViewport) {
