@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.26","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"9470dc434599"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.27","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"b2121d6b3129"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -706,6 +706,15 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .dl-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(120% 90% at 0% 0%, rgba(47, 86, 71, .12), transparent 62%); pointer-events: none; }
 .dl-card > * { position: relative; }
 .dl-card .fb-ico { background: rgba(47, 86, 71, .12); color: #2f5647; }
+/* k181 การ์ดบันทึกหน้างานของหน้าแรกเจ้าของ: เรื่องล่าสุดของวัน และปุ่มดูวันก่อนหน้า วันถัดไป */
+.dl-home { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.dl-nav { gap: 8px; align-items: center; }
+.dl-nav > span { text-align: center; }
+.dl-latest { display: grid; gap: 6px; margin-top: 12px; }
+.dl-l { display: grid; gap: 2px; padding: 8px 10px; border-radius: 10px; background: rgba(127, 127, 127, .09); }
+.dl-l b { font-size: 14px; font-weight: 600; }
+.dl-l span { font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+.dl-l small { font-size: 12px; color: var(--ink-2); }
 /* ---------- ordering from Makro and GO (Order.gs) ---------- */
 .od-card { overflow: hidden; }
 .od-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(120% 90% at 0% 0%, rgba(59, 91, 138, .12), transparent 62%); pointer-events: none; }
@@ -9571,7 +9580,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (e.code !== 'KIOSK') kioskGone(false);
       else if (kioskSwapped()) {
         // สลับกุญแจตอนใส่ PIN: ไม่ค้างหน้าโครงรอตรวจ · กลับหน้าใส่ PIN ให้ลองใหม่ด้วยกุญแจใหม่ แล้วปิดกล้อง
-        if (seq === k.seq) { stopCamera(); k.pin = ''; k.err = 'จอลงเวลาเพิ่งเปลี่ยนเครื่อง ลองใส่รหัสใหม่อีกครั้ง'; k.step = 'pin'; render(); }
+        if (seq === k.seq) { stopCamera(); k.pin = ''; k.err = 'จอเพิ่งตั้งใหม่ ใส่ PIN อีกครั้ง'; k.step = 'pin'; render(); }
         return;
       }
       else if (kioskGone(true)) { LS.del(KEY.kiosk); S.kiosk = null; toast(e.message, 'bad'); stopScreenCam(); start(); return; }
@@ -10120,8 +10129,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var noWord = money((r.absentCut || 0) + (r.noShowCut || 0));
     openSheet({ title: 'กติกา Incentive', body: html`<ul class="rules">
         <li>${icon('check')}<span>มาตรงเวลา ได้ Incentive เต็มทุกเดือน</span></li>
-        <li>${icon('clock')}<span>สายไม่เกิน ${r.grace} นาที ได้ ${r.allowed} ครั้งต่อเดือน ไม่หัก Incentive${r.lateCut ? ' · เกินนั้นหักจาก Incentive ครั้งละ ' + money(r.lateCut) + ' บาท' : ''}</span></li>
-        <li>${icon('money')}<span>เข้างานช้ากว่าเวลากะ ได้เงินตามเวลาที่ทำจริง${r.lateTimeFrom && r.lateTimeFrom > workDate() ? ' (เริ่ม ' + thShort(r.lateTimeFrom) + ')' : ''} นับทีละครึ่งชั่วโมง · ได้อนุญาตเข้างานช้า มาตามเวลาที่อนุญาต ไม่นับสาย ไม่หัก Incentive ได้ค่าจ้างและ OT เต็ม</span></li>
+        <li>${icon('clock')}<span>มาให้ทันเวลากะ รู้ว่าจะช้าบอกผู้อนุมัติก่อนเข้างาน</span></li>
         <li>${icon('rain')}<span>วันฝนตก เผื่อเวลาเดินทาง ค่อย ๆ มาให้ปลอดภัย</span></li>
         <li>${icon('cal')}<span><b class="rules-h">ไปทำงานไม่ได้ บอกผู้อนุมัติก่อนเวลาเข้างาน ร้านจะได้หาคนช่วยทัน</b>
           ${bizSub.length ? html`<span class="rules-sub"><b>ติดธุระ</b> ${bizSub.map(function (s) { var k = s.indexOf(' · เช่น '); return k > 0 ? s.slice(0, k) : s; }).join(' · ')}${toldWhen}</span>` : ''}
@@ -14228,9 +14236,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (rem.keepersGone) todo.unshift(['team', 'ตั้งคนดูแล PAR ใหม่ — คนที่ตั้งไว้ออกแล้ว ระหว่างนี้หัวหน้าครัวดูแทน', 'settings', 'more']);
     // k151 (คำเจ้าของ 14 พ.ย. 16:01 "อยากได้แบบคลีนอะปุ่มน้อยๆกดง่ายๆ"): ตัวเลขร้านที่ซ้ำกับที่อื่นพับท้ายหน้าใต้ ตัวเลขร้าน แตะเปิด ไม่ลบ
     //   (เดือนนี้ถึงวันนี้และเงินเดือนย้อนหลัง = แท็บเงินเดือน · ลงเวลา ตรงเวลา ลา หยุดวันนี้ = แท็บทีม · รออนุมัติลา = กล่อง รอคุณ)
+    // k181 (เจ้าของร้าน 20 พ.ย. 2569 00:03 "หน้าแรกของเจ้าของร้านควรมีปัญหาให้ดูย้อนหลังได้ไหม ตอนนี้ไม่รู้ดูตรงไหนเลยทั้งที่เป็นเรื่องสำคัญสุด"):
+    //   บันทึกหน้างานเป็นการ์ดแรกใต้คำทักทาย เหนือกล่อง รอคุณ (ทับลำดับของ k150 ที่ให้ รอคุณ เป็นการ์ดแรก)
     return html`<div class="stack">
       <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}${o.update && o.team && (o.team.list || []).length ? updateTip(o.update) : ''}</div>
       ${pushCard()}
+      ${dailyOwnerCard(o.daily)}
       ${waitBox(o, todo)}
       ${teamUseCard(o.team)}
       ${o.update ? updateCard(o.update) : ''}
@@ -14238,7 +14249,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${meetCard(o.meet, o.talk)}
       ${pinLocksCard(o.pinLocks)}
       ${turnoverCard(o.turnover)}
-      ${dailyOwnerCard(o.daily)}
       ${feedbackCard(o.feedback)}
       ${tempUp ? tempOwnerCard(o.temp) : ''}
       ${due ? html`<section class="card hero pad-lg"><span class="eyebrow">ต้องจ่าย · เงินเดือน${due.month}${due.payDue ? ' · วันที่ ' + thShort(due.payDue) : ''}</span><div class="big" style="margin-top:6px">${money(due.total)}<small>บาท</small></div>
@@ -19759,6 +19769,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   };
   var dl = null; // what is being noted: {date, open, quick, items: {topic: {menu, detail}}, draft}
   var dlList = null; // the owner's page of notes
+  var DL_HOME = null; // k181 วันอื่นที่การ์ดบันทึกหน้างานของหน้าแรกเจ้าของกำลังดู (null = วันที่เปิดมาเจอ)
   function dlHome() { return (S.home && S.home.daily) || null; }
   function dlTopics() { return ((S.view === 'owner' ? dlList : dlHome()) || {}).topics || []; }
   function dlTopic(key) { return dlTopics().filter(function (t) { return t[0] === key; })[0] || [key, DL_SHORT[key] || key, '', '', 'เรื่องอะไร']; }
@@ -20071,9 +20082,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     dlLooked(d.mine || []);
     // Seen now: the card's news goes, without drawing the page again.
     Array.prototype.forEach.call(document.querySelectorAll('.dl-card .dl-news, .dl-card .fb-mine-btn .dot'), function (el) { el.remove(); });
-    openSheet({ title: 'ที่ฉันบันทึก', body: html`<p class="small muted mt0">เจ้าของร้านดูแล้วขึ้นว่า "รับทราบแล้ว" ร้านกำลังแก้ขึ้นว่า "กำลังแก้" แก้เสร็จขึ้นว่า "แก้แล้ว" · เรื่องที่ยังไม่ได้แต้มมีเหตุผลบอกไว้ และเพิ่มรายละเอียดได้ 1 ครั้ง · เรื่องของวันนี้แก้หัวข้อหรือข้อความได้จนร้านเริ่มแก้ ลบได้ถ้าพิมพ์ผิด</p><section class="card flush"><div class="list">${(d.mine || []).map(function (x) {
-      var redo = x.status === 'void' && !x.redo;
-      return html`<div class="item">${icon(DL_ICON[x.topic] || 'chat')}<div class="grow"><div class="t">${x.again ? 'เจออีก · ' : ''}${dlTopic(x.topic)[1]}${x.menu ? ' · ' + x.menu : ''}</div><div class="s">${x.detail ? x.detail + ' · ' : ''}${dlDay(x.date)}${x.at ? ' ' + isoTime(x.at) + ' น.' : ''}</div>${x.ownerNote ? html`<div class="s" style="color:${x.status === 'void' ? 'var(--ink-2)' : 'var(--ok)'}">เจ้าของร้าน: ${x.ownerNote}</div>` : ''}${x.redo && x.status === 'fresh' ? html`<div class="s">เพิ่มรายละเอียดแล้ว รอเจ้าของร้านดูอีกครั้ง</div>` : ''}${redo ? html`<button class="btn sm" style="margin-top:6px" data-act="dl-redo" data-id="${x.id}">${icon('edit')} เพิ่มรายละเอียด</button>` : ''}${x.edit ? html`<button class="btn sm" style="margin-top:6px" data-act="dl-edit" data-id="${x.id}">${icon('edit')} แก้</button>` : ''}</div><div class="r">${dlStatusPill(x.status)}${x.date === d.today && x.status === 'fresh' ? html`<button class="icon-btn" data-act="dl-del" data-id="${x.id}" aria-label="ลบเรื่องนี้">${icon('trash')}</button>` : ''}</div></div>`;
+    openSheet({ title: 'ที่ฉันบันทึก', body: html`<p class="small muted mt0">เจ้าของร้านดูแล้วขึ้นว่า "รับทราบแล้ว" ร้านกำลังแก้ขึ้นว่า "กำลังแก้" แก้เสร็จขึ้นว่า "แก้แล้ว" · เรื่องของวันนี้แก้หัวข้อหรือข้อความได้จนร้านเริ่มแก้ ลบได้ถ้าพิมพ์ผิด</p><section class="card flush"><div class="list">${(d.mine || []).map(function (x) {
+      // k181 เรื่องที่เจ้าของร้านให้ไม่นับแต้มขึ้นเหมือนเรื่องปกติ ไม่มีป้าย เหตุผล หรือปุ่มเพิ่มรายละเอียด (เจ้าของร้าน 20 พ.ย. 2569 01:14)
+      return html`<div class="item">${icon(DL_ICON[x.topic] || 'chat')}<div class="grow"><div class="t">${x.again ? 'เจออีก · ' : ''}${dlTopic(x.topic)[1]}${x.menu ? ' · ' + x.menu : ''}</div><div class="s">${x.detail ? x.detail + ' · ' : ''}${dlDay(x.date)}${x.at ? ' ' + isoTime(x.at) + ' น.' : ''}</div>${x.ownerNote ? html`<div class="s" style="color:var(--ok)">เจ้าของร้าน: ${x.ownerNote}</div>` : ''}${x.edit ? html`<button class="btn sm" style="margin-top:6px" data-act="dl-edit" data-id="${x.id}">${icon('edit')} แก้</button>` : ''}</div><div class="r">${dlStatusPill(x.status)}${x.date === d.today && x.status === 'fresh' ? html`<button class="icon-btn" data-act="dl-del" data-id="${x.id}" aria-label="ลบเรื่องนี้">${icon('trash')}</button>` : ''}</div></div>`;
     })}</div></section>`, foot: html`<button class="btn primary" data-act="sheet-close">ปิด</button>` });
   }
   /**
@@ -20120,29 +20131,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       // (k15) แผ่นที่ฉันบันทึกเปิดอยู่ ระดับใหม่จึงรอฉลองตอนแผ่นปิด (lvCheck): บอกว่าแก้แล้วทันทีเสมอ ไม่งั้นกดบันทึกแล้วไม่มีอะไรบอก
       lvCheck(d.level);
       toast(d.notice + (got > 0 ? ' · +' + got + ' แต้ม' : ''), 'ok');
-    }, function () {});
-  }
-  /** A note not counted, added to once: what happened, a few more words, back to the owner. */
-  function openDailyRedo(id) {
-    var x = (((dlHome() || {}).mine) || []).filter(function (m) { return m.id === id; })[0];
-    if (!x) return;
-    openSheet({ title: 'เพิ่มรายละเอียด', body: html`<div class="fb-prompt"><h3>${dlTopic(x.topic)[1]}${x.menu ? ' · ' + x.menu : ''}</h3><p>${x.ownerNote ? 'เจ้าของร้าน: ' + x.ownerNote + ' · ' : ''}เล่าเพิ่มว่าเกิดอะไร ที่ไหน เมื่อไหร่ เจ้าของร้านจะดูอีกครั้ง (เพิ่มได้ 1 ครั้ง)</p></div>
-      ${x.detail ? html`<p class="small muted">ที่บันทึกไว้: ${x.detail}</p>` : ''}
-      <label class="field"><span>เพิ่มเติม</span><textarea class="input" id="dl-redo-detail" maxlength="500" rows="3" placeholder="เช่น หมูหมดตอน 2 ทุ่ม ลูกค้า 3 โต๊ะต้องเปลี่ยนเมนู"></textarea></label>`,
-      foot: html`<button class="btn" data-act="dl-mine">กลับ</button><button class="btn primary" data-act="dl-redo-send" data-id="${x.id}">${icon('send')} ส่งให้เจ้าของร้านดูอีกครั้ง</button>` });
-  }
-  function sendDailyRedo(btn) {
-    var box = $('#dl-redo-detail');
-    var more = box ? String(box.value || '').trim() : '';
-    if (!more) { toast('พิมพ์เพิ่มสั้น ๆ ก่อนนะ', 'tip'); return; }
-    run(btn, call('dailyRedo', { id: btn.dataset.id, detail: more }, staffAuth())).then(function (d) {
-      if (S.home) { S.home.daily = d.daily; if (d.level) S.home.level = d.level; }
-      if (d.levels) { S.levels = d.levels; if (S.home) S.home.levels = d.levels; }
-      render();
-      openDailyMine();
-      // (k15) แต้มที่ตัดสินใหม่อาจถึงระดับใหม่หรือมงกุฎ: ฉลองตอนแผ่นปิดเหมือนการส่งอื่น ไม่ไปตกที่การส่งครั้งถัดไป
-      lvCheck(d.level);
-      toast(d.notice, 'ok');
     }, function () {});
   }
   /** What this phone last showed of each of the person's notes: the owner's look since is news for them. */
@@ -21635,15 +21623,29 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // ---- จบประชุมทีม ----
   function dailyOwnerCard(o) {
     if (!o) return '';
-    var counts = Object.keys(o.counts || {}).sort(function (a, b) { return o.counts[b] - o.counts[a]; });
-    return html`<button class="card dl-card" data-act="dl-inbox" style="width:100%;text-align:left">
-      <div class="fb-invite-h"><span class="fb-ico">${icon('note')}</span><div class="grow"><span class="eyebrow">บันทึกหน้างาน · ${dlDay(o.day)}</span><b>${o.total ? o.total + ' เรื่องจากหน้าร้าน' : 'ยังไม่มีเรื่องบันทึก'}</b></div>${o.fresh ? html`<span class="pill warn">ใหม่ ${o.fresh}</span>` : ''}${icon('right')}</div>
-      ${counts.length ? html`<div class="row wrapx" style="gap:6px">${counts.map(function (k) { return html`<span class="pill">${DL_SHORT[k] || k} ${o.counts[k]}</span>`; })}</div>` : ''}
-      ${o.summary ? html`<div class="hint" style="margin-top:12px">${icon('spark')}<span><b>Claude สรุป${dlDay(o.summary.date)}:</b> ${o.summary.text.slice(0, 200)}${o.summary.text.length > 200 ? '…' : ''}</span></div>` : ''}
-      ${o.fixing && o.fixing.count ? html`<p class="small" style="margin:10px 0 0"><b>กำลังแก้ ${o.fixing.count} เรื่อง</b>${o.fixing.still.length ? ' · ยังเกิดอยู่: ' + o.fixing.still.map(function (t) { return (t.menu || t.detail) + ' (เจออีก ' + t.again + ')'; }).join(' · ') : ' · ช่วงนี้ไม่มีใครเจออีก'}</p>` : ''}
-      ${(o.recurring || []).length ? html`<p class="small" style="margin:10px 0 0"><b>เกิดซ้ำหลายวัน:</b> ${o.recurring.map(function (r) { return (DL_SHORT[r.topic] || r.topic) + ': ' + (r.menu || r.detail) + ' ' + r.days + ' วัน'; }).join(' · ')}</p>` : ''}
-      ${(o.missing || []).length ? html`<p class="small muted" style="margin:8px 0 0">เมื่อวานยังไม่ส่งสรุป: ${o.missing.join(', ')} · แอปเตือนให้แล้ว</p>` : ''}
-    </button>`;
+    // วันที่เปิดมาเจอใช้ข้อมูลสดของหน้าแรกเสมอ · วันอื่นใช้ที่เพิ่งโหลดมา
+    if (DL_HOME && o.view && DL_HOME.day === o.view.day) DL_HOME = null;
+    var v = DL_HOME || o.view || { day: o.day, total: o.total, counts: o.counts, items: [], prev: '', next: '' };
+    var first = !DL_HOME;
+    var counts = Object.keys(v.counts || {}).sort(function (a, b) { return v.counts[b] - v.counts[a]; });
+    var items = v.items || [];
+    var more = (v.total || 0) - items.length;
+    return html`<div class="dl-home"><button class="card dl-card" data-act="dl-inbox" style="width:100%;text-align:left">
+      <div class="fb-invite-h"><span class="fb-ico">${icon('note')}</span><div class="grow"><span class="eyebrow">บันทึกหน้างาน · ${dlDay(v.day)}</span><b>${v.total ? v.total + ' เรื่องจากหน้าร้าน' : 'ยังไม่มีเรื่องบันทึก'}</b></div>${o.fresh ? html`<span class="pill warn">ใหม่ ${o.fresh}</span>` : ''}${icon('right')}</div>
+      ${counts.length ? html`<div class="row wrapx" style="gap:6px">${counts.map(function (k) { return html`<span class="pill">${DL_SHORT[k] || k} ${v.counts[k]}</span>`; })}</div>` : ''}
+      ${items.length ? html`<div class="dl-latest">${items.map(function (x) { return html`<div class="dl-l"><b>${DL_SHORT[x.topic] || x.topic}${x.menu ? ' · ' + x.menu : ''}</b>${x.text ? html`<span>${x.text}</span>` : ''}<small>${[x.at ? isoTime(x.at) + ' น.' : '', x.dept || ''].filter(String).join(' · ')}</small></div>`; })}</div>` : ''}
+      ${more > 0 ? html`<p class="small muted" style="margin:8px 0 0">และอีก ${more} เรื่อง · แตะเพื่อดูทั้งหมด</p>` : ''}
+      ${first && o.summary ? html`<div class="hint" style="margin-top:12px">${icon('spark')}<span><b>Claude สรุป${dlDay(o.summary.date)}:</b> ${o.summary.text.slice(0, 200)}${o.summary.text.length > 200 ? '…' : ''}</span></div>` : ''}
+      ${first && o.fixing && o.fixing.count ? html`<p class="small" style="margin:10px 0 0"><b>กำลังแก้ ${o.fixing.count} เรื่อง</b>${o.fixing.still.length ? ' · ยังเกิดอยู่: ' + o.fixing.still.map(function (t) { return (t.menu || t.detail) + ' (เจออีก ' + t.again + ')'; }).join(' · ') : ' · ช่วงนี้ไม่มีใครเจออีก'}</p>` : ''}
+      ${first && (o.recurring || []).length ? html`<p class="small" style="margin:10px 0 0"><b>เกิดซ้ำหลายวัน:</b> ${o.recurring.map(function (r) { return (DL_SHORT[r.topic] || r.topic) + ': ' + (r.menu || r.detail) + ' ' + r.days + ' วัน'; }).join(' · ')}</p>` : ''}
+      ${first && (o.missing || []).length ? html`<p class="small muted" style="margin:8px 0 0">เมื่อวานยังไม่ส่งสรุป: ${o.missing.join(', ')} · แอปเตือนให้แล้ว</p>` : ''}
+    </button>
+    <div class="row dl-nav"><button class="btn sm" data-act="dl-day" data-day="${v.prev || ''}" ${v.prev ? '' : 'disabled'}>‹ วันก่อนหน้า</button><span class="small muted grow">${dlDay(v.day)}</span><button class="btn sm" data-act="dl-day" data-day="${v.next || ''}" ${v.next ? '' : 'disabled'}>วันถัดไป ›</button></div></div>`;
+  }
+  /** k181 เจ้าของกดดูวันก่อนหน้าหรือวันถัดไปจากการ์ดหน้าแรก ทีละวัน */
+  function loadDailyDay(day, btn) {
+    if (!day) return;
+    run(btn, call('dailyDay', { day: day }, ownerAuth())).then(function (d) { DL_HOME = d; render(); }, function () {});
   }
   /** ปุ่มเรื่องที่รอคุณตัดสินในสรุปประชุม (k29): เปิดบันทึกหน้างานแล้วเลื่อนไปกลุ่มของเรื่องนั้นพร้อมกรอบ · ไม่มีใน 14 วันล่าสุด: บอกสั้น ๆ */
   var DL_FOCUS = '';
@@ -21956,12 +21958,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     openSheet({ title: 'บันทึกว่าแก้แล้ว', body: html`<p class="small muted mt0">คนที่บันทึกเรื่องนี้จะเห็นว่าร้านแก้แล้ว ช่วยให้ทีมอยากบันทึกต่อ</p><label class="field"><span>บอกทีมว่าแก้อย่างไร (ไม่บังคับ)</span><textarea class="input" id="dl-note" maxlength="300" placeholder="เช่น สั่งหมูเพิ่มเป็นวันละ 3 กก. แล้ว"></textarea></label>`,
       foot: html`<button class="btn" data-act="dl-inbox">ยกเลิก</button><button class="btn primary" data-act="dl-mark" data-ids="${ids}" data-status="fixed">${icon('check')} แก้แล้ว</button>` });
   }
-  /** Not counted, and why (a tap, or the owner's own words): the one who noted it sees it, and may add to it once. */
+  /** ไม่นับแต้ม พร้อมเหตุผลที่เจ้าของร้านจดไว้ดูเอง · k181 คนที่บันทึกไม่ได้รับแจ้งและไม่เห็นเหตุผล */
   function askDailyVoid(ids) {
     var why = (dlList && dlList.voidWhy) || ['ยังไม่รู้ว่าเกิดอะไร เล่าเพิ่มอีกนิดนะ', 'เรื่องนี้มีบันทึกไว้แล้ว ขอบคุณที่ช่วยบอกนะ', 'เรื่องนี้อยู่นอกงานร้าน ขอบคุณที่เล่านะ'];
-    openSheet({ title: 'ไม่นับแต้มเรื่องนี้', body: html`<p class="small muted mt0">คนที่บันทึกเห็นเหตุผลนี้ และเพิ่มรายละเอียดได้ 1 ครั้ง แล้วเรื่องกลับมาให้ดูอีก · บอกสั้น ๆ ไม่ต้องตำหนิ น้องจะยังกล้าบอกเรื่องเล็ก ๆ</p>
+    openSheet({ title: 'ไม่นับแต้มเรื่องนี้', body: html`<p class="small muted mt0">แต้มและคะแนนทีมของเรื่องนี้ไม่นับ · คนที่บันทึกไม่ได้รับแจ้งและไม่เห็นเหตุผล น้องจะยังกล้าบอกเรื่องเล็ก ๆ · กด "นับแต้มกลับ" ได้ทุกเมื่อ</p>
       <div class="chips dl-whys">${why.map(function (w) { return html`<button class="chip" data-act="dl-why" data-why="${w}">${w}</button>`; })}</div>
-      <label class="field" style="margin-top:12px"><span>เหตุผลที่น้องจะเห็น</span><textarea class="input" id="dl-note" maxlength="300" rows="2">${why[0]}</textarea></label>`,
+      <label class="field" style="margin-top:12px"><span>เหตุผล (คุณเห็นคนเดียว)</span><textarea class="input" id="dl-note" maxlength="300" rows="2">${why[0]}</textarea></label>`,
       foot: html`<button class="btn" data-act="dl-inbox">ยกเลิก</button><button class="btn primary" data-act="dl-mark" data-ids="${ids}" data-status="void">ไม่นับแต้ม</button>` });
   }
   function markDaily(el) {
@@ -21973,6 +21975,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       toast(d.notice, 'ok');
       openDailyInbox();
       loadOwner(true, true);
+      // k181 การ์ดหน้าแรกกำลังดูวันอื่นอยู่: โหลดวันนั้นใหม่ให้ตรงกับที่เพิ่งกด
+      if (DL_HOME) call('dailyDay', { day: DL_HOME.day }, ownerAuth()).then(function (v) { DL_HOME = v; render(); }, function () {});
     }, function () {});
   }
 
@@ -22503,7 +22507,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       run(el, call('kioskRemove', { id: S.kiosk.id, fromScreen: true }, { ownerPin: pin })).then(function () {
         // หน้าต่างเก่าอาจกดเลิก ขณะที่เครื่องมีกุญแจใหม่ของหน้าต่างอื่นแล้ว: ลบกุญแจในเครื่องเฉพาะเมื่อตรงกับจอที่เลิกใช้
         var mine = LS.get(KEY.kiosk);
-        closeSheet(); stopCamera(); if (mine && mine.token === gone) LS.del(KEY.kiosk); S.kiosk = null; S.view = 'start'; render(); toast('เครื่องนี้เลิกเป็นเครื่องลงเวลาแล้ว');
+        // k181 กุญแจในเครื่องเป็นของจอใหม่ที่หน้าต่างอื่นตั้ง (ไม่ลบ): เครื่องยังเป็นจอลงเวลาอยู่ บอกตามจริงว่าจอย้ายหน้าต่าง
+        var moved = !!(mine && mine.token !== gone);
+        closeSheet(); stopCamera(); if (mine && mine.token === gone) LS.del(KEY.kiosk); S.kiosk = null; S.view = 'start'; render(); toast(moved ? 'จอลงเวลาย้ายไปหน้าต่างใหม่แล้ว ปิดหน้าต่างนี้ได้' : 'เครื่องนี้เลิกเป็นเครื่องลงเวลาแล้ว');
       }, function () {});
     },
 
@@ -23525,6 +23531,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       run(el, call('dailyDelete', { id: el.dataset.id }, staffAuth())).then(function (d) { S.home.daily = d.daily; if (d.levels) { S.levels = d.levels; if (S.home) S.home.levels = d.levels; } if (d.level) { S.home.level = d.level; lvCheck(d.level); } render(); openDailyMine(); toast('ลบแล้ว', 'ok'); }, function () {});
     },
     'dl-inbox': function (el) { openDailyInbox(el && el.dataset.key); },
+    'dl-day': function (el) { loadDailyDay(el.dataset.day, el); },
     'mr-open': function () { openMorning(); },
     'meet-open': function () { openMeet(); },
     'meet-go': function () { meetGo(); },
@@ -23559,14 +23566,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }, function () { loadOwner(true, true).then(tempRedraw); });
     },
     'dl-again-send': function (el) { sendDailyAgain(el); },
-    'dl-redo': function (el) { openDailyRedo(el.dataset.id); },
     'thx-open': function (el) { openThanks(el.dataset.id); },
     'thx-to': function (el) { if (!thx) return; thx.to = el.dataset.id; thanksRedraw(); },
     'thx-kind': function (el) { if (!thx) return; thx.kind = el.dataset.kind; thanksRedraw(); },
     'thx-send': function (el) { sendThanks(el); },
     'thx-mine': function () { openThanksMine(); },
     'calm-toggle': function (el) { askCalm(el); },
-    'dl-redo-send': function (el) { sendDailyRedo(el); },
     'dl-void': function (el) { askDailyVoid(el.dataset.ids); },
     'dl-why': function (el) { var box = $('#dl-note'); if (box) { box.value = el.dataset.why; box.focus(); } },
     'dl-mark': function (el) { markDaily(el); },
