@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.27","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"b2121d6b3129"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.28","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"d15ce19971eb"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -12624,7 +12624,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${asked ? mine : ''}
       ${S.view === 'owner' ? html`<div class="stats" style="grid-template-columns:repeat(2,1fr)">${(L.balance || []).filter(function (b) { return b.paid || b.used; }).map(function (b) {
         var body = b.paid
-          ? html`<b style="font-size:24px">${b.remaining}<small class="muted" style="font-size:14px"> / ${b.quota} วัน</small></b><span>ใช้ไป ${b.used}${b.pending ? ' · รออนุมัติ ' + b.pending : ''}${b.eligible ? '' : ' · ยังใช้ไม่ได้'}${b.cashed ? ' · ที่เหลือคิดเป็นเงินแล้ว' : ''}</span>`
+          ? html`<b style="font-size:24px">${dayNum(b.remaining)}<small class="muted" style="font-size:14px"> / ${b.quota} วัน</small></b><span>ใช้ไป ${b.used}${b.pending ? ' · รออนุมัติ ' + b.pending : ''}${b.eligible ? '' : ' · ยังใช้ไม่ได้'}${b.cashed ? ' · ที่เหลือคิดเป็นเงินแล้ว' : ''}</span>`
           : html`<b style="font-size:24px">${b.used}<small class="muted" style="font-size:14px"> วัน</small></b><span>ใช้ไปปีนี้</span>`;
         return b.vacation
           ? html`<button class="stat" style="text-align:left;padding:14px" data-act="vacation-info"><span>${b.type} ${icon('info')}</span>${body}</button>`
@@ -12979,6 +12979,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     });
     return runs.map(function (r) { return (r.from === r.to ? r.from : r.from + '–' + r.to) + ' ' + TH_MONTHS[r.m - 1]; }).join(', ');
   }
+  /** 2.14.28 (k182) จำนวนวันคงเหลือ: ติดลบขึ้นเครื่องหมายลบชัด เช่น −2 (หน้าเจ้าของร้าน) */
+  function dayNum(n) {
+    n = +n || 0;
+    return n < 0 ? '−' + -n : String(n);
+  }
   function vacationInfo() {
     var b = ((S.home && S.home.leave.balance) || []).filter(function (x) { return x.vacation; })[0];
     if (!b) return;
@@ -12987,7 +12992,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${S.view === 'owner' ? html`<div class="item"><div class="grow"><div class="t">พักร้อนประจำปี</div><div class="s">${b.annual ? (b.annualOn ? 'ทำงานครบ ' + b.annualYears + ' ปี วันที่ ' + thShort(b.annualOn) + ' ใช้ได้ตั้งแต่วันนั้น' : 'ทำงานครบ ' + b.annualYears + ' ปีแล้ว') : b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ได้เมื่อทำงานครบ ' + b.annualYears + ' ปี'}</div></div><div class="r amt">${b.annual} วัน</div></div>` : ''}
         ${S.view === 'owner' ? html`<div class="item"><div class="grow"><div class="t">วันหยุดตามประเพณี เลือกวันหยุดเอง</div><div class="s">${b.setMissing ? 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน' : 'ได้ 1 วันต่อวันหยุดตามประเพณี 1 วันที่ร้านเปิดทำการ'}</div><div class="s">ลาพักร้อนแต่ละวัน นับเป็นวันหยุดตามประเพณีที่เหลือก่อน หมดแล้วค่อยนับเป็นพักร้อนประจำปี</div></div><div class="r amt">${b.credits.length} วัน</div></div>${(b.offCredits || []).length ? html`<div class="item"><div class="grow"><div class="t">ร้านปิดตรงวันหยุดประจำ</div><div class="s">ใช้วันหยุดแล้ว ได้พักร้อนเพิ่มวันละ 1 วัน</div></div><div class="r amt">${b.offCredits.length} วัน</div></div>` : ''}` : ''}
         ${S.view === 'owner' && b.bonus ? html`<div class="item"><div class="grow"><div class="t">วันแถม ${b.bonusLeft} วัน ใช้ได้ถึง 31 ธ.ค. ${+String(b.bonusUntil).slice(0, 4) + 543}</div><div class="s">ร้านแถมจากพักร้อนที่เหลือปีก่อน ใช้เป็นลำดับสุดท้าย ไม่คิดเป็นเงิน หมดเมื่อออก</div></div></div>` : ''}
-      ${S.view === 'owner' ? html`<div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>${b.remaining}</b><span>วันที่เหลือ</span></div></div>` : ''}
+      ${S.view === 'owner' ? html`<div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>${dayNum(b.remaining)}</b><span>วันที่เหลือ</span></div></div>` : ''}
       ${b.noStart || b.setMissing ? html`<div class="hint">${icon('info')}<span>${b.noStart ? 'ยังไม่มีวันเริ่มงานในระบบ — แจ้งเจ้าของร้าน' : 'ยังไม่มีปฏิทินวันหยุดตามประเพณีของปีนี้ในระบบ — แจ้งเจ้าของร้าน'}</span></div>` : ''}
       <div class="hint">${icon('cal')}<span><b>ร้านปิดทุกปี</b> ${fixedHolidayText()} — ไม่ต้องลา</span></div>
     </div>`, foot: html`<button class="btn primary" data-act="sheet-close">ปิด</button>` });
@@ -14342,6 +14347,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     ['งาน', [['position', 'ตำแหน่งงาน'], ['dept', 'แผนก', 'depts'], ['role', 'สิทธิ์ในระบบ', 'roles'], ['status', 'สถานะ', 'statuses', 'ให้ออก: ใส่วันทำงานวันสุดท้ายและเหตุที่ออก สถานะเปลี่ยนเป็น ลาออก เอง · กลับมาทำงาน: เลือกเหตุที่ออก ยังไม่ออก หรือกด ล้าง ที่วันสุดท้าย สถานะกลับเป็น ทำงาน'], ['dayOff', 'วันหยุดประจำ', 'days', 'หยุดได้เท่าจำนวนวันนี้ในรอบเงินเดือน (4 หรือ 5 วัน) ไม่หักเงิน · มาทำงานวันนี้แล้วหยุดวันอื่นแทนได้ วันหยุดประจำที่มาทำได้ค่าแรงเพิ่ม 1 วัน วันหยุดแทนไม่รับค่าจ้าง · ยังไม่ตั้ง = หยุดได้ตามวันหยุดต่อรอบในตั้งค่า'], ['startDate', 'วันเริ่มงาน', 'date', 'ใช้คิดสิทธิ์ลาพักร้อน (ครบ 1 ปีได้ 6 วันอัตโนมัติ) และวันหยุดตามประเพณี'], ['endDate', 'วันทำงานวันสุดท้าย', 'date', 'เป็นพนักงานถึงวันนี้ · เข้าแอปและลงเวลาได้ถึงวันนี้ หลังจากนั้นดูได้เฉพาะสลิปเงินเดือน'], ['endReason', 'เหตุที่ออก', 'endReasons']]],
     ['ค่าจ้าง', [['employment', 'สถานะการจ้าง', 'employment'], ['probationEnd', 'วันผ่านโปร', 'date', 'ตั้งแต่วันนี้ได้เงินเดือน + Incentive + ประกันสังคม'], ['probationRate', 'ค่าแรงช่วงทดลองงาน (บาท/วัน)', 'num'], ['probationWht', 'ภาษีหัก ณ ที่จ่ายช่วงทดลองงาน (%)', 'num'], ['payType', 'ประเภทค่าจ้าง', 'payTypes'], ['rate', 'เงินเดือน/ค่าแรง (บาท)', 'num'], ['otRate', 'ค่า OT (บาท/ชม.)', 'num'], ['sso', 'หักประกันสังคม', 'yesno']]],
     ['Incentive', [['diligence', 'เบี้ยขยัน (บาท)', 'num'], ['headAllowance', 'ค่าหัวหน้า (บาท)', 'num'], ['tenureAllowance', 'ค่าอยู่นาน (บาท)', 'num']]],
+    // 2.14.28 (k182) ปรับวันพักร้อนปี 2569: ช่องข้อความ พิมพ์เครื่องหมายลบได้บนมือถือ (แป้นตัวเลขของ iPhone ไม่มีเครื่องหมายลบ) หลังบ้านตรวจค่า
+    ['วันลา', [['leaveAdj2569', 'ปรับวันพักร้อนปี 2569 (บวก/ลบ)', 'adj']]],
     ['อื่น ๆ', [['note', 'หมายเหตุ']]],
   ];
   /** คำอธิบายใต้ช่อง: ที่มากับรายชื่อพนักงาน (เจ้าของร้านเท่านั้น 2.13.18) ก่อน ไม่งั้นของในรายการช่อง */
@@ -14373,7 +14380,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         : html`<input class="input" data-f="${key}" data-change="${end}" type="${type === 'date' ? 'date' : type === 'num' ? 'number' : 'text'}" ${type === 'num' ? 'inputmode="decimal" step="any"' : ''} ${key === 'endDate' ? 'style="flex:1;min-width:0"' : ''} value="${v}">`;
       // (2.13.28: ช่องวันที่บน iPhone ลบเองไม่ได้ · ปุ่ม ล้าง = ยังไม่ออก)
       if (key === 'endDate') ctl = html`<div class="row" style="gap:8px">${ctl}<button type="button" class="btn sm" data-act="emp-end-clear" style="${v ? '' : 'display:none'}">ล้าง</button></div>`;
-      return html`<label class="field"><span>${f[1]}</span>${ctl}${empHint(f) ? html`<small>${empHint(f)}</small>` : ''}</label>`;
+      // (2.14.28 k182 ใต้ช่องปรับ: ยอดคงเหลือปี 2569 ตอนนี้ของคนนี้ รวมค่าปรับที่บันทึกแล้ว ติดลบขึ้นเครื่องหมายลบ)
+      var left = key === 'leaveAdj2569' && typeof e.leaveLeft2569 === 'number' ? html`<small class="lv-left-now">ตอนนี้วันพักร้อนคงเหลือปี 2569: <b>${dayNum(e.leaveLeft2569)} วัน</b></small>` : '';
+      return html`<label class="field"><span>${f[1]}</span>${ctl}${empHint(f) ? html`<small>${empHint(f)}</small>` : ''}${left}</label>`;
     };
     var face = id ? faceOf({ id: id }) : '';
     openSheet({ use: 'แก้ไข/เพิ่มพนักงาน', title: id ? 'แก้ไข ' + (e.display || e.nick) : 'เพิ่มพนักงาน', body: html`${wcEntry(e)}${selfNameRow(id, e)}${face ? html`<div class="form-group"><div class="row" style="gap:14px">${avatar({ id: id }, 'lg')}<div class="grow small muted">รูปที่${e.display || e.nick}ถ่ายเองในแอป เห็นเฉพาะคนที่เข้าระบบแล้ว</div><button class="btn sm" data-act="face-remove-emp" data-id="${id}">เอารูปออก</button></div></div>` : ''}${EMP_FIELDS.map(function (g) { return html`<div class="form-group"><div class="eyebrow" style="margin-bottom:8px">${g[0]}</div>${g[1].map(input)}</div>`; })}
