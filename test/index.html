@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.25","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"73d5e5d6f152"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.26","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"37fe8518b21d"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -3223,6 +3223,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 /* ---------- kiosk (always dark, for the shop tablet) ---------- */
 .kiosk { --k-bg: #0e0c0a; --k-surface: rgba(255, 248, 238, .055); --k-line: rgba(255, 248, 238, .09); --k-ink: #f4efe8; --k-muted: #9d9388; --k-rim: inset 0 1px 0 rgba(255, 255, 255, .09), inset 0 0 0 1px rgba(255, 255, 255, .06); min-height: 100vh; min-height: var(--app-h, 100vh); background: radial-gradient(1100px 620px at 50% -12%, rgba(210, 160, 90, .20) 0%, transparent 62%), radial-gradient(900px 520px at 100% 110%, rgba(60, 110, 104, .14), transparent 60%), var(--k-bg); color: var(--k-ink); display: flex; flex-direction: column; }
 .kiosk .k-top { display: flex; align-items: center; justify-content: space-between; padding: 22px 28px 0; }
+/* k180 แถบเล็กใต้หัวจอ อยู่ในแนวเรียงปกติ ไม่ลอยทับปุ่มหรือ QR */
+.kiosk .k-inapp { margin: 8px 28px 0; padding: 6px 12px; border-radius: 10px; background: #fff4d6; color: #5c4400; font-size: 13px; line-height: 1.4; text-align: center; }
 .kiosk .brand .wm { font-size: 26px; color: var(--k-ink); }
 .kiosk .brand .ko { color: #d2ac6b; }
 .kiosk .k-clock { text-align: center; padding: 26px 16px 8px; }
@@ -6633,7 +6635,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // (2.13.44 g-b3 A2-5) หลังบ้านไม่ตอบ: การอ่านยอมแพ้ภายในราว 30 วิ รวมส่งซ้ำแล้ว (เดิมถึง 156 วิ) การเขียนรอ 30 วิ (เดิม 90)
   // ระหว่างนั้นปุ่มหมุน · ส่งรูปหรือไฟล์ (คำขอใหญ่) และการอ่านที่ช้าตามขนาด (NO_HEDGE) รอเท่าเดิม
   var READ_MAX = 30000, WRITE_MAX = 30000, BIG_BODY = 50000;
-  function writeWait(data) {
+  // (k180 รอบตรวจ) งานนานที่เจ้าของร้านกดเอง (ล้างข้อมูล กู้ข้อมูล สำรองตอนนี้ ส่งไฟล์สำรอง) รอ 3 นาที งานอื่นตามเดิม
+  var LONG_WRITES = ['wipe', 'restore', 'backup', 'backupMail'];
+  function writeWait(action, data) {
+    if (LONG_WRITES.indexOf(action) >= 0) return 180000;
     try { return JSON.stringify(data || {}).length > BIG_BODY ? 90000 : WRITE_MAX; } catch (e) { return 90000; }
   }
   var READS = ['boot', 'kioskPing', 'status', 'home', 'month', 'calendar', 'payslips', 'payslip', 'team', 'entries', 'leaves', 'exceptions', 'payroll', 'photo', 'photos', 'owner', 'employees', 'feedbackMine', 'feedbackList', 'feedbackFile', 'feedbackSync', 'orderList', 'orderOwner', 'orderCatalog', 'notes', 'pushKey', 'usageReport', 'exportTables', 'rainHistory', 'howTo', 'leaveCost', 'leaveAddCost'];
@@ -6646,7 +6651,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var writing = 0;
   function call(action, data, auth, opts) {
     if (READS.indexOf(action) < 0) {
-      return send(action, data, auth, writeWait(data)).catch(function (e) {
+      return send(action, data, auth, writeWait(action, data)).catch(function (e) {
         // A change is never sent twice: its answer may have been lost after the server saved it.
         if (e.network) e.message = (e.bad ? 'ระบบตอบผิดพลาดระหว่างบันทึก' : 'เน็ตสะดุดระหว่างบันทึก') + ' อาจบันทึกไปแล้ว — ดูในรายการก่อนกดอีกครั้ง';
         throw e;
@@ -7683,6 +7688,60 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       throw e;
     });
   }
+
+  // (k180 รอบตรวจ) งานนานที่เจ้าของร้านกดเอง: ปิดทุกปุ่มในแผ่นจนงานจบ ใต้ปุ่มบอกว่ากำลังทำ · หมดเวลา (e.network) ไม่คืนปุ่ม
+  // เช็กผลจริงจากหน้าเจ้าของทุก 10 วิ นานสุด 3 นาที (probe.seen เทียบเวลาที่กด) เห็นผลทำแบบสำเร็จ (probe.ok) ไม่เห็นผลบอกให้ดูก่อนกดอีก
+  // คืนคำสัญญาที่สำเร็จเมื่อคำตอบมาตามปกติ · กรณีอื่นปฏิเสธโดยจัดการเองครบแล้ว
+  var LONG_POLL_MS = 10000, LONG_POLL_MAX = 180000;
+  function longRun(el, label, promise, probe) {
+    var scope = (el && el.closest && el.closest('.sheet')) || (el && el.parentNode) || document;
+    var btns = [].slice.call(scope.querySelectorAll('button'));
+    if (el && btns.indexOf(el) < 0) btns.push(el);
+    var was = btns.map(function (b) { return b.disabled; });
+    var t0 = now().getTime();
+    btns.forEach(function (b) { b.disabled = true; });
+    spin(el, true);
+    var note = document.createElement('p');
+    note.className = 'small muted';
+    note.textContent = 'กำลัง' + label + ' อาจใช้ราว 1 นาที ไม่ต้องกดซ้ำ';
+    var host = el && el.parentNode;
+    if (host && host.parentNode) host.parentNode.insertBefore(note, host.nextSibling);
+    var release = function () {
+      if (note.parentNode) note.parentNode.removeChild(note);
+      btns.forEach(function (b, i) { b.disabled = was[i]; });
+      if (el) el.classList.remove('loading');
+    };
+    return promise.then(function (v) { release(); return v; }, function (e) {
+      if (!(e && e.network) || !probe) {
+        release();
+        toast(e.message, 'bad');
+        if (e.code === 'AUTH' && S.view === 'staff') logoutStaff();
+        throw e;
+      }
+      note.textContent = 'ยังรอผลอยู่ ระบบอาจยังทำอยู่ กำลังตรวจให้ ไม่ต้องกดซ้ำ';
+      return new Promise(function (resolve, reject) {
+        var until = Date.now() + LONG_POLL_MAX;
+        var step = function () {
+          setTimeout(function () {
+            loadOwner(true, true).then(function (home) { return home; }, function () { return null; }).then(function (home) {
+              // เห็นผลแล้ว: ทำแบบสำเร็จ (วาดหน้าใหม่หรือโหลดหน้าใหม่) ปุ่มเดิมไม่คืนให้กดอีก
+              if (home && probe.seen(home, t0)) { if (note.parentNode) note.parentNode.removeChild(note); if (el) el.classList.remove('loading'); probe.ok(home); reject(e); return; }
+              if (Date.now() < until) { step(); return; }
+              // ไม่เห็นผล: ปุ่มทำงานยังปิด เหลือแต่ปุ่มปิดแผ่น
+              note.textContent = 'ยังไม่เห็นผล ระบบอาจยังทำอยู่ ดูที่ ตั้งค่า › ข้อมูลและการสำรอง ก่อนกดอีกครั้ง';
+              if (el) el.classList.remove('loading');
+              btns.forEach(function (b) { if (b.getAttribute('data-act') === 'sheet-close') b.disabled = false; });
+              reject(e);
+            });
+          }, LONG_POLL_MS);
+        };
+        step();
+      });
+    });
+  }
+  /** ผลของงานนานที่เห็นจากหน้าเจ้าของ (ตัวเทียบ probe.seen): เวลาของผลต้องไม่ก่อนตอนกด */
+  function sinceTap(iso, t0) { var t = Date.parse(iso || ''); return isFinite(t) && t >= t0 - 2000; }
+  function backupSeen(key) { return function (home, t0) { return !!home.backup && sinceTap(home.backup[key], t0); }; }
 
   // ======================================================================
   // Device: scripts, camera, QR, location, images
@@ -8738,14 +8797,21 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.setup = null;
     var q = new URLSearchParams(location.search);
     q.delete('setup');
+    q.delete('openExternalBrowser');
     try { history.replaceState(null, '', location.pathname + (String(q) ? '?' + q : '') + location.hash); } catch (e) { /* the address keeps it */ }
   }
   /** The link for the shop's phone: the first page of this same site (the real app, or the test one), and the code. */
-  function setupUrl(code) { return location.href.replace(/[?#].*$/, '').replace(/[^\/]*$/, '') + '?setup=' + encodeURIComponent(code); }
+  function setupUrl(code) { return location.href.replace(/[?#].*$/, '').replace(/[^\/]*$/, '') + '?setup=' + encodeURIComponent(code) + '&openExternalBrowser=1'; }
   /** When a link runs out: its day and time. */
   function linkUntil(iso) { return iso ? isoDate(iso) + ' ' + hmOf(new Date(iso)) + ' น.' : ''; }
   VIEWS.kioskSetup = function () {
     var st = S.setup || {};
+    // k180 (2.14.26) เปิดในเบราว์เซอร์ของแอปแชต: ค่าจอที่ตั้งในนี้ ไอคอนหน้าจอโฮม (Chrome) มองไม่เห็น จึงไม่มีปุ่มตั้งเครื่อง
+    if (inAppBrowser()) {
+      return html`<div class="wrap page"><div class="start-head">${brand(true)}</div>
+      <div class="card pad-lg center" id="setup-inapp"><h2 class="title">เปิดลิงก์นี้ใน Chrome ก่อน</h2><p class="muted mt0">ตอนนี้ลิงก์เปิดอยู่ในแอปแชต กดเมนูที่มุมจอแล้วเลือกเปิดในเบราว์เซอร์ หรือคัดลอกลิงก์ไปวางใน Chrome แล้วจึงตั้งเครื่องเป็นจอลงเวลา</p></div>
+      <div class="foot-links"><button class="link" data-act="kiosk-setup-skip">ไม่ใช่มือถือร้าน เปิดแอปตามปกติ</button></div></div>`;
+    }
     return html`<div class="wrap page"><div class="start-head">${brand(true)}</div>
       <div class="card pad-lg center"><h2 class="title">ตั้งเครื่องนี้เป็นจอลงเวลาในร้าน</h2><p class="muted mt0">เปิดลิงก์นี้บนมือถือร้าน แล้วกดปุ่มด้านล่าง</p>
       <div class="pin-err" role="alert">${st.err || ''}</div>
@@ -9207,6 +9273,40 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   // ---- the screen checks in: every few seconds around shift starts --------
   var pingTimer = null;
+  // k180 (2.14.26) หลังบ้านตอบว่าไม่รู้จักจอ: เครื่องลบค่าจอเมื่อได้คำตอบนี้ติดกันอย่างน้อย 3 ครั้ง และครั้งแรกถึงครั้งล่าสุด
+  // ห่างกันไม่น้อยกว่า 2 นาที · ผลอื่นใดคั่น (สำเร็จ ข้อผิดพลาดอื่น เน็ตหลุด) นับใหม่ · ระหว่างนั้นจอคงเดิม
+  var KIOSK_GONE_TIMES = 3, KIOSK_GONE_MS = 120000;
+  var kGone = { n: 0, first: 0 };
+  /** One answer about this screen: `unknown`, the server does not know it. True once it is to be forgotten. */
+  function kioskGone(unknown) {
+    if (!unknown) { kGone.n = 0; kGone.first = 0; return false; }
+    var t = Date.now();
+    if (!kGone.n) kGone.first = t;
+    kGone.n++;
+    if (kGone.n < KIOSK_GONE_TIMES || t - kGone.first < KIOSK_GONE_MS) return false;
+    kGone.n = 0; kGone.first = 0;
+    return true;
+  }
+  /**
+   * (k180 รอบตรวจ 3) localStorage ใช้ร่วมทุกหน้าต่างของเว็บเดียวกัน: หน้าต่างอื่นอาจเพิ่งตั้งจอใหม่ (กุญแจใหม่) ไว้แล้ว
+   * เรียกก่อนนับว่าจอถูกลืม · ค่าในเครื่องเป็นกุญแจอื่นจากที่หน้านี้ถือ = ใช้ค่าในเครื่อง ไม่นับ ไม่ลบ แล้วเปิดจอใหม่ · คืนจริงเมื่อสลับ
+   */
+  function kioskSwapped() {
+    var m = LS.get(KEY.kiosk);
+    if (!m || !m.token || !S.kiosk || m.token === S.kiosk.token) return false;
+    S.kiosk = m;
+    kioskGone(false);
+    kioskBoot();
+    return true;
+  }
+  /** k180 ค่าจอที่จำในเครื่อง (เปิดครั้งหน้าขึ้นทันที): จดเหมือนกันทั้งตอนเปิดและตอนรีเฟรชทุก 5 นาที */
+  function keepKioskBoot(b) {
+    // (k180 รอบตรวจ 2) คำตอบที่มาช้าหลังเครื่องเลิกเป็นจอแล้ว (S.kiosk เป็น null): ไม่จด
+    if (!S.kiosk) return;
+    var keep = Object.assign({}, b);
+    delete keep.scan; delete keep.serverNow;
+    remember('kboot', keep, S.kiosk.id || '');
+  }
   function pingSoon(ms) {
     clearTimeout(pingTimer);
     pingTimer = setTimeout(kioskPing, ms == null ? pingDelay() : ms);
@@ -9222,6 +9322,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var st = S.k.cam.state;
     var cam = !camWanted() ? 'off' : st === 'ok' || st === 'covered' ? st : 'none';
     call('kioskPing', { cam: cam, v: CODE_VERSION, lv: ((S.levels || B.levels) || {}).tag || '', nm: S.k.nm || '', kn: Object.keys(S.k.done || {}).length }, { kiosk: S.kiosk.token }).then(function (d) {
+      kioskGone(false);
       if (d.version && CODE_VERSION && d.version !== CODE_VERSION && !S.k.newVersion) { S.k.newVersion = true; if (S.k.step === 'names') render(); }
       // A level, the crown or the team's goal changed: the names and the goal again.
       if (d.levels) { S.levels = d.levels; drawKioskNames(); drawKioskQuest(); }
@@ -9237,7 +9338,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       (d.shots || []).forEach(sendShot);
       pingSoon();
     }, function (e) {
-      if (e.code === 'KIOSK') { LS.del(KEY.kiosk); S.kiosk = null; stopScreenCam(); start(); return; }
+      if (e.code !== 'KIOSK') kioskGone(false);
+      else if (kioskSwapped()) return;
+      else if (kioskGone(true)) { LS.del(KEY.kiosk); S.kiosk = null; stopScreenCam(); start(); return; }
       pingSoon(20000);
     });
   }
@@ -9286,10 +9389,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var kioskTimer = 0;
   function kioskBoot() {
     call('boot', { kiosk: S.kiosk.token, v: CODE_VERSION }).then(function (b) {
-      if (b.kioskInvalid) { LS.del(KEY.kiosk); forget('kboot'); S.kiosk = null; toast('เครื่องนี้ถูกยกเลิกการเป็นเครื่องลงเวลาแล้ว', 'bad'); boot(); return; }
-      var keep = Object.assign({}, b);
-      delete keep.scan; delete keep.serverNow;
-      remember('kboot', keep, S.kiosk.id || '');
+      if (b.kioskInvalid) {
+        if (kioskSwapped()) return;
+        if (kioskGone(true)) { LS.del(KEY.kiosk); forget('kboot'); S.kiosk = null; toast('เครื่องนี้ถูกยกเลิกการเป็นเครื่องลงเวลาแล้ว', 'bad'); stopScreenCam(); boot(); return; }
+        // ยังไม่ครบเกณฑ์: จอคงเดิม ถามใหม่อีกครู่
+        setTimeout(function () { if (S.view === 'kiosk' && S.kiosk) kioskBoot(); }, 15000);
+        pingSoon(20000);
+        return;
+      }
+      kioskGone(false);
+      if (!S.kiosk) return; // (k180 รอบตรวจ 2) เครื่องเลิกเป็นจอระหว่างรอคำตอบ: ทิ้งคำตอบนี้
+      keepKioskBoot(b);
       B = takeBoot(b);
       S.kiosk.name = b.kiosk.name;
       kioskDone(b);
@@ -9299,6 +9409,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       pingSoon(1500);
     }, function (e) {
       // Not loaded yet: say why and try again soon; loaded before: the screen keeps working.
+      kioskGone(false);
       if (!B.kiosk) toast(e.message, 'bad');
       setTimeout(function () { if (S.view === 'kiosk' && S.kiosk) kioskBoot(); }, 15000);
       pingSoon(20000);
@@ -9311,11 +9422,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function kioskRefresh() {
     if (S.view !== 'kiosk' || S.k.step !== 'names' || !S.kiosk) return;
     call('boot', { kiosk: S.kiosk.token, v: CODE_VERSION }).then(function (b) {
-      if (b.kioskInvalid) { LS.del(KEY.kiosk); S.kiosk = null; start(); return; }
+      if (b.kioskInvalid) {
+        if (kioskSwapped()) return;
+        if (kioskGone(true)) { LS.del(KEY.kiosk); S.kiosk = null; stopScreenCam(); start(); }
+        return;
+      }
+      kioskGone(false);
+      if (!S.kiosk) return; // (k180 รอบตรวจ 2) เครื่องเลิกเป็นจอระหว่างรอคำตอบ: ทิ้งคำตอบนี้
+      keepKioskBoot(b);
       B = takeBoot(b);
       kioskDone(b);
       if (S.k.step === 'names') render();
-    }, function () { /* offline for a moment: keep the screen as is */ });
+    }, function () { kioskGone(false); /* offline for a moment: keep the screen as is */ });
   }
   function kioskAuth(empId, pin) { return { kiosk: S.kiosk ? S.kiosk.token : '', empId: empId, pin: pin }; }
   function kioskReset() {
@@ -9363,6 +9481,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     return html`<div class="kiosk">
       <div class="k-top">${brand()}<span class="muted small">${S.kiosk ? S.kiosk.name : ''}</span></div>
+      ${S.setupDone ? html`<div class="k-inapp" role="status">ถึงเจ้าของร้าน: เพิ่มไอคอนหน้าจอโฮมจากเบราว์เซอร์ที่ใช้ตั้งนี้ แล้วเปิดจอจากไอคอนนั้น</div>` : ''}
+      ${inAppBrowser() ? html`<div class="k-inapp" role="status">ถึงเจ้าของร้าน: จอนี้เปิดอยู่ในแอปแชต ตั้งเครื่องใหม่ใน Chrome เพื่อให้ไอคอนบนหน้าจอโฮมจำจอนี้ได้</div>` : ''}
       ${k.step === 'names' ? html`<div class="k-clock"><div class="t" data-clock="big"></div><div class="d" data-clock="date"></div></div><div class="k-quest" id="k-quest">${kioskQuest()}</div>` : ''}
       <div class="k-body">${body}</div>
       <div class="k-foot"><span>ลงเวลาเข้างานอย่างเดียว · ดูข้อมูลและขอลาในมือถือของคุณ</span><button data-act="k-exit">ตั้งค่าเครื่อง</button></div>
@@ -9447,11 +9567,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       render();
     }, function (e) {
       S.pinBusy = false;
-      if (e.code === 'KIOSK') { LS.del(KEY.kiosk); S.kiosk = null; toast(e.message, 'bad'); start(); return; }
+      // k180 ไม่รู้จักจอ: ลบค่าจอเมื่อครบเกณฑ์ของ kioskGone เท่านั้น ยังไม่ครบจอคงเดิม บอกให้ลองใหม่
+      if (e.code !== 'KIOSK') kioskGone(false);
+      else if (kioskSwapped()) {
+        // สลับกุญแจตอนใส่ PIN: ไม่ค้างหน้าโครงรอตรวจ · กลับหน้าใส่ PIN ให้ลองใหม่ด้วยกุญแจใหม่ แล้วปิดกล้อง
+        if (seq === k.seq) { stopCamera(); k.pin = ''; k.err = 'จอลงเวลาเพิ่งเปลี่ยนเครื่อง ลองใส่รหัสใหม่อีกครั้ง'; k.step = 'pin'; render(); }
+        return;
+      }
+      else if (kioskGone(true)) { LS.del(KEY.kiosk); S.kiosk = null; toast(e.message, 'bad'); stopScreenCam(); start(); return; }
       if (seq !== k.seq) return;
       stopCamera();
       k.pin = '';
-      k.err = e.message;
+      k.err = e.code === 'KIOSK' ? 'จอลงเวลาใช้ไม่ได้ชั่วครู่ ลองใหม่อีกครั้ง หรือบอกผู้อนุมัติให้ลงเวลาแทน' : e.message;
       k.step = 'pin';
       render();
     });
@@ -14082,7 +14209,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var c = o.today.counts;
     var todo = [];
     if (o.shop.lat == null) todo.push(['pin', 'ตั้งพิกัดร้าน (ทำตอนอยู่ในร้าน)', 'settings']);
-    if (!o.kiosks.length && o.settings.qrLive && o.settings.qrLive.value === 'ใช่') todo.unshift(['tablet', 'ตั้งจอลงเวลาในร้าน (มือถือ/แท็บเล็ตเครื่องเก่า) — พนักงานสแกน QR จากจอนี้', 'settings']);
+    if (!o.kiosksBad && !o.kiosks.length && o.settings.qrLive && o.settings.qrLive.value === 'ใช่') todo.unshift(['tablet', 'ตั้งจอลงเวลาในร้าน (มือถือ/แท็บเล็ตเครื่องเก่า) — พนักงานสแกน QR จากจอนี้', 'settings']);
     o.kiosks.filter(function (k) { return k.current === false; }).forEach(function (k) { todo.unshift(['tablet', 'เปิด' + k.name + 'ใหม่ 1 ครั้ง (รีเฟรช) แล้วกดอนุญาตกล้อง — จอยังเป็นแอปรุ่นเก่า', 'settings']); });
     if (o.approverReviews) todo.unshift(['team', 'ตรวจการลงเวลาของผู้อนุมัติ ' + o.approverReviews + ' รายการ (ผู้อนุมัติตรวจของตัวเองไม่ได้)', 'team']);
     if (!o.settings.weatherKey.set) todo.push(['rain', 'ใส่ WeatherAPI key เพื่อตรวจฝนอัตโนมัติ', 'settings', 'more']);
@@ -14405,6 +14532,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <div class="list">
           <div class="item" style="padding-left:0;padding-right:0">${icon('pin')}<div class="grow"><div class="t">พิกัดร้าน</div><div class="s">${o.shop.lat != null ? o.shop.lat.toFixed(5) + ', ' + o.shop.lng.toFixed(5) + ' · รัศมี ' + o.shop.radius + ' ม.' : 'ยังไม่ได้ตั้ง'}</div></div><button class="btn sm" data-act="set-location">ใช้ตำแหน่งตอนนี้</button></div>
           <div class="item" style="padding-left:0;padding-right:0">${icon('qr')}<div class="grow"><div class="t">ป้าย QR กระดาษ</div><div class="s">${set.qrLive && set.qrLive.value === 'ใช่' ? 'ตอนนี้ใช้ QR บนจอในร้าน ป้ายกระดาษใช้ได้เมื่อปิด "QR ต้องมาจากจอในร้าน"' : 'สำหรับลงเวลาด้วยมือถือ · รหัส ' + o.qr.code}</div></div><button class="btn sm" data-act="qr-poster">เปิดป้าย</button></div>
+          ${o.kiosksBad ? html`<div class="item" style="padding-left:0;padding-right:0">${icon('tablet')}<div class="grow"><div class="review-why">อ่านรายการจอไม่สำเร็จ ลองใหม่</div></div><button class="btn" data-act="kiosks-retry">ลองใหม่</button></div>` : ''}
           ${o.kiosks.map(function (k) { return html`<div class="item" style="padding-left:0;padding-right:0">${icon('tablet')}<div class="grow"><div class="t">${k.name}${thisKiosk && thisKiosk.id === k.id ? ' (เครื่องนี้)' : ''}</div><div class="s">ตั้งเมื่อ ${isoDate(k.createdAt)}${k.lastSeen ? ' · ใช้ล่าสุด ' + isoDate(k.lastSeen) : ''}</div>${k.current === false ? html`<div class="review-why">ยังเป็นแอปรุ่นเก่า — เปิดจอนี้ใหม่ 1 ครั้ง (รีเฟรช) แล้วกดอนุญาตกล้อง</div>` : ''}</div><button class="icon-btn" data-act="kiosk-remove" data-id="${k.id}" aria-label="ยกเลิกเครื่องนี้">${icon('trash')}</button></div>`; })}
           ${o.kioskLink && Date.parse(o.kioskLink.until) > now().getTime() ? html`<div class="item" style="padding-left:0;padding-right:0">${icon('link')}<div class="grow"><div class="t">ลิงก์ตั้งจอที่ยังไม่ใช้</div><div class="s">หมดอายุ ${linkUntil(o.kioskLink.until)}</div></div><button class="btn sm" data-act="kiosk-link-cancel">ยกเลิกลิงก์</button></div>` : ''}
         </div>
@@ -14500,6 +14628,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <label class="field"><span>เวลา</span><input class="input" type="time" id="rs-time" data-change="restore-when" value="${hmOf(at)}"></label></div>
       <div class="hint" style="margin-top:4px">${icon('info')}<span id="rs-say">${restoreSay(Math.floor(at.getTime() / 60000) * 60000).text}</span></div>`,
       foot: html`<button class="btn" data-act="sheet-close">ยกเลิก</button><button class="btn danger" data-act="restore-go">กู้ข้อมูล</button>` });
+  }
+  /** เห็นผลกู้จากหน้าเจ้าของ: เวลากู้ล่าสุด (backup.restore.last.when) ไม่ก่อนตอนกด แล้วทำแบบสำเร็จ */
+  function restoreProbe(at, undo) {
+    return {
+      seen: function (home, t0) { var r = home.backup && home.backup.restore; return !!(r && r.last && sinceTap(r.last.when, t0)); },
+      ok: function (home) { var r = home.backup.restore; restoredGo({ restored: { undo: undo, at: undo ? '' : r.last.at || (at ? new Date(at).toISOString() : '') }, unnoted: false }); },
+    };
   }
   /** The shop put back: everything this phone kept of it goes, and the page opens anew (the server restarted on what was put back). */
   function restoredGo(d) {
@@ -22345,7 +22480,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var o = confirmWork;
       // (2.13.42 g-c1) กดซ้ำระหว่างบันทึกไม่ส่งซ้ำ
       if (!o || el.disabled) return;
-      run(el, o.work()).then(function (d) { if (confirmWork === o) confirmWork = null; o.done(d); }, function () {});
+      (o.long ? longRun(el, o.long, o.work(), o.probe) : run(el, o.work())).then(function (d) { if (confirmWork === o) confirmWork = null; o.done(d); }, function () {});
     },
     'print': function () { window.print(); },
     'save-image': function (el) { saveImage(el.dataset.target, el.dataset.name, el); },
@@ -22363,8 +22498,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     'k-unregister': function (el) {
       var pin = $('#k-owner-pin').value;
-      run(el, call('kioskRemove', { id: S.kiosk.id }, { ownerPin: pin })).then(function () {
-        closeSheet(); stopCamera(); LS.del(KEY.kiosk); S.kiosk = null; S.view = 'start'; render(); toast('เครื่องนี้เลิกเป็นเครื่องลงเวลาแล้ว');
+      if (!S.kiosk) return; // (k180 รอบตรวจ 2) เครื่องเลิกเป็นจอไปแล้ว
+      var gone = S.kiosk.token;
+      run(el, call('kioskRemove', { id: S.kiosk.id, fromScreen: true }, { ownerPin: pin })).then(function () {
+        // หน้าต่างเก่าอาจกดเลิก ขณะที่เครื่องมีกุญแจใหม่ของหน้าต่างอื่นแล้ว: ลบกุญแจในเครื่องเฉพาะเมื่อตรงกับจอที่เลิกใช้
+        var mine = LS.get(KEY.kiosk);
+        closeSheet(); stopCamera(); if (mine && mine.token === gone) LS.del(KEY.kiosk); S.kiosk = null; S.view = 'start'; render(); toast('เครื่องนี้เลิกเป็นเครื่องลงเวลาแล้ว');
       }, function () {});
     },
 
@@ -23874,6 +24013,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         toast('เครื่องนี้เป็นจอลงเวลาแล้ว', 'ok');
       }, function () {});
     },
+    'kiosks-retry': function () { loadOwner(false, true); },
     'kiosk-remove': function (el) {
       // (2.13.42 g-c1) ถามแล้วรอบันทึกในชีต: ปุ่มยืนยันหมุน กดซ้ำไม่ส่งซ้ำ ผลขึ้นเมื่อบันทึกสำเร็จ ล้มแล้วชีตยังเปิด บอกเหตุ กดใหม่ได้ (CLAUDE.md ปุ่มที่บันทึก)
       confirmThen({ title: 'ยกเลิกเครื่องลงเวลา', text: 'เครื่องนี้จะลงเวลาไม่ได้อีก', yes: 'ยกเลิกเครื่อง', danger: true,
@@ -23904,9 +24044,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     },
     // มือถือร้านที่เปิดลิงก์: กดแล้วจึงใช้รหัส · เก็บกุญแจจอแบบ kiosk-add-go ไม่มีอะไรของเจ้าของร้านในเครื่องนี้ · ที่อยู่ไม่มีรหัสแล้ว
     'kiosk-setup-go': function (el) {
+      // k180 ในเบราว์เซอร์ของแอปแชตไม่ตั้งเครื่อง (หน้าบอกให้เปิดใน Chrome)
+      if (inAppBrowser()) { render(); return; }
       var code = (S.setup && S.setup.code) || setupCode();
-      run(el, call('kioskSetup', { code: code })).then(function (d) {
+      // (k180 รอบตรวจ) เครื่องที่มีค่าจออยู่แล้วส่งกุญแจเดิมไปด้วย หลังบ้านแทนจอเดิมไม่ซ้อนรายการ
+      var oldKiosk = LS.get(KEY.kiosk);
+      run(el, call('kioskSetup', { code: code, oldToken: (oldKiosk && oldKiosk.token) || '' })).then(function (d) {
         dropSetup();
+        S.setupDone = true;
         S.kiosk = { token: d.token, id: d.kiosk.id, name: d.kiosk.name };
         LS.set(KEY.kiosk, S.kiosk);
         LS.del(KEY.owner); forget('owner'); forget('parts'); S.owner = null;
@@ -23915,8 +24060,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }, function (e) { S.setup = { code: code, err: e.message }; if (S.view === 'kioskSetup') render(); });
     },
     'kiosk-setup-skip': function () { dropSetup(); location.reload(); },
-    'backup': function (el) { run(el, call('backup', {}, ownerAuth())).then(function (d) { backupDone(d); }, function () {}); },
-    'backup-mail': function (el) { run(el, call('backupMail', {}, ownerAuth())).then(function (d) { backupDone(d); }, function () {}); },
+    'backup': function (el) {
+      longRun(el, 'สำรองข้อมูล', call('backup', {}, ownerAuth()), { seen: backupSeen('copyAt'), ok: function (home) { backupDone({ status: home.backup, notice: 'สำรองข้อมูลแล้ว' }); } }).then(function (d) { backupDone(d); }, function () {});
+    },
+    'backup-mail': function (el) {
+      longRun(el, 'ส่งไฟล์สำรอง', call('backupMail', {}, ownerAuth()), { seen: backupSeen('mailAt'), ok: function (home) { backupDone({ status: home.backup, notice: 'ส่งไฟล์สำรองแล้ว' }); } }).then(function (d) { backupDone(d); }, function () {});
+    },
     // what the sheet held, changed here (ย้ายหลังบ้าน task 7): the shifts, the types of leave, the daily summary
     // (สรุปประจำวัน), the tables as a file, the shop as it was
     'shift-open': function (el) { shiftForm(el.dataset.id || ''); },
@@ -23961,12 +24110,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'wipe-go': function (el) {
       var word = (($('#wp-word') || {}).value || '').trim();
       if (word !== 'ล้างข้อมูล') { toast('พิมพ์คำว่า ล้างข้อมูล ก่อน', 'bad'); return; }
-      run(el, call('wipe', { confirm: word, keep: WIPE_KEEP }, ownerAuth())).then(function (d) { closeSheet(); toast(d.notice, 'ok'); setTimeout(function () { location.reload(); }, 2500); }, function () {});
+      var wiped = function (d) { closeSheet(); toast(d.notice, 'ok'); setTimeout(function () { location.reload(); }, 2500); };
+      longRun(el, 'ล้างข้อมูล', call('wipe', { confirm: word, keep: WIPE_KEEP }, ownerAuth()), { seen: backupSeen('wipedAt'), ok: function () { wiped({ notice: 'ล้างข้อมูลแล้ว' }); } }).then(wiped, function () {});
     },
     'restore-go': function () {
       var at = restoreAt(), say = restoreSay(at);
       if (!say.ok) { toast(say.text, 'bad'); return; }
       confirmThen({ title: 'ยืนยันกู้ข้อมูล', text: say.text + ' · กู้ผิดเวลา กด "ย้อนการกู้" ที่ ตั้งค่า › ข้อมูลและการสำรอง', yes: 'กู้ข้อมูล', danger: true, back: html`<button class="btn" data-act="restore-open">กลับ</button>`,
+        long: 'กู้ข้อมูล', probe: restoreProbe(at, false),
         work: function () { var pressed = hmOf(now()); return call('restore', { at: at }, ownerAuth()).then(function (d) { d.pressed = pressed; return d; }); },
         done: restoredGo });
     },
@@ -23974,6 +24125,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var r = restoreInfo(), last = r && r.last;
       if (!last || !last.undo) return;
       confirmThen({ title: 'ย้อนการกู้', text: 'ร้านกลับไปเป็นเหมือนก่อนกดกู้เมื่อ ' + whenAt(last.when) + ' · ทุกอย่างที่บันทึกหลังการกู้หายไป', yes: 'ย้อนการกู้', danger: true,
+        long: 'ย้อนการกู้', probe: restoreProbe(0, true),
         work: function () { var pressed = hmOf(now()); return call('restore', { undo: true }, ownerAuth()).then(function (d) { d.pressed = pressed; return d; }); },
         done: restoredGo });
     },

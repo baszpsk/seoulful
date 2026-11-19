@@ -76,6 +76,61 @@ function pageUrl(page) {
   return new URL(page, self.registration.scope).href;
 }
 
+// k180 (2.14.26) ตัววาด QR ของจอลงเวลา (ไฟล์เดียว ระบุรุ่นในที่อยู่ จึงไม่เปลี่ยน): เก็บหลังโหลดครั้งแรก เน็ตสะดุดใช้ที่เก็บไว้
+var LIBS = DB + '-libs';
+var LIB = /^https:\/\/cdn\.jsdelivr\.net\/npm\/qrcode-generator@\d+\.\d+\.\d+\/qrcode\.js$/;
+
+function isLib(url) {
+  return LIB.test(String(url || '').split(/[?#]/)[0]);
+}
+
+/** The QR drawer: the one kept, else the web's, kept only when it came whole (asked so its status can be read). */
+function lib(e) {
+  var req = e.request;
+  var url = String(req.url).split(/[?#]/)[0];
+  var after;
+  e.waitUntil(
+    new Promise(function (done) {
+      after = done;
+    }),
+  );
+  return caches
+    .open(LIBS)
+    .catch(function () {
+      return null;
+    })
+    .then(function (c) {
+      return (c ? c.match(url) : Promise.resolve(null))
+        .catch(function () {
+          return null;
+        })
+        .then(function (kept) {
+          if (kept) {
+            after();
+            return kept;
+          }
+          return fetch(url, { mode: 'cors', credentials: 'omit' }).then(
+            function (r) {
+              if (c && r.ok) {
+                // (k180 รอบตรวจ) เก็บตัวใหม่แล้ว ตัวรุ่นเก่าในที่เก็บเดียวกันลบทิ้ง (เหลือคีย์เดียว)
+                c.put(url, r.clone())
+                  .then(function () {
+                    return forgetOtherLibs(c, url);
+                  })
+                  .catch(function () {})
+                  .then(after, after);
+              } else after();
+              return r;
+            },
+            function () {
+              after();
+              return fetch(req);
+            },
+          );
+        });
+    });
+}
+
 /** Whether `url` is one of the site's fonts in this helper's own folder (not one below it: the test app's). */
 function isFont(url) {
   var scope = self.registration.scope;
@@ -127,6 +182,27 @@ function font(e) {
           );
         });
     });
+}
+
+/** ที่อยู่ของไลบรารีที่ตัดเลขรุ่นหลัง @ ออก (qrcode-generator@1.4.4/qrcode.js -> qrcode-generator/qrcode.js) */
+function libFile(u) {
+  return String(u).split(/[?#]/)[0].replace(/@[^/@]+\//, '/');
+}
+
+function forgetOtherLibs(c, url) {
+  if (!c.keys) return null;
+  return c.keys().then(function (list) {
+    return Promise.all(
+      list
+        .filter(function (r) {
+          // (k180 รอบตรวจ 2) ลบเฉพาะไลบรารีตัวเดียวกันต่างรุ่น (ชื่อไฟล์เดียวกัน) ไลบรารีตัวอื่นอยู่ต่อ
+          return r.url !== url && libFile(r.url) === libFile(url);
+        })
+        .map(function (r) {
+          return c.delete(r);
+        }),
+    );
+  });
 }
 
 function forgetOld(c, url) {
@@ -205,6 +281,10 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   if (isFont(req.url)) {
     e.respondWith(font(e));
+    return;
+  }
+  if (isLib(req.url)) {
+    e.respondWith(lib(e));
     return;
   }
   if (req.mode !== 'navigate') return;
