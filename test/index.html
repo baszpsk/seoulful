@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.22","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"dc2f327711c7"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.23","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"bc377c8ac471"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -34,9 +34,9 @@
   // (the test app's names apart from the shop's, as the app's own STORE)
   var STORE = site.store || '';
   function get(k) { try { return JSON.parse(localStorage.getItem(STORE + k)); } catch (e) { return null; } }
-  // (มือถือจำ PIN มีหมดอายุ ดู liveSession 25 ต.ค. 2569)
-  // (k176: min = อายุต่ำสุดของช่องนั้น น้องที่ใส่ PIN ไว้ก่อนอัปเดตเก็บอายุ 30 นาทีไว้ในเครื่อง ใช้ 30 วันตามช่องของน้องเสมอ)
-  function live(v, min) { return v && !(v.seen && Date.now() - v.seen > Math.max(v.idle || 2592000000, min || 0)) ? v : null; }
+  // (มือถือจำ PIN ดู liveSession 25 ต.ค. 2569 · k177 เจ้าของร้าน 19 พ.ย. 2569: ช่องของน้องรวมผู้อนุมัติไม่หมดเพราะไม่ได้ใช้นาน
+  // forever = ไม่เทียบอายุ · ช่องเจ้าของร้านเทียบอายุที่เก็บตามเดิม)
+  function live(v, forever) { return v && (forever || !(v.seen && Date.now() - v.seen > (v.idle || 2592000000))) ? v : null; }
   function stable(v) {
     if (Array.isArray(v)) return '[' + v.map(stable).join(',') + ']';
     if (v && typeof v === 'object') return '{' + Object.keys(v).sort().map(function (k) { return JSON.stringify(k) + ':' + stable(v[k]); }).join(',') + '}';
@@ -45,7 +45,7 @@
   function keyOf(body) { try { var r = JSON.parse(body); return r.action + '|' + stable(r.auth || {}) + '|' + stable(r.data || {}); } catch (e) { return ''; } }
   if ((get('seoulful.kiosk') || {}).token) return;
   var q = new URLSearchParams(location.search);
-  var page = String(site.page || q.get('page') || '').toLowerCase(), staff = live(get('seoulful.staff'), 2592000000), owner = live(get('seoulful.owner'));
+  var page = String(site.page || q.get('page') || '').toLowerCase(), staff = live(get('seoulful.staff'), true), owner = live(get('seoulful.owner'));
   var list = [{ action: 'boot', auth: {}, data: { page: page, scan: q.get('in') || q.get('qr') || '', v: site.version || '' } }];
   if (page === 'owner' || (owner && !staff)) { if (owner && owner.pin) list.push({ action: 'owner', auth: { ownerPin: owner.pin }, data: {} }); }
   else if (staff && staff.empId) list.push({ action: 'home', auth: { empId: staff.empId, pin: staff.pin }, data: {} });
@@ -3627,8 +3627,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     del: function (k) { try { window.localStorage.removeItem(STORE + k); } catch (e) { /* storage unavailable */ } },
   };
   var HOOKS = window.__SEOULFUL_HOOKS__ || {};
-  // (มือถือจำ PIN มีหมดอายุ 25 ต.ค. 2569: เจ้าของร้านที่ไม่ติ๊กจำไม่ได้ใช้ 30 นาที น้องและผู้อนุมัติไม่ได้เปิดแอป 30 วัน
-  // ใส่ PIN ใหม่ · 18 พ.ย. 2569 ผู้อนุมัติใช้ 30 วันเหมือนน้อง ใส่ PIN ครั้งเดียวต่อเครื่อง · การแจ้งเตือนในมือถือยังอยู่)
+  // (มือถือจำ PIN 25 ต.ค. 2569: เจ้าของร้านที่ไม่ติ๊กจำไม่ได้ใช้ 30 นาที ใส่รหัสใหม่ · k177 เจ้าของร้าน 19 พ.ย. 2569 "ไม่ต้องหลุดเลยได้ไหม":
+  // น้องและผู้อนุมัติใส่ PIN ครั้งเดียวต่อเครื่อง ไม่หมดเพราะไม่ได้ใช้นาน · IDLE_MS.long เหลือเป็นค่าที่เก็บในช่องของน้องให้หน้ารุ่นเก่าที่ค้างในเครื่องอ่านได้)
   var IDLE_MS = { short: 30 * 60000, long: 30 * 86400000 };
   // (2.13.54 g-k10 · เจ้าของร้านตอบ "85 ok ไม่มีใครใช้คอมฉัน" 3 พ.ย. 2569) หน้าเจ้าของร้านที่ติ๊ก จำไว้ในเครื่องนี้ จำรหัส 30 วันนับจาก
   // ใส่รหัสครั้งล่าสุด (keep: ใช้แอปไม่ยืด ออกจากหน้าไม่ทำให้หมด) · ไม่ติ๊ก = ไม่เก็บในเครื่อง แบบเดิม · กดออกหรือรหัสใช้ไม่ได้ ลืมทันที
@@ -3640,9 +3640,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function liveSession(key) {
     var v = LS.get(key);
-    // k176: ช่องของน้องใช้อายุไม่ต่ำกว่า IDLE_MS.long เสมอ (น้องที่ใส่ PIN ไว้ก่อนอัปเดตเก็บ 30 นาที ไม่หลุดอีกรอบ) · ช่องเจ้าของร้านใช้ค่าที่เก็บ
+    // k177: ช่องของน้องรวมผู้อนุมัติไม่เทียบอายุ ออกเมื่อกดออกหรือหลังบ้านตอบ AUTH (PIN เปลี่ยนหรือถูกถอน) เท่านั้น · ช่องเจ้าของร้านใช้ค่าที่เก็บ
+    if (key === KEY.staff) return v;
     var age = v && v.idle || IDLE_MS.long;
-    if (key === KEY.staff && age < IDLE_MS.long) age = IDLE_MS.long;
     if (!v || !v.seen || Date.now() - v.seen <= age) return v;
     LS.del(key);
     forget(key === KEY.owner ? 'owner' : 'home');
@@ -9617,7 +9617,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     render();
     if (msg) toast(msg, 'bad');
   }
-  // (มือถือจำ PIN มีหมดอายุ: กลับมาเปิดแอปหลังไม่ได้ใช้นานเกิน ใส่ PIN ใหม่ ไม่ปิดการแจ้งเตือน 25 ต.ค. 2569)
+  // (กลับมาเปิดแอปหลังไม่ได้ใช้นานเกิน: เจ้าของร้านใส่รหัสใหม่ ไม่ปิดการแจ้งเตือน 25 ต.ค. 2569 · k177: ช่องของน้องไม่หมดอายุแล้ว
+  // สาขาของน้องทำงานเฉพาะเมื่อ liveSession คืนว่าง ซึ่งตอนนี้ไม่เกิดจากอายุ)
   function lockIfIdle() {
     if (S.owner && LS.get(KEY.owner) && !liveSession(KEY.owner)) {
       closeSheet(); dropSession(); dropFaces();
@@ -20571,7 +20572,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <ol class="push-steps">${inLine() || !/Safari\//.test(navigator.userAgent) || /CriOS|FxiOS|EdgiOS/.test(navigator.userAgent) ? html`<li>เปิดหน้านี้ใน Safari ก่อน (คัดลอกลิงก์ไปวางใน Safari)</li>` : ''}
           <li>กดปุ่มแชร์ ${icon('share')} (ถ้าไม่เห็น กด ··· ก่อน)</li>
           <li>เลือก "เพิ่มไปยังหน้าจอโฮม" (Add to Home Screen) แล้วกด "เพิ่ม" (Add)</li>
-          <li>เปิดแอปจากไอคอน Seoulful บนหน้าจอโฮม ใส่ชื่อและ PIN อีกครั้ง (ครั้งแรกครั้งเดียว) แล้วกด "เปิดแจ้งเตือน"</li></ol>
+          <li>เปิดแอปจากไอคอน Seoulful บนหน้าจอโฮม ใส่ชื่อและ PIN อีกครั้ง (ครั้งแรกครั้งเดียว หลังจากนั้นเปิดจากไอคอนไม่ต้องใส่ PIN อีก) แล้วกด "เปิดแจ้งเตือน"</li></ol>
         ${what}${S.pushLock ? '' : later}</section>`;
     }
     if (st === 'old') {
