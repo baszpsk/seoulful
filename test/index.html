@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.28","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"d0d3e69bae98"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.29","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"5f731e21e8db"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -308,8 +308,13 @@ a { color: inherit; }
 .crest { display: block; width: auto; height: 56px; aspect-ratio: 728 / 559; margin: 0 auto 14px; color: var(--gold); }
 
 /* The top bar is clear at the top of a page; scrolled, it turns to glass over what passes under it. */
-.topbar { position: sticky; top: 0; z-index: 20; padding-top: env(safe-area-inset-top); background: transparent; transition: background-color .3s ease, box-shadow .3s ease; }
-.topbar.scrolled { background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: inset 0 -1px 0 var(--line), 0 10px 24px -18px rgba(60, 42, 20, .35); }
+/* 2.14.29 (k183 · เจ้าของร้าน 20 พ.ย. 2569 10:28 แถบบนที่มีรูปตัวละครสั่นตอนเลื่อนจอขึ้นลง): เดิมตัวแถบเองสลับเบลอ พื้น และเงาตอนเลื่อนผ่านขอบบน
+   ของที่ขยับตลอดในแถบ (วงรุ้งหมุน ประกาย กระดิ่ง) จึงอยู่ในชั้นเบลอ เครื่องต้องวาดกระจกทั้งแถบใหม่ทุกเฟรมระหว่างเลื่อน
+   ตอนนี้กระจกเป็นชั้นของตัวเองใต้ของในแถบ (.topbar::before) เปิดปิดด้วยความทึบอย่างเดียว ตัวแถบเป็นชั้นแยกที่ไม่เปลี่ยนอะไรระหว่างเลื่อน หน้าตาเท่าเดิม
+   กันเกิดอีก: test/k183-smooth.test.js และด่านเลื่อนหน้าแรกใน dev/demo-check.js */
+.topbar { position: sticky; top: 0; z-index: 20; padding-top: env(safe-area-inset-top); background: transparent; transform: translateZ(0); }
+.topbar::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .3s ease; background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: inset 0 -1px 0 var(--line), 0 10px 24px -18px rgba(60, 42, 20, .35); }
+.topbar.scrolled::before { opacity: 1; }
 .topbar .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
 .who { display: flex; align-items: center; gap: 10px; min-width: 0; min-height: 44px; border-radius: 999px; transition: transform .45s var(--spring); }
 .who:active { transform: scale(.95); transition-duration: .1s; }
@@ -724,7 +729,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-head p { margin: 4px 0 0; }
 .od-search { width: 100%; }
 /* Counting: one list, category after category; the search box and the categories stay on top, under the app's bar. */
-.od-nav { position: sticky; top: calc(60px + env(safe-area-inset-top)); z-index: 12; margin: 0 -16px; padding: 8px 16px 10px; background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: inset 0 -1px 0 var(--line), 0 10px 22px -18px rgba(60, 42, 20, .4); }
+.od-nav { position: sticky; top: calc(60px + env(safe-area-inset-top)); z-index: 12; transform: translateZ(0); margin: 0 -16px; padding: 8px 16px 10px; background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: inset 0 -1px 0 var(--line), 0 10px 22px -18px rgba(60, 42, 20, .4); }
 .od-find { display: flex; align-items: center; gap: 8px; height: 42px; padding: 0 14px; border-radius: 14px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--btn-line); }
 .od-find svg { width: 18px; height: 18px; flex: none; color: var(--muted); }
 /* 2.13.11 ของหมดด่วน: พิมพ์ค้นชื่อของแล้วแตะเลือก (เดิมเลื่อนหาในรายการยาว) */
@@ -855,7 +860,7 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .od-extras .od-extra { border-radius: var(--r-md); margin-bottom: 8px; border-top: 0; }
 .od-extras .od-extra .od-mhs { margin-top: 6px; }
 .od-plain svg { width: 14px; height: 14px; }
-.od-bar { position: sticky; z-index: 5; bottom: calc(92px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 8px; padding: 10px 10px 10px 16px; border-radius: 20px; background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--glass-shadow); }
+.od-bar { position: sticky; z-index: 5; bottom: calc(92px + env(safe-area-inset-bottom)); transform: translateZ(0); display: flex; align-items: center; gap: 8px; padding: 10px 10px 10px 16px; border-radius: 20px; background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--glass-shadow); }
 .od-bar[hidden] { display: none; }
 .od-bar b { display: block; font-size: 15px; }
 .od-bar small { display: block; font-size: 12.5px; color: var(--muted); }
@@ -1148,7 +1153,8 @@ html.c3:not(.c3-slow) .av.h3:not(.h3-on):not(.h3-late) > b, html.c3:not(.c3-slow
 .av.lv6 { --lv-ring: var(--r6); --lv-glow: 0 0 20px rgba(244, 114, 182, .5), 0 0 34px rgba(245, 158, 11, .35); }
 .av.lv7 { --lv-ring: var(--r7); --lv-glow: 0 0 22px rgba(251, 191, 36, .6), 0 0 38px rgba(244, 114, 182, .4); }
 .av.lv8 { --lv-ring: var(--r8); --lv-glow: 0 0 24px rgba(167, 139, 250, .65), 0 0 42px rgba(56, 189, 248, .45); }
-.av.lv4::before, .av.lv5::before, .av.lv6::before { animation: lv-turn 6s linear infinite; }
+/* (k183) วงที่หมุนเป็นชั้นของตัวเอง: หมุนด้วย transform บนชั้นนั้น ไม่วาดของรอบข้างใหม่ */
+.av.lv4::before, .av.lv5::before, .av.lv6::before { animation: lv-turn 6s linear infinite; will-change: transform; }
 /* A level's 3D frame (i3Want): 1.8 times the circle across, the circle in its middle, behind the head
    (what is on the head comes up over it); still, its light its own. Past the circle it reaches up to .24
    of it across to the side (the legend's wings), .22 below and .27 above (the gold's laurels and star),
@@ -3161,7 +3167,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 /* (2.14.2 แผน k138 ข้อ 2.5) ปุ่มเสียงห่างปุ่มปิด 10 px (เดิมระยะติดลบ เหลือ 6 px กดพลาดง่าย) */
 .sheet-h .snd { margin-left: auto; }
 .sheet-h .snd.on { color: var(--gold-ink); background: var(--gold-soft); }
-.confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none; }
+.confetti { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none; }
 /* A number that changed counts to its new value, with a little bump; points won float up (#132). */
 .cnt { display: inline-block; font-variant-numeric: tabular-nums; }
 .cnt.bump-up { animation: cntUp .55s var(--spring); }
@@ -3396,12 +3402,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 }
 /* Glass the phone cannot draw, or its owner asked to do without, is plain and solid. */
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .tabbar, .topbar.scrolled, #sheet-root .sheet { background: var(--surface); }
+  .tabbar, .topbar::before, #sheet-root .sheet { background: var(--surface); }
   .toast { background: #1e1a16; }
 }
 @media (prefers-reduced-transparency: reduce) {
-  .tabbar, .topbar.scrolled, #sheet-root .sheet, .card:not(.hero), .stat, .name-tile, .emp-card, .status-bar { background: var(--surface); }
-  .tabbar, .topbar, #sheet-root .sheet, .toast { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .tabbar, .topbar::before, #sheet-root .sheet, .card:not(.hero), .stat, .name-tile, .emp-card, .status-bar { background: var(--surface); }
+  .tabbar, .topbar::before, #sheet-root .sheet, .toast { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .toast { background: #1e1a16; }
   body::before { display: none; }
 }
@@ -3500,15 +3506,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 .tab { color: var(--ink-2); }
 .tab[aria-selected="true"] { color: var(--ink); font-weight: 700; }
 .tab[aria-selected="true"]::before, .tabbar .lens { background: var(--lens); box-shadow: var(--glass-rim), 0 4px 12px -6px rgba(40, 28, 14, .25); }
-.topbar.scrolled { background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: inset 0 -.5px 0 var(--line-strong); }
+.topbar::before { background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: inset 0 -.5px 0 var(--line-strong); }
 .topbar.scrolled .brand .ko { color: var(--ink-2); }
 .topbar.scrolled .brand .dot { background: var(--ink-2); }
 .topbar .who .meta span { color: var(--ink-2); }
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .tabbar, .topbar.scrolled { background: var(--glass-solid); }
+  .tabbar, .topbar::before { background: var(--glass-solid); }
 }
 @media (prefers-reduced-transparency: reduce) {
-  .tabbar, .topbar.scrolled { background: var(--glass-solid); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .tabbar, .topbar::before { background: var(--glass-solid); -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 /* แผ่นและข้อความลอยเป็นพื้นทึบ (เบลอเฉพาะแถบ) */
 #sheet-root .sheet { background: var(--surface); }
@@ -4773,7 +4779,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // room show it live (breathing, turned by a drag, changed at once); a move plays on a live stage put
   // over the character for as long as it lasts. The engine (site/3d/engine.js) loads once the app is
   // shown; until then, and on phones that cannot, the drawn characters stay.
-  var C3 = { state: 0, mod: null, pics: {}, io: null, live: null, timer: 0, lost: false };
+  var C3 = { state: 0, mod: null, pics: {}, io: null, live: null, timer: 0, lost: false, scrollAt: 0 };
+  // (k183 รอบแก้ต่อ) เวลาที่จอหรือกล่องใดเลื่อนล่าสุด จดอย่างเดียว: เวทีตัวละครตอนเล่นท่าใช้งดวัดและงดวางตำแหน่งระหว่างเลื่อน (c3Go)
+  document.addEventListener('scroll', function () { C3.scrollAt = Date.now(); }, { passive: true, capture: true });
   var C3_LIVE = '.shop-char, .rm-char';
   /** The live stage a character is the one on (the shop's, the room's): never a little copy of it in its
    *  pet's box there (ตัวจิ๋วของฉัน, pictured as any pet is: once taken for the stage's own, it hid). */
@@ -5751,11 +5759,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     s.follow = place;
     // (as the page moves: a box it is in scrolled, or laid out anew; written only when it is no longer over
     // the character)
-    var follow = setInterval(place, 50);
-    window.addEventListener('scroll', place, { capture: true, passive: true });
+    // (k183 รอบแก้ต่อ) เวทีเป็นลูกของกล่องเดียวกับตัวละคร จึงเลื่อนไปกับหน้าเองในเฟรมเดียวกับจอ ไม่มีสคริปต์ย้ายตามการเลื่อน
+    // (iPhone เลื่อนหน้าแยกจากสคริปต์ ของที่สคริปต์ย้ายตามช้ากว่าจออย่างน้อยหนึ่งเฟรม เห็นเป็นสั่น) · วัดและวางใหม่เฉพาะตอนหน้าจัดใหม่
+    // ขนาดจอเปลี่ยน หรือหมุนจอ · ระหว่างจอหรือกล่องใดกำลังเลื่อน (0.2 วิล่าสุด) ไม่วัดไม่เขียน
+    var placeIdle = function () { if (!(Date.now() - C3.scrollAt < 200)) place(); };
+    var follow = setInterval(placeIdle, 50);
+    window.addEventListener('resize', place);
+    window.addEventListener('orientationchange', place);
     s.end = function () {
       clearInterval(follow);
-      window.removeEventListener('scroll', place, { capture: true, passive: true });
+      window.removeEventListener('resize', place);
+      window.removeEventListener('orientationchange', place);
       s.stop();
       if (box.parentNode) box.parentNode.removeChild(box);
       svg.classList.remove('c3-under', 'go', 'loop', 'c3-held');
@@ -11105,6 +11119,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (textField(document.activeElement)) return;
     var vv = window.visualViewport;
     if (vv && vv.scale > 1.01) return;
+    // (k183 รอบแก้ต่อ 2) นิ้วยังอยู่บนจอ (ปัดซ้ำเร็ว ๆ หรือดึงค้างที่ขอบบนขอบล่างตอนจอเด้ง) ไม่แตะ: สั่งเลื่อนสวนนิ้วเห็นเป็นหน้าสั่น · ยกนิ้วครั้งนั้นนัดเช็กใหม่เอง
+    if (viewBack.finger > 0) return;
     n = n > 0 ? n : 0;
     if (n < 10 && performance.now() - nmScrollAt < 150) { setTimeout(function () { viewBack(n + 1); }, 200); return; }
     var to = viewY();
@@ -11117,6 +11133,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     scrollNow = to;
   }
   // ยกนิ้วแล้วรอจอเด้งกลับเองก่อน (700 มิลลิวินาที) ยังค้างจึงพากลับ · กลับเข้าแอปและหน้าแสดงใหม่ตรวจอีกครั้ง
+  // (k183 รอบแก้ต่อ 2) จำนวนนิ้วที่อยู่บนจอตอนนี้ จดทุกครั้งที่นิ้วแตะหรือยก · กลับเข้าแอปเริ่มนับใหม่ (เผื่อเหตุการณ์ยกนิ้วหายตอนสลับแอป)
+  viewBack.finger = 0;
+  ['touchstart', 'touchend', 'touchcancel'].forEach(function (t) { document.addEventListener(t, function (ev) { viewBack.finger = ev.touches ? ev.touches.length : 0; }, { passive: true, capture: true }); });
+  window.addEventListener('pageshow', function () { viewBack.finger = 0; });
+  document.addEventListener('visibilitychange', function () { viewBack.finger = 0; });
   ['touchend', 'touchcancel'].forEach(function (t) { document.addEventListener(t, function () { setTimeout(viewBack, 700); }, { passive: true, capture: true }); });
   window.addEventListener('pageshow', function () { viewBack(); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) viewBack(); });
@@ -11140,11 +11161,16 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var w = window.innerWidth, h = window.innerHeight;
     if (!w || !h || (w === appHw && h === appHv)) return;
     if (w === appHw && h < appHv && (kbUp || textField(document.activeElement))) return;
+    // (k183 รอบแก้ต่อ 2) ความสูงเปลี่ยนอย่างเดียว (แถบเบราว์เซอร์ของ iPhone ยุบหรือกางตอนเลื่อน) ระหว่างนิ้วอยู่บนจอหรือจอยังเลื่อน: ยังไม่เขียน รอจอนิ่งแล้ววัดใหม่
+    // (เขียน --app-h ที่รากกลางการเลื่อน ทั้งหน้าคิดรูปแบบและจัดความสูงใหม่ตอนจอกำลังไหล) · ความกว้างเปลี่ยนหรือหมุนจอ และครั้งแรกตอนเปิด เขียนทันทีเหมือนเดิม
+    if (w === appHw && setAppH.moving && setAppH.moving()) { clearTimeout(setAppH.wait); setAppH.wait = setTimeout(setAppH, 250); return; }
     appHw = w;
     appHv = h;
     document.documentElement.style.setProperty('--app-h', h + 'px');
   }
   setAppH();
+  // (k183 รอบแก้ต่อ 2) จอกำลังขยับ = นิ้วอยู่บนจอ หรือเลื่อนใน 250 มิลลิวินาทีล่าสุด (nmScrollAt ที่ตัวฟังเลื่อนของหน้าจด)
+  setAppH.moving = function () { return viewBack.finger > 0 || performance.now() - nmScrollAt < 250; };
   window.addEventListener('resize', setAppH);
   window.addEventListener('pageshow', setAppH);
   // 2.13.28 k-count2 (เจ้าของ 30 ต.ค. 2569 "ถ้าเราไปกดโดนกะหล่ำปลีแต่เรานับอย่างอื่นอยู่มันบังคับให้เราต้องใส่จำนวนกะหล่ำปลีที่มีก่อนถึงจะไปทำอย่างอื่นต่อได้"): แตะโดนช่องเลขของที่ไม่ได้ตั้งใจ ออกได้ทันที
@@ -24254,11 +24280,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // (2.13.44 g-b3) ตำแหน่งเลื่อนล่าสุดที่ตัวฟังเลื่อนจำไว้: syncBars ไม่อ่าน window.scrollY เอง เพราะอ่านหลังวาดหน้าใหม่บังคับ
   // ให้เครื่องจัดหน้าทั้งหน้าทันที (โปรไฟล์ a-4 ที่ CPU ช้า 4 เท่า: 785 จาก 1,023 ms ตอนสลับ 4 แท็บ)
   var scrollNow = 0;
+  // 2.14.29 (k183) กระจกของแถบบน: เปิดเมื่อเลื่อนเกิน 8 จุด ปิดเมื่อกลับมาต่ำกว่า 2 จุด (ช่วงกันเด้ง: นิ้วค้างแถวขอบบนหรือจอเด้งกลับ ไม่สลับไปมา)
+  // เขียนคลาสเฉพาะเมื่อค่าเปลี่ยน
+  var barOn = false;
   function syncBars() {
+    barOn = scrollNow > (barOn ? 2 : 8);
     var bar = $('.topbar');
-    if (bar) bar.classList.toggle('scrolled', scrollNow > 4);
+    if (bar && bar.classList.contains('scrolled') !== barOn) bar.classList.toggle('scrolled', barOn);
     var tabs = $('.tabbar');
-    if (tabs) tabs.classList.toggle('min', !!barsMin);
+    if (tabs && tabs.classList.contains('min') !== !!barsMin) tabs.classList.toggle('min', !!barsMin);
   }
   window.addEventListener('scroll', function () {
     nmScrollAt = performance.now();
