@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.35","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"c6ceffcaa9ae"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.36","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"afe6b77eee66"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -1017,6 +1017,17 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .dl-clear svg { width: 16px; height: 16px; }
 .dl-name .input:placeholder-shown + .dl-clear { display: none; }
 .dl-sorted { color: var(--muted); }
+/* k190r ร้านตอบ: บรรทัดคำตอบใต้เรื่องของน้อง · การ์ดประกาศหน้าแรก · บรรทัดและปุ่มตอบในแผ่นของเจ้าของร้าน */
+.rp-line { margin-top: 6px; padding: 6px 10px; border-radius: 10px; background: var(--ok-soft); color: var(--ink); overflow-wrap: anywhere; }
+.rp-line b { margin-right: 6px; color: var(--ok); }
+.say-card .say-h { display: flex; align-items: center; gap: 8px; }
+.say-card .say-h svg { flex: none; width: 18px; height: 18px; color: var(--gold); }
+.say-card .say-h .eyebrow { flex: 1; min-width: 0; }
+.say-card .say-t { margin: 10px 0 12px; font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
+.rp-own { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.rp-own .rp-state { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.rp-own .rp-state b { color: var(--ok); }
+.rp-ways { display: grid; gap: 8px; margin-top: 12px; }
 .dl-nopts { margin-top: 6px; padding: 6px 10px; border-radius: 10px; background: var(--inset); color: var(--muted); }
 .dl-mark { width: 20px; height: 20px; flex: none; margin-left: auto; color: var(--line); }
 .dl-group { padding: 12px 16px; border-top: 1px solid var(--line); }
@@ -2184,6 +2195,10 @@ html.i3-ui-stand .shop-top.stage .shop-char::before { opacity: 1; }
 .dm-stamps { display: flex; align-items: center; gap: 5px; margin-top: 10px; }
 .dm-work { display: flex; align-items: center; gap: 8px; width: 100%; margin: 8px 0 0; padding: 8px 10px; border: 0; border-radius: 12px; background: rgba(245, 158, 11, .14); color: var(--ink-2); font: inherit; font-size: 13px; line-height: 1.4; text-align: left; cursor: pointer; }
 .dm-work svg { flex: none; width: 16px; height: 16px; }
+/* k191d วันหยุดประจำ: บรรทัดบอกว่าพักได้ แทนบรรทัดเตือนสีส้ม · ช่องวันหยุดในแถวแสตมป์จางลง */
+.dm-off { margin: 8px 0 0; padding: 8px 10px; border-radius: 12px; background: var(--inset); color: var(--ink-2); font-size: 13px; line-height: 1.4; }
+.dm-stamps .st.off { background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
+.dm-stamps .st.off.today { box-shadow: inset 0 0 0 1.5px var(--gold); }
 .dm-stamps .st { position: relative; flex: 1; display: grid; place-items: center; height: 40px; border-radius: 12px; background: var(--inset); font-style: normal; }
 .dm-stamps .st b { font-size: 11px; font-weight: 600; color: var(--muted); }
 .dm-stamps .st.today { box-shadow: inset 0 0 0 1.5px var(--gold); }
@@ -2449,6 +2464,11 @@ body.sb-on #toasts .toast { pointer-events: none; }
 /* 2.14.30 (k184 · น้องขอผ่านแอป เจ้าของร้านตกลง 20 พ.ย. 2569) มือถือแนวนอนตอนจอเกมครัวเปิด: กรอบเกมเต็มความกว้างจอ หัวแถบ แถบล่าง และแผ่นข้างหลังซ่อนไว้ชั่วคราว
    หมุนกลับแนวตั้งเงื่อนไขนี้หลุดเอง กลับเป็นกรอบเดิม · ใช้ CSS อย่างเดียว (iPhone ขอเต็มจอและล็อกการหมุนไม่ได้) · เงื่อนไขเดียวกับ SB_LAND และตัวจัดกระดาน (fit) ในโค้ดเกม */
 @media (orientation: landscape) and (max-height: 500px) and (min-width: 560px) { #sb-host { max-width: none; } body.sb-on #app, body.sb-on #sheet-root { visibility: hidden; } body.sb-on #app *, body.sb-on #app *::before, body.sb-on #app *::after, body.sb-on #sheet-root *, body.sb-on #sheet-root *::before, body.sb-on #sheet-root *::after { animation-play-state: paused !important; } }
+/* k191g (เจ้าของร้าน 22 พ.ย. 2569 22:38) จอเกมครัวหมุนตามเครื่องเท่านั้น แอปไม่หมุนจอเอง · มือถือแนวตั้งตอนจอเกมเปิด: บรรทัดเล็กใต้แถบหัวจอเกม (แถบหัวสูง 46 จุด เริ่มที่ 6 จุด · ดูภาพจอ 390x844 และ 390x667 แล้วไม่ทับปุ่มและชื่อบนแถบหัว) บอกว่าหมุนเป็นแนวนอนได้
+   ไม่รับนิ้ว จางหายเองใน 8 วินาที เป็นแนวนอนแล้วไม่ขึ้น (กฎข้างบนใช้แทน) · เปิดจอเกมใหม่หรือหมุนกลับแนวตั้งขึ้นอีกครั้ง */
+#sb-turn { display: none; }
+@media (orientation: portrait) and (max-width: 480px) { body.sb-on #sb-turn { display: block; position: absolute; z-index: 3; left: 50%; top: 53px; transform: translateX(-50%); width: max-content; max-width: 94%; padding: 3px 10px; border-radius: 999px; background: rgba(0, 0, 0, .58); color: #fff; font-size: 11px; line-height: 1.35; text-align: center; pointer-events: none; animation: sb-turn-out 8s linear forwards; } }
+@keyframes sb-turn-out { 0%, 85% { opacity: 1; } 100% { opacity: 0; } }
 /* 2.14.30 (k184) บรรทัดบนการ์ดทีม: ไม่ได้เล่นเกมก็ช่วยทีมได้ */
 .bk-help { display: block; margin: 2px 0 8px; font-size: 12.5px; line-height: 1.45; color: var(--ink); }
 /* 2.13.53 การ์ดและปุ่มเข้าครัวโซลฟูล์เป็นตัวอย่างเกมจริงที่เล่นวนเอง (.bks · bksScene วาดกระดานเปิด · SeoulBlock.demo เล่นต่อ): กระดาน 8×8 ช่อง .sb-c
@@ -3812,6 +3832,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     kiosk: LS.get(KEY.kiosk),
     scanCode: B.scan || '',
     geoBusy: false,
+    // (k190q) รอบหาตำแหน่งซ้ำตอนยังอยู่นอกร้าน: ตัวนัด จำนวนครั้ง และเคยได้ตำแหน่งแล้ว (เครื่องอนุญาตแล้ว)
+    geoTimer: 0, geoTry: 0, geoAsked: false,
     // (where the phone is, being looked for: geoFresh)
     geoP: null,
     k: { step: 'names', emp: null, pin: '', status: null, shift: null, result: null, stream: null, timer: null, idle: null, busy: false, done: {}, shotsSent: {}, newVersion: false,
@@ -10144,6 +10166,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return html`<section class="card pad-lg"><span class="eyebrow">วันนี้ · ${thDate(st.workDate)}</span>
         <div class="hello" style="font-size:26px">${what}</div><p class="muted mt0">พักผ่อนให้เต็มที่ ถ้ามาทำงานก็ลงเวลาได้ตามปกติ</p>${clockButtonArea(st)}</section>`;
     }
+    // k190t วันหยุดประจำ (นับสลับวันหยุดที่อนุมัติแล้ว) ยังไม่ลงเวลา: ขึ้นว่าวันหยุด แบบเดียวกับวันลาและร้านปิด ปุ่มลงเวลายังอยู่
+    if (st.dayOffToday) {
+      return html`<section class="card pad-lg"><span class="eyebrow">วันนี้ · ${thDate(st.workDate)}</span>
+        <div class="hello" style="font-size:26px">วันหยุด</div><p class="muted mt0">วันนี้วันหยุด พักผ่อนให้เพียงพอนะ</p>${clockButtonArea(st)}</section>`;
+    }
     return html`<section class="card pad-lg"><div class="card-h"><span class="eyebrow">วันนี้ · ${thDate(st.workDate)}</span><span class="pill">ยังไม่ลงเวลา</span></div>
       <div class="now-clock"><span data-clock="hms">${hmsNow()}</span><small>เวลาตอนนี้</small></div>${clockButtonArea(st)}</section>`;
   }
@@ -10163,7 +10190,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         : html`<div class="gps-line warn">${icon('pin')}<span>เปิดตำแหน่ง (GPS) แล้วกดอนุญาตให้เว็บนี้ใช้ตำแหน่ง</span></div>`;
     }
     var d = distM(g.lat, g.lng, shop.lat, shop.lng);
-    var inside = d - Math.min(Math.max(g.acc || 0, 0), 100) <= B.clock.radius;
+    var inside = !geoOut(g);
+    // (k190q) ตำแหน่งที่บอกว่าห่างร้านยังหาซ้ำอยู่: บอกว่ากำลังเช็กอีกครั้ง ไม่ให้เข้าใจว่าค้าง
+    if (!inside && (S.geoBusy || S.geoTimer)) return html`<div class="gps-line wait">${icon('pin')}<span>อยู่ห่างร้าน ${distText(d)} · กำลังเช็กตำแหน่งอีกครั้ง…</span></div>`;
     return html`<div class="gps-line ${inside ? 'ok' : 'warn'}">${icon('pin')}<span>${inside ? 'อยู่ในร้าน' : 'อยู่ห่างร้าน ' + distText(d) + ' — ลงเวลาได้เมื่ออยู่ในร้าน'}</span></div>`;
   }
   /** Whether this phone already lets the page know where it is. */
@@ -10176,22 +10205,64 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
   }
   function warmGps() {
-    if (S.geoBusy || !(B.clock && B.clock.shop) || (S.geo && Date.now() - S.geo.t < 30000)) return;
+    if (S.geoBusy || !(B.clock && B.clock.shop) || geoGood()) return;
     S.geoBusy = true;
     geoFresh().then(function () {
       S.geoBusy = false;
+      geoAgain();
       if (S.view === 'staff') softRender();
     });
+  }
+  // (k190q · น้องแจ้ง 22 พ.ย. 2569 "อยู่ในร้าน แล้วบอกไม่อยู่ ต้องปัดเข้าออก") ตำแหน่งแรกของมือถือมักคลาดหรือเป็นที่เก่า
+  // (หาตอนใส่ PIN ก่อนถึงร้าน) เดิมหาครั้งเดียวแล้วค้างบนจอจนปิดเปิดแอป และตอนกดลงเวลาใช้ค่าเดิมซ้ำ 30 วิ
+  // ตอนนี้: ค่าที่บอกว่าอยู่นอกร้าน (หรือหาไม่ได้) ใช้ซ้ำไม่เกิน 5 วิ · หน้าแรกที่ยังไม่ลงเวลาหาซ้ำเองทุก 5 วิ ไม่เกิน 12 ครั้ง
+  // จนอยู่ในร้าน · กลับมาเปิดแอปเริ่มนับใหม่ (geoBack) · หลังบ้านยังตรวจระยะเองทุกครั้ง (Api.gs checkLocation_)
+  var GEO_IN_MS = 30000, GEO_OUT_MS = 5000, GEO_AGAIN_MS = 5000, GEO_TRIES = 12;
+  /** ตำแหน่งนี้อยู่นอกรัศมีร้าน (เผื่อความคลาดที่มือถือบอก ไม่เกิน 100 ม. แบบเดียวกับหลังบ้าน) */
+  function geoOut(g) {
+    var shop = B.clock && B.clock.shop;
+    if (!g || !shop) return false;
+    return distM(g.lat, g.lng, shop.lat, shop.lng) - Math.min(Math.max(g.acc || 0, 0), 100) > B.clock.radius;
+  }
+  /** ตำแหน่งล่าสุดยังใช้ได้: ในร้าน 30 วิ · นอกร้าน 5 วิ (นอกร้านต้องหาใหม่เร็ว เพราะมักเป็นค่าคลาดหรือค่าเก่า) */
+  function geoGood() {
+    return !!S.geo && Date.now() - S.geo.t < (geoOut(S.geo) ? GEO_OUT_MS : GEO_IN_MS);
+  }
+  /** หน้าแรกของน้องที่ยังไม่ลงเวลา และจอเปิดอยู่: ที่เดียวที่ต้องรู้ตำแหน่งต่อเนื่อง */
+  function geoWanted() {
+    return S.view === 'staff' && !S.peek && S.tab === 'home' && !S.sub && !!S.home && !inToday() && !!(B.clock && B.clock.shop) && B.clock.mode === 'kiosk+phone' && document.visibilityState === 'visible';
+  }
+  /** หลังหาตำแหน่งเสร็จ: ยังนอกร้านหรือหาไม่ได้ นัดหาอีกครั้ง (ไม่เกิน GEO_TRIES ครั้งต่อการเปิดแอปหนึ่งรอบ) */
+  function geoAgain() {
+    if (S.geoTimer) { clearTimeout(S.geoTimer); S.geoTimer = 0; }
+    if (S.geo && !geoOut(S.geo)) { S.geoTry = 0; return; }
+    if (!S.geo && !HOOKS.locate && !S.geoAsked) return;
+    if (!geoWanted() || (S.geoTry || 0) >= GEO_TRIES) return;
+    S.geoTry = (S.geoTry || 0) + 1;
+    S.geoTimer = setTimeout(function () {
+      S.geoTimer = 0;
+      if (geoWanted()) warmGps(); else if (S.view === 'staff') softRender();
+    }, GEO_AGAIN_MS);
+  }
+  /** กลับมาเปิดแอป: เริ่มนับรอบหาซ้ำใหม่ แล้วหาตำแหน่งทันทีถ้าค่าเดิมใช้ไม่ได้แล้ว */
+  function geoBack() {
+    if (document.visibilityState !== 'visible') return;
+    S.geoTry = 0;
+    if (!geoWanted()) return;
+    // เคยได้ตำแหน่งแล้ว = เครื่องอนุญาตแล้ว หาได้เลย (มือถือบางรุ่นถามสิทธิ์ล่วงหน้าไม่ได้) · ยังไม่เคย ถามสิทธิ์ก่อน ไม่ให้มีคำถามเด้งเอง
+    if (S.geo || S.geoAsked) { warmGps(); return; }
+    gpsAllowed().then(function (yes) { if (yes && geoWanted()) warmGps(); });
   }
   /**
    * Where the phone is, as a clock-in sends it: found within the last 30 seconds, else the one being looked
    * for now (never two at once), else looked for now.
    */
   function geoFresh() {
-    if (S.geo && Date.now() - S.geo.t < 30000) return Promise.resolve(S.geo);
+    if (geoGood()) return Promise.resolve(S.geo);
     if (S.geoP) return S.geoP;
     var p = locate(true).then(function (g) {
       if (S.geoP === p) S.geoP = null;
+      if (g) S.geoAsked = true;
       return g;
     });
     S.geoP = p;
@@ -10350,8 +10421,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     //   ภารกิจวันนี้ การ์ดเดือนนี้ ของขวัญต้อนรับ ห้อง แต่งตัว ไปแท็บฉัน · ลาน ครัว ภารกิจทีม เป้ายอดขาย อยู่แท็บเพื่อน
     return html`<div class="stack home-stack">
       <div class="hello-row"><div class="hello">${greeting()}<br>${nameTag(me, ownName(me))}${S.homeErr ? staleNote(S.homeAt) : ''}</div>${h.level ? meDuo(h.level) : ''}</div>
+      ${sayCards(h.says)}
       ${ideasLink(h)}
-      ${!st.checkedIn && !st.leaveToday && !st.closedToday ? rainBanner(h.rain, 'home') : ''}
+      ${!st.checkedIn && !st.leaveToday && !st.closedToday && !st.dayOffToday ? rainBanner(h.rain, 'home') : ''}
       ${todayCard()}
       ${welcomeAsk(h.welcome)}
       ${noApproverCard(h.welcome)}
@@ -10372,13 +10444,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** (k98 หน้าแรก) ภารกิจวันนี้แบบย่อ: แถวเดียวบอกทำแล้วกี่ข้อกับแสตมป์สัปดาห์นี้ · แตะแล้วกางการ์ดภารกิจเต็มในที่เดิม แตะภารกิจในนั้นไปทำได้เหมือนเดิม */
   function dayFold(day) {
     if (!day) return '';
-    var done = day.missions.filter(function (m) { return m.done; }).length;
+    var off = dayOffNow(day), shown = dayShown(day, off); // k191d วันหยุด: ไม่นับและไม่ทวงข้อมาตรงเวลา
+    var done = shown.filter(function (m) { return m.done; }).length;
     var key = S.staff ? 'seoulful.stamp.' + S.staff.empId : '';
     // แสตมป์เพิ่งได้: ตราบนแถวย่อเด้งแบบเดียวกับตราในการ์ด (การ์ดในแถวพับจำวันที่เองตามเดิม)
     var pop = day.stamp && key && LS.get(key) !== day.date;
     var week = 'สัปดาห์นี้ ' + day.week.n + '/' + day.week.of + ' ดวง';
-    var sub = day.stamp ? 'ได้แสตมป์วันนี้แล้ว · ' + week : done >= day.need && !day.work ? 'อีกนิดเดียว: มาตรงเวลาหรือบันทึกหน้างาน 1 เรื่อง' : 'ทำ ' + day.need + ' ใน ' + day.missions.length + ' ได้แสตมป์ · ' + week;
-    return html`<details class="card dm-fold ${day.stamp ? 'stamped' : ''}"><summary class="dm-sum"><span class="q-gem ${pop ? 'pop' : ''}">${icon(day.stamp ? 'check' : 'star')}</span><span class="grow"><b>ภารกิจวันนี้ ${done}/${day.missions.length}</b><span>${sub}</span></span><i class="dm-dots" aria-hidden="true">${day.missions.map(function (m) { return html`<i class="${m.done ? 'on' : ''}"></i>`; })}</i>${icon('right')}</summary>${dayCard(day)}</details>`;
+    var sub = off ? DAY_OFF_TEXT + ' · ' + week : day.stamp ? 'ได้แสตมป์วันนี้แล้ว · ' + week : done >= day.need && !day.work ? 'อีกนิดเดียว: มาตรงเวลาหรือบันทึกหน้างาน 1 เรื่อง' : 'ทำ ' + day.need + ' ใน ' + day.missions.length + ' ได้แสตมป์ · ' + week;
+    return html`<details class="card dm-fold ${day.stamp ? 'stamped' : ''}"><summary class="dm-sum"><span class="q-gem ${pop ? 'pop' : ''}">${icon(day.stamp ? 'check' : 'star')}</span><span class="grow"><b>ภารกิจวันนี้ ${done}/${shown.length}</b><span>${sub}</span></span><i class="dm-dots" aria-hidden="true">${shown.map(function (m) { return html`<i class="${m.done ? 'on' : ''}"></i>`; })}</i>${icon('right')}</summary>${dayCard(day)}</details>`;
   }
   /** (k114) ตัวละครกับสัตว์เลี้ยงปุ่มเดียวบนหน้าแรก ยืนข้างกันไม่ทับ: แตะแล้วตัวละครเล่นท่า สัตว์ที่รอให้ลูบได้ลูบ (วันละครั้ง) ไม่งั้นเล่นท่าด้วยกัน */
   function meDuo(l) {
@@ -12839,7 +12912,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // (สลับวันหยุดขอได้เมื่อตั้งวันหยุดประจำแล้ว · ฟอร์มของผู้อนุมัติหลังบ้านตรวจให้ · งาน 327)
     var myOff = S.home && S.home.me ? S.home.me.dayOff : null;
     // (k-q1b คำในฟอร์มที่ผู้อนุมัติลงแทนถูกทั้งแบบเดิมและแบบหักตามเวลาที่บอก ยอดหักและค่าจ้างจริงขึ้นในกล่อง lv-cost ตามแบบที่ใช้กับวันลานั้น)
-    return html`${opts.pickEmp ? html`<label class="field"><span>พนักงาน</span><select class="input" id="lv-emp" data-change="lv-cost">${(B.employees || []).map(function (e) { return html`<option value="${e.id}">${e.name}</option>`; })}</select></label>` : ''}
+    // k190s (เจ้าของร้าน ok ข้อความ 22 พ.ย. 2569 17:05): ฟอร์มขอลาของพนักงานมีคำแนะนำบรรทัดเดียวบนสุด ขึ้นทุกประเภทการลา · ฟอร์มที่ผู้อนุมัติลงแทนไม่มี
+    return html`${opts.pickEmp ? html`<label class="field"><span>พนักงาน</span><select class="input" id="lv-emp" data-change="lv-cost">${(B.employees || []).map(function (e) { return html`<option value="${e.id}">${e.name}</option>`; })}</select></label>` : html`<div class="hint" id="lv-how" style="margin-bottom:12px">${icon('info')}<span>ลาล่วงหน้า บอกผู้อนุมัติที่ร้านก่อน แล้วกดขอลาในแอป · ป่วยหรือเร่งด่วน โทรหรือแชตบอกได้เลย</span></div>`}
       <label class="field"><span>ประเภทการลา</span><select class="input" id="lv-type" data-change="lv-type">${types.map(function (t) { return html`<option value="${t.type}">${t.type}</option>`; })}${opts.pickEmp || myOff != null ? html`<option value="${swapType()}">${swapType()}</option>` : ''}</select><small id="lv-note">${S.view === 'owner' ? leaveTypeNote(types[0]) : ''}</small></label>
       <label class="field" id="lv-work-row" hidden><span>มาทำงานวันหยุดประจำวันที่</span><input class="input" type="date" id="lv-work" data-change="lv-cost"><small id="lv-work-note"></small></label>
       <div class="two"><label class="field"><span id="lv-from-label">ตั้งแต่</span><input class="input" type="date" id="lv-from" data-change="lv-cost" value="${opts.from || today}"></label>
@@ -14553,13 +14627,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** เรื่องที่น้องบอก: {at, ic, t หัวข้อ, s สิ่งที่ห้องทำหรือสถานะ, act ปุ่มเปิดแผ่นดู} ล่าสุดก่อน */
   function lookToldRows(o) {
     var rows = [];
+    // (k190r) ท้ายบรรทัดสถานะของแต่ละเรื่อง: ร้านตอบน้องแล้วหรือยัง พร้อมคำตอบ (บรรทัดเดียว ตัดท้ายด้วย lk-t)
+    var lookAnswer = function (x) { return x.answer ? ' · ร้านตอบแล้ว: ' + x.answer : ' · ยังไม่ได้ตอบน้อง'; };
     var v = o.daily && o.daily.view;
     ((v && v.items) || []).forEach(function (x) {
-      rows.push({ at: Date.parse(x.at) || 0, ic: 'note', t: (DL_SHORT[x.topic] || x.topic) + (x.menu ? ' · ' + x.menu : '') + (x.text ? ' · ' + x.text : ''), s: 'บันทึกหน้างาน' + (x.at ? ' · ' + lookWhen(x.at) : ''), act: 'dl-inbox' });
+      rows.push({ at: Date.parse(x.at) || 0, ic: 'note', t: (DL_SHORT[x.topic] || x.topic) + (x.menu ? ' · ' + x.menu : '') + (x.text ? ' · ' + x.text : ''), s: 'บันทึกหน้างาน' + (x.at ? ' · ' + lookWhen(x.at) : '') + lookAnswer(x), act: 'dl-inbox' });
     });
     var f = o.feedback;
     ((f && f.latest) || []).forEach(function (x) {
-      rows.push({ at: Date.parse(x.at) || 0, ic: 'chat', t: x.name + ': ' + (x.text || fbFilesText(x.files)), s: (x.status === 'fresh' && x.claude ? 'Claude ตอบแล้ว' : fbOwnerStatus(x)[0]) + (x.at ? ' · ' + lookWhen(x.at) : ''), act: 'fb-inbox' });
+      rows.push({ at: Date.parse(x.at) || 0, ic: 'chat', t: x.name + ': ' + (x.text || fbFilesText(x.files)), s: (x.status === 'fresh' && x.claude ? 'Claude ตอบแล้ว' : fbOwnerStatus(x)[0]) + (x.at ? ' · ' + lookWhen(x.at) : '') + lookAnswer(x), act: 'fb-inbox' });
     });
     (o.roomDid || []).forEach(function (x) { rows.push({ at: Date.parse(x.at) || 0, ic: 'check', t: x.what, s: 'ห้องทำแล้ว · ' + lookWhen(x.at), act: '' }); });
     rows.sort(function (a, b) { return b.at - a.at; });
@@ -15180,21 +15256,37 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // ---- the day's missions (Levels.gs DAY_MISSIONS) and the week's stamps -------------------
   var MISSION_ICON = { onTime: 'clock', note: 'note', praise: 'heart', pet: 'paw', play: 'map', find: 'search' };
   /** Three small things a day; two of them the day's stamp; five stamps in a week a free box. */
+  /** k191d วันนี้เป็นวันหยุดประจำและยังไม่ได้มาทำงาน (สถานะวันนี้ dayOffToday ของ k190t): การ์ดภารกิจไม่ทวงข้อมาตรงเวลา · มาลงเวลา ได้แสตมป์ หรือบันทึกหน้างานแล้ว การ์ดเป็นแบบปกติ */
+  function dayOffNow(day) {
+    var st = (S.home && S.home.status) || {};
+    return !!(day && st.dayOffToday && !st.checkedIn && !day.stamp && !day.work && st.workDate === day.date);
+  }
+  /** k191d วันหยุดประจำของสัปดาห์นี้ [จันทร์ถึงอาทิตย์] จากสถานะวันนี้ (Payroll.gs dayOffWeek_) · คนละสัปดาห์กับการ์ดไม่ใช้ */
+  function dayOffWeek(day) {
+    var st = (S.home && S.home.status) || {};
+    return day && st.workDate === day.date && st.dayOffWeek && st.dayOffWeek.length === 7 ? st.dayOffWeek : [];
+  }
+  /** k191d ข้อของวันนี้ที่การ์ดแสดง: วันหยุดไม่แสดงข้อมาตรงเวลาที่ยังไม่ได้ทำ */
+  function dayShown(day, off) {
+    return day.missions.filter(function (m) { return !(off && m.kind === 'onTime' && !m.done); });
+  }
+  var DAY_OFF_TEXT = 'วันนี้วันหยุด พักได้เลย ไม่เสียอะไร';
   function dayCard(day) {
     if (!day) return '';
+    var off = dayOffNow(day), offs = dayOffWeek(day), shown = dayShown(day, off);
     var mon = day.week.start;
     var ti = daysBetween(mon, day.date);
     var key = S.staff ? 'seoulful.stamp.' + S.staff.empId : '';
     var justNow = day.stamp && key && LS.get(key) !== day.date;
     if (justNow) LS.set(key, day.date);
     return html`<section class="card dm-card ${day.stamp ? 'stamped' : ''}">
-      <div class="dm-h"><span class="eyebrow">ภารกิจวันนี้<button class="info-btn" data-act="dm-rules" aria-label="กติกาภารกิจ">${icon('info')}</button></span><span class="small muted">ทำ ${day.need} ใน ${day.missions.length} ได้แสตมป์</span></div>
-      <div class="dm-list">${day.missions.map(function (m) {
+      <div class="dm-h"><span class="eyebrow">ภารกิจวันนี้<button class="info-btn" data-act="dm-rules" aria-label="กติกาภารกิจ">${icon('info')}</button></span><span class="small muted">${off ? 'วันหยุด' : 'ทำ ' + day.need + ' ใน ' + day.missions.length + ' ได้แสตมป์'}</span></div>
+      <div class="dm-list">${shown.map(function (m) {
         return html`<button class="dm ${m.done ? 'done' : ''}" data-act="dm-go" data-kind="${m.kind}"><i class="dm-ck">${icon(m.done ? 'check' : MISSION_ICON[m.kind] || 'star')}</i><span>${m.name}</span></button>`;
       })}</div>
-      ${day.stamp || day.work ? '' : html`<button class="dm-work" data-act="dm-go" data-kind="note">${icon(MISSION_ICON.note)}<span>${day.missions.filter(function (m) { return m.done; }).length >= day.need ? 'อีกนิดเดียว: มาตรงเวลาหรือบันทึกหน้างาน 1 เรื่อง แสตมป์วันนี้ก็มา' : 'วันที่ได้แสตมป์ต้องมาตรงเวลาหรือบันทึกหน้างาน 1 เรื่องด้วย'}</span></button>`}
+      ${off ? html`<p class="dm-off">${DAY_OFF_TEXT}</p>` : day.stamp || day.work ? '' : html`<button class="dm-work" data-act="dm-go" data-kind="note">${icon(MISSION_ICON.note)}<span>${day.missions.filter(function (m) { return m.done; }).length >= day.need ? 'อีกนิดเดียว: มาตรงเวลาหรือบันทึกหน้างาน 1 เรื่อง แสตมป์วันนี้ก็มา' : 'วันที่ได้แสตมป์ต้องมาตรงเวลาหรือบันทึกหน้างาน 1 เรื่องด้วย'}</span></button>`}
       <div class="dm-stamps">${day.week.days.map(function (on, i) {
-        return html`<i class="st ${on ? 'on' : ''} ${i === ti ? 'today' : ''} ${on && i === ti && justNow ? 'pop' : ''}"><b>${TH_DAYS[(i + 1) % 7]}</b>${on ? html`<span class="st-ink">${icon('star')}</span>` : ''}</i>`;
+        return html`<i class="st ${on ? 'on' : ''} ${!on && offs[i] ? 'off' : ''} ${i === ti ? 'today' : ''} ${on && i === ti && justNow ? 'pop' : ''}"><b>${!on && offs[i] ? 'หยุด' : TH_DAYS[(i + 1) % 7]}</b>${on ? html`<span class="st-ink">${icon('star')}</span>` : ''}</i>`;
       })}<span class="st-box ${day.week.box ? 'got' : ''}" aria-label="กล่องฟรี">${icon('gift')}</span></div>
       <p class="small muted" style="margin:8px 0 0">${day.week.box ? 'สัปดาห์นี้ได้กล่องฟรีแล้ว เปิดได้ที่ห้องของฉัน › สะสม' : 'แสตมป์สัปดาห์นี้ ' + day.week.n + '/' + day.week.of + ' ดวง · ครบได้กล่องฟรี'}</p>
     </section>`;
@@ -15506,6 +15598,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       <div class="wl-acts"><button class="btn primary" data-act="wl-ask-open">ตอบ</button><button class="btn" data-act="wl-ask-later">ไว้ก่อน</button></div></section>`;
   }
   /** ไม่มีผู้อนุมัติที่ยังทำงาน: คำขอไปที่เจ้าของร้าน (หน้าแรกและหน้าวันลา) */
+  /**
+   * k190r (2.14.36 · เจ้าของร้าน 22 พ.ย. 2569 10:55 เรื่องที่ทุกคนต้องทำแจ้งน้องทุกคน เรื่องอย่างทางเดินแจ้งหัวหน้าทุกคน ไม่บอกว่าใครแจ้ง):
+   * ประกาศของร้านถึงคนนี้ เป็นการ์ดบนสุดของหน้าแรก กด รับทราบ แล้วหาย · มีแต่คำที่ร้านพิมพ์ ไม่มีชื่อคนที่บอก (Feedback.gs sayHome_)
+   */
+  function sayCards(list) {
+    return (list || []).map(function (x) {
+      return html`<section class="card say-card" data-say="${x.id}"><div class="say-h">${icon('bell')}<span class="eyebrow">${x.to === 'heads' ? 'ร้านแจ้งหัวหน้า' : 'ร้านแจ้งทุกคน'}</span><span class="small muted">${whenAt(x.at)}</span></div><p class="say-t">${x.text}</p><button class="btn primary block" data-act="say-ack" data-id="${x.id}">รับทราบ</button></section>`;
+    });
+  }
   function noApproverCard(w) {
     return w && w.noApprover ? html`<div class="card wl-noappr">${icon('approve')}<span class="grow">ตอนนี้ไม่มีผู้อนุมัติ คำขอไปที่เจ้าของร้าน</span></div>` : '';
   }
@@ -19115,6 +19216,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       blockShow(blockWithRun(g));
     }, function () { block.busy = false; });
   }
+  var SB_TURN_TEXT = 'หมุนมือถือเป็นแนวนอนได้ ถ้าจอไม่หมุน ปิดล็อกหมุนจอของเครื่องก่อน';
   function blockShow(g) {
     var SB = blockBoot(), d = block.data;
     g.stats = blockStats(d);
@@ -19144,6 +19246,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       keep: function (mode, r) { blockRunSet(who, mode, r); }
     });
     block.host.sb = block.ui; // ตัวคุมหน้าจอเกม (dev/block-ui-check.js ใช้จบรอบ)
+    // k191g บรรทัดบอกว่าหมุนเป็นแนวนอนได้ (ขึ้นเฉพาะมือถือแนวตั้ง ด้วย CSS ของ #sb-turn) · แอปไม่หมุนจอเอง
+    if (!block.host.querySelector('#sb-turn')) { var turn = document.createElement('div'); turn.id = 'sb-turn'; turn.setAttribute('role', 'note'); turn.textContent = SB_TURN_TEXT; block.host.appendChild(turn); }
     blockQuiet();
     setTimeout(blockWarm, 300);
   }
@@ -20319,7 +20423,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${d.lead ? (d.sentToday ? html`<div class="dl-done"><span class="pill ok">${icon('check')} ส่งสรุปวันนี้แล้ว</span>${d.streak >= 2 ? html`<span class="pill gold">${icon('spark')} ส่งครบ ${d.streak} วันติด</span>` : ''}</div>` : html`<button class="btn primary block" style="margin-top:12px" data-act="dl-form" data-date="${d.today}">${icon('note')} ส่งสรุปวันนี้</button>`) : ''}
       ${dlFixingList(d)}
       ${meetRow(d.meet)}
-      ${news.length ? html`<button class="dl-news" data-act="dl-mine">${icon('check')}<span>ร้านอ่านเรื่องที่คุณบันทึกแล้ว ${news.length} เรื่อง · ขอบคุณที่บอกนะ</span>${icon('right')}</button>` : ''}
+      ${news.length ? html`<button class="dl-news" data-act="dl-mine">${icon('check')}<span>${news.some(function (x) { return x.replyAt; }) ? 'ร้านตอบเรื่องที่คุณบอกแล้ว ' + news.filter(function (x) { return x.replyAt; }).length + ' เรื่อง · แตะเพื่ออ่าน' : 'ร้านอ่านเรื่องที่คุณบันทึกแล้ว ' + news.length + ' เรื่อง · ขอบคุณที่บอกนะ'}</span>${icon('right')}</button>` : ''}
       <div class="fb-foot"><span>${icon('team')}<span>${team.today ? 'วันนี้ทีมบันทึก ' + team.today + ' เรื่อง' : 'วันนี้ยังไม่มีใครบันทึก บอกเป็นคนแรกเลย'}${team.fixed && !(S.home && S.home.level) ? html`<br>เดือนนี้ร้านแก้แล้ว ${team.fixed} เรื่อง` : ''}</span></span>${(d.mine || []).length ? html`<button class="fb-mine-btn" data-act="dl-mine">บันทึกของฉัน${mineToday ? ' ' + mineToday : ''}${news.length ? html`<i class="dot" aria-label="ร้านอ่านแล้ว"></i>` : ''}${icon('right')}</button>` : ''}</div>
     </section>`;
   }
@@ -20606,7 +20710,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     Array.prototype.forEach.call(document.querySelectorAll('.dl-card .dl-news, .dl-card .fb-mine-btn .dot'), function (el) { el.remove(); });
     openSheet({ title: 'ที่ฉันบันทึก', body: html`<p class="small muted mt0">ร้านดูแล้วขึ้นว่า "รับทราบแล้ว" ร้านกำลังแก้ขึ้นว่า "กำลังแก้" แก้เสร็จขึ้นว่า "แก้แล้ว" · เรื่องของวันนี้แก้หัวข้อหรือข้อความได้จนร้านเริ่มแก้ ลบได้ถ้าพิมพ์ผิด</p><section class="card flush"><div class="list">${(d.mine || []).map(function (x) {
       // k185 เรื่องที่ยังไม่ได้แต้ม: บรรทัดนุ่ม ๆ บอกเหตุผล (x.tell มาเฉพาะเรื่องของตัวเอง) ปุ่มและป้ายสถานะเหมือนเรื่องปกติ ไม่มีสีแดง (แทน k181 ที่ไม่บอกเลย)
-      return html`<div class="item">${icon(DL_ICON[x.topic] || 'chat')}<div class="grow"><div class="t">${x.again ? 'เจออีก · ' : ''}${dlTopic(x.topic)[1]}${x.menu ? ' · ' + x.menu : ''}</div><div class="s">${x.detail ? x.detail + ' · ' : ''}${dlDay(x.date)}${x.at ? ' ' + isoTime(x.at) + ' น.' : ''}</div>${x.ownerNote ? html`<div class="s" style="color:var(--ok)">เจ้าของร้าน: ${x.ownerNote}</div>` : ''}${x.tell ? html`<div class="s dl-nopts">ยังไม่ได้แต้มเรื่องนี้ · ${x.tell}</div>` : ''}${x.edit ? html`<button class="btn sm" style="margin-top:6px" data-act="dl-edit" data-id="${x.id}">${icon('edit')} แก้</button>` : ''}</div><div class="r">${dlStatusPill(x.status)}${x.date === d.today && x.status === 'fresh' ? html`<button class="icon-btn" data-act="dl-del" data-id="${x.id}" aria-label="ลบเรื่องนี้">${icon('trash')}</button>` : ''}</div></div>`;
+      return html`<div class="item">${icon(DL_ICON[x.topic] || 'chat')}<div class="grow"><div class="t">${x.again ? 'เจออีก · ' : ''}${dlTopic(x.topic)[1]}${x.menu ? ' · ' + x.menu : ''}</div><div class="s">${x.detail ? x.detail + ' · ' : ''}${dlDay(x.date)}${x.at ? ' ' + isoTime(x.at) + ' น.' : ''}</div>${x.ownerNote ? html`<div class="s" style="color:var(--ok)">เจ้าของร้าน: ${x.ownerNote}</div>` : ''}${x.reply ? html`<div class="s rp-line"><b>ร้านตอบ</b>${x.reply}</div>` : ''}${x.tell ? html`<div class="s dl-nopts">ยังไม่ได้แต้มเรื่องนี้ · ${x.tell}</div>` : ''}${x.edit ? html`<button class="btn sm" style="margin-top:6px" data-act="dl-edit" data-id="${x.id}">${icon('edit')} แก้</button>` : ''}</div><div class="r">${dlStatusPill(x.status)}${x.pts > 0 ? html`<span class="pill">+${x.pts} แต้ม</span>` : ''}${x.date === d.today && x.status === 'fresh' ? html`<button class="icon-btn" data-act="dl-del" data-id="${x.id}" aria-label="ลบเรื่องนี้">${icon('trash')}</button>` : ''}</div></div>`;
     })}</div></section>`, foot: html`<button class="btn primary" data-act="sheet-close">ปิด</button>` });
   }
   /**
@@ -20656,13 +20760,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }, function () {});
   }
   /** What this phone last showed of each of the person's notes: the owner's look since is news for them. */
-  function dlSig(x) { return x.status + (x.ownerNote ? '+note' : ''); }
+  // (k190r) คำตอบของร้าน (replyAt) นับเป็นข่าวใหม่ด้วย แม้สถานะยังเป็นเรื่องใหม่ · เรื่องที่ไม่มีคำตอบได้ค่าเดิมทุกตัว
+  function dlSig(x) { return x.status + (x.ownerNote ? '+note' : '') + (x.replyAt ? '+' + x.replyAt : ''); }
   function dlKey() { return 'seoulful.dl.' + ((S.staff && S.staff.empId) || ''); }
   function dlNews(d) {
     var looked = LS.get(dlKey()) || {};
     return ((d && d.mine) || []).filter(function (x) {
       var was = looked[x.id];
-      return x.status !== 'fresh' && (!was || was !== dlSig(x));
+      return (x.status !== 'fresh' || !!x.replyAt) && (!was || was !== dlSig(x));
     });
   }
   function dlLooked(list) {
@@ -20782,7 +20887,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     try { card = pushCard(); } finally { S.pushLock = false; }
     return html`${topbar({ name: nameTag(me, ownName(me)), sub: '', av: avatar(me) }, 'staff-menu', null)}
       <main class="wrap page"><div class="stack home-stack push-lock">
-        ${!st.checkedIn && !st.leaveToday && !st.closedToday ? rainBanner(h.rain, 'home') : ''}
+        ${!st.checkedIn && !st.leaveToday && !st.closedToday && !st.dayOffToday ? rainBanner(h.rain, 'home') : ''}
         ${todayCard()}
         <section class="card pad-lg"><b>เปิดแจ้งเตือนก่อนใช้แอป</b><p class="small" style="margin:6px 0 0">เรื่องจากร้านและวันลาที่อนุมัติ มาทางแจ้งเตือนของแอป เปิดครั้งเดียว แล้วใช้แอปได้ทุกอย่าง · ระหว่างนี้ลงเวลาได้ตามปกติ</p></section>
         ${card}
@@ -20801,7 +20906,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var st = h.status || {};
     return html`${topbar({ name: nameTag(me, ownName(me)), sub: '', av: avatar(me) }, 'staff-menu', null)}
       <main class="wrap page"><div class="stack home-stack name-ask">
-        ${!st.checkedIn && !st.leaveToday && !st.closedToday ? rainBanner(h.rain, 'home') : ''}
+        ${!st.checkedIn && !st.leaveToday && !st.closedToday && !st.dayOffToday ? rainBanner(h.rain, 'home') : ''}
         ${todayCard()}
         <section class="card pad-lg nm-card"><b>ยินดีต้อนรับสู่ Seoulful</b><p class="small" style="margin:6px 0 0">ตั้งชื่อของคุณก่อนเริ่มใช้แอป</p>${nameFields(me, false)}<button class="btn primary block" data-act="name-save" style="margin-top:14px">บันทึกชื่อ</button></section>
         <button class="btn block" data-act="logout-staff">ออกจากระบบในเครื่องนี้</button>
@@ -21257,7 +21362,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
 
   // -- the bell: what this person was told (the last 30 days)
   var bellList = null; // {notes, unread, phones} as last fetched
-  var NOTE_ICON = { review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', 'daily-new': 'note', 'daily-seen': 'check', 'daily-nopts': 'note', 'daily-ask': 'note', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', 'order-edit': 'edit', 'order-wait': 'cart', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', 'pin-lock': 'lock', 'self-name': 'team', test: 'bell', battle: 'shield', 'ot-ask': 'clock', 'ot-add': 'clock', 'kiosk-link': 'tablet' };
+  var NOTE_ICON = { 'say-one': 'chat', 'say-all': 'bell', 'say-heads': 'bell', review: 'clock', 'leave-ask': 'leave', leave: 'leave', 'daily-fixed': 'check', 'daily-fixing': 'tool', 'daily-new': 'note', 'daily-seen': 'check', 'daily-nopts': 'note', 'daily-ask': 'note', daily: 'note', 'fb-new': 'chat', fb: 'chat', 'swap-ask': 'swap', swap: 'swap', praise: 'heart', order: 'truck', 'order-fix': 'truck', 'order-edit': 'edit', 'order-wait': 'cart', check: 'shield', temp: 'team', 'rain-soon': 'rain', 'clock-fix': 'edit', 'clock-mine': 'clock', 'pin-lock': 'lock', 'self-name': 'team', test: 'bell', battle: 'shield', 'ot-ask': 'clock', 'ot-add': 'clock', 'kiosk-link': 'tablet' };
   function noteWhen(iso) {
     var ms = now().getTime() - Date.parse(iso);
     if (ms < 60000) return 'เมื่อสักครู่';
@@ -22425,6 +22530,22 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return d;
     }, function (e) { toast(e.message, 'bad'); });
   }
+  // ---- k190r (2.14.36 · เจ้าของร้าน 22 พ.ย. 2569 10:57 "ทุกข้อความที่น้องพิมพ์มาควรมีแจ้งกลับให้น้องด้วย") ร้านตอบทุกเรื่องที่น้องบอก ----
+  // ห้องร่างคำตอบ เจ้าของร้านตกลงในแชต แล้วห้องกดในโหมดทำงาน · 3 ทาง: ตอบคนที่บอก แจ้งน้องทุกคน แจ้งหัวหน้าทุกคน (Feedback.gs apiReplySave_)
+  var RP_TO = { one: 'คนที่บอก', all: 'ทุกคน', heads: 'หัวหน้า' };
+  var RP = null; // เรื่องที่กำลังตอบในแผ่น {kind, ids}
+  /** บรรทัดบอกว่าตอบน้องแล้วหรือยัง (เห็นทั้งสองโหมด) และปุ่มเปิดแผ่นตอบ (โหมดทำงานเท่านั้น) · open = ยังมีแถวที่ไม่มีคำตอบ */
+  function rpOwner(kind, ids, x, what, open) {
+    if (!ids.length) return '';
+    return html`<div class="rp-own"><div class="s rp-state">${x.reply ? html`<b>ร้านตอบแล้ว</b> (ถึง${RP_TO[x.replyTo] || RP_TO.one}) · ${x.reply}` : open ? 'ยังไม่ได้ตอบน้อง' : ''}</div><button class="btn sm" data-act="rp-open" data-kind="${kind}" data-ids="${ids.join(',')}" data-what="${what}">${icon('chat')} ${x.reply ? 'ตอบใหม่' : 'ตอบน้อง'}</button></div>`;
+  }
+  function openReply(kind, ids, what) {
+    RP = { kind: kind, ids: ids };
+    openSheet({ title: 'ตอบน้อง', body: html`<div class="fb-prompt"><h3>${what || 'เรื่องที่น้องบอก'}</h3><p>ใส่คำตอบที่เจ้าของร้านตกลงในแชตแล้ว · ประกาศถึงทุกคนหรือหัวหน้าไม่ใส่ชื่อคนที่บอก</p></div>
+      <label class="field"><span>คำตอบถึงน้อง</span><textarea class="input" id="rp-text" maxlength="500" placeholder="เช่น ร้านสั่งของเพิ่มแล้ว ของเข้าวันพฤหัส ขอบคุณที่บอกนะ"></textarea></label>
+      <div class="rp-ways"><button class="btn primary block" data-act="rp-send" data-to="one">ตอบคนที่บอก</button><button class="btn block" data-act="rp-send" data-to="all">แจ้งน้องทุกคน</button><button class="btn block" data-act="rp-send" data-to="heads">แจ้งหัวหน้าทุกคน</button></div>`,
+      foot: html`<button class="btn" data-act="sheet-close">ปิด</button>` });
+  }
   function dlGroupRow(g, noActs) {
     var ids = (g.ids || []).join(',');
     var acts = !noActs && ids && g.status !== 'fixed';
@@ -22435,6 +22556,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       ${g.guess && !g.sorted ? html`<div class="s dl-sorted">ระบบเดาจากข้อความ · อ่านที่น้องเขียนก่อนกด</div>` : ''}${g.sorted || (g.from || []).length ? html`<div class="s dl-sorted">${g.sorted ? 'Claude จัด: ' + g.sorted : 'ชื่อเดียวกับเรื่องนี้ · น้องเลือก ' + g.from.map(function (k) { return DL_SHORT[k] || k; }).join(', ')}</div>` : ''}
       ${(g.photos || []).length ? html`<div class="dl-photos">${g.photos.map(function (id, i) { return html`<button class="btn sm dl-photo-btn" data-act="dl-photo-open" data-id="${id}">${icon('image')} ดูรูป${g.photos.length > 1 ? ' ' + (i + 1) : ''}</button>`; })}</div>` : ''}
       ${(g.people || []).length ? html`<div class="s">${g.people.join(', ')}${g.ownerNote ? ' · ตอบ: ' + g.ownerNote : ''}</div>` : ''}
+      ${!noActs && g.status !== 'void' ? rpOwner('daily', g.ids || [], g, (DL_SHORT[g.topic] || g.topic) + (g.menu ? ' · ' + g.menu : ''), g.open > 0) : ''}
       ${acts && g.status === 'void' ? html`<div class="acts"><button class="btn sm" data-act="dl-mark" data-ids="${ids}" data-status="fresh">นับแต้มกลับ</button></div>`
         : acts && g.status === 'fixing' ? html`<div class="acts"><button class="btn sm" data-act="dl-fix" data-ids="${ids}">${icon('check')} แก้แล้ว</button><button class="btn sm ghost" data-act="dl-mark" data-ids="${ids}" data-status="unfix">เลิกแก้</button></div>`
         : acts ? html`<div class="acts">${fixable ? html`<button class="btn sm" data-act="dl-fixing" data-ids="${ids}">${icon('tool')} กำลังแก้</button><button class="btn sm" data-act="dl-fix" data-ids="${ids}">${icon('check')} แก้แล้ว</button>` : ''}${g.status === 'fresh' ? html`<button class="btn sm" data-act="dl-mark" data-ids="${ids}" data-status="seen">${g.topic === 'praise' ? html`${icon('heart')} ` : ''}รับทราบ</button>` : ''}${g.status === 'fresh' ? html`<button class="btn sm ghost" data-act="dl-void" data-ids="${ids}">ไม่นับแต้ม</button>` : ''}</div>` : ''}
@@ -22549,7 +22671,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** The feedback on the home screen (a screen saved by an older app has only a count). */
   function fbHome(f) { return f && typeof f === 'object' ? f : { count: +f || 0, mine: [], team: {} }; }
   /** What this phone last showed of each thing the person sent: anything new since is news for them. */
-  function fbSig(x) { return x.status + (x.seen ? '+seen' : '') + (x.noted || x.note ? '+note' : ''); }
+  function fbSig(x) { return x.status + (x.seen ? '+seen' : '') + (x.noted || x.note ? '+note' : '') + (x.replyAt ? '+' + x.replyAt : ''); }
   function fbKey() { return 'seoulful.fb.' + ((S.staff && S.staff.empId) || ''); }
   function fbNews(f) {
     var looked = LS.get(fbKey()) || {};
@@ -22586,7 +22708,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var n = fbNews(f).filter(function (x) { return x.status === 'approved' || x.status === 'built' || x.status === 'done'; })[0];
     if (!n) return '';
     var done = n.status === 'done';
-    return html`<button class="card fb-cheer ${done ? 'done' : ''}" data-act="fb-mine">${icon(done ? 'spark' : 'check')}<div class="grow"><b>${(FB_CHEER[n.kind] || FB_CHEER.idea)[n.status]}</b><span>${n.text}${done ? ' · ขอบคุณที่ช่วยนะ' : ''}</span></div>${icon('right')}</button>`;
+    return html`<button class="card fb-cheer ${done ? 'done' : ''}" data-act="fb-mine">${icon(done ? 'spark' : 'check')}<div class="grow"><b>${(FB_CHEER[n.kind] || FB_CHEER.idea)[n.status]}${n.ptsNow > 0 ? ' · +' + n.ptsNow + ' แต้ม' : ''}</b><span>${n.text}${done ? ' · ขอบคุณที่ช่วยนะ' : ''}</span></div>${icon('right')}</button>`;
   }
   // Sentences to start from: tap one, then finish it in your own words (the shop's things first: small ones count most).
   var FB_STARTERS = {
@@ -22836,7 +22958,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<p class="fb-sum">คุณช่วยเสนอแล้ว ${list.length} เรื่อง${done ? ' · ใช้ได้แล้ว ' + done + ' เรื่อง' : ''}</p><div class="list">${list.map(function (f) {
       var tone = f.status === 'done' ? 'done' : f.status === 'declined' || (f.status === 'fresh' && !f.seen) ? 'wait' : '';
       return html`<div class="item fb-item">${fbThumb(f)}<div class="grow"><div class="t fb-text">${f.text || fbFilesText(f.files)}</div><div class="s">${f.kind === 'bug' ? 'เจอปัญหา' : f.kind === 'ask' ? 'ไม่แน่ใจ ขอถาม' : 'ไอเดีย'} · ${whenAt(f.at)}</div>
-        ${fbTrack(f)}<div class="fb-state ${tone}">${f.status === 'done' ? icon('check') : ''}${fbStateText(f)}</div>${f.note ? html`<div class="s fb-note">เจ้าของร้าน: ${f.note}</div>` : ''}</div></div>`;
+        ${fbTrack(f)}<div class="fb-state ${tone}">${f.status === 'done' ? icon('check') : ''}${fbStateText(f)}${f.pts > 0 ? html`<span class="pill">+${f.pts} แต้ม</span>` : ''}</div>${f.note ? html`<div class="s fb-note">เจ้าของร้าน: ${f.note}</div>` : ''}${f.reply ? html`<div class="s rp-line"><b>ร้านตอบ</b>${f.reply}</div>` : ''}</div></div>`;
     })}</div>`;
   }
   var FB_MINE_TITLE = 'เรื่องที่ฉันส่ง';
@@ -22959,6 +23081,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         : html`<div class="hint" style="margin-top:16px">${icon('info')}<span>อนุมัติแล้ว · กด "คัดลอกคำขอ" แล้ววางในแชต Claude (หรือเชื่อมกิตฮับในตั้งค่า เพื่อส่งเองอัตโนมัติ)</span></div>`;
     } else actions = view;
     if (f.status !== 'fresh' && f.note) actions = html`${actions}<p class="small muted" style="margin:16px 0 0">ตอบ ${f.name} ไว้ว่า: ${f.note}</p>`;
+    actions = html`${actions}${rpOwner('feedback', [f.id], f, f.text || fbFilesText(f.files), !f.answer)}`;
     var foot = f.status === 'fresh'
       ? html`<button class="btn" data-act="fb-decline" data-id="${f.id}">ยังไม่ทำ</button><button class="btn" data-act="fb-shop" data-id="${f.id}">${icon('home')} ร้านทำเอง</button><button class="btn primary" data-act="fb-approve" data-id="${f.id}">${icon('check')} ให้ Claude ทำ</button>`
       : f.status === 'approved' && f.by === 'shop'
@@ -23684,6 +23807,50 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       fb.text = box.value;
       box.focus();
       try { box.setSelectionRange(box.value.length, box.value.length); } catch (e) { /* an older phone: the cursor stays */ }
+    },
+    // (k190r) เปิดแผ่นตอบน้อง และส่งคำตอบ 3 ทาง: ระหว่างรอขึ้น กำลังบันทึก… ผลขึ้นเมื่อหลังบ้านบันทึกสำเร็จจริง ล้มคืนปุ่มเดิม คำที่พิมพ์ยังอยู่
+    'rp-open': function (el) { openReply(el.dataset.kind, String(el.dataset.ids || '').split(',').filter(String), el.dataset.what || ''); },
+    'rp-send': function (el) {
+      if (!RP || el.disabled) return;
+      var text = String(($('#rp-text') || {}).value || '').trim();
+      if (!text) { toast('พิมพ์คำตอบก่อนนะ', 'bad'); return; }
+      var kind = RP.kind;
+      var ids = RP.ids;
+      var label = el.innerHTML;
+      var ways = document.querySelectorAll('[data-act="rp-send"]');
+      Array.prototype.forEach.call(ways, function (b) { b.disabled = true; });
+      el.textContent = 'กำลังบันทึก…';
+      call('replySave', { kind: kind, ids: ids, to: el.dataset.to, text: text }, ownerAuth()).then(function (d) {
+        RP = null;
+        toast(d.notice, 'ok');
+        loadOwner(true, true);
+        if (kind === 'feedback') {
+          if (fbList) fbList.items = fbList.items.map(function (x) { return x.id === ids[0] ? Object.assign({}, x, { reply: d.reply, replyTo: d.replyTo, answer: d.reply }) : x; });
+          openFeedbackItem(ids[0]);
+        } else {
+          dlList = null;
+          openDailyInbox();
+        }
+      }, function (e) {
+        Array.prototype.forEach.call(ways, function (b) { b.disabled = false; });
+        el.innerHTML = label;
+        toast(e.message, 'bad');
+      });
+    },
+    // (k190r) น้องกดรับทราบประกาศของร้าน: การ์ดหายเมื่อบันทึกสำเร็จจริง
+    'say-ack': function (el) {
+      if (el.disabled) return;
+      el.disabled = true;
+      el.textContent = 'กำลังบันทึก…';
+      call('sayAck', { id: el.dataset.id }, staffAuth()).then(function (d) {
+        if (S.home) S.home.says = d.says || [];
+        var card = el.closest ? el.closest('.say-card') : null;
+        if (card && card.parentNode) card.parentNode.removeChild(card);
+      }, function (e) {
+        el.disabled = false;
+        el.textContent = 'รับทราบ';
+        toast(e.message, 'bad');
+      });
     },
     'fb-reply': function (el) { var box = $('#fb-reply'); if (box) { box.value = FB_REPLIES[+el.dataset.i]; box.focus(); } },
     'fb-remove': function (el) { var f = fb.files.splice(+el.dataset.i, 1)[0]; if (f) URL.revokeObjectURL(f.url); var box = $('#fb-text'); if (box) fb.text = box.value; refreshFeedbackForm(); },
@@ -24821,6 +24988,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   document.addEventListener('visibilitychange', backToApp);
   window.addEventListener('pageshow', backToApp);
   window.addEventListener('focus', backToApp);
+  // (k190q) กลับมาเปิดแอป: หาตำแหน่งใหม่ด้วย (แยกจาก backToApp เพราะข้อมูลหน้าแรกที่ยังใหม่กว่า 60 วิ ไม่โหลดซ้ำ จึงไม่ถึง warmGps)
+  document.addEventListener('visibilitychange', geoBack);
+  window.addEventListener('pageshow', geoBack);
   window.addEventListener('focus', function () {
     // The camera app closed without a picture: release the pending promise.
     setTimeout(function () {
