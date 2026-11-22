@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.32","page":"owner","e3":"7294d0dd","edge":true,"build":"7db356146a63"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.35","page":"owner","e3":"7294d0dd","edge":true,"build":"6ff1f1a77c5d"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="เจ้าของร้าน">
@@ -330,8 +330,28 @@ h3.h3 { font-size: 15px; font-weight: 600; margin: 20px 4px 8px; }
 /* 2.14.32 (k186) หน้าเจ้าของร้านโหมดดู: ปุ่มสั่งงานและช่องกรอกไม่แสดง แถวข้อมูลเห็นได้แต่กดไม่ได้ */
 body.look [data-off] { pointer-events: none; cursor: default; }
 body.look .btn[data-off], body.look .menu-item[data-off], body.look .icon-btn[data-off], body.look .chip[data-off] { display: none !important; }
+/* (k187) โหมดดู: การ์ดและแถวที่แตะไม่ได้ไม่แสดงลูกศร › (ที่แตะเปิดดูได้คงไว้) */
+body.look [data-off] .ic-go { display: none !important; }
+/* (k187) แถบบนตอนเจ้าของร้านดูหน้าจอน้อง */
+.peek-bar .wrap { gap: 10px; }
+.peek-bar .peek-say { flex: 1; min-width: 0; font-size: 14px; line-height: 1.3; }
+.peek-bar .peek-say small { display: block; color: var(--muted); font-size: 12px; }
 body.look #app main input, body.look #app main select, body.look #app main textarea, body.look #sheet-root input, body.look #sheet-root select, body.look #sheet-root textarea { display: none !important; }
 body.look .look-page h3.h3 { margin: 6px 4px -6px; }
+/* 2.14.35 (k189) หน้าเจ้าของร้านโหมดดูแบบกระชับ: เรื่องละบรรทัด ส่วนเกินพับไว้ · หน้าแบบที่น้องเห็น ชื่อเรียงบรรทัดเดียวเลื่อนข้างได้ */
+body.look [data-off] [data-act] { pointer-events: auto; }
+.item .grow.lk-g { min-width: 0; }
+.look-page .list > .item { padding-top: 10px; padding-bottom: 10px; }
+.lk-t { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.look-page .card > .bk-line { display: flex; align-items: center; gap: 6px; margin: 8px 16px 0; font-size: 13.5px; color: var(--muted); }
+.look-page .card > .bk-line svg { flex: none; width: 16px; height: 16px; }
+.lk-push > summary { display: flex; align-items: center; gap: 8px; color: inherit; }
+.lk-push > summary svg { flex: none; width: 18px; height: 18px; }
+.lk-push > .card { border: 0; box-shadow: none; margin: 0; }
+.lk-more > summary { padding: 10px 16px; font-size: 13.5px; color: var(--muted); cursor: pointer; }
+.peek-row { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px 14px; scrollbar-width: none; }
+.peek-row::-webkit-scrollbar { display: none; }
+.peek-chip { flex: none; appearance: none; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: transparent; color: inherit; border-radius: 999px; padding: 4px 12px 4px 4px; font: inherit; font-size: 14px; cursor: pointer; }
 
 /* k107 กันหน้าเลื่อนข้าง: วงรุ้งรอบรูปที่หมุนอยู่ยื่นเกินขอบขวา 0.8 px และการ์ดตอนเปลี่ยนแท็บเลื่อนเข้าจากขวา 22 px ทำให้หน้ากว้างเกินจอชั่วคราว (จอ 390 กว้าง 391) · ตัดเฉพาะส่วนที่เกินขอบจอ เอฟเฟกต์เหมือนเดิม */
 html, body { overflow-x: clip; }
@@ -348,6 +368,10 @@ body .btn.upd-ack.block { background: var(--surface); box-shadow: 0 0 0 8px var(
 .hello > .upd-tip > span { flex: 1; min-width: 0; }
 .hello > .upd-tip small { margin-top: 2px; font-size: 13px; }
 .hello > .upd-tip > .btn { flex: none; }
+/* 2.14.34 (k188) บรรทัดเรื่องรอ Claude ใต้คำทักทายของหน้าเจ้าของร้าน: บรรทัดเดียว ไม่ใช่การ์ด ไม่มีปุ่ม */
+.hello > .bk-line { display: flex; align-items: flex-start; gap: 8px; margin-top: 12px; font-size: 15px; font-weight: 500; line-height: 1.4; letter-spacing: 0; }
+.hello > .bk-line svg { flex: none; width: 18px; height: 18px; margin-top: 1px; color: var(--muted); }
+.hello > .bk-line > span { flex: 1; min-width: 0; }
 button.card { transition: transform .45s var(--spring); }
 button.card:active { transform: scale(.975); transition-duration: .12s; }
 .card.pad-lg { padding: 22px; }
@@ -1349,6 +1373,14 @@ html.i3-ui-coin .coin::before { content: none; }
 .shop-top.stage .shop-name { margin: 0; font-size: 20px; }
 .shop-top.stage .shop-chips { grid-column: 1 / -1; margin-top: 14px; }
 @media (max-height: 700px) { .shop-top.stage .shop-char { width: 78px; height: 146px; } }
+/* (2.14.35) เลื่อนรายการลง เวทีย่อ (.mini): ตัวละครเล็ก ไม่มีคำอธิบาย หมวดแถวเดียวเลื่อนข้าง เห็นของเกินครึ่งจอ · กลับบนสุดคืนขนาดเดิม
+   ไม่ให้เบราว์เซอร์ขยับตำแหน่งเลื่อนเองตอนเวทีเปลี่ยนขนาด (overflow-anchor) ไม่งั้นย่อแล้วเด้งกลับ */
+#shop { overflow-anchor: none; }
+/* (k190u) เวทีเป็นแถบติดจอ: ขนาดตัวละครสลับทันที ไม่ไล่ความกว้างความสูง (ไล่ = จัดหน้าใหม่ทุกเฟรมระหว่างเลื่อน กติกา k183) */
+.shop-top.stage.mini { padding-top: 6px; padding-bottom: 8px; }
+.shop-top.stage.mini .shop-char { width: 78px; height: 146px; }
+.shop-top.stage.mini .shop-say, .shop-top.stage.mini .shop-coin-how { display: none; }
+.shop-top.stage.mini .shop-chips { flex-wrap: nowrap; min-width: 0; overflow-x: auto; margin-top: 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 /* (k162f) ชิปหมวดขึ้นบรรทัดใหม่เมื่อไม่พอ เห็นครบทุกหมวดบนจอแคบ ไม่ต้องเลื่อนข้างหา */
 .shop-chips { position: relative; display: flex; flex-wrap: wrap; gap: 6px; margin: 10px -2px 0; padding: 2px; }
 .shop-chips::-webkit-scrollbar { display: none; }
@@ -3094,18 +3126,15 @@ html.i3-box-s1-body.i3-box-s1-lid .bx-svg.s1 .bx-body, html.i3-box-s2-body.i3-bo
 .cal-day[aria-pressed="true"] { background: var(--surface); box-shadow: inset 0 0 0 2px var(--ink); }
 .cal-day.closed { background: repeating-linear-gradient(135deg, var(--inset) 0 5px, transparent 5px 10px), var(--surface-2); }
 .cal-day .lbl { font-size: 10px; line-height: 1.2; color: var(--muted); padding: 0 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cal-day .credit { position: absolute; top: 7px; right: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
 .cal-ppl { display: flex; flex-wrap: wrap; gap: 2px; }
 .pip { width: 16px; height: 16px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 9.5px; font-style: normal; font-weight: 600; line-height: 1; flex: none; }
 .pip.leave { background: var(--gold); color: var(--surface); }
 .pip.pending { border: 1.3px dashed var(--gold); color: var(--gold); }
 .pip.more { width: auto; padding: 0 2px; color: var(--muted); }
 .pip.hatch { border-radius: 5px; background: repeating-linear-gradient(135deg, var(--line-strong) 0 3px, transparent 3px 6px); }
-.pip.dot { width: 8px; height: 8px; background: var(--gold); }
 .cal-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 12px; padding: 0 6px; font-size: 12px; color: var(--muted); }
 .cal-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .cal-legend .pip { width: 14px; height: 14px; font-size: 0; }
-.cal-legend .pip.dot { width: 8px; height: 8px; }
 .cal-sel { border-top: 1px solid var(--line); }
 .cal-sel-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px 4px; }
 .cal-sel-h b { font-weight: 600; }
@@ -3653,10 +3682,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // The test app's site sits under the shop's (dev/staging.js), so a phone gives both one storage: the
   // test app's names start with SITE.store, and neither ever reads the other's.
   var STORE = (SITE && SITE.store) || '';
+  // 2.14.33 (k187 · เจ้าของร้านตกลง 20 พ.ย. 2569 มือถือของเจ้าของดูอย่างเดียว ห้องตัดสินให้ดูหน้าจอน้องได้แบบไม่แก้อะไร):
+  // S.peek = น้องที่เจ้าของร้านกำลังดูหน้าจอ {empId, name} · ระหว่างดู หน้าไม่เขียนอะไรลงเครื่อง (ร่าง หน้าแรกที่จำไว้ ของน้องคนนั้น)
+  // เว้นของเจ้าของร้านเอง (รหัสที่จำไว้ และบันทึกการใช้แอปของเจ้าของ) · ด่านอื่นอยู่ที่ call() ตัวจัดคลิก และ lookText
   var LS = {
     get: function (k) { try { return JSON.parse(window.localStorage.getItem(STORE + k)); } catch (e) { return null; } },
-    set: function (k, v) { try { window.localStorage.setItem(STORE + k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } },
-    del: function (k) { try { window.localStorage.removeItem(STORE + k); } catch (e) { /* storage unavailable */ } },
+    set: function (k, v) { if (S && S.peek && [KEY.owner, USE_Q, USE_KEYS, USE_LAST].indexOf(k) < 0) return; try { window.localStorage.setItem(STORE + k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } },
+    del: function (k) { if (S && S.peek && [KEY.owner, USE_Q, USE_KEYS, USE_LAST].indexOf(k) < 0) return; try { window.localStorage.removeItem(STORE + k); } catch (e) { /* storage unavailable */ } },
   };
   var HOOKS = window.__SEOULFUL_HOOKS__ || {};
   // (มือถือจำ PIN 25 ต.ค. 2569: เจ้าของร้านที่ไม่ติ๊กจำไม่ได้ใช้ 30 นาที ใส่รหัสใหม่ · k177 เจ้าของร้าน 19 พ.ย. 2569 "ไม่ต้องหลุดเลยได้ไหม":
@@ -6644,7 +6676,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     scale: '<path d="M4.5 9.5h15l-1.3 9a2 2 0 0 1-2 1.7H7.8a2 2 0 0 1-2-1.7z"/><path d="M7.5 5.5h9"/><path d="M12 5.5v4"/><circle cx="12" cy="15" r="2.2"/><path d="M12 15l1.2-1"/>',
   };
   function icon(name) {
-    return raw('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICON[name] || '') + '</svg>');
+    // (k187) ลูกศร › มี class ให้โหมดดูซ่อนได้บนการ์ดที่แตะไม่ได้
+    return raw('<svg' + (name === 'right' ? ' class="ic-go"' : '') + ' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICON[name] || '') + '</svg>');
   }
 
   // ======================================================================
@@ -6689,36 +6722,63 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   //   กดได้แค่ปุ่มใน LOOK_ACTS (เปิดดูเรื่อง ปิดแผ่น เปิดแจ้งเตือนของมือถือเครื่องนี้ ซึ่งต้องกดบนเครื่องเอง) · ช่องกรอกไม่ทำงาน
   // โหมดทำงาน (?work=1 บนคอมของห้อง Claude ที่กดแทนเจ้าของร้าน): หน้าเดิมครบทุกปุ่ม แต่ไม่ส่ง feedbackSeen และ notesSeen
   //   (ห้องเปิดดู ไม่ใช่เจ้าของร้านอ่าน) และทุกคำขอแนบ from: 'work' ให้หลังบ้านจดว่าห้องทำอะไร (Api.gs ownerActNote_)
-  // สลับด้วย ?work=1 / ?work=0 ครั้งเดียว จำในเครื่อง แล้วลบออกจากที่อยู่ (แบบ ?setup=) · กันกดพลาดและให้ดูง่าย ไม่ใช่ความปลอดภัย (รหัสเจ้าของเดียวกัน)
+  // สลับด้วย ?work=1 / ?work=0 ครั้งเดียว จำในแท็บนั้น (k189 เดิมจำในเครื่อง) แล้วลบออกจากที่อยู่ (แบบ ?setup=) · กันกดพลาดและให้ดูง่าย ไม่ใช่ความปลอดภัย (รหัสเจ้าของเดียวกัน)
   // หน้าตัวอย่างลองเล่น (มีตัวสลับบทบาท ไม่มี SITE.page): ค่าเริ่มต้นเป็นโหมดทำงาน ให้ลองกดได้ครบ · ?work=0 ดูหน้าดูอย่างเดียว
-  var LOOK_CALLS = ['owner', 'boot', 'notes', 'avatars', 'dailyList', 'dailyDay', 'dailyPhoto', 'feedbackList', 'feedbackFile', 'checkList', 'pushKey', 'pushOn', 'pushOff', 'notesSeen', 'feedbackSeen', 'photo', 'usageReport'];
-  var LOOK_ACTS = ['bell-open', 'sheet-close', 'dl-day', 'dl-inbox', 'dl-all', 'dl-toggle', 'dl-photo-open', 'dl-photo-x', 'mr-open', 'meet-open', 'fb-inbox', 'fb-open', 'fb-play', 'photo', 'team-one', 'use-open', 'use-days', 'use-back', 'ck-list', 'push-on', 'retry-load'];
+  var LOOK_CALLS = ['owner', 'boot', 'notes', 'avatars', 'dailyList', 'dailyDay', 'dailyPhoto', 'feedbackList', 'feedbackFile', 'checkList', 'pushKey', 'pushOn', 'pushOff', 'notesSeen', 'feedbackSeen', 'photo', 'usageReport',
+    'home', 'month', 'calendar', 'payslips', 'feedbackMine', 'orderList', 'shop', 'shelf', 'plaza', 'runs', 'howTo', 'status', 'blockGame'];
+  var LOOK_ACTS = ['bell-open', 'sheet-close', 'dl-day', 'dl-inbox', 'dl-all', 'dl-toggle', 'dl-photo-open', 'dl-photo-x', 'mr-open', 'meet-open', 'fb-inbox', 'fb-open', 'fb-play', 'photo', 'team-one', 'use-open', 'use-days', 'use-back', 'ck-list', 'push-on', 'retry-load', 'peek-open', 'peek-back', 'told-all'];
+  // (k187) ดูหน้าจอน้อง (ทั้งโหมดดูและโหมดทำงาน): ส่งได้แค่คำสั่งอ่านของน้องที่หลังบ้านยอมให้ดูแทน (Api.gs PEEK_ROUTES_ · boot ไม่ถามรหัส)
+  //   กดได้แค่ปุ่มเปลี่ยนแท็บ เปิดหน้าย่อย เปิดกระดิ่ง ปิดแผ่น และกลับ (PEEK_ACTS ใช้เฉพาะตอนดูหน้าจอน้อง ไม่ปนกับปุ่มของหน้าเจ้าของโหมดดู)
+  //   · ปุ่มเข้าออกการดู (peek-open peek-back) อยู่ใน LOOK_ACTS และคำสั่งดูทุกตัวอยู่ใน LOOK_CALLS (k187-peek.test.js ตรวจ)
+  var PEEK_CALLS = ['boot', 'home', 'month', 'calendar', 'payslips', 'feedbackMine', 'orderList', 'shop', 'shelf', 'plaza', 'runs', 'notes', 'howTo', 'status', 'avatars', 'blockGame'];
+  // (k189) เพิ่มปุ่มเปิดแผ่นและเลื่อนดูของ แต่งตัว ห้องของฉัน ลาน: เปลี่ยนแค่สิ่งที่วาดบนจอ ไม่ส่งคำสั่งเขียน (ซื้อ ใส่ ลอง จัดห้อง เปิดกล่อง ลูบสัตว์ ยังปิด)
+  var PEEK_ACTS = ['peek-back', 'tab', 'me-go', 'open-history', 'close-sub', 'month-nav', 'cal-nav', 'cal-pick', 'fr-reload', 'bell-open', 'sheet-close', 'retry-load', 'shop-open', 'char-open', 'shelf-open', 'plaza-open', 'shop-slot', 'shop-mode', 'sh-who', 'rm-tab', 'rm-things', 'pz-who'];
   var WORK_SKIP = ['feedbackSeen', 'notesSeen'];
   var DEMO_PAGE = !!window.__SEOULFUL_HOOKS__;
-  var workMode = DEMO_PAGE;
-  function ownerPage() { return !!(SITE && SITE.page === 'owner') || DEMO_PAGE; }
-  /** ?work=1 / ?work=0 ในที่อยู่: จำในเครื่องแล้วลบออกจากที่อยู่ · ไม่มีในที่อยู่ = ค่าที่จำไว้ (ไม่เคยตั้ง = โหมดดู หน้าตัวอย่าง = โหมดทำงาน) */
+  // 2.14.35 (k189 · เจ้าของร้าน 20 พ.ย. 2569 "ในแอปคือฉันดูอย่างเดียว" · 22 พ.ย. มือถือเจ้าของยังเห็นปุ่มเพราะเข้าจากหน้าพนักงาน):
+  //   หน้าเจ้าของร้านทุกทางเข้า (owner.html · หน้าพนักงานแล้วแตะ เจ้าของร้าน · เปิดครั้งหน้า) เป็นโหมดดู
+  //   โหมดทำงานมีได้ทางเดียวคือเปิดด้วย ?work=1 และจำแค่ในแท็บนั้น (sessionStorage) · ?work=0 ล้าง
+  //   · ค่าที่รุ่นก่อนจำไว้ในเครื่อง (localStorage) ล้างทุกครั้งที่เปิด มือถือที่เคยจำโหมดทำงานจึงกลับเป็นโหมดดู
+  //   หน้าตัวอย่างลองเล่น: ค่าเริ่มต้นโหมดทำงานเหมือนเดิม · ?as=site-owner ?as=site-index จำลองหน้าจริงของร้าน (ค่าเริ่มต้นโหมดดู) ให้ด่านตรวจ
+  var DEMO_AS = '';
+  try { DEMO_AS = DEMO_PAGE ? ({ 'site-owner': 'owner', 'site-index': 'index' })[new URLSearchParams(location.search).get('as')] || '' : ''; } catch (e) { DEMO_AS = ''; }
+  var WORK_BASE = DEMO_PAGE && !DEMO_AS;
+  var workMode = WORK_BASE;
+  /** (k189) หน้าเจ้าของร้านเปิดได้จากทุกหน้าของแอป และกติกาโหมดเดียวกันทุกหน้า (เดิมเฉพาะ owner.html) */
+  function ownerPage() { return true; }
+  /** ?work=1 / ?work=0 ในที่อยู่: จำในแท็บนี้แล้วลบออกจากที่อยู่ · ไม่มีในที่อยู่ = ค่าของแท็บนี้ (ไม่เคยตั้ง = โหมดดู หน้าตัวอย่าง = โหมดทำงาน) */
   function workTake() {
-    if (!ownerPage()) return;
+    var w = null;
     try {
       var q = new URLSearchParams(location.search);
-      var w = q.get('work');
+      w = q.get('work');
       if (w === '1' || w === '0') {
-        LS.set(KEY.work, w);
         q.delete('work');
         try { history.replaceState(null, '', location.pathname + (String(q) ? '?' + q : '') + location.hash); } catch (e) { /* the address keeps it */ }
-      }
+      } else w = null;
     } catch (e) { /* no address to read */ }
-    var kept = LS.get(KEY.work);
-    workMode = kept === '1' || kept === 1 ? true : kept === '0' || kept === 0 ? false : DEMO_PAGE;
+    // (k190g) ล้างค่าที่รุ่นก่อนจำในเครื่อง · ที่เก็บของเครื่องใช้ไม่ได้ก็ไม่ให้การโหลดหน้าล้ม (โหมดยังอ่านจากแท็บนี้ต่อ)
+    try { LS.del(KEY.work); } catch (e) { /* ที่เก็บของเครื่องใช้ไม่ได้ */ }
+    var kept = w;
+    try {
+      var ss = window.sessionStorage;
+      if (w === '1' || (w === '0' && WORK_BASE)) ss.setItem(STORE + KEY.work, w);
+      else if (w === '0') ss.removeItem(STORE + KEY.work);
+      kept = ss.getItem(STORE + KEY.work);
+    } catch (e) { /* แท็บนี้เก็บไม่ได้: ใช้ค่าจากที่อยู่ครั้งนี้ */ }
+    workMode = kept === '1' ? true : kept === '0' ? false : WORK_BASE;
   }
+  /** (k187) ปุ่มที่กดได้ตอนนี้ในหน้าที่ดูอย่างเดียว: ดูหน้าจอน้อง = PEEK_ACTS · หน้าเจ้าของโหมดดู = LOOK_ACTS · ไม่ใช่หน้าดูอย่างเดียว = null */
+  function lookActs() { return S.peek ? PEEK_ACTS : lookOn() ? LOOK_ACTS : null; }
+  function peekAuth() { return { ownerPin: S.owner ? S.owner.pin : '', peek: S.peek.empId }; }
   function workOn() { return ownerPage() && workMode && S.view === 'owner'; }
   function lookOn() { return ownerPage() && !workMode && S.view === 'owner'; }
   /** โหมดดู: ปุ่มนอก LOOK_ACTS ไม่เป็นปุ่ม (data-act กลายเป็น data-off: ปุ่มสั่งงานซ่อน แถวข้อมูลยังเห็นแต่กดไม่ได้) */
   function lookText(out) {
     out = String(out);
-    if (!lookOn()) return out;
-    return out.replace(/(\s)data-act="([^"]*)"/g, function (m, sp, a) { return !a || LOOK_ACTS.indexOf(a) >= 0 ? m : sp + 'data-off="' + a + '"'; });
+    var acts = lookActs();
+    if (!acts) return out;
+    return out.replace(/(\s)data-act="([^"]*)"/g, function (m, sp, a) { return !a || acts.indexOf(a) >= 0 ? m : sp + 'data-off="' + a + '"'; });
   }
   function lookStrip(x) { return raw(lookText(x)); }
   // (ตอนโหลดหน้า ก่อนวาดครั้งแรก: หน้าของร้านและหน้าตัวอย่างเริ่มคนละทาง จึงอ่านที่นี่ที่เดียว)
@@ -6728,6 +6788,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   var writing = 0;
   function call(action, data, auth, opts) {
     // (k186) โหมดดู: ส่งได้แค่คำสั่งในรายการอนุญาต · โหมดทำงาน: ห้องเปิดดูไม่นับว่าเจ้าของร้านอ่านแล้ว
+    // (k187) ดูหน้าจอน้อง: ส่งได้แค่คำสั่งอ่านในรายการ และส่งด้วยรหัสเจ้าของร้านกับธงดูแทนเสมอ (หลังบ้านไม่นับว่าน้องออนไลน์ ไม่เขียนอะไร)
+    if (S.peek) {
+      if (PEEK_CALLS.indexOf(action) < 0) { var peekNo = new Error('หน้าแบบที่น้องเห็นดูได้อย่างเดียว ส่วนนี้เปิดดูแทนไม่ได้'); peekNo.code = 'LOOK'; if (S.peek.no) S.peek.no.push(action); return Promise.reject(peekNo); }
+      auth = peekAuth();
+    }
     if (lookOn() && LOOK_CALLS.indexOf(action) < 0) { var lookNo = new Error('หน้านี้ดูอย่างเดียว บอกห้องในแชตได้เลย'); lookNo.code = 'LOOK'; return Promise.reject(lookNo); }
     if (workOn() && WORK_SKIP.indexOf(action) >= 0) return Promise.resolve({});
     if (READS.indexOf(action) < 0) {
@@ -7053,10 +7118,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     }
     return p;
   }
-  function staffAuth() { return S.staff ? { empId: S.staff.empId, pin: S.staff.pin } : {}; }
+  function staffAuth() { return S.peek ? peekAuth() : S.staff ? { empId: S.staff.empId, pin: S.staff.pin } : {}; }
   function ownerAuth() { return S.owner ? { ownerPin: S.owner.pin } : {}; }
   function actorAuth() { return S.view === 'owner' ? ownerAuth() : staffAuth(); }
-  function isApprover() { return S.view === 'owner' || (S.home && S.home.me && S.home.me.role === 'approver'); }
+  function isApprover() { if (S.peek) return false; return S.view === 'owner' || (S.home && S.home.me && S.home.me.role === 'approver'); }
 
   // ======================================================================
   // How the app is used (#283, Usage.gs)
@@ -7109,10 +7174,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** Whose the app is now: a person's id, 'OWNER', or '' (the shop's screen goes by its own token). */
   function useWho() {
     if (S.view === 'kiosk') return '';
+    if (S.peek) return 'OWNER'; // (k187) ดูหน้าจอน้อง: ไม่จดเป็นการใช้แอปของน้อง
     if (S.view === 'owner') return S.owner ? 'OWNER' : '';
     return S.staff ? S.staff.empId : '';
   }
   function useScreen() {
+    if (S.peek) return 'เจ้าของร้าน › หน้าแบบที่น้องเห็น';
     if (S.view === 'staff') return 'พนักงาน › ' + (USE_TAB[S.tab] || S.tab) + (S.sub ? ' › ' + (USE_TAB[S.sub] || S.sub) : '');
     if (S.view === 'owner') return 'เจ้าของร้าน › ' + (USE_OWNER_TAB[S.ownerTab] || S.ownerTab);
     if (S.view === 'kiosk') return 'จอในร้าน › ' + (USE_KIOSK[S.k.step] || S.k.step);
@@ -7223,7 +7290,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return S.view === 'staff' && sheetState ? 'แผ่น ' + useSheetName(sheetState) : '';
   }
   document.addEventListener('input', function (ev) {
-    if (lookOn()) return;
+    if (lookOn() || S.peek) return;
     var el = ev.target;
     if (!el || !el.dataset || el.dataset.dl || el.id === 'fb-text' || /^(search|password|file)$/.test(el.type || '')) return;
     var name = useFormOther();
@@ -7368,6 +7435,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    * server keeps each once), three times at most.
    */
   function useSend() {
+    if (S.peek) return; // (k187) ระหว่างดูหน้าจอน้องไม่มีคำขอเขียนออกจากหน้า ส่งหลังกลับ
     var q = LS.get(USE_Q) || [];
     if (!q.length) return;
     var keys = LS.get(USE_KEYS) || {};
@@ -8390,7 +8458,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function render(soft) {
     var fn = VIEWS[S.view] || VIEWS.loading;
     var app = $('#app');
-    document.body.classList.toggle('look', lookOn()); // (k186) หน้าเจ้าของร้านโหมดดู
+    if (S.peek && (S.view !== 'staff' || !S.staff || !S.staff.peek)) S.peek = null; // (k187) ออกจากหน้าของน้องที่ดูทางอื่น: เลิกสถานะดู
+    document.body.classList.toggle('look', !!(lookOn() || S.peek)); // (k186) หน้าเจ้าของร้านโหมดดู · (k187) ดูหน้าจอน้อง
     var screen = S.view + '|' + (S.view === 'owner' ? S.ownerTab : S.tab) + '|' + (S.sub || '');
     var waited = !!app.querySelector('.skel, .outline');
     var tabWas = tabIndex(app);
@@ -9717,7 +9786,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.home = data;
     S.homeAt = Date.now();
     appIn(data.app);
-    if (S.staff) useKeep(S.staff.empId, data.useKey);
+    if (S.staff && !S.peek) useKeep(S.staff.empId, data.useKey);
     // 2.13.13 (ข้อ 17 ก): คนออกแล้วดูได้เฉพาะสลิป
     if (data.slipOnly) { if (data.bell) badgeSet(data.bell.unread || 0); return; }
     if (data.levels) S.levels = data.levels;
@@ -9735,7 +9804,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var st = data.status || {};
     var codes = (st.shifts || []).map(function (s) { return s.code; });
     if (!S.shift || codes.indexOf(S.shift) < 0) S.shift = st.suggested;
-    if (!st.checkedIn && B.clock && B.clock.mode === 'kiosk+phone') warmGps();
+    if (!S.peek && !st.checkedIn && B.clock && B.clock.mode === 'kiosk+phone') warmGps();
     if (st.checkedIn && S.scanCode) {
       S.scanCode = '';
       if (st.today) toast('วันนี้ลงเวลาไปแล้วเมื่อ ' + String(st.today.in).slice(0, 5) + ' น.');
@@ -9753,6 +9822,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!S.staff) return Promise.resolve(null);
     if (S.homeLoad && !fresh) return S.homeLoad;
     var auth = staffAuth();
+    auth.empId = S.staff.empId; // (k187) ดูหน้าจอน้อง: คำขอไปด้วยรหัสเจ้าของร้าน (call ใส่เอง) ตรงนี้ใช้รู้ว่าคำตอบเป็นของใคร
     var seq = S.homeSeq = (S.homeSeq || 0) + 1;
     S.homeLoad = call('home', {}, auth, { fresh: !!fresh }).then(function (data) {
       if (seq !== S.homeSeq) return null;
@@ -9817,6 +9887,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     S.setMore = false;
   }
   function logoutStaff(msg) {
+    // (k187) ดูหน้าจอน้องแล้วหลังบ้านไม่ยอม: กลับหน้าเจ้าของร้าน ไม่แตะของในเครื่อง
+    if (S.peek) { peekBack(); if (msg) toast(msg, 'bad'); return; }
     // (ล้างการแจ้งเตือนในเครื่องไม่สำเร็จ ยังออกจากระบบได้เสมอ)
     try { pushOffHere(S.staff ? staffAuth() : null); } catch (e) { /* เครื่องที่ล้างไม่ได้ */ }
     LS.del(KEY.staff);
@@ -9833,6 +9905,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // (กลับมาเปิดแอปหลังไม่ได้ใช้นานเกิน: เจ้าของร้านใส่รหัสใหม่ ไม่ปิดการแจ้งเตือน 25 ต.ค. 2569 · k177: ช่องของน้องไม่หมดอายุแล้ว
   // สาขาของน้องทำงานเฉพาะเมื่อ liveSession คืนว่าง ซึ่งตอนนี้ไม่เกิดจากอายุ)
   function lockIfIdle() {
+    if (S.peek && S.owner && LS.get(KEY.owner) && !liveSession(KEY.owner)) peekDrop(); // (k187) รหัสเจ้าของหมดเวลาระหว่างดู: เลิกดูก่อน
     if (S.owner && LS.get(KEY.owner) && !liveSession(KEY.owner)) {
       closeSheet(); dropSession(); dropFaces();
       S.owner = null; S.ownerHome = null; S.ownerErr = ''; S.pay = null; S.team = null; S.employees = null; S.leaves = null;
@@ -9866,7 +9939,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // them). Leave, slips and the month's history are under ฉัน: there whenever needed, not the first thing seen.
   function staffTabs() {
     var me = (S.home && S.home.me) || empById(staffId());
-    var approver = me && me.role === 'approver';
+    var approver = !S.peek && me && me.role === 'approver'; // (k187) ดูหน้าจอน้อง: ไม่มีแท็บทีมของผู้อนุมัติ
     var pend = S.home && S.home.approver ? S.home.approver.pendingLeaves : 0;
     var tabs = [['home', 'home', 'หน้าแรก']];
     if (approver) tabs.push(['team', 'team', 'ทีม', pend]);
@@ -9902,6 +9975,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function topbar(who, act, bell) {
     var n = bell ? bell.unread || 0 : 0;
+    // (k187) ดูหน้าจอน้อง: แถบบนบอกว่ากำลังดูของใคร ดูอย่างเดียว และปุ่มกลับ · กระดิ่งของน้องเปิดดูได้ (ไม่นับว่าอ่านแล้ว)
+    if (S.peek) return html`<header class="topbar peek-bar"><div class="wrap"><span class="peek-say">หน้าแบบที่ <b>${S.peek.name}</b> เห็น<small>ดูอย่างเดียว</small></span><div class="top-r">${bell ? html`<button class="icon-btn bell-btn" data-act="bell-open" aria-label="แจ้งเตือนของน้อง">${icon('bell')}${n ? html`<i class="bell-n">${n > 9 ? '9+' : n}</i>` : ''}</button>` : ''}<button class="btn sm" data-act="peek-back">กลับ</button></div></div></header>`;
     return html`<header class="topbar"><div class="wrap">${brand()}<div class="top-r">${bell ? html`<button class="icon-btn bell-btn ${bellRing(n) ? 'ring' : ''}" data-act="bell-open" aria-label="แจ้งเตือน${n ? ' ใหม่ ' + n + ' เรื่อง' : ''}">${icon('bell')}${n ? html`<i class="bell-n">${n > 9 ? '9+' : n}</i>` : ''}</button>` : ''}<button class="who" style="background:none;border:0;padding:0" data-act="${act}" aria-label="เมนูบัญชี"><span class="meta"><b>${who.name}</b>${who.sub ? html`<span>${who.sub}</span>` : ''}</span>${who.av}</button></div></div></header>`;
   }
   /** Whose staff screen this is: signed in, or being signed in. */
@@ -10261,7 +10336,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function homeView() {
     var h = S.home;
     var me = h.me;
-    var approver = me.role === 'approver';
+    var approver = !S.peek && me.role === 'approver';
     var st = h.status || {};
     // ลงเวลาก่อนเกม: การ์ดลงเวลาอยู่จอแรกเสมอ แถวชิปเกมอยู่ใต้งานของวันนี้ · การ์ดชวนบันทึกอยู่ใต้การ์ดลงเวลา (เจ้าของ ok 27 ต.ค. 2569)
     // (k98 หน้าแรก) เจ้าของ 9 พ.ย. 2569 "หน้าแรกมันดูรกๆ": บนสุดเหลือเรื่องที่ใช้ทุกวัน (บันทึกหน้างาน ลงเวลา การ์ดงาน ภารกิจวันนี้แบบย่อ)
@@ -10343,7 +10418,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     </section>`;
   }
   document.addEventListener('input', function (ev) {
-    if (lookOn()) return;
+    if (lookOn() || S.peek) return;
     var el = ev.target;
     if (!el || (el.id !== 'tell-text' && el.id !== 'tell-menu')) return;
     var k = tellKept();
@@ -11904,7 +11979,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     odKeep();
   }
   document.addEventListener('input', function (ev) {
-    if (lookOn()) return;
+    if (lookOn() || S.peek) return;
     var el = ev.target;
     if (el.dataset && el.dataset.odl === 'qty') { odLineTyped(); return; }
     if (el.dataset && el.dataset.odu === 'q') {
@@ -12550,7 +12625,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     })}`;
   }
   document.addEventListener('input', function (ev) {
-    if (lookOn()) return;
+    if (lookOn() || S.peek) return;
     var el = ev.target;
     if (!el.dataset || el.dataset.odo !== 'q' || !odo.cat) return;
     odo.catQ = el.value;
@@ -13115,6 +13190,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (x.kind === 'pending') return 'รออนุมัติ' + (x.type ? ' · ' + x.type : '');
     return x.type || 'ลา';
   }
+  // 2.14.35 (k189 · เจ้าของร้านตกลง 22 พ.ย. 2569 12:19): ตารางไม่มีจุดของวันหยุดตามประเพณี (วันที่ร้านตั้งเอง ร้านเปิดตามปกติ) และไม่มีคำอธิบายจุด
+  //   แตะวันนั้นยังขึ้นป้าย วันหยุดตามประเพณี กับคำ ร้านเปิดทำการตามปกติ ใต้ตาราง · วันร้านปิดยังมีลายและคำ ปิด เหมือนเดิม · ข้อมูลและการคิดวันลาไม่แตะ
   function calCard(c) {
     if (!c) return html`<div class="skel"></div>`;
     S.calShown = c;
@@ -13131,7 +13208,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var more = d.items.length - shown.length;
       var cls = 'cal-day' + (dowOf(d.date) === 0 ? ' sun' : '') + (d.date === c.today ? ' today' : '') + (d.closed ? ' closed' : '');
       var label = thDateLong(d.date) + (d.closed ? ' · ร้านปิด' : '') + (d.name ? ' · ' + d.name : d.credit ? ' · วันหยุดตามประเพณี' : '') + d.items.map(function (x) { return ' · ' + who(x.id).name + ' ' + calItemLabel(x); }).join('');
-      return html`<button class="${cls}" data-act="cal-pick" data-date="${d.date}" aria-pressed="${d.date === sel}" aria-label="${label}"><span class="n">${+d.date.slice(8, 10)}</span>${d.credit ? html`<span class="credit"></span>` : ''}${d.closed ? html`<span class="lbl">ปิด</span>` : ''}${shown.length ? html`<span class="cal-ppl">${shown.map(function (x) { var p = who(x.id); return html`<i class="pip ${x.kind}">${initial(p.nick || p.name)}</i>`; })}${more ? html`<i class="pip more">+${more}</i>` : ''}</span>` : ''}</button>`;
+      return html`<button class="${cls}" data-act="cal-pick" data-date="${d.date}" aria-pressed="${d.date === sel}" aria-label="${label}"><span class="n">${+d.date.slice(8, 10)}</span>${d.closed ? html`<span class="lbl">ปิด</span>` : ''}${shown.length ? html`<span class="cal-ppl">${shown.map(function (x) { var p = who(x.id); return html`<i class="pip ${x.kind}">${initial(p.nick || p.name)}</i>`; })}${more ? html`<i class="pip more">+${more}</i>` : ''}</span>` : ''}</button>`;
     });
     var detail = html`<div class="cal-sel"><div class="cal-sel-h"><b>${thDateLong(day.date)}</b>${day.closed ? html`<span class="pill">ร้านปิด</span>` : day.credit ? html`<span class="pill gold">วันหยุดตามประเพณี</span>` : ''}</div>
       ${day.name ? html`<p class="cal-hname">${day.name}</p>` : ''}
@@ -13144,7 +13221,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<section class="card flush"><div class="cal">
         <div class="monthnav"><button class="icon-btn" data-act="cal-nav" data-delta="-1" aria-label="เดือนก่อน">${icon('left')}</button><div class="center"><b>${c.label}</b><span class="sub">ใครลาวันไหน</span></div><button class="icon-btn" data-act="cal-nav" data-delta="1" aria-label="เดือนถัดไป">${icon('right')}</button></div>
         <div class="cal-grid">${TH_DAYS.map(function (d, i) { return html`<span class="cal-dow ${i === 0 ? 'sun' : ''}" aria-hidden="true">${d.replace('.', '')}</span>`; })}${pads}${cells}</div>
-        <div class="cal-legend"><span><i class="pip leave"></i>ลา</span>${pending ? html`<span><i class="pip pending"></i>รออนุมัติ</span>` : ''}<span><i class="pip hatch"></i>ร้านปิด</span><span><i class="pip dot"></i>วันหยุดตามประเพณี</span></div>
+        <div class="cal-legend"><span><i class="pip leave"></i>ลา</span>${pending ? html`<span><i class="pip pending"></i>รออนุมัติ</span>` : ''}<span><i class="pip hatch"></i>ร้านปิด</span></div>
         ${c.setMissing ? html`<div class="hint warn" style="margin-top:12px">${icon('alert')}<span>ยังไม่มีปฏิทินวันหยุดตามประเพณีปี ${+c.setMissing + 543} ในระบบ — เจ้าของร้านใส่ได้ที่ ตั้งค่า › วันหยุดและวันจ่ายเงิน</span></div>` : ''}
       </div>${detail}</section>`;
   }
@@ -14330,16 +14407,17 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    *  look = โหมดดู: คำที่บอกให้แตะหรือกด เปลี่ยนเป็นบอกห้องในแชต (k186 แยกจาก overview ข้อความเดิมทุกตัว) */
   function ownerTodo(o, look) {
     var todo = [];
-    if (o.shop.lat == null) todo.push(['pin', 'ตั้งพิกัดร้าน (ทำตอนอยู่ในร้าน)', 'settings']);
-    if (!o.kiosksBad && !o.kiosks.length && o.settings.qrLive && o.settings.qrLive.value === 'ใช่') todo.unshift(['tablet', 'ตั้งจอลงเวลาในร้าน (มือถือ/แท็บเล็ตเครื่องเก่า) — พนักงานสแกน QR จากจอนี้', 'settings']);
-    o.kiosks.filter(function (k) { return k.current === false; }).forEach(function (k) { todo.unshift(['tablet', 'เปิด' + k.name + 'ใหม่ 1 ครั้ง (รีเฟรช) แล้วกดอนุญาตกล้อง — จอยังเป็นแอปรุ่นเก่า', 'settings']); });
+    // (k189) โหมดดู: งานตั้งค่าที่ห้องทำเองได้ (พิกัดร้าน จอในร้าน WeatherAPI สำรอง วันหยุดตามประเพณี) ไม่ขึ้นใน รอคุณตกลง
+    if (!look && o.shop.lat == null) todo.push(['pin', 'ตั้งพิกัดร้าน (ทำตอนอยู่ในร้าน)', 'settings']);
+    if (!o.kiosksBad && !o.kiosks.length && !look && o.settings.qrLive && o.settings.qrLive.value === 'ใช่') todo.unshift(['tablet', 'ตั้งจอลงเวลาในร้าน (มือถือ/แท็บเล็ตเครื่องเก่า) — พนักงานสแกน QR จากจอนี้', 'settings']);
+    if (!look) o.kiosks.filter(function (k) { return k.current === false; }).forEach(function (k) { todo.unshift(['tablet', 'เปิด' + k.name + 'ใหม่ 1 ครั้ง (รีเฟรช) แล้วกดอนุญาตกล้อง — จอยังเป็นแอปรุ่นเก่า', 'settings']); });
     if (o.approverReviews) todo.unshift(['team', 'ตรวจการลงเวลาของผู้อนุมัติ ' + o.approverReviews + ' รายการ (ผู้อนุมัติตรวจของตัวเองไม่ได้)', 'team']);
-    if (!o.settings.weatherKey.set) todo.push(['rain', 'ใส่ WeatherAPI key เพื่อตรวจฝนอัตโนมัติ', 'settings', 'more']);
+    if (!look && !o.settings.weatherKey.set) todo.push(['rain', 'ใส่ WeatherAPI key เพื่อตรวจฝนอัตโนมัติ', 'settings', 'more']);
     var bk = o.backup || {};
-    if (bk.error || bk.stale) todo.unshift(['shield', (bk.error ? 'สำรองข้อมูลอัตโนมัติไม่สำเร็จ' : 'ไม่ได้สำรองข้อมูลมา 3 วันแล้ว') + (look ? ' — บอกห้องในแชตได้เลย' : ' — ดูสาเหตุ แล้วกด "สำรองตอนนี้"'), 'settings', 'more']);
-    if (bk.mailOn && bk.to && !bk.offAccount) todo.push(['mail', 'ให้ส่งไฟล์สำรองไปอีเมลของบัญชีอื่น (ข้อมูลไม่หายแม้เข้าบัญชี Google ของร้านไม่ได้)', 'settings', 'more']);
+    if (!look && (bk.error || bk.stale)) todo.unshift(['shield', (bk.error ? 'สำรองข้อมูลอัตโนมัติไม่สำเร็จ' : 'ไม่ได้สำรองข้อมูลมา 3 วันแล้ว') + ' — ดูสาเหตุ แล้วกด "สำรองตอนนี้"', 'settings', 'more']);
+    if (!look && bk.mailOn && bk.to && !bk.offAccount) todo.push(['mail', 'ให้ส่งไฟล์สำรองไปอีเมลของบัญชีอื่น (ข้อมูลไม่หายแม้เข้าบัญชี Google ของร้านไม่ได้)', 'settings', 'more']);
     var rem = o.reminders || {};
-    (rem.setMissing || []).forEach(function (y) { todo.unshift(['cal', 'ใส่วันหยุดตามประเพณีปี ' + (+y + 543) + ' (ตามประกาศวันหยุดสถาบันการเงิน)', 'settings', 'more']); });
+    if (!look) (rem.setMissing || []).forEach(function (y) { todo.unshift(['cal', 'ใส่วันหยุดตามประเพณีปี ' + (+y + 543) + ' (ตามประกาศวันหยุดสถาบันการเงิน)', 'settings', 'more']); });
     if ((rem.dayOffMissing || []).length) todo.push(['cal', 'ตั้งวันหยุดประจำ ' + rem.dayOffMissing.length + ' คน (' + rem.dayOffMissing.join(', ') + ') — ระหว่างนี้หยุดได้ตามวันหยุดต่อรอบแบบเดิม', 'staff']);
     if ((rem.nameSent || []).length) todo.unshift(['team', 'คนใหม่ตั้งชื่อแล้ว ' + rem.nameSent.length + ' คน (' + rem.nameSent.join(', ') + ') รอยืนยัน — ' + (look ? 'บอกห้องในแชตให้ตรวจชื่อจริงที่ขึ้นสลิปแล้วยืนยันได้เลย' : 'แตะเพื่อตรวจชื่อจริงที่ขึ้นสลิปแล้วกดยืนยันชื่อ'), 'staff']);
     if ((rem.startMissing || []).length) todo.unshift(['team', 'ใส่วันเริ่มงาน ' + rem.startMissing.length + ' คน (' + rem.startMissing.join(', ') + ') — ระหว่างนี้ยังไม่ได้พักร้อนตามอายุงาน', 'staff']);
@@ -14366,6 +14444,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     });
     if (o.temp && o.temp.need && !o.temp.booked && !o.temp.closed) rows.push(['team', 'คนชั่วคราวรอบนี้ยังไม่ได้จอง']);
     (o.pinLocks || []).forEach(function (x) { rows.push(['lock', x.name + ' ถูกล็อกจากใส่ PIN ผิด']); });
+    // (k189) การ์ด คนเข้า–ออก ไม่อยู่ในโหมดดู: ผลทดลองงานที่ต้องตัดสินขึ้นที่นี่
+    (o.turnover || []).forEach(function (p) { if (p.prob) rows.push(['team', p.name + ' ครบทดลองงาน ' + thShort(p.prob) + ' — ผลเป็นอย่างไร (ผ่าน ขยาย หรือไม่ผ่าน)']); });
     return rows;
   }
   function lookWhen(iso) {
@@ -14376,26 +14456,161 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   // คำในการ์ดเดิมที่บอกให้แตะเพื่อทำ (ไม่ใช่เปิดดู): ในโหมดดูเป็นคำบอก [คำเดิม, คำในโหมดดู] · คำเดิมต้องมีใน src (k186-look.test.js ตรวจ)
   var LOOK_SAY = [['แตะชื่อเมื่อคุยแล้ว แตะอีกครั้งเพื่อยกเลิก', 'คุยแล้วบอกห้องในแชตได้เลย']];
+  /** 2.14.33 (k187) ส่วนที่ 4 ของหน้าเจ้าของร้าน: รายชื่อน้องที่ทำงานอยู่ เลือกชื่อแล้วเห็นหน้าจอของน้องคนนั้นแบบดูอย่างเดียว
+   *  (k189) เจ้าของร้านเห็นคำว่า หน้าแบบที่น้องเห็น · โหมดทำงานใช้การ์ดนี้ โหมดดูใช้ peekLine (บรรทัดเดียว) */
+  function peekCard() {
+    var list = B.employees || [];
+    if (!list.length || !ownerPage()) return '';
+    return html`<section class="card flush" data-look="peek"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">หน้าแบบที่น้องเห็น</span></div>
+      <p class="small muted" style="margin:6px 16px 0">เลือกชื่อเพื่อเปิดหน้าแบบที่น้องคนนั้นเห็น · ดูอย่างเดียว น้องไม่เห็นว่ามีคนเปิดดู</p>
+      <div class="list">${list.map(function (e) { return html`<button class="item" data-act="peek-open" data-id="${e.id}">${avatar(e)}<span class="grow">${e.name}</span>${icon('right')}</button>`; })}</div></section>`;
+  }
+  /** (k187) เริ่มดูหน้าจอของน้อง: หน้าพนักงานของคนนั้นด้วยรหัสเจ้าของร้าน · ของในหน่วยความจำของคนที่เข้าใช้ก่อนหน้าล้าง แล้วคืนตอนกลับ */
+  function peekOpen(id) {
+    var e = empById(id);
+    if (!e || !S.owner || !ownerPage() || S.peek) return;
+    if (sheetState) closeSheet();
+    var kept = { staff: S.staff, tab: S.tab, sub: S.sub };
+    dropSession();
+    staffForget();
+    S.peek = { empId: e.id, name: e.name, kept: kept, no: [] };
+    if (DEMO_PAGE) window.__SEOULFUL_PEEK__ = S.peek;
+    S.staff = { empId: e.id, name: e.name, pin: '', peek: true };
+    S.tab = 'home'; S.sub = null; S.view = 'staff';
+    (window.scrollTo(0, 0), scrollNow = 0);
+    render();
+    loadHome();
+  }
+  /** (k187) เลิกดู: ล้างของน้องคนนั้นจากหน่วยความจำ ไม่วาดหน้า (ผู้เรียกพาไปหน้าถัดไปเอง) */
+  function peekDrop() {
+    if (!S.peek) return null;
+    var kept = S.peek.kept || {};
+    if (sheetState) closeSheet();
+    dropSession();
+    staffForget();
+    S.peek = null;
+    if (DEMO_PAGE) window.__SEOULFUL_PEEK__ = null;
+    S.staff = kept.staff || null; S.tab = kept.tab || 'home'; S.sub = kept.sub || null;
+    return kept;
+  }
+  function peekBack() {
+    if (!peekDrop()) return;
+    S.view = 'owner';
+    (window.scrollTo(0, 0), scrollNow = 0);
+    render();
+    loadOwner(true, true);
+  }
+  /**
+   * 2.14.34 (k188 · เจ้าของร้าน 22 พ.ย. 2569 08:20 น้องพิมพ์มาแล้วไม่มีใครทำ น้องจะไม่อยากพิมพ์): เรื่องที่น้องบอกแล้วยังรอ Claude จัดการ
+   * ใต้คำทักทายของหน้าเจ้าของร้าน ทั้งโหมดดูและโหมดทำงาน · ขึ้นเมื่อมีเรื่องค้างเท่านั้น · น้องและผู้อนุมัติไม่เห็น (หลังบ้านให้เฉพาะคำสั่ง owner)
+   */
+  function backlogLine(b) {
+    if (!b || !(b.count > 0) || !S.owner || !ownerPage() || S.peek) return '';
+    return html`<div class="bk-line" data-look="backlog">${icon('clock')}<span>เรื่องที่น้องบอก รอ Claude จัดการ ${b.count} เรื่อง · ${b.days > 0 ? 'ค้างนานสุด ' + b.days + ' วัน' : 'เข้ามาวันนี้'}</span></div>`;
+  }
+  /**
+   * 2.14.35 (k189 · เจ้าของร้าน 20 พ.ย. 2569 "ในแอปคือฉันดูอย่างเดียว" ดูง่ายที่สุด): หน้าโหมดดูแบบกระชับ ราว 2 จอมือถือ เรียง 4 ส่วน
+   * วันนี้ (เฉพาะเรื่องผิดปกติ) › เรื่องที่น้องบอก (บันทึกหน้างาน ความคิดเห็น เรื่องรอ Claude และสิ่งที่ห้องทำ รวมกล่องเดียว ล่าสุดก่อน)
+   * › รอคุณตกลง (มีเรื่องจึงขึ้น) › หน้าแบบที่น้องเห็น (บรรทัดเดียว) · การ์ดเต็มของโหมดทำงานไม่อยู่หน้านี้ แผ่นที่เปิดดูได้ยังเปิดได้
+   * · ข้อมูลจากคำสั่ง owner คำสั่งเดียวเหมือนเดิม
+   */
+  var LOOK_MAX = 5;
+  /** วันนี้: [ไอคอน, ข้อความ, ปุ่มเปิดแผ่นดู] เฉพาะเรื่องที่ผิดจากปกติ */
+  function lookTodayRows(o) {
+    var rows = [];
+    var s = o.sales;
+    var w = s && s.week;
+    if (s && s.missing) rows.push(['money', 'ยอดขายยังไม่ได้ใส่ ' + s.missing + ' วัน', '']);
+    if (w && w.target && !w.reached && w.start) {
+      // เทียบกับส่วนของสัปดาห์ที่ผ่านมาแล้วถึงเมื่อวาน (ยอดของวันนี้ใส่หลังปิดร้าน)
+      var gone = Math.max(0, Math.min(7, daysBetween(w.start, workDate())));
+      var should = Math.round((gone / 7) * 100);
+      if (gone && (w.pct || 0) < should) rows.push(['money', 'ยอดขายสัปดาห์นี้ต่ำกว่าเป้า · ได้ ' + (w.pct || 0) + '% ถึงเมื่อวานควรได้ราว ' + should + '%', '']);
+    }
+    ((o.check && o.check.zones) || []).forEach(function (z) {
+      (z.rounds || []).forEach(function (r) {
+        if (r.done ? r.done.failed : r.due) rows.push(['shield', 'เช็กมาตรฐาน ' + z.zone + ' รอบ ' + r.round + ' น. ' + (r.done ? 'ไม่ผ่าน ' + r.done.failed + ' ข้อ' : 'เลยเวลาแล้วยังไม่ได้เช็ก'), 'ck-list']);
+      });
+    });
+    var t = o.team;
+    var away = t && t.at ? (t.list || []).filter(function (x) { return !x.last; }).length : 0;
+    if (away) rows.push(['team', 'น้องยังไม่เปิดแอป ' + away + ' คน (7 วันถึงเมื่อคืน)', '']);
+    var m = o.morning;
+    if (m && !m.empty) {
+      var y = [];
+      if ((m.out || []).length) y.push('ของหมด ' + m.out.length + ' อย่าง');
+      if (m.check && m.check.done < m.check.due) y.push('เช็กมาตรฐานได้ ' + m.check.done + '/' + m.check.due + ' รอบ');
+      if (((m.daily || {}).missing || []).length) y.push('ยังไม่ส่งสรุปหน้างาน ' + m.daily.missing.length + ' คน');
+      if ((m.stale || []).length) y.push('งานหัวหน้าค้างเกิน 1 วัน ' + m.stale.length + ' เรื่อง');
+      if (y.length) rows.push(['clock', 'เมื่อวาน: ' + y.join(' · '), 'mr-open']);
+    }
+    var bk = o.backup || {};
+    if (bk.error || bk.stale) rows.push(['shield', (bk.error ? 'สำรองข้อมูลอัตโนมัติไม่สำเร็จ' : 'ไม่ได้สำรองข้อมูลมา 3 วันแล้ว') + ' — บอกห้องในแชตได้เลย', '']);
+    return rows;
+  }
+  /** เรื่องที่น้องบอก: {at, ic, t หัวข้อ, s สิ่งที่ห้องทำหรือสถานะ, act ปุ่มเปิดแผ่นดู} ล่าสุดก่อน */
+  function lookToldRows(o) {
+    var rows = [];
+    var v = o.daily && o.daily.view;
+    ((v && v.items) || []).forEach(function (x) {
+      rows.push({ at: Date.parse(x.at) || 0, ic: 'note', t: (DL_SHORT[x.topic] || x.topic) + (x.menu ? ' · ' + x.menu : '') + (x.text ? ' · ' + x.text : ''), s: 'บันทึกหน้างาน' + (x.at ? ' · ' + lookWhen(x.at) : ''), act: 'dl-inbox' });
+    });
+    var f = o.feedback;
+    ((f && f.latest) || []).forEach(function (x) {
+      rows.push({ at: Date.parse(x.at) || 0, ic: 'chat', t: x.name + ': ' + (x.text || fbFilesText(x.files)), s: (x.status === 'fresh' && x.claude ? 'Claude ตอบแล้ว' : fbOwnerStatus(x)[0]) + (x.at ? ' · ' + lookWhen(x.at) : ''), act: 'fb-inbox' });
+    });
+    (o.roomDid || []).forEach(function (x) { rows.push({ at: Date.parse(x.at) || 0, ic: 'check', t: x.what, s: 'ห้องทำแล้ว · ' + lookWhen(x.at), act: '' }); });
+    rows.sort(function (a, b) { return b.at - a.at; });
+    return rows;
+  }
+  function toldRow(x) {
+    var inner = html`${icon(x.ic)}<span class="grow lk-g"><span class="lk-t">${x.t}</span><span class="s lk-t">${x.s}</span></span>`;
+    return x.act ? html`<button class="item" data-act="${x.act}">${inner}${icon('right')}</button>` : html`<div class="item">${inner}</div>`;
+  }
+  /** แผ่นดูเรื่องที่น้องบอกทั้งหมด (ดูอย่างเดียว) · ปุ่มท้ายแผ่นเปิดแผ่นบันทึกหน้างานและความคิดเห็นแบบเต็ม */
+  function openTold() {
+    var o = S.ownerHome;
+    if (!o) return;
+    var rows = lookToldRows(o);
+    openSheet({ title: 'เรื่องที่น้องบอก', wide: true,
+      body: html`<section class="card flush">${rows.length ? html`<div class="list">${rows.map(toldRow)}</div>` : html`<p class="small muted" style="margin:16px">ยังไม่มีเรื่องที่น้องบอก</p>`}</section>`,
+      foot: html`<button class="btn" data-act="dl-inbox">บันทึกหน้างาน</button><button class="btn" data-act="fb-inbox">ความคิดเห็น</button><button class="btn primary" data-act="sheet-close">ปิด</button>` });
+  }
+  /** (k189) หน้าแบบที่น้องเห็น ของโหมดดู: ชื่อเรียงบรรทัดเดียว เลือกชื่อแล้วเปิดหน้าของน้องคนนั้นแบบดูอย่างเดียว */
+  function peekLine() {
+    var list = B.employees || [];
+    if (!list.length) return '';
+    return html`<section class="card flush" data-look="peek"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">หน้าแบบที่น้องเห็น</span><span class="small muted">เลือกชื่อ · ดูอย่างเดียว</span></div>
+      <div class="peek-row">${list.map(function (e) { return html`<button class="peek-chip" data-act="peek-open" data-id="${e.id}">${avatar(e)}<span class="grow">${e.name}</span></button>`; })}</div></section>`;
+  }
   function lookView() {
     var o = S.ownerHome;
+    MR_LAST = o.morning || null; // แผ่นรายงานเมื่อวานใช้ข้อมูลชุดนี้ (เดิมตั้งตอนวาดการ์ด ซึ่งโหมดดูไม่วาดแล้ว)
+    var today = lookTodayRows(o);
+    var told = lookToldRows(o);
     var wait = lookWaitRows(o);
-    var shop = [dailyOwnerCard(o.daily), morningCard(o.morning), meetCard(o.meet, o.talk), feedbackCard(o.feedback), turnoverCard(o.turnover), checkOwnerCard(o.check), salesOwnerCard(o.sales), orderOwnerCard(o.order), teamUseCard(o.team), useCard(o.usage)]
-      .map(function (x) { return String(x || ''); }).filter(function (x) { return x; });
-    var did = o.roomDid || [];
+    // การ์ดเปิดแจ้งเตือน: ขึ้นเฉพาะเครื่องที่ยังไม่เปิด พับไว้เป็นบรรทัดเดียว (วิธีเปิดบน iPhone ยาวเกือบครึ่งจอ) ปุ่มเปิดอยู่ข้างใน
+    var push = pushCard();
+    var todayRow = function (r) { return r[2] ? html`<button class="item" data-act="${r[2]}">${icon(r[0])}<span class="grow">${r[1]}</span>${icon('right')}</button>` : lookRow(r[0], r[1]); };
+    // เกิน LOOK_MAX เรื่อง: ที่เหลือพับไว้ แตะบรรทัดสรุปเพื่อกางดู
+    var fold = function (rows, draw) {
+      var rest = rows.slice(LOOK_MAX);
+      return html`<div class="list">${rows.slice(0, LOOK_MAX).map(draw)}</div>${rest.length ? html`<details class="lk-more"><summary>และอีก ${rest.length} เรื่อง</summary><div class="list">${rest.map(draw)}</div></details>` : ''}`;
+    };
     var out = lookText(html`${topbar({ name: 'เจ้าของร้าน', sub: o.brand.name + ' Staff', av: ownerSeal() }, '', o.bell)}
       <main class="wrap page look-page"><div class="stack">
         <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}</div>
-        ${pushCard()}
-        <section class="card flush" data-look="wait"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">รอคุณตกลง</span></div>
-          ${wait.length
-            ? html`<p class="small muted" style="margin:6px 16px 0">ตกลงผ่านแชตกับห้องได้เลย · หน้านี้ดูอย่างเดียว ไม่มีปุ่มให้กด</p><div class="list">${wait.map(function (r) { return lookRow(r[0], r[1]); })}</div>`
-            : html`<p class="small muted" style="margin:6px 16px 16px">ไม่มีเรื่องรอ</p>`}</section>
-        <h3 class="h3" data-look="shop">เรื่องในร้าน</h3>
-        ${shop.length ? raw(shop.join('')) : html`<section class="card flush"><p class="small muted" style="margin:16px">ยังไม่มีเรื่องในร้าน</p></section>`}
-        <section class="card flush" data-look="did"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">ห้องทำแล้ว</span></div>
-          ${did.length
-            ? html`<div class="list">${did.map(function (x) { return lookRow('check', x.what, lookWhen(x.at)); })}</div>`
-            : html`<p class="small muted" style="margin:6px 16px 16px">7 วันนี้ห้องยังไม่ได้ทำอะไรในแอป</p>`}</section>
+        ${push ? html`<details class="card flush lk-more lk-push"><summary>${icon('bell')} เครื่องนี้ยังไม่เปิดแจ้งเตือน · ดูวิธีเปิด</summary>${push}</details>` : ''}
+        <section class="card flush" data-look="today"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">วันนี้</span></div>
+          ${today.length ? fold(today, todayRow) : html`<p class="small muted" style="margin:6px 16px 16px">วันนี้ไม่มีเรื่องผิดปกติ</p>`}</section>
+        <section class="card flush" data-look="told"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">เรื่องที่น้องบอก</span></div>
+          ${backlogLine(o.backlog)}
+          ${told.length
+            ? html`<div class="list">${told.slice(0, LOOK_MAX).map(toldRow)}<button class="item" data-act="told-all">${icon('note')}<span class="grow">${told.length > LOOK_MAX ? 'และอีก ' + (told.length - LOOK_MAX) + ' เรื่อง · ดูทั้งหมด' : 'ดูทั้งหมด'}</span>${icon('right')}</button></div>`
+            : html`<p class="small muted" style="margin:6px 16px 16px">ยังไม่มีเรื่องที่น้องบอก</p>`}</section>
+        ${wait.length ? html`<section class="card flush" data-look="wait"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">รอคุณตกลง</span></div>
+          <p class="small muted" style="margin:6px 16px 0">ตอบในแชตกับ Claude ได้เลย · หน้านี้ดูอย่างเดียว</p>${fold(wait, function (r) { return lookRow(r[0], r[1]); })}</section>` : ''}
+        ${peekLine()}
       </div></main>`);
     LOOK_SAY.forEach(function (w) { out = out.split(w[0]).join(w[1]); });
     return raw(out);
@@ -14414,11 +14629,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // k181 (เจ้าของร้าน 20 พ.ย. 2569 00:03 "หน้าแรกของเจ้าของร้านควรมีปัญหาให้ดูย้อนหลังได้ไหม ตอนนี้ไม่รู้ดูตรงไหนเลยทั้งที่เป็นเรื่องสำคัญสุด"):
     //   บันทึกหน้างานเป็นการ์ดแรกใต้คำทักทาย เหนือกล่อง รอคุณ (ทับลำดับของ k150 ที่ให้ รอคุณ เป็นการ์ดแรก)
     return html`<div class="stack">
-      <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}${o.update && o.team && (o.team.list || []).length ? updateTip(o.update) : ''}</div>
+      <div class="hello">${greeting()}<small>${thDateLong(workDate())}</small>${S.ownerErr ? staleNote(S.ownerAt) : ''}${backlogLine(o.backlog)}${o.update && o.team && (o.team.list || []).length ? updateTip(o.update) : ''}</div>
       ${pushCard()}
       ${dailyOwnerCard(o.daily)}
       ${waitBox(o, todo)}
       ${teamUseCard(o.team)}
+      ${peekCard()}
       ${o.update ? updateCard(o.update) : ''}
       ${morningCard(o.morning)}
       ${meetCard(o.meet, o.talk)}
@@ -15144,7 +15360,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     })();
   }
   document.addEventListener('change', function (ev) {
-    if (lookOn()) return;
+    if (lookOn() || S.peek) return;
     var el = ev.target;
     if (el && el.dataset && el.dataset.sales && el.dataset.date) saveSalesDay(el);
   });
@@ -15259,7 +15475,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   var tipAt = 0;
   function tipsCards(h) { var w = (h || S.home || {}).welcome; return w && w.card && w.card.k === 'tips' ? w.card.cards || [] : []; }
-  function tipsDue(h) { return S.view === 'staff' && !!S.staff && S.tipsSkip !== S.staff.empId && tipsCards(h).length > 0; }
+  function tipsDue(h) { return !S.peek && S.view === 'staff' && !!S.staff && S.tipsSkip !== S.staff.empId && tipsCards(h).length > 0; }
   /** การ์ดแนะนำทีละใบ เต็มหน้า (ไม่มีแถบแท็บ แผ่นที่ขึ้นเองรอจนดูครบ) · ใบท้าย "เริ่มใช้แอป" บันทึกว่าเห็น (welcomeSeen tips) */
   function tipsView() {
     var list = tipsCards();
@@ -15383,6 +15599,48 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var m = (look || {}).g === 'm';
     return { s: 's-1', r: m ? 'r-short' : 'r-long', c: 'c-black', u: 'u-uniform', l: m ? 'l-pants' : 'l-skirt', k: 'k-sneaker', m: 'm-wave', g: m ? 'g-m' : 'g-f', z: 'z-3' }[slot] || '';
   }
+  // (2.14.35) เลื่อนรายการในแผ่นแต่งตัวลงเกิน SHOP_MINI_AT เวทีย่อ (shop.mini จำไว้ให้วาดใหม่ยังย่อ) · กลับถึงบนสุดคืนขนาดเดิม
+  // ย่อเฉพาะเมื่อรายการยาวพอ (ย่อแล้วยังเลื่อนได้) กันย่อแล้วเด้งกลับ · scroll ไม่ลอยขึ้น จึงฟังแบบ capture
+  var SHOP_MINI_AT = 40, SHOP_MINI_ROOM = 320;
+  // (k190u) ตัวฟังแค่อ่านตำแหน่งเลื่อน (passive) · สลับคลาสในเฟรมถัดไปเฉพาะตอนข้ามเกณฑ์ (กติกา k183 ค)
+  // (k190w) สภาพย่อตัดสินในเฟรมถัดไปจากตำแหน่งเลื่อนตอนนั้น แล้วจด shop.mini พร้อมสลับคลาสในที่เดียว
+  // (เดิมจด shop.mini ในตัวฟังก่อนสลับคลาส: แผ่นวาดใหม่หรือเลื่อนกลับเองโดยไม่มีเหตุการณ์เลื่อน ค่าที่จดกับตำแหน่งจริงไม่ตรงกันแล้วค้างย่อ)
+  var shopMiniQueued = false;
+  /** เวทีควรย่อไหม จากตำแหน่งเลื่อนของเนื้อแผ่น (was = ตอนนี้ย่ออยู่) · อ่านอย่างเดียว */
+  function shopMiniWant(sc, was) {
+    // (k190w) แอปสั่งเลื่อนขึ้นบนสุดเอง (ลองทั้งชุด): เวทีเป็นสภาพปกติตั้งแต่สั่ง ไม่กลับไปย่อระหว่างทางเลื่อน
+    if (shop.miniHold) { if (Date.now() < shop.miniHold && sc.scrollTop > 4) return false; shop.miniHold = 0; }
+    if (!was) return sc.scrollTop > SHOP_MINI_AT && sc.scrollHeight - sc.clientHeight > SHOP_MINI_AT + SHOP_MINI_ROOM;
+    return sc.scrollTop > 4;
+  }
+  /** ตรวจสภาพย่อของเวทีในเฟรมถัดไป (คิวเดียว ไม่โยนข้อผิดพลาด คืนตัวกันคิวเสมอ) */
+  function shopMiniLater() {
+    if (shopMiniQueued) return;
+    shopMiniQueued = true;
+    requestAnimationFrame(function () {
+      try {
+        var sc = document.getElementById('sheet-body'), st = sc && sc.querySelector('#shop .shop-top.stage');
+        if (!shop || !st) return;
+        var on = shopMiniWant(sc, st.classList.contains('mini'));
+        shop.mini = on;
+        if (st.classList.contains('mini') === on) return;
+        st.classList.toggle('mini', on);
+        // หมวดที่เปิดอยู่ยังอยู่ในสายตาเมื่อชิปเหลือแถวเดียว
+        var row = st.querySelector('.shop-chips'), hit = row && row.querySelector('[aria-pressed="true"]');
+        if (on && row && hit) row.scrollLeft = Math.max(0, hit.offsetLeft - (row.clientWidth - hit.offsetWidth) / 2);
+      } catch (e) { /* แผ่นปิดหรือวาดใหม่ระหว่างเฟรม: รอบหน้าตรวจใหม่ */ } finally { shopMiniQueued = false; }
+    });
+  }
+  // ฟังเฉพาะการเลื่อนของเนื้อแผ่นที่มีแผ่นแต่งตัวอยู่ (การเลื่อนส่วนอื่นของหน้าไม่ทำอะไร)
+  document.addEventListener('scroll', function (e) {
+    var sc = e.target;
+    if (!shop || !sc || sc.id !== 'sheet-body') return;
+    var st = sc.querySelector('#shop .shop-top.stage');
+    if (!st) return;
+    var was = st.classList.contains('mini');
+    if (!shop.miniHold && shopMiniWant(sc, was) === was && !!shop.mini === was) return;
+    shopMiniLater();
+  }, { capture: true, passive: true });
   /** The dressing: the character first (its moves), unless the other page was the last one used. */
   // The shop's pages and the kinds of things on each, in order (Levels.gs CHAR_SLOTS, LOOK_SLOTS, ROOM_SLOTS).
   // (the effects, f, are tried on the whole character too: they shine round it on its stage)
@@ -15394,6 +15652,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (slot && SHOP_SLOTS[shop.mode].indexOf(slot) >= 0) shop.slot = slot;
     shop.tries = {};
     shop.tryKit = null;
+    shop.mini = false;
+    shop.miniHold = 0;
     openSheet({ title: 'แต่งตัว', body: shop.data ? shopBody() : html`<div id="shop" aria-busy="true"><div class="skel" style="height:220px"></div><div class="skel" style="height:260px;margin-top:12px"></div></div>`, foot: shopFoot() });
     var mine = shop;
     call('shop', {}, staffAuth()).then(function (d) {
@@ -15509,8 +15769,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (room) roomWant(look.t || 't-wood', 1500);
     // (the character on a podium of its own, in 3D, #206)
     if (char) i3Want('ui-stand');
-    var stage = char ? html`<div class="shop-top stage"><div class="shop-char">${raw(charOf(look, shop.slot === 'm' || kit ? 'loop' : ''))}${chFx(look)}${look.p ? html`<span class="shop-pet pet-box">${raw(PET_ART(look.p, look))}</span>` : ''}</div><div class="shop-info">${info}</div>${chips}</div>`
-      : room ? html`<div class="shop-top stage room-prev th-${look.t || 't-wood'}"><div class="rp-scene"><i class="rm-wall"></i><i class="rm-floor"></i><div class="rp-cab"><span>${raw(FIG_ART('egg'))}</span><span class="${deco ? 'rp-try' : ''}">${raw(deco ? DECO_ART(deco) : DECO_ART('d-plant'))}</span><span>${raw(FIG_ART('mochi'))}</span></div><div class="rp-char">${raw(charOf(look))}</div></div><div class="shop-info">${info}</div>${chips}</div>`
+    var stage = char ? html`<div class="shop-top stage${shop.mini ? ' mini' : ''}"><div class="shop-char">${raw(charOf(look, shop.slot === 'm' || kit ? 'loop' : ''))}${chFx(look)}${look.p ? html`<span class="shop-pet pet-box">${raw(PET_ART(look.p, look))}</span>` : ''}</div><div class="shop-info">${info}</div>${chips}</div>`
+      : room ? html`<div class="shop-top stage${shop.mini ? ' mini' : ''} room-prev th-${look.t || 't-wood'}"><div class="rp-scene"><i class="rm-wall"></i><i class="rm-floor"></i><div class="rp-cab"><span>${raw(FIG_ART('egg'))}</span><span class="${deco ? 'rp-try' : ''}">${raw(deco ? DECO_ART(deco) : DECO_ART('d-plant'))}</span><span>${raw(FIG_ART('mochi'))}</span></div><div class="rp-char">${raw(charOf(look))}</div></div><div class="shop-info">${info}</div>${chips}</div>`
       : html`<div class="shop-top">${avatar(me, 'xl' + (shopTrying() || shop.tryKit ? ' av-try' : ''), [d.lv, d.crown ? 1 : 0, look])}${info}</div>${chips}`;
     var modes = [['char', 'user', 'ตัวละคร'], ['av', 'spark', 'รูปและชื่อ'], ['room', 'home', 'ห้อง']];
     return html`<div id="shop"><div class="seg shop-modes" role="tablist">${modes.map(function (m) { return html`<button aria-pressed="${mode === m[0]}" data-act="shop-mode" data-mode="${m[0]}">${icon(m[1])} ${m[2]}</button>`; })}</div>
@@ -15573,6 +15833,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     setSheetBody(shopBody());
     setShopFoot();
     if (pop) { var top = $('.shop-top'); if (top) top.classList.add('pop'); }
+    // (k190w) วาดใหม่แล้วรายการสั้นลงหรือตำแหน่งเลื่อนเปลี่ยนโดยไม่มีเหตุการณ์เลื่อน: ตรวจสภาพย่อของเวทีอีกรอบในเฟรมถัดไป
+    shopMiniLater();
   }
   /** Bought or worn: the shop, the person's level and everyone's looks as they are now. A whole outfit just made shows off its move. */
   function shopDone(d) {
@@ -20454,6 +20716,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    * · '' ใช้ได้ทุกอย่าง: เปิดแล้ว หรือมือถือรับแจ้งเตือนไม่ได้เลย (iPhone เก่า เบราว์เซอร์ที่ไม่มีแจ้งเตือน เปิดไม่สำเร็จซ้ำ) ร้านส่ง LINE แทน
    */
   function pushGate(h) {
+    if (S.peek) return ''; // (k187) ดูหน้าจอน้อง: ไม่มีจอตั้งชื่อ การ์ดแนะนำ หรือหน้าสอนเปิดแจ้งเตือน
     h = h || S.home;
     if (S.view !== 'staff' || !h || h.slipOnly) return '';
     // 2.14.3 น้องใหม่ตั้งชื่อเอง: จอตั้งชื่อก่อนการ์ดแนะนำ หน้าสอนเปิดแจ้งเตือน และแผ่นที่ขึ้นเอง (ลงเวลาได้บนจอนี้)
@@ -20487,6 +20750,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     welcomeCheck(l);
   }
   function lockRelease() {
+    if (S.peek) return; // (k187) ดูหน้าจอน้อง: ไม่มีแผ่นที่ขึ้นเอง (ระดับ ภารกิจ ต้อนรับ) ซึ่งจดว่าน้องเห็นแล้ว
     if (S.heldLevel === undefined || S.view !== 'staff' || !S.home || pushGate()) return;
     if (sheetState) { if (!S.heldWait) S.heldWait = setTimeout(function () { S.heldWait = 0; lockRelease(); }, 1000); return; }
     sheetChecks();
@@ -21029,6 +21293,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (b) b.phones = d.phones;
       if (bellShown()) setSheetBody(bellBody());
       if (!d.unread || workOn()) return; // (k186) ห้องเปิดกระดิ่ง ไม่ใช่เจ้าของร้านอ่าน
+      if (S.peek) return; // (k187) เจ้าของร้านดูกระดิ่งของน้อง ไม่ใช่น้องอ่าน
       call('notesSeen', {}, auth).then(function () {
         var b2 = myBell();
         if (b2) b2.unread = 0;
@@ -23562,7 +23827,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     // กลับมาลองท่า ลูกโป่งหายทุกเฟรม · ตัวลอง k80c บนแอปทดลอง 2.13.72)
     'shop-mode': function (el) { if (el.dataset.mode === shop.mode) return; shop.mode = el.dataset.mode; shop.slot = SHOP_SLOTS[shop.mode][0]; shop.tryKit = null; shopRedraw(); },
     'shop-room': function () { closeSheet(); setTimeout(function () { openShelf({ tab: 'room' }); setTimeout(function () { if (shelf && shelf.data && !shelf.arrange && $('#shelf')) roomArrange(); }, 500); }, 230); },
-    'shop-kit': function (el) { shop.tryKit = shop.tryKit === el.dataset.id ? null : el.dataset.id; shopRedraw(); var b = $('#sheet-body'); if (b && shop.tryKit) b.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' }); },
+    'shop-kit': function (el) { shop.tryKit = shop.tryKit === el.dataset.id ? null : el.dataset.id; if (shop.tryKit) { shop.mini = false; shop.miniHold = Date.now() + 3000; } shopRedraw(); var b = $('#sheet-body'); if (b && shop.tryKit) b.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' }); },
     'shop-wear-kit': function (el) { run(el, call('shopWearKit', { kit: el.dataset.id }, staffAuth()), null, shopDone).catch(function () {}); },
     'char-open': function () { openShop('char'); },
     'char-go': function (el) {
@@ -24446,6 +24711,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'ideas-invite': function () { ACTIONS.tab({ dataset: { tab: 'ideas' } }); var box = document.getElementById('tell-text'); if (box) { try { box.focus({ preventScroll: true }); } catch (e) { box.focus(); } } },
     'use-open': function () { openUse(); },
     'team-one': function (el) { openTeamOne(el.dataset.id); },
+    // (k187) ดูหน้าจอน้องแบบดูอย่างเดียว
+    'peek-open': function (el) { peekOpen(el.dataset.id); },
+    'peek-back': function () { peekBack(); },
+    'told-all': function () { openTold(); },
     'use-days': function (el) { loadUse(+el.dataset.days === 30 ? 30 : 7); },
     'use-back': function (el) { loadUse(useRep.days, Math.max(0, +el.dataset.back || 0)); },
   };
@@ -24455,7 +24724,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!el || el.disabled) return;
     var fn = ACTIONS[el.dataset.act];
     if (!fn) return;
-    if (lookOn() && LOOK_ACTS.indexOf(el.dataset.act) < 0) return; // (k186) โหมดดู: ปุ่มนอกรายการอนุญาตไม่ทำงาน
+    var okActs = lookActs();
+    if (okActs && okActs.indexOf(el.dataset.act) < 0) return; // (k186) โหมดดู · (k187) ดูหน้าจอน้อง: ปุ่มนอกรายการอนุญาตไม่ทำงาน
     if (el.tagName === 'A' && el.getAttribute('href') && !/^#/.test(el.getAttribute('href'))) return;
     ev.preventDefault();
     noteLens(el);
@@ -24470,7 +24740,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     glideLenses();
   });
   document.addEventListener('change', function (ev) {
-    if (lookOn()) return;
+    if (lookOn() || S.peek) return;
     var el = ev.target;
     if (el.id === 'cam-env' || el.id === 'cam-user' || el.id === 'face-pick') { onCameraFile(el); return; }
     if (el.dataset.change === 'lv-type' || el.dataset.change === 'lv-cost') { if (el.id === 'lv-from') { var lvTo = document.getElementById('lv-to'); if (lvTo && el.value && (!lvTo.value || lvTo.value < el.value)) lvTo.value = el.value; } leaveFormSync(); }
@@ -24522,11 +24792,33 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       return;
     }
     if (document.visibilityState === 'visible' && S.bootErr) { retryBoot(); return; }
-    // Back in the app after a while: refresh today (rain, approvals) quietly.
-    if (document.visibilityState !== 'visible' || sheetState) return;
-    if (S.view === 'staff' && S.staff && S.home && Date.now() - (S.homeAt || 0) > 120000) loadHome(true);
-    if (S.view === 'owner' && S.owner && S.ownerHome && S.ownerTab === 'overview' && Date.now() - (S.ownerAt || 0) > 120000) loadOwner(true);
   });
+  // (2.14.35) กลับมาเปิดแอป: นาฬิกาและวันที่ตรงทันที แล้วโหลดวันนี้ใหม่เงียบ ๆ (ฝน คำขอ) เมื่อข้อมูลเก่ากว่า 60 วิ หรือวันทำงานเปลี่ยน (ข้าม 06:00)
+  // แท็บทีมโหลดด้วย · ผูก visibilitychange pageshow focus (มือถือบางรุ่นส่งมาไม่ครบ) มาพร้อมกันทำครั้งเดียว · tick เรียก freshView ทุกนาทีให้หน้าที่เปิดค้างข้ามวันได้ข้อมูลวันใหม่
+  var BACK_STALE_MS = 60000, BACK_ONCE_MS = 1000;
+  var backAt = 0, freshDayWas = '', tickMin = -1;
+  function freshView(back) {
+    if (S.view === 'kiosk' || S.bootErr || sheetState) return;
+    var day = workDate(), turned = !!freshDayWas && day !== freshDayWas, t = Date.now();
+    freshDayWas = day;
+    if (!turned && !back) return;
+    if (S.view === 'staff' && S.staff && S.home) {
+      if (turned || t - (S.homeAt || 0) > BACK_STALE_MS) loadHome(true, turned);
+      if (S.tab === 'team') loadTeam();
+    }
+    if (S.view === 'owner' && S.owner && S.ownerHome && S.ownerTab === 'overview' && (turned || t - (S.ownerAt || 0) > BACK_STALE_MS)) loadOwner(true);
+  }
+  function backToApp() {
+    if (document.visibilityState !== 'visible') return;
+    var t = Date.now();
+    if (t - backAt < BACK_ONCE_MS) return;
+    backAt = t;
+    tick();
+    freshView(true);
+  }
+  document.addEventListener('visibilitychange', backToApp);
+  window.addEventListener('pageshow', backToApp);
+  window.addEventListener('focus', backToApp);
   window.addEventListener('focus', function () {
     // The camera app closed without a picture: release the pending promise.
     setTimeout(function () {
@@ -24599,6 +24891,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         : thDateLong(ymdOf(n)) + (k === 'date' && S.view !== 'kiosk' ? ' · ' + pad(p.hh) + ':' + pad(p.mi) + ' น.' : '');
       if (el.textContent !== t) el.textContent = t;
     });
+    // (2.14.35) นาทีละครั้ง: วันทำงานเปลี่ยนระหว่างเปิดค้าง โหลดวันใหม่
+    if (p.mi !== tickMin) { tickMin = p.mi; freshView(false); }
   }
   setInterval(tick, 1000);
 
@@ -24690,7 +24984,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       q.delete('go');
       try { history.replaceState(null, '', location.pathname + (String(q) ? '?' + q : '') + location.hash); } catch (e) { /* the address keeps it */ }
     }
-    var page = String(SITE.page || q.get('page') || '').toLowerCase();
+    var page = String(SITE.page || q.get('page') || (DEMO_AS === 'owner' ? 'owner' : '')).toLowerCase(); // (k189) ?as=site-owner ของหน้าตัวอย่าง = owner.html
     var scan = q.get('in') || q.get('qr') || '';
     // Opened by scanning the shop's QR: the code counts at once (the server checks it at the clock-in).
     var code = LIVE_QR_RE.test(scan) ? scan : /^[A-Za-z0-9]{4,16}$/.test(scan) ? scan.toUpperCase() : '';
