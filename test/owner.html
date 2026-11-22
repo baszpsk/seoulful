@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.36","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"a0779048724f"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.37","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"0a43c1bc99df"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -337,6 +337,7 @@ body.look [data-off] .ic-go { display: none !important; }
 .peek-bar .wrap { gap: 10px; }
 .peek-bar .peek-say { flex: 1; min-width: 0; font-size: 14px; line-height: 1.3; }
 .peek-bar .peek-say small { display: block; color: var(--muted); font-size: 12px; }
+.peek-bar .peek-try { color: inherit; text-decoration: underline; }
 body.look #app main input, body.look #app main select, body.look #app main textarea, body.look #sheet-root input, body.look #sheet-root select, body.look #sheet-root textarea { display: none !important; }
 body.look .look-page h3.h3 { margin: 6px 4px -6px; }
 /* 2.14.35 (k189) หน้าเจ้าของร้านโหมดดูแบบกระชับ: เรื่องละบรรทัด ส่วนเกินพับไว้ · หน้าแบบที่น้องเห็น ชื่อเรียงบรรทัดเดียวเลื่อนข้างได้ */
@@ -6756,7 +6757,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   //   · ปุ่มเข้าออกการดู (peek-open peek-back) อยู่ใน LOOK_ACTS และคำสั่งดูทุกตัวอยู่ใน LOOK_CALLS (k187-peek.test.js ตรวจ)
   var PEEK_CALLS = ['boot', 'home', 'month', 'calendar', 'payslips', 'feedbackMine', 'orderList', 'shop', 'shelf', 'plaza', 'runs', 'notes', 'howTo', 'status', 'avatars', 'blockGame'];
   // (k189) เพิ่มปุ่มเปิดแผ่นและเลื่อนดูของ แต่งตัว ห้องของฉัน ลาน: เปลี่ยนแค่สิ่งที่วาดบนจอ ไม่ส่งคำสั่งเขียน (ซื้อ ใส่ ลอง จัดห้อง เปิดกล่อง ลูบสัตว์ ยังปิด)
-  var PEEK_ACTS = ['peek-back', 'tab', 'me-go', 'open-history', 'close-sub', 'month-nav', 'cal-nav', 'cal-pick', 'fr-reload', 'bell-open', 'sheet-close', 'retry-load', 'shop-open', 'char-open', 'shelf-open', 'plaza-open', 'shop-slot', 'shop-mode', 'sh-who', 'rm-tab', 'rm-things', 'pz-who'];
+  var PEEK_ACTS = ['peek-back', 'tab', 'me-go', 'open-history', 'close-sub', 'month-nav', 'cal-nav', 'cal-pick', 'fr-reload', 'bell-open', 'sheet-close', 'retry-load', 'shop-open', 'char-open', 'shelf-open', 'plaza-open', 'shop-slot', 'shop-mode', 'sh-who', 'rm-tab', 'rm-things', 'pz-who',
+    'od-open', 'od-go', 'od-pic', 'od-how', 'od-coming'];
+  // (k193c · เจ้าของร้าน 23 พ.ย. 2569 อยากกดดูหน้าสั่งของของน้องต่อ) บรรทัดบน: เปิดหน้าสั่งของ ไปที่หมวด ดูรูปของ เปิดคำอธิบาย · อ่านด้วย orderList ที่ดูแทนได้อยู่แล้ว
+  //   ปุ่มบวกลบจำนวน ส่ง แก้ ยืนยัน ของหมดด่วน ของนอกรายการ ยังปิด (ช่องกรอกไม่แสดงตอนดู) · อยากลองกดจริง: ลิงก์ไปแอปทดลองในแถบบน (peekTryLink)
   var WORK_SKIP = ['feedbackSeen', 'notesSeen'];
   var DEMO_PAGE = !!window.__SEOULFUL_HOOKS__;
   // 2.14.35 (k189 · เจ้าของร้าน 20 พ.ย. 2569 "ในแอปคือฉันดูอย่างเดียว" · 22 พ.ย. มือถือเจ้าของยังเห็นปุ่มเพราะเข้าจากหน้าพนักงาน):
@@ -6795,6 +6799,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** (k187) ปุ่มที่กดได้ตอนนี้ในหน้าที่ดูอย่างเดียว: ดูหน้าจอน้อง = PEEK_ACTS · หน้าเจ้าของโหมดดู = LOOK_ACTS · ไม่ใช่หน้าดูอย่างเดียว = null */
   function lookActs() { return S.peek ? PEEK_ACTS : lookOn() ? LOOK_ACTS : null; }
   function peekAuth() { return { ownerPin: S.owner ? S.owner.pin : '', peek: S.peek.empId }; }
+  /** (k193c) ลิงก์ในแถบบนตอนดูหน้าของน้อง: เปิดแอปทดลองในแท็บใหม่ ไว้ลองกดจริง (ข้อมูลคนละชุดกับร้าน) · ดูหน้าสั่งของอยู่ = เปิดที่หน้าสั่งของ (?go=order ของ goTo)
+   *  ที่อยู่ = โฟลเดอร์ test/ ข้างหน้าเว็บของร้าน (site.json test.url) คิดจากที่อยู่ของหน้านี้ ไม่เขียนที่อยู่ลงโค้ด · ขึ้นเฉพาะเว็บของร้าน (SITE) บนแอปทดลองเองและหน้าตัวอย่างไม่ขึ้น */
+  function peekTryLink() {
+    if (!SITE || /\/test\//.test(String(location.pathname || ''))) return '';
+    var to = '';
+    try { to = new URL('test/', String(location.href).split(/[?#]/)[0]).href; } catch (e) { return ''; }
+    return html`<a class="peek-try" href="${to + (S.sub === 'order' ? '?go=order' : '')}" target="_blank" rel="noopener">ลองกดจริงในแอปทดลอง</a>`;
+  }
   function workOn() { return ownerPage() && workMode && S.view === 'owner'; }
   function lookOn() { return ownerPage() && !workMode && S.view === 'owner'; }
   /** โหมดดู: ปุ่มนอก LOOK_ACTS ไม่เป็นปุ่ม (data-act กลายเป็น data-off: ปุ่มสั่งงานซ่อน แถวข้อมูลยังเห็นแต่กดไม่ได้) */
@@ -10000,7 +10012,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function topbar(who, act, bell) {
     var n = bell ? bell.unread || 0 : 0;
     // (k187) ดูหน้าจอน้อง: แถบบนบอกว่ากำลังดูของใคร ดูอย่างเดียว และปุ่มกลับ · กระดิ่งของน้องเปิดดูได้ (ไม่นับว่าอ่านแล้ว)
-    if (S.peek) return html`<header class="topbar peek-bar"><div class="wrap"><span class="peek-say">หน้าแบบที่ <b>${S.peek.name}</b> เห็น<small>ดูอย่างเดียว</small></span><div class="top-r">${bell ? html`<button class="icon-btn bell-btn" data-act="bell-open" aria-label="แจ้งเตือนของน้อง">${icon('bell')}${n ? html`<i class="bell-n">${n > 9 ? '9+' : n}</i>` : ''}</button>` : ''}<button class="btn sm" data-act="peek-back">กลับ</button></div></div></header>`;
+    if (S.peek) return html`<header class="topbar peek-bar"><div class="wrap"><span class="peek-say">หน้าแบบที่ <b>${S.peek.name}</b> เห็น<small>ดูอย่างเดียว${peekTryLink() ? html` · ${peekTryLink()}` : ''}</small></span><div class="top-r">${bell ? html`<button class="icon-btn bell-btn" data-act="bell-open" aria-label="แจ้งเตือนของน้อง">${icon('bell')}${n ? html`<i class="bell-n">${n > 9 ? '9+' : n}</i>` : ''}</button>` : ''}<button class="btn sm" data-act="peek-back">กลับ</button></div></div></header>`;
     return html`<header class="topbar"><div class="wrap">${brand()}<div class="top-r">${bell ? html`<button class="icon-btn bell-btn ${bellRing(n) ? 'ring' : ''}" data-act="bell-open" aria-label="แจ้งเตือน${n ? ' ใหม่ ' + n + ' เรื่อง' : ''}">${icon('bell')}${n ? html`<i class="bell-n">${n > 9 ? '9+' : n}</i>` : ''}</button>` : ''}<button class="who" style="background:none;border:0;padding:0" data-act="${act}" aria-label="เมนูบัญชี"><span class="meta"><b>${who.name}</b>${who.sub ? html`<span>${who.sub}</span>` : ''}</span>${who.av}</button></div></div></header>`;
   }
   /** Whose staff screen this is: signed in, or being signed in. */
@@ -14510,9 +14522,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="item">${icon(ic)}<span class="grow">${text}${sub ? html`<span class="s" style="display:block">${sub}</span>` : ''}</span></div>`;
   }
   function lookWaitRows(o) {
-    var f = o.feedback || {};
     var rows = [];
-    if (f.fresh) rows.push(['chat', 'น้องบอกเรื่องใหม่ ' + f.fresh + ' เรื่อง']);
+    // (k193b) น้องบอกเรื่องใหม่ N เรื่อง ไม่อยู่ที่นี่แล้ว: ซ้ำกับการ์ด เรื่องที่น้องบอก ที่เปิดดูได้ทีละเรื่อง
     if (o.pendingLeaves) rows.push(['approve', 'คำขอลารออนุมัติ ' + o.pendingLeaves + ' รายการ']);
     ownerTodo(o, true).forEach(function (t) { rows.push([t[0], t[1]]); });
     (o.periods || []).filter(function (p) { return p.status === 'approved'; }).forEach(function (p) {
@@ -14591,13 +14602,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    * · ข้อมูลจากคำสั่ง owner คำสั่งเดียวเหมือนเดิม
    */
   var LOOK_MAX = 5;
-  /** วันนี้: [ไอคอน, ข้อความ, ปุ่มเปิดแผ่นดู] เฉพาะเรื่องที่ผิดจากปกติ */
+  /** วันนี้: [ไอคอน, ข้อความ, ปุ่มเปิดแผ่นดู, รหัสของปุ่ม] เฉพาะเรื่องที่ผิดจากปกติ
+   *  (k193a · เจ้าของร้าน 23 พ.ย. 2569) ทุกแถวเปิดดูได้หรืออ่านแล้วจบในตัว: ยอดขายยังไม่ได้ใส่ ไม่ขึ้นที่นี่ (เจ้าของร้านทำต่อจากแถวนี้ไม่ได้) */
   function lookTodayRows(o) {
     var rows = [];
     var s = o.sales;
     var w = s && s.week;
-    if (s && s.missing) rows.push(['money', 'ยอดขายยังไม่ได้ใส่ ' + s.missing + ' วัน', '']);
-    if (w && w.target && !w.reached && w.start) {
+    // (k193a) ต่ำกว่าเป้า: เทียบได้เมื่อวันที่ร้านเปิดของสัปดาห์นี้ถึงเมื่อวานใส่ยอดครบ (ยอดขาดวันเดียวเปอร์เซ็นต์ก็ต่ำเอง ไม่ใช่ขายได้น้อย)
+    var gap = !!s && (s.days || []).some(function (x) { return x.open && x.sales == null && w && x.date >= w.start && x.date < workDate(); });
+    if (w && w.target && !w.reached && w.start && !gap) {
       // เทียบกับส่วนของสัปดาห์ที่ผ่านมาแล้วถึงเมื่อวาน (ยอดของวันนี้ใส่หลังปิดร้าน)
       var gone = Math.max(0, Math.min(7, daysBetween(w.start, workDate())));
       var should = Math.round((gone / 7) * 100);
@@ -14609,8 +14622,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       });
     });
     var t = o.team;
-    var away = t && t.at ? (t.list || []).filter(function (x) { return !x.last; }).length : 0;
-    if (away) rows.push(['team', 'น้องยังไม่เปิดแอป ' + away + ' คน (7 วันถึงเมื่อคืน)', '']);
+    var away = t && t.at ? (t.list || []).filter(function (x) { return !x.last; }) : [];
+    // (k193a) บอกชื่อในแถว · คนเดียวเปิดแผ่นของคนนั้น หลายคนเปิดแผ่น การใช้แอป (ดูอย่างเดียวทั้งคู่ อยู่ใน LOOK_ACTS)
+    if (away.length) rows.push(['team', 'น้องยังไม่เปิดแอป ' + away.length + ' คน (7 วันถึงเมื่อคืน)' + away.map(function (x) { return x.name ? ' · ' + x.name : ''; }).join(''), away.length === 1 ? 'team-one' : 'use-open', away.length === 1 ? away[0].id : '']);
     var m = o.morning;
     if (m && !m.empty) {
       var y = [];
@@ -14637,9 +14651,29 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     ((f && f.latest) || []).forEach(function (x) {
       rows.push({ at: Date.parse(x.at) || 0, ic: 'chat', t: x.name + ': ' + (x.text || fbFilesText(x.files)), s: (x.status === 'fresh' && x.claude ? 'Claude ตอบแล้ว' : fbOwnerStatus(x)[0]) + (x.at ? ' · ' + lookWhen(x.at) : '') + lookAnswer(x), act: 'fb-inbox' });
     });
-    (o.roomDid || []).forEach(function (x) { rows.push({ at: Date.parse(x.at) || 0, ic: 'check', t: x.what, s: 'ห้องทำแล้ว · ' + lookWhen(x.at), act: '' }); });
+    // (k193b · เจ้าของร้าน 23 พ.ย. 2569 แถวที่กดดูไม่ได้เท่ากับไม่ได้ส่งอะไรมา): สิ่งที่ห้องทำไม่ปนในการ์ดนี้แล้ว ทุกแถวที่นี่เปิดดูได้ (lookDidRows บรรทัดพับท้ายหน้า)
     rows.sort(function (a, b) { return b.at - a.at; });
     return rows;
+  }
+  /** (k193b) สิ่งที่ Claude กดแทนใน 7 วัน: งานชนิดเดียวกันรวมเป็นแถวเดียว {t งาน, n กี่ครั้ง, iso ครั้งล่าสุด} ล่าสุดก่อน · เป็นตัวเลขที่อ่านแล้วจบ ไม่ใช่แถวต่อครั้ง */
+  function lookDidRows(o) {
+    var by = {};
+    var rows = [];
+    (o.roomDid || []).forEach(function (x) {
+      var at = Date.parse(x.at) || 0;
+      var r = by[x.what];
+      if (!r) { r = by[x.what] = { t: x.what, n: 0, at: -1, iso: '' }; rows.push(r); }
+      r.n++;
+      if (at > r.at) { r.at = at; r.iso = x.at; }
+    });
+    rows.sort(function (a, b) { return b.at - a.at; });
+    return rows;
+  }
+  function lookDidFold(o) {
+    var rows = lookDidRows(o);
+    if (!rows.length) return '';
+    var n = rows.reduce(function (k, r) { return k + r.n; }, 0);
+    return html`<details class="card flush lk-more" data-look="did"><summary>${icon('check')} Claude ทำแทนคุณใน 7 วัน ${n} ครั้ง</summary><div class="list">${rows.map(function (r) { return lookRow('check', r.t + ' · ' + r.n + ' ครั้ง', 'ล่าสุด ' + lookWhen(r.iso)); })}</div></details>`;
   }
   function toldRow(x) {
     var inner = html`${icon(x.ic)}<span class="grow lk-g"><span class="lk-t">${x.t}</span><span class="s lk-t">${x.s}</span></span>`;
@@ -14669,7 +14703,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var wait = lookWaitRows(o);
     // การ์ดเปิดแจ้งเตือน: ขึ้นเฉพาะเครื่องที่ยังไม่เปิด พับไว้เป็นบรรทัดเดียว (วิธีเปิดบน iPhone ยาวเกือบครึ่งจอ) ปุ่มเปิดอยู่ข้างใน
     var push = pushCard();
-    var todayRow = function (r) { return r[2] ? html`<button class="item" data-act="${r[2]}">${icon(r[0])}<span class="grow">${r[1]}</span>${icon('right')}</button>` : lookRow(r[0], r[1]); };
+    var todayRow = function (r) { return r[2] ? html`<button class="item" data-act="${r[2]}" data-id="${r[3] || ''}">${icon(r[0])}<span class="grow">${r[1]}</span>${icon('right')}</button>` : lookRow(r[0], r[1]); };
     // เกิน LOOK_MAX เรื่อง: ที่เหลือพับไว้ แตะบรรทัดสรุปเพื่อกางดู
     var fold = function (rows, draw) {
       var rest = rows.slice(LOOK_MAX);
@@ -14689,6 +14723,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         ${wait.length ? html`<section class="card flush" data-look="wait"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">รอคุณตกลง</span></div>
           <p class="small muted" style="margin:6px 16px 0">ตอบในแชตกับ Claude ได้เลย · หน้านี้ดูอย่างเดียว</p>${fold(wait, function (r) { return lookRow(r[0], r[1]); })}</section>` : ''}
         ${peekLine()}
+        ${lookDidFold(o)}
       </div></main>`);
     LOOK_SAY.forEach(function (w) { out = out.split(w[0]).join(w[1]); });
     return raw(out);
