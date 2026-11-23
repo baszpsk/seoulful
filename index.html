@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.40","page":"","e3":"7294d0dd","edge":true,"build":"dd1aa48a9589"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.41","page":"","e3":"7294d0dd","edge":true,"build":"50f0d9179f06"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="Seoulful">
@@ -352,9 +352,13 @@ body.look .od-find, body.look .stepper button[data-off] { display: none !importa
 body.look [data-off] [data-act] { pointer-events: auto; }
 .item .grow.lk-g { min-width: 0; }
 .look-page .list > .item { padding-top: 10px; padding-bottom: 10px; }
+.look-page .card-h { align-items: baseline; justify-content: space-between; }
+.look-page .card-h .eyebrow { letter-spacing: .02em; }
+.look-page .list > .item .lk-g > .s { margin-top: 1px; font-size: 13px; }
+.look-page .list > .item.lk-all { color: var(--muted); font-size: 14px; }
+.look-page .list > .item.lk-all > svg:first-child { display: none; }
+.look-page .lk-more[data-wait] > summary { padding-top: 12px; padding-bottom: 14px; }
 .lk-t { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.look-page .card > .bk-line { display: flex; align-items: center; gap: 6px; margin: 8px 16px 0; font-size: 13.5px; color: var(--muted); }
-.look-page .card > .bk-line svg { flex: none; width: 16px; height: 16px; }
 .lk-push > summary { display: flex; align-items: center; gap: 8px; color: inherit; }
 .lk-push > summary svg { flex: none; width: 18px; height: 18px; }
 .lk-push > .card { border: 0; box-shadow: none; margin: 0; }
@@ -484,6 +488,14 @@ body.noscroll #app .btn.loading::after { display: none; }
 .nt-row.fresh b::after { content: ''; display: inline-block; width: 7px; height: 7px; margin-left: 6px; border-radius: 50%; background: var(--bad); vertical-align: 2px; }
 .nt-row span { display: block; font-size: 13px; color: var(--ink-2); line-height: 1.45; overflow-wrap: anywhere; }
 .nt-row small { display: block; margin-top: 3px; font-size: 11.5px; color: var(--muted); }
+.do-row { cursor: default; }
+.do-row select.do-pick { flex: none; width: 152px; }
+.push-sw { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 12px 14px; border-radius: var(--r-md, 14px); background: var(--inset); font-size: 14px; }
+.push-sw > svg { flex: none; width: 18px; height: 18px; color: var(--muted); }
+.push-sw > b { font-weight: 600; color: var(--ok); }
+.nt-done { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 28px 0 20px; font-size: 15px; color: var(--muted); }
+.nt-done svg { width: 18px; height: 18px; color: var(--ok); }
+.nt-all { display: block; margin: 12px auto 0; padding: 10px 16px; min-height: 44px; border: 0; background: none; color: var(--muted); font: inherit; font-size: 13.5px; }
 /* Asking for notifications on this phone: until they are on, on the home screen (no way to put it away). */
 .push-card { background: linear-gradient(135deg, var(--gold-soft), transparent 70%), var(--card); box-shadow: var(--card-shadow), inset 0 0 0 1px rgba(196, 150, 80, .28); }
 .push-card .fb-invite-h { margin-bottom: 6px; }
@@ -6758,7 +6770,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // หน้าตัวอย่างลองเล่น (มีตัวสลับบทบาท ไม่มี SITE.page): ค่าเริ่มต้นเป็นโหมดทำงาน ให้ลองกดได้ครบ · ?work=0 ดูหน้าดูอย่างเดียว
   var LOOK_CALLS = ['owner', 'boot', 'notes', 'avatars', 'dailyList', 'dailyDay', 'dailyPhoto', 'feedbackList', 'feedbackFile', 'checkList', 'pushKey', 'pushOn', 'pushOff', 'notesSeen', 'feedbackSeen', 'photo', 'usageReport',
     'home', 'month', 'calendar', 'payslips', 'feedbackMine', 'orderList', 'shop', 'shelf', 'plaza', 'runs', 'howTo', 'status', 'blockGame', 'leaves'];
-  var LOOK_ACTS = ['bell-open', 'sheet-close', 'dl-day', 'dl-inbox', 'dl-all', 'dl-toggle', 'dl-photo-open', 'dl-photo-x', 'mr-open', 'meet-open', 'fb-inbox', 'fb-open', 'fb-play', 'photo', 'team-one', 'use-open', 'use-days', 'use-back', 'ck-list', 'push-on', 'retry-load', 'peek-open', 'peek-back', 'told-all', 'lk-leaves'];
+  var LOOK_ACTS = ['bell-open', 'sheet-close', 'dl-day', 'dl-inbox', 'dl-all', 'dl-toggle', 'dl-photo-open', 'dl-photo-x', 'mr-open', 'meet-open', 'fb-inbox', 'fb-open', 'fb-play', 'photo', 'team-one', 'use-open', 'use-days', 'use-back', 'ck-list', 'push-on', 'retry-load', 'peek-open', 'peek-back', 'told-all', 'lk-leaves', 'nt-read', 'nt-all'];
   // (k187) ดูหน้าจอน้อง (ทั้งโหมดดูและโหมดทำงาน): ส่งได้แค่คำสั่งอ่านของน้องที่หลังบ้านยอมให้ดูแทน (Api.gs PEEK_ROUTES_ · boot ไม่ถามรหัส)
   //   กดได้แค่ปุ่มเปลี่ยนแท็บ เปิดหน้าย่อย เปิดกระดิ่ง ปิดแผ่น และกลับ (PEEK_ACTS ใช้เฉพาะตอนดูหน้าจอน้อง ไม่ปนกับปุ่มของหน้าเจ้าของโหมดดู)
   //   · ปุ่มเข้าออกการดู (peek-open peek-back) อยู่ใน LOOK_ACTS และคำสั่งดูทุกตัวอยู่ใน LOOK_CALLS (k187-peek.test.js ตรวจ)
@@ -13974,12 +13986,49 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return html`<div class="stack">${leaveApprovals()}</div>`;
   }
   /** The approvers' ทีม tab: leave waiting for them first (when there is), the day's board, then the pay. */
+  /** k199 (เจ้าของร้าน 23 พ.ย. 2569 08:28): การ์ดงานของผู้อนุมัติ ตั้งวันหยุดประจำของทีม · ยังมีคนที่ไม่ได้ตั้งขึ้นจำนวนคน ตั้งครบแล้วเป็นแถวเปิดดูหรือแก้ */
+  function dayOffCard() {
+    var l = S.team && S.team.dayOffs;
+    if (S.view !== 'staff' || S.peek || !l || !l.length) return '';
+    var miss = l.filter(function (e) { return e.dayOff == null; }).length;
+    return html`<section class="card flush" data-card="dayoff"><button class="item" data-act="dayoff-open">${icon('cal')}<span class="grow"><span class="t" style="display:block">ตั้งวันหยุดประจำของทีม</span><span class="s" style="display:block">${miss ? 'ยังไม่ได้ตั้ง ' + miss + ' คน · แตะเพื่อเลือกวันให้แต่ละคน' : 'ตั้งครบทุกคนแล้ว · แตะเพื่อดูหรือแก้'}</span></span>${miss ? html`<span class="pill warn">${miss} คน</span>` : ''}${icon('right')}</button></section>`;
+  }
+  function dayOffBody() {
+    var l = (S.team && S.team.dayOffs) || [];
+    return html`<p class="small muted mt0">เลือกวันหยุดประจำสัปดาห์ของแต่ละคน แล้วกด บันทึก</p><section class="card flush"><div class="list">${l.map(function (e) {
+      return html`<label class="item do-row">${avatar(empById(e.id) || { id: e.id, name: e.name })}<span class="grow t">${e.name}</span><select class="input do-pick" data-id="${e.id}" data-was="${e.dayOff == null ? '' : e.dayOff}" aria-label="วันหยุดประจำของ ${e.name}">${e.dayOff == null ? html`<option value="" selected>ยังไม่ได้ตั้ง</option>` : ''}${TH_DAYS_LONG.map(function (d, i) { return html`<option value="${i}" ${e.dayOff === i ? raw('selected') : ''}>วัน${d}</option>`; })}</select></label>`;
+    })}</div></section>`;
+  }
+  function openDayOff() {
+    openSheet({ title: 'วันหยุดประจำของทีม', body: dayOffBody(),
+      foot: html`<button class="btn" data-act="sheet-close">ปิด</button><button class="btn primary" data-act="dayoff-save">บันทึก</button>` });
+  }
+  /** ส่งเฉพาะคนที่เลือกวันต่างจากเดิม ทีละคน · บันทึกครบจึงบอกว่าบันทึกแล้วและปิดแผ่น · ล้มบอกเหตุ แผ่นยังอยู่ กดใหม่ได้ */
+  function dayOffSave(el) {
+    var picks = [];
+    document.querySelectorAll('#sheet-body select.do-pick').forEach(function (x) { if (x.value !== '' && x.value !== x.dataset.was) picks.push({ empId: x.dataset.id, dayOff: +x.value }); });
+    if (!picks.length) { toast('ยังไม่ได้เปลี่ยนวันของใคร'); return; }
+    var auth = actorAuth();
+    var step = function (i, last) {
+      if (i >= picks.length) return Promise.resolve(last);
+      return call('dayOffSave', picks[i], auth).then(function (d) { if (S.team && d && d.dayOffs) S.team.dayOffs = d.dayOffs; return step(i + 1, d); });
+    };
+    run(el, step(0, null)).then(function () {
+      toast('บันทึกวันหยุดประจำแล้ว ' + picks.length + ' คน', 'ok');
+      closeSheet();
+      render();
+      loadHome(true, true);
+    }, function () {
+      if (sheetState && sheetState.title === 'วันหยุดประจำของทีม') setSheetBody(dayOffBody());
+      render();
+    });
+  }
   function teamApproveView() {
     var pend = S.leaves && S.leaves.pending && S.leaves.pending.length;
     var recent = S.leaves && S.leaves.recent && S.leaves.recent.length;
     // (k100a) คำขอที่รออนุมัติบนสุดเมื่อมี › ทีมวันนี้ › การลาล่าสุด › เงินเดือน (เนื้อหาเดิม)
     // k107 คำขอที่รอขึ้นก่อนการ์ดเปิดแจ้งเตือน · รายการเดือนนี้ย้ายลงใต้การลาล่าสุด (เดิมอยู่ท้ายทีมวันนี้ ขึ้นก่อนการลา)
-    return html`<div class="stack">${pend ? html`${leaveApprovals('wait')}<div class="divider"></div>` : ''}${pushTeamCard(S.home && S.home.approver && S.home.approver.push)}${teamView('board')}<div class="divider"></div>${pend ? (recent ? html`${leaveApprovals('recent')}<div class="divider"></div>` : '') : html`${leaveApprovals()}<div class="divider"></div>`}${teamEntries()}</div>`;
+    return html`<div class="stack">${pend ? html`${leaveApprovals('wait')}<div class="divider"></div>` : ''}${dayOffCard()}${pushTeamCard(S.home && S.home.approver && S.home.approver.push)}${teamView('board')}<div class="divider"></div>${pend ? (recent ? html`${leaveApprovals('recent')}<div class="divider"></div>` : '') : html`${leaveApprovals()}<div class="divider"></div>`}${teamEntries()}</div>`;
   }
 
   /** A leave that costs nothing off the Incentive: a doctor's note seen, or beyond anyone's control (#256, #257). */
@@ -14598,7 +14647,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!look && bk.mailOn && bk.to && !bk.offAccount) todo.push(['mail', 'ให้ส่งไฟล์สำรองไปอีเมลของบัญชีอื่น (ข้อมูลไม่หายแม้เข้าบัญชี Google ของร้านไม่ได้)', 'settings', 'more']);
     var rem = o.reminders || {};
     if (!look) (rem.setMissing || []).forEach(function (y) { todo.unshift(['cal', 'ใส่วันหยุดตามประเพณีปี ' + (+y + 543) + ' (ตามประกาศวันหยุดสถาบันการเงิน)', 'settings', 'more']); });
-    if ((rem.dayOffMissing || []).length) todo.push(['cal', 'ตั้งวันหยุดประจำ ' + rem.dayOffMissing.length + ' คน (' + rem.dayOffMissing.join(', ') + ') — ระหว่างนี้หยุดได้ตามวันหยุดต่อรอบแบบเดิม', 'staff']);
+    // (k199 · เจ้าของร้าน 23 พ.ย. 2569 08:28) โหมดดู: ตั้งวันหยุดประจำไม่ค้างที่เจ้าของร้าน ผู้อนุมัติตั้งเองในหน้าทีม (dayOffCard)
+    if (!look && (rem.dayOffMissing || []).length) todo.push(['cal', 'ตั้งวันหยุดประจำ ' + rem.dayOffMissing.length + ' คน (' + rem.dayOffMissing.join(', ') + ') — ระหว่างนี้หยุดได้ตามวันหยุดต่อรอบแบบเดิม', 'staff']);
     if ((rem.nameSent || []).length) todo.unshift(['team', 'คนใหม่ตั้งชื่อแล้ว ' + rem.nameSent.length + ' คน (' + rem.nameSent.join(', ') + ') รอยืนยัน — ' + (look ? 'บอกห้องในแชตให้ตรวจชื่อจริงที่ขึ้นสลิปแล้วยืนยันได้เลย' : 'แตะเพื่อตรวจชื่อจริงที่ขึ้นสลิปแล้วกดยืนยันชื่อ'), 'staff']);
     if ((rem.startMissing || []).length) todo.unshift(['team', 'ใส่วันเริ่มงาน ' + rem.startMissing.length + ' คน (' + rem.startMissing.join(', ') + ') — ระหว่างนี้ยังไม่ได้พักร้อนตามอายุงาน', 'staff']);
     if ((rem.probEndMissing || []).length) todo.unshift(['team', 'ใส่วันผ่านโปร ' + rem.probEndMissing.length + ' คน (' + rem.probEndMissing.join(', ') + ') — ไม่ใส่ = ทดลองงานไปตลอด', 'staff']);
@@ -14693,7 +14743,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   /**
    * 2.14.34 (k188 · เจ้าของร้าน 22 พ.ย. 2569 08:20 น้องพิมพ์มาแล้วไม่มีใครทำ น้องจะไม่อยากพิมพ์): เรื่องที่น้องบอกแล้วยังรอ Claude จัดการ
-   * ใต้คำทักทายของหน้าเจ้าของร้าน ทั้งโหมดดูและโหมดทำงาน · ขึ้นเมื่อมีเรื่องค้างเท่านั้น · น้องและผู้อนุมัติไม่เห็น (หลังบ้านให้เฉพาะคำสั่ง owner)
+   * ใต้คำทักทายของหน้าเจ้าของร้าน โหมดทำงาน (k199 · เจ้าของร้านทัก 23 พ.ย. 2569: เป็นงานภายในของห้อง ไม่ขึ้นในโหมดดูแล้ว) · ขึ้นเมื่อมีเรื่องค้างเท่านั้น · น้องและผู้อนุมัติไม่เห็น (หลังบ้านให้เฉพาะคำสั่ง owner)
    */
   function backlogLine(b) {
     if (!b || !(b.count > 0) || !S.owner || !ownerPage() || S.peek) return '';
@@ -14742,42 +14792,25 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (bk.error || bk.stale) rows.push(['shield', (bk.error ? 'สำรองข้อมูลอัตโนมัติไม่สำเร็จ' : 'ไม่ได้สำรองข้อมูลมา 3 วันแล้ว') + ' — บอกห้องในแชตได้เลย', '']);
     return rows;
   }
-  /** เรื่องที่น้องบอก: {at, ic, t หัวข้อ, s สิ่งที่ห้องทำหรือสถานะ, act ปุ่มเปิดแผ่นดู} ล่าสุดก่อน */
+  /** เรื่องที่น้องบอก: {at, ic, t หัวข้อ, s สิ่งที่ห้องทำหรือสถานะ, act ปุ่มเปิดแผ่นดู} ล่าสุดก่อน
+   *  (k199 · เจ้าของร้าน 23 พ.ย. 2569 08:24 "คุ้มค่ากับเวลาที่ฉันดู") open = ยังไม่ได้ตอบน้องและยังไม่จบ: หน้าแรกขึ้นเฉพาะแถว open (s0 สถานะแบบสั้น)
+   *  เรื่องที่ตอบแล้วหรือจบแล้ว (เสร็จแล้ว ยังไม่ทำ) อยู่ในแผ่น ดูทั้งหมด */
   function lookToldRows(o) {
     var rows = [];
     // (k190r) ท้ายบรรทัดสถานะของแต่ละเรื่อง: ร้านตอบน้องแล้วหรือยัง พร้อมคำตอบ (บรรทัดเดียว ตัดท้ายด้วย lk-t)
     var lookAnswer = function (x) { return x.answer ? ' · ร้านตอบแล้ว: ' + x.answer : ' · ยังไม่ได้ตอบน้อง'; };
     var v = o.daily && o.daily.view;
     ((v && v.items) || []).forEach(function (x) {
-      rows.push({ at: Date.parse(x.at) || 0, ic: 'note', t: (DL_SHORT[x.topic] || x.topic) + (x.menu ? ' · ' + x.menu : '') + (x.text ? ' · ' + x.text : ''), s: 'บันทึกหน้างาน' + (x.at ? ' · ' + lookWhen(x.at) : '') + lookAnswer(x), act: 'dl-inbox' });
+      rows.push({ at: Date.parse(x.at) || 0, ic: 'note', t: (DL_SHORT[x.topic] || x.topic) + (x.menu ? ' · ' + x.menu : '') + (x.text ? ' · ' + x.text : ''), s: 'บันทึกหน้างาน' + (x.at ? ' · ' + lookWhen(x.at) : '') + lookAnswer(x), s0: 'บันทึกหน้างาน' + (x.at ? ' · ' + lookWhen(x.at) : ''), open: !x.answer, act: 'dl-inbox' });
     });
     var f = o.feedback;
     ((f && f.latest) || []).forEach(function (x) {
-      rows.push({ at: Date.parse(x.at) || 0, ic: 'chat', t: x.name + ': ' + (x.text || fbFilesText(x.files)), s: (x.status === 'fresh' && x.claude ? 'Claude ตอบแล้ว' : fbOwnerStatus(x)[0]) + (x.at ? ' · ' + lookWhen(x.at) : '') + lookAnswer(x), act: 'fb-inbox' });
+      var fst = (x.status === 'fresh' && x.claude ? 'Claude ตอบแล้ว' : fbOwnerStatus(x)[0]) + (x.at ? ' · ' + lookWhen(x.at) : '');
+      rows.push({ at: Date.parse(x.at) || 0, ic: 'chat', t: x.name + ': ' + (x.text || fbFilesText(x.files)), s: fst + lookAnswer(x), s0: fst, open: !x.answer && x.status !== 'done' && x.status !== 'declined', act: 'fb-inbox' });
     });
-    // (k193b · เจ้าของร้าน 23 พ.ย. 2569 แถวที่กดดูไม่ได้เท่ากับไม่ได้ส่งอะไรมา): สิ่งที่ห้องทำไม่ปนในการ์ดนี้แล้ว ทุกแถวที่นี่เปิดดูได้ (lookDidRows บรรทัดพับท้ายหน้า)
+    // (k193b · เจ้าของร้าน 23 พ.ย. 2569 แถวที่กดดูไม่ได้เท่ากับไม่ได้ส่งอะไรมา): สิ่งที่ห้องทำไม่ปนในการ์ดนี้แล้ว ทุกแถวที่นี่เปิดดูได้ · (k199 · เจ้าของร้าน 23 พ.ย. 2569 08:21 "ไม่จำเป็นต้องบอกฉันเลย") บรรทัดพับ Claude ทำแทนคุณ ออกจากหน้านี้แล้ว
     rows.sort(function (a, b) { return b.at - a.at; });
     return rows;
-  }
-  /** (k193b) สิ่งที่ Claude กดแทนใน 7 วัน: งานชนิดเดียวกันรวมเป็นแถวเดียว {t งาน, n กี่ครั้ง, iso ครั้งล่าสุด} ล่าสุดก่อน · เป็นตัวเลขที่อ่านแล้วจบ ไม่ใช่แถวต่อครั้ง */
-  function lookDidRows(o) {
-    var by = {};
-    var rows = [];
-    (o.roomDid || []).forEach(function (x) {
-      var at = Date.parse(x.at) || 0;
-      var r = by[x.what];
-      if (!r) { r = by[x.what] = { t: x.what, n: 0, at: -1, iso: '' }; rows.push(r); }
-      r.n++;
-      if (at > r.at) { r.at = at; r.iso = x.at; }
-    });
-    rows.sort(function (a, b) { return b.at - a.at; });
-    return rows;
-  }
-  function lookDidFold(o) {
-    var rows = lookDidRows(o);
-    if (!rows.length) return '';
-    var n = rows.reduce(function (k, r) { return k + r.n; }, 0);
-    return html`<details class="card flush lk-more" data-look="did"><summary>${icon('check')} Claude ทำแทนคุณใน 7 วัน ${n} ครั้ง</summary><div class="list">${rows.map(function (r) { return lookRow('check', r.t + ' · ' + r.n + ' ครั้ง', 'ล่าสุด ' + lookWhen(r.iso)); })}</div></details>`;
   }
   function toldRow(x) {
     var inner = html`${icon(x.ic)}<span class="grow lk-g"><span class="lk-t">${x.t}</span><span class="s lk-t">${x.s}</span></span>`;
@@ -14796,7 +14829,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function peekLine() {
     var list = B.employees || [];
     if (!list.length) return '';
-    return html`<section class="card flush" data-look="peek"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">หน้าแบบที่น้องเห็น</span><span class="small muted">เลือกชื่อ · ดูอย่างเดียว</span></div>
+    return html`<section class="card flush" data-look="peek"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">หน้าแบบที่น้องเห็น</span><span class="small muted">ดูอย่างเดียว</span></div>
       <div class="peek-row">${list.map(function (e) { return html`<button class="peek-chip" data-act="peek-open" data-id="${e.id}">${avatar(e)}<span class="grow">${e.name}</span></button>`; })}</div></section>`;
   }
   function lookView() {
@@ -14804,6 +14837,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     MR_LAST = o.morning || null; // แผ่นรายงานเมื่อวานใช้ข้อมูลชุดนี้ (เดิมตั้งตอนวาดการ์ด ซึ่งโหมดดูไม่วาดแล้ว)
     var today = lookTodayRows(o);
     var told = lookToldRows(o);
+    // (k199) หน้าแรก: เฉพาะเรื่องที่ยังไม่ได้ตอบและยังไม่จบ · ที่เหลือนับไว้ในแถว ดูทั้งหมด
+    var toldOpen = told.filter(function (x) { return x.open; });
+    var toldRest = told.length - Math.min(toldOpen.length, LOOK_MAX);
+    var toldHome = function (x) { return toldRow({ ic: x.ic, t: x.t, s: x.s0, act: x.act }); };
+    var toldAll = told.length ? html`<button class="item lk-all" data-act="told-all">${icon('note')}<span class="grow">${toldOpen.length > LOOK_MAX ? 'และอีก ' + (toldOpen.length - LOOK_MAX) + ' เรื่องรอตอบ · ดูทั้งหมด' : toldRest > 0 ? 'ตอบแล้วหรือจบแล้ว ' + toldRest + ' เรื่อง · ดูทั้งหมด' : 'ดูทั้งหมด'}</span>${icon('right')}</button>` : '';
     var wait = lookWaitRows(o);
     // (k195o) รอคุณตกลง: แถวที่เปิดแผ่นดูได้เป็นปุ่ม · เรื่องที่ไม่มีแผ่นให้เปิดรวมเป็นบรรทัดสรุปเดียว กางอ่านเป็นข้อความ (ไม่มีแถวที่ดูเหมือนปุ่มแต่กดไม่ได้)
     var waitGo = wait.filter(function (r) { return r[2]; });
@@ -14823,16 +14861,13 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         <section class="card flush" data-look="today"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">วันนี้</span></div>
           ${today.length ? fold(today, todayRow) : html`<p class="small muted" style="margin:6px 16px 16px">วันนี้ไม่มีเรื่องผิดปกติ</p>`}</section>
         <section class="card flush" data-look="told"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">เรื่องที่น้องบอก</span></div>
-          ${backlogLine(o.backlog)}
           ${told.length
-            ? html`<div class="list">${told.slice(0, LOOK_MAX).map(toldRow)}<button class="item" data-act="told-all">${icon('note')}<span class="grow">${told.length > LOOK_MAX ? 'และอีก ' + (told.length - LOOK_MAX) + ' เรื่อง · ดูทั้งหมด' : 'ดูทั้งหมด'}</span>${icon('right')}</button></div>`
+            ? html`${toldOpen.length ? '' : html`<p class="small muted" style="margin:6px 16px 0">ไม่มีเรื่องรอตอบ</p>`}<div class="list">${toldOpen.slice(0, LOOK_MAX).map(toldHome)}${toldAll}</div>`
             : html`<p class="small muted" style="margin:6px 16px 16px">ยังไม่มีเรื่องที่น้องบอก</p>`}</section>
         ${wait.length ? html`<section class="card flush" data-look="wait"><div class="card-h" style="padding:16px 16px 0"><span class="eyebrow">รอคุณตกลง</span></div>
-          <p class="small muted" style="margin:6px 16px 0">ตอบในแชตกับ Claude ได้เลย · หน้านี้ดูอย่างเดียว</p>
           ${waitGo.length ? html`<div class="list">${waitGo.map(todayRow)}</div>` : ''}
           ${waitSay.length ? html`<details class="lk-more" data-wait="say"><summary>${waitGo.length ? 'และอีก ' : ''}${waitSay.length} เรื่องรอคุณตอบในแชต · แตะอ่าน</summary><div class="lk-notes">${waitSay.map(function (r) { return html`<p>${r[1]}</p>`; })}</div></details>` : ''}</section>` : ''}
         ${peekLine()}
-        ${lookDidFold(o)}
       </div></main>`);
     LOOK_SAY.forEach(function (w) { out = out.split(w[0]).join(w[1]); });
     return raw(out);
@@ -21541,7 +21576,65 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (st !== 'on') return pushCard();
     return html`<div class="push-here">${icon('check')}<div class="grow"><b>มือถือเครื่องนี้เปิดแจ้งเตือนแล้ว</b><span>รับแจ้งเตือนของ ${pushWho()} · มีเรื่องใหม่จะเด้งและสั่น · ลองส่งดูได้</span></div><button class="btn sm" data-act="push-test">ลองส่ง</button></div>`;
   }
+  /** k199 (เจ้าของร้าน 23 พ.ย. 2569 08:24 กระดิ่งกับหน้าแรกไม่ควรซ้ำกัน): กระดิ่งของเจ้าของร้านในโหมดดู = กล่องเรื่องเข้า
+   *  ขึ้นเฉพาะเรื่องที่ยังไม่อ่าน แตะแล้วเปิดเรื่องนั้นและนับว่าอ่านเรื่องเดียว · เปิดแผ่นเฉย ๆ ไม่นับว่าอ่าน เลขแดงจึงเท่าที่ยังไม่อ่านจริง
+   *  · เรื่องที่อยู่ในการ์ด เรื่องที่น้องบอก ของหน้าแรก หลังบ้านไม่ส่งมาที่นี่ (Push.gs NOTE_HOME_KINDS_) · น้อง ผู้อนุมัติ และโหมดทำงานใช้กระดิ่งแบบเดิม */
+  function bellInbox() { return lookOn() && !S.peek; }
+  function bellCount(n) {
+    var b = myBell();
+    if (b) b.unread = n;
+    badgeSet(n);
+    softRender();
+  }
+  /** บรรทัดเดียวบนสุดของกล่องเรื่องเข้า: มือถือเครื่องนี้เปิดแจ้งเตือนอยู่ไหม · ยังไม่เปิดใช้การ์ดเปิดแจ้งเตือนเดิม */
+  function pushSwitch() {
+    var st = pushState();
+    if (st === 'wait') return '';
+    if (st !== 'on') return pushCard();
+    return html`<div class="push-sw">${icon('bell')}<span class="grow">แจ้งเตือนมือถือเครื่องนี้</span><b>เปิดอยู่</b></div>`;
+  }
+  function bellInboxBody() {
+    var d = bellList;
+    var fresh = d ? d.notes.filter(function (n) { return n.fresh; }) : [];
+    var list = !d ? html`<div class="stack" aria-busy="true"><div class="skel" style="height:64px"></div><div class="skel" style="height:64px"></div></div>`
+      : fresh.length ? html`<section class="card flush"><div class="nt-list">${fresh.map(function (n) {
+        return html`<button class="nt-row fresh" data-act="nt-read" data-id="${n.id}" data-go="${n.go || 'bell'}"><span class="nt-ico">${icon(NOTE_ICON[n.kind] || 'bell')}</span><span class="grow"><b>${n.title}</b>${n.body ? html`<span>${n.body}</span>` : ''}<small>${noteWhen(n.at)}</small></span></button>`;
+      })}</div></section>${fresh.length > 1 ? html`<button class="nt-all" data-act="nt-all">อ่านแล้วทั้งหมด</button>` : ''}`
+      : html`<p class="nt-done">${icon('check')}อ่านครบแล้ว</p>`;
+    return html`${pushSwitch()}${list}`;
+  }
+  // เรื่องที่โหมดดูมีแผ่นให้เปิดดู: แตะแล้วเปิดแผ่นนั้น · เรื่องอื่นอ่านจบในแถว แตะแล้วแถวหายจากกล่อง
+  var BELL_OPENS = {
+    fb: function () { openFeedbackInbox(); },
+    'meet-sum': function () { meetData.up = false; openMeet(); },
+    'daily-new': function () { openDailyInbox(); },
+    leaves: function () { openLookLeaves(); },
+  };
+  function bellRead(id, go) {
+    if (!bellList) return;
+    var hit = false;
+    bellList.notes.forEach(function (n) { if (n.id === id && n.fresh) { n.fresh = false; hit = true; } });
+    if (hit) {
+      var b = myBell();
+      bellCount(Math.max(0, ((b && b.unread) || 1) - 1));
+      call('notesSeen', { ids: [id] }, ownerAuth()).then(function (r) { if (r && r.unread != null) bellCount(r.unread); }, function () {});
+    }
+    if (Object.prototype.hasOwnProperty.call(BELL_OPENS, go)) BELL_OPENS[go]();
+    else if (bellShown()) setSheetBody(bellBody());
+  }
+  function bellReadAll() {
+    if (!bellList) return;
+    bellList.notes.forEach(function (n) { n.fresh = false; });
+    bellCount(0);
+    if (bellShown()) setSheetBody(bellBody());
+    call('notesSeen', {}, ownerAuth()).then(function () {}, function () {});
+  }
+  /** k199 เจ้าของร้านเปิดแผ่นบันทึกหน้างานหรือความคิดเห็น (โหมดดู): แถวแจ้งเรื่องใหม่ชนิดนั้นนับว่าอ่าน ครั้งหน้าจึงเริ่มนับเรื่องใหม่ */
+  function homeSeen(kind) {
+    if (bellInbox()) call('notesSeen', { kinds: [kind] }, ownerAuth()).then(function () {}, function () {});
+  }
   function bellBody() {
+    if (bellInbox()) return bellInboxBody();
     var d = bellList;
     var list = !d ? html`<div class="stack" aria-busy="true"><div class="skel" style="height:64px"></div><div class="skel" style="height:64px"></div><div class="skel" style="height:64px"></div></div>`
       : d.notes.length ? html`<section class="card flush"><div class="nt-list">${d.notes.map(function (n) {
@@ -21562,6 +21655,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       var b = myBell();
       if (b) b.phones = d.phones;
       if (bellShown()) setSheetBody(bellBody());
+      // (k199) กล่องเรื่องเข้าของเจ้าของร้าน: เปิดแผ่นไม่นับว่าอ่าน เลขแดงตามที่หลังบ้านนับ
+      if (bellInbox()) { if ((b ? b.unread || 0 : 0) !== (d.unread || 0)) bellCount(d.unread || 0); return; }
       if (!d.unread || workOn()) return; // (k186) ห้องเปิดกระดิ่ง ไม่ใช่เจ้าของร้านอ่าน
       if (S.peek) return; // (k187) เจ้าของร้านดูกระดิ่งของน้อง ไม่ใช่น้องอ่าน
       call('notesSeen', {}, auth).then(function () {
@@ -23318,6 +23413,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'push-on': function (el) { pushEnable(el); },
     'push-test': function (el) { run(el, call('pushTest', {}, actorAuth())).then(pushTried, function () {}); },
     'nt-go': function (el) { goTo(el.dataset.go); },
+    'nt-read': function (el) { if (bellInbox()) bellRead(el.dataset.id, el.dataset.go); },
+    'nt-all': function () { if (bellInbox()) bellReadAll(); },
+    'dayoff-open': function () { openDayOff(); },
+    'dayoff-save': function (el) { dayOffSave(el); },
     'confirm-yes': function () { var r = confirmResolve; confirmResolve = null; closeSheet(); if (r) r(true); },
     'confirm-no': function () { closeSheet(); },
     'confirm-work': function (el) {
@@ -24018,7 +24117,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'fb-reply': function (el) { var box = $('#fb-reply'); if (box) { box.value = FB_REPLIES[+el.dataset.i]; box.focus(); } },
     'fb-remove': function (el) { var f = fb.files.splice(+el.dataset.i, 1)[0]; if (f) URL.revokeObjectURL(f.url); var box = $('#fb-text'); if (box) fb.text = box.value; refreshFeedbackForm(); },
     'fb-send': function () { sendFeedback(); },
-    'fb-inbox': function () { openFeedbackInbox(); },
+    'fb-inbox': function () { homeSeen('fb-new'); openFeedbackInbox(); },
     'fb-open': function (el) { openFeedbackItem(el.dataset.id); },
     'fb-play': function (el) {
       var f = fbFind(el.dataset.id);
@@ -24432,7 +24531,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'dl-del': function (el) {
       run(el, call('dailyDelete', { id: el.dataset.id }, staffAuth())).then(function (d) { S.home.daily = d.daily; if (d.levels) { S.levels = d.levels; if (S.home) S.home.levels = d.levels; } if (d.level) { S.home.level = d.level; lvCheck(d.level); } render(); openDailyMine(); toast('ลบแล้ว', 'ok'); }, function () {});
     },
-    'dl-inbox': function (el) { openDailyInbox(el && el.dataset.key); },
+    'dl-inbox': function (el) { homeSeen('daily-new'); openDailyInbox(el && el.dataset.key); },
     'dl-day': function (el) { loadDailyDay(el.dataset.day, el); },
     'mr-open': function () { openMorning(); },
     'meet-open': function (el) { meetData.up = !!(el && el.dataset && el.dataset.up); openMeet(); },
