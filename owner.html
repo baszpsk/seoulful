@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.38","page":"owner","e3":"7294d0dd","edge":true,"build":"6aa5750832b1"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful.seeds-to-success9.workers.dev/exec","version":"2.14.39","page":"owner","e3":"7294d0dd","edge":true,"build":"023db4333ca3"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="เจ้าของร้าน">
@@ -7729,6 +7729,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (n.hasAttribute(at.name)) continue;
       // (2.13.44 g-b3 ชื่อเรืองแสง: ตำแหน่งไล่สีที่ nmTick ตั้งไว้คงอยู่ ไม่กระตุกกลับตอนวาดใหม่)
       if (at.name === 'style' && old.classList.contains('nm')) continue;
+      // (k196 ความสูงที่ odWarm วัดไว้ของแถวสั่งของ คงอยู่ตอนวาดใหม่)
+      if (at.name === 'style' && old.classList.contains('od-item')) continue;
       if (at.name === 'class') { var m = marksKept('', old); if (m) { if (m !== at.value) old.setAttribute('class', m); continue; } }
       old.removeAttribute(at.name);
     }
@@ -8916,7 +8918,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if ((S.view === 'staff' && S.home) || (S.view === 'owner' && S.ownerHome)) pushPrep();
     lockRelease();
     pushCantTell();
-    if (S.sub === 'order' && $('#od-cats')) { odSpySet(S.odAt || 0, true); odSpy(); }
+    if (S.sub === 'order' && $('#od-cats')) { odSpySet(S.odAt || 0, true); odSpy(); odWarmSoon(); }
+    odPreload();
     glideLenses();
     runCardPics();
     bksWatch();
@@ -11142,6 +11145,18 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     ((S.od && S.od.items) || []).forEach(function (it) { if (odEntry(it)) out.push(it); });
     return out;
   }
+  /**
+   * k196: รายการสั่งของโหลดรอไว้หลังหน้าแรกขึ้น (ครั้งเดียวต่อคนต่อการเข้าแอป) แตะการ์ดสั่งของแล้วรายการขึ้นเลย ไม่ต้องรอหลังบ้านก่อน
+   * · เปิดแผ่นแล้วแอปยังโหลดใหม่เหมือนเดิม (openOrder) · โหลดรอไม่สำเร็จเงียบไว้ เปิดแผ่นจึงโหลดและบอกตามเดิม · ดูแทนน้องและโหมดดูหน้าตาไม่โหลดรอ
+   */
+  var odPreFor = '';
+  function odPreload() {
+    if (S.view !== 'staff' || !S.home || S.sub || S.od || S.peek || lookOn()) return;
+    var who = staffId();
+    if (!who || odPreFor === who || !$('[data-act="od-open"]')) return;
+    odPreFor = who;
+    setTimeout(function () { if (who === staffId() && !S.od && S.sub !== 'order') loadOrderList(); }, 1200);
+  }
   function loadOrderList(open) {
     var who = staffId();
     return call('orderList', {}, staffAuth()).then(function (d) {
@@ -11934,10 +11949,76 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     for (var k = 0; k < heads.length; k++) if (heads[k].getBoundingClientRect().top <= line) cur = +heads[k].dataset.i;
     if (cur !== S.odAt) odSpySet(cur);
   }
+  /**
+   * k196 (ครัวบอกแผ่นสั่งของช้า 23 พ.ย. 2569): กดบวกลบหรือพิมพ์จำนวนแล้วแถวสูงขึ้น ทุกแถวข้างล่างเลื่อน เบราว์เซอร์ระบายสีใหม่ราว 100 แถว
+   * รอบจอ · ล้างคำค้นจัดหน้าใหม่ครบ 157 แถวในจังหวะเดียว · odWarm ใส่ content-visibility: auto พร้อมความสูงจริงที่วัดได้ให้ทีละแถวตอนเครื่องว่าง
+   * หลังหน้าขึ้นครบแล้ว แถวนอกจอจึงไม่ถูกจัดหน้าและระบายสีอีก และตำแหน่งหัวหมวดตรงเท่าเดิมเพราะใช้ความสูงจริง ไม่ใช่ค่าประมาณ
+   * · ไม่ใส่ใน CSS ตั้งแต่แรก: (1) ความสูงประมาณทำแตะชิปหมวดท้ายพลาด (งาน k162) (2) วัด 23 พ.ย. 2569 เบราว์เซอร์ไล่จัดหน้าทีละแถวเองหลังภาพแรก
+   *   (ตัวเติมฟอร์มอัตโนมัติถามทุกช่องพิมพ์) ค้าง 1 วินาทีแทนที่จะเร็วขึ้น
+   * · แถวที่เนื้อหาเปลี่ยน (ข้อมูลมาใหม่) วัดใหม่ · จอเปลี่ยนความกว้าง วัดใหม่ทุกแถว · odGo วัดที่ค้างให้ครบก่อนคิดตำแหน่ง
+   * · morph คง style ของแถวไว้ตอนวาดใหม่
+   */
+  var OD_CV = typeof CSS !== 'undefined' && !!CSS.supports && CSS.supports('content-visibility', 'auto');
+  var odWarmQ = [], odWarmT = 0, odWarmDirty = false, odWarmW = 0;
+  function odWarmSoon() {
+    if (!OD_CV) return;
+    odWarmDirty = true;
+    if (!odWarmT) odWarmT = odWarmLater();
+  }
+  function odWarmFill() {
+    if (!odWarmDirty) return;
+    odWarmDirty = false;
+    var rows = document.querySelectorAll('#od-body .od-item'), q = [], wide = window.innerWidth !== odWarmW;
+    odWarmW = window.innerWidth;
+    // (แถวแรกที่เห็นของหมวดไม่มีเส้นคั่นบน สูงต่างจากตอนมีแถวอยู่เหนือ 1px: คำค้นเปลี่ยนแถวแรก วัดแถวนั้นใหม่)
+    var box = null, top = true;
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      if (r.parentNode !== box) { box = r.parentNode; top = true; }
+      if (r.hidden) { r._cvk = 0; continue; }
+      r._cvn = r.innerHTML.length + (top ? 0.5 : 0);
+      top = false;
+      if (wide || r._cvk !== r._cvn) q.push(r);
+    }
+    odWarmQ = q;
+  }
+  /** รอบถัดไปตอนเครื่องว่างจริง (หลังภาพขึ้นจอ ไม่แย่งคิวกับการวาดและนิ้วที่แตะ) · เบราว์เซอร์ที่ไม่มีตัวรอเครื่องว่างใช้ตัวจับเวลา */
+  function odWarmLater() {
+    return window.requestIdleCallback ? window.requestIdleCallback(odWarmStep, { timeout: 3000 }) : setTimeout(odWarmStep, 200);
+  }
+  function odWarmStep(idle) {
+    odWarmT = 0;
+    if (S.sub !== 'order') { odWarmQ = []; odWarmDirty = false; return; }
+    odWarmFill();
+    // (ครั้งละ 4 แถว ทำต่อเท่าที่เครื่องยังว่าง)
+    do { odWarm(4); } while (odWarmQ.length && idle && idle.timeRemaining && idle.timeRemaining() > 8);
+    if (odWarmQ.length || odWarmDirty) odWarmT = odWarmLater();
+  }
+  /** วัดความสูงจริงของแถวในคิว n แถว (0 = ทั้งหมด) แล้วจดไว้ที่แถว */
+  function odWarm(n) {
+    var todo = [], r, i;
+    while (odWarmQ.length && (!n || todo.length < n)) { r = odWarmQ.shift(); if (r.isConnected && !r.hidden) todo.push(r); }
+    if (!todo.length) return;
+    // (แถวที่ข้ามการจัดหน้าอยู่: เปิดให้จัดหน้าก่อนวัด · แถวที่ยังไม่เคยใส่ จัดหน้าอยู่แล้ว อ่านได้เลย)
+    for (i = 0; i < todo.length; i++) if (todo[i].style.contentVisibility) todo[i].style.contentVisibility = 'visible';
+    // (ความสูงที่จดเป็นของเนื้อหาข้างใน ไม่รวมขอบในและเส้นคั่นของแถว: จดรวมแล้วแถวนอกจอสูงเกินจริงแถวละ 25px)
+    var hs = todo.map(function (x) {
+      var cs = getComputedStyle(x);
+      return x.getBoundingClientRect().height - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0) - (parseFloat(cs.borderTopWidth) || 0) - (parseFloat(cs.borderBottomWidth) || 0);
+    });
+    for (i = 0; i < todo.length; i++) {
+      r = todo[i];
+      if (hs[i] > 0) { r.style.containIntrinsicSize = 'auto ' + Math.round(hs[i] * 100) / 100 + 'px'; r.style.contentVisibility = 'auto'; r._cvk = r._cvn; }
+      else r.style.contentVisibility = '';
+    }
+  }
+  window.addEventListener('resize', function () { if (S.sub === 'order' && window.innerWidth !== odWarmW) odWarmSoon(); });
   /** Tapped in the bar: the page glides to that category (nothing drawn again, the bar stays where it is). */
   function odGo(i) {
     var head = document.getElementById('od-sec-' + i);
     if (!head) return;
+    // k196: ความสูงจริงของทุกแถวต้องครบก่อนคิดตำแหน่งหัวหมวด
+    if (OD_CV) { odWarmDirty = true; odWarmFill(); odWarm(0); }
     odSpySet(i);
     S.odGoing = true;
     clearTimeout(S.odGoingT);
@@ -12122,6 +12203,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       }
       var first = secs.filter(function (x) { return x.items.length; })[0];
       if (first) odSpySet(first.i, true);
+      odWarmSoon();
       return;
     }
     var v = el.value.trim() === '' ? null : Number(el.value.replace(',', '.'));
