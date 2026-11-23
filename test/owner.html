@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.41","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"934db745c8f9"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.42","page":"owner","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"a87dd5739db5"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·เจ้าของ">
@@ -489,6 +489,8 @@ body.noscroll #app .btn.loading::after { display: none; }
 .nt-row.fresh b::after { content: ''; display: inline-block; width: 7px; height: 7px; margin-left: 6px; border-radius: 50%; background: var(--bad); vertical-align: 2px; }
 .nt-row span { display: block; font-size: 13px; color: var(--ink-2); line-height: 1.45; overflow-wrap: anywhere; }
 .nt-row small { display: block; margin-top: 3px; font-size: 11.5px; color: var(--muted); }
+.nt-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14.5px; line-height: 1.7; user-select: text; -webkit-user-select: text; }
+.nt-text-at { display: block; margin-top: 10px; font-size: 12px; color: var(--muted); }
 .do-row { cursor: default; }
 .do-row select.do-pick { flex: none; width: 152px; }
 .push-sw { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 12px 14px; border-radius: var(--r-md, 14px); background: var(--inset); font-size: 14px; }
@@ -9870,6 +9872,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (st.today) toast('วันนี้ลงเวลาไปแล้วเมื่อ ' + String(st.today.in).slice(0, 5) + ' น.');
     }
     if (data.bell) badgeSet(data.bell.unread || 0);
+    fbQueueRun(); // k200 ไฟล์แนบที่ค้างจากครั้งก่อน ส่งต่อ
     goSoon();
   }
   function homeTag(id, data) { return id + '|' + ((data && data.status && data.status.workDate) || workDate()); }
@@ -10034,7 +10037,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     return performance.now() - bellAt < BELL_MS;
   }
   function topbar(who, act, bell) {
-    var n = bell ? bell.unread || 0 : 0;
+    var n = bellNum(bell);
     // (k187) ดูหน้าจอน้อง: แถบบนบอกว่ากำลังดูของใคร ดูอย่างเดียว และปุ่มกลับ · กระดิ่งของน้องเปิดดูได้ (ไม่นับว่าอ่านแล้ว)
     if (S.peek) return html`<header class="topbar peek-bar"><div class="wrap"><span class="peek-say">หน้าแบบที่ <b>${S.peek.name}</b> เห็น<small>ดูอย่างเดียว${peekTryLink() ? html` · ${peekTryLink()}` : ''}</small></span><div class="top-r">${bell ? html`<button class="icon-btn bell-btn" data-act="bell-open" aria-label="แจ้งเตือนของน้อง">${icon('bell')}${n ? html`<i class="bell-n">${n > 9 ? '9+' : n}</i>` : ''}</button>` : ''}<button class="btn sm" data-act="peek-back">กลับ</button></div></div></header>`;
     return html`<header class="topbar"><div class="wrap">${brand()}<div class="top-r">${bell ? html`<button class="icon-btn bell-btn ${bellRing(n) ? 'ring' : ''}" data-act="bell-open" aria-label="แจ้งเตือน${n ? ' ใหม่ ' + n + ' เรื่อง' : ''}">${icon('bell')}${n ? html`<i class="bell-n">${n > 9 ? '9+' : n}</i>` : ''}</button>` : ''}<button class="who" style="background:none;border:0;padding:0" data-act="${act}" aria-label="เมนูบัญชี"><span class="meta"><b>${who.name}</b>${who.sub ? html`<span>${who.sub}</span>` : ''}</span>${who.av}</button></div></div></header>`;
@@ -14514,7 +14517,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       prefetchTabs();
       syncDailySums(d.daily);
       syncUseAdvice(d.usage);
-      if (d.bell) badgeSet(d.bell.unread || 0);
+      if (d.bell) badgeSet(bellNum(d.bell));
       goSoon();
       return d;
     }, function (e) {
@@ -21582,9 +21585,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    *  ขึ้นเฉพาะเรื่องที่ยังไม่อ่าน แตะแล้วเปิดเรื่องนั้นและนับว่าอ่านเรื่องเดียว · เปิดแผ่นเฉย ๆ ไม่นับว่าอ่าน เลขแดงจึงเท่าที่ยังไม่อ่านจริง
    *  · เรื่องที่อยู่ในการ์ด เรื่องที่น้องบอก ของหน้าแรก หลังบ้านไม่ส่งมาที่นี่ (Push.gs NOTE_HOME_KINDS_) · น้อง ผู้อนุมัติ และโหมดทำงานใช้กระดิ่งแบบเดิม */
   function bellInbox() { return lookOn() && !S.peek; }
+  /** k200 เลขแดงของกระดิ่ง: เจ้าของร้านโหมดดูนับเฉพาะเรื่องที่เปิดอ่านได้ (หลังบ้านส่ง look) · ที่อื่นนับทุกเรื่องตามเดิม */
+  function bellNum(b) { return b ? (bellInbox() && b.look != null ? b.look : b.unread) || 0 : 0; }
+  function bellGot(r) { return r && bellInbox() && r.look != null ? r.look : r ? r.unread : null; }
   function bellCount(n) {
     var b = myBell();
-    if (b) b.unread = n;
+    if (b) { if (bellInbox() && b.look != null) b.look = n; else b.unread = n; }
     badgeSet(n);
     softRender();
   }
@@ -21597,39 +21603,55 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function bellInboxBody() {
     var d = bellList;
-    var fresh = d ? d.notes.filter(function (n) { return n.fresh; }) : [];
+    // k200 ขึ้นเฉพาะเรื่องที่แตะแล้วเปิดอ่านได้จริง (หลังบ้านบอกทีละแถว) · เรื่องเนื้อยาวขึ้นบรรทัดสรุปบรรทัดเดียว แตะแล้วเปิดเนื้อเต็ม
+    var fresh = d ? d.notes.filter(function (n) { return n.fresh && n.look; }) : [];
     var list = !d ? html`<div class="stack" aria-busy="true"><div class="skel" style="height:64px"></div><div class="skel" style="height:64px"></div></div>`
       : fresh.length ? html`<section class="card flush"><div class="nt-list">${fresh.map(function (n) {
-        return html`<button class="nt-row fresh" data-act="nt-read" data-id="${n.id}" data-go="${n.go || 'bell'}"><span class="nt-ico">${icon(NOTE_ICON[n.kind] || 'bell')}</span><span class="grow"><b>${n.title}</b>${n.body ? html`<span>${n.body}</span>` : ''}<small>${noteWhen(n.at)}</small></span></button>`;
+        return html`<button class="nt-row fresh" data-act="nt-read" data-id="${n.id}" data-go="${n.go || 'bell'}"><span class="nt-ico">${icon(NOTE_ICON[n.kind] || 'bell')}</span><span class="grow"><b>${n.title}</b>${n.body ? html`<span>${bellLine(n)}</span>` : ''}<small>${noteWhen(n.at)}</small></span></button>`;
       })}</div></section>${fresh.length > 1 ? html`<button class="nt-all" data-act="nt-all">อ่านแล้วทั้งหมด</button>` : ''}`
       : html`<p class="nt-done">${icon('check')}อ่านครบแล้ว</p>`;
     return html`${pushSwitch()}${list}`;
   }
-  // เรื่องที่โหมดดูมีแผ่นให้เปิดดู: แตะแล้วเปิดแผ่นนั้น · เรื่องอื่นอ่านจบในแถว แตะแล้วแถวหายจากกล่อง
+  // เรื่องที่โหมดดูมีแผ่นให้เปิดดู: แตะแล้วเปิดแผ่นนั้น · k200 เรื่องอื่นที่ขึ้นในกล่อง (รายงานเมื่อวาน สรุปประจำวัน) แตะแล้วเปิดเนื้อเต็มในแผ่นข้อความ
+  // · ทุกแถวในกล่องจึงแตะแล้วเปิดอะไรเสมอ (รายการปลายทางตรงกับ Push.gs NOTE_LOOK_GO_)
   var BELL_OPENS = {
     fb: function () { openFeedbackInbox(); },
     'meet-sum': function () { meetData.up = false; openMeet(); },
     'daily-new': function () { openDailyInbox(); },
     leaves: function () { openLookLeaves(); },
   };
+  function bellOpens(go) { return Object.prototype.hasOwnProperty.call(BELL_OPENS, go); }
+  /** บรรทัดใต้หัวเรื่องของแถว: เรื่องเนื้อยาวหลายบรรทัดขึ้นบรรทัดเนื้อบรรทัดแรก (บรรทัดบนสุดซ้ำหัวเรื่อง) */
+  function bellLine(n) {
+    if (bellOpens(n.go)) return n.body;
+    var l = String(n.body || '').split('\n').filter(function (x) { return x.trim(); });
+    return l.length > 1 ? l[1] : l[0] || '';
+  }
+  /** k200 เนื้อเต็มของเรื่องที่ไม่มีแผ่นของตัวเอง อ่านในแผ่นข้อความ · กลับ = กล่องเรื่องเข้า */
+  function openNoteText(n) {
+    openSheet({ use: 'แจ้งเตือน · เปิดเรื่อง', title: n.title, body: html`<p class="nt-text">${n.body || n.title}</p><small class="nt-text-at">${noteWhen(n.at)}</small>`, foot: html`<button class="btn primary" data-act="bell-open">กลับ</button>` });
+  }
   function bellRead(id, go) {
     if (!bellList) return;
     var hit = false;
-    bellList.notes.forEach(function (n) { if (n.id === id && n.fresh) { n.fresh = false; hit = true; } });
+    var note = null;
+    bellList.notes.forEach(function (n) { if (n.id !== id) return; note = n; if (n.fresh) { n.fresh = false; hit = true; } });
     if (hit) {
-      var b = myBell();
-      bellCount(Math.max(0, ((b && b.unread) || 1) - 1));
-      call('notesSeen', { ids: [id] }, ownerAuth()).then(function (r) { if (r && r.unread != null) bellCount(r.unread); }, function () {});
+      bellCount(Math.max(0, (bellNum(myBell()) || 1) - 1));
+      call('notesSeen', { ids: [id] }, ownerAuth()).then(function (r) { var left = bellGot(r); if (left != null) bellCount(left); }, function () {});
     }
-    if (Object.prototype.hasOwnProperty.call(BELL_OPENS, go)) BELL_OPENS[go]();
+    if (bellOpens(go)) BELL_OPENS[go]();
+    else if (note) openNoteText(note);
     else if (bellShown()) setSheetBody(bellBody());
   }
   function bellReadAll() {
     if (!bellList) return;
-    bellList.notes.forEach(function (n) { n.fresh = false; });
+    // k200 อ่านแล้วเฉพาะเรื่องที่ขึ้นในกล่อง (เรื่องของโหมดทำงานที่ไม่ขึ้นที่นี่ยังนับในโหมดทำงาน)
+    var ids = [];
+    bellList.notes.forEach(function (n) { if (n.fresh && n.look) { n.fresh = false; ids.push(n.id); } });
     bellCount(0);
     if (bellShown()) setSheetBody(bellBody());
-    call('notesSeen', {}, ownerAuth()).then(function () {}, function () {});
+    if (ids.length) call('notesSeen', { ids: ids }, ownerAuth()).then(function (r) { var left = bellGot(r); if (left != null) bellCount(left); }, function () {});
   }
   /** k199 เจ้าของร้านเปิดแผ่นบันทึกหน้างานหรือความคิดเห็น (โหมดดู): แถวแจ้งเรื่องใหม่ชนิดนั้นนับว่าอ่าน ครั้งหน้าจึงเริ่มนับเรื่องใหม่ */
   function homeSeen(kind) {
@@ -21658,7 +21680,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (b) b.phones = d.phones;
       if (bellShown()) setSheetBody(bellBody());
       // (k199) กล่องเรื่องเข้าของเจ้าของร้าน: เปิดแผ่นไม่นับว่าอ่าน เลขแดงตามที่หลังบ้านนับ
-      if (bellInbox()) { if ((b ? b.unread || 0 : 0) !== (d.unread || 0)) bellCount(d.unread || 0); return; }
+      if (bellInbox()) { if (b && d.look != null && b.look == null) b.look = d.look; if (bellNum(b) !== (bellGot(d) || 0)) bellCount(bellGot(d) || 0); return; }
       if (!d.unread || workOn()) return; // (k186) ห้องเปิดกระดิ่ง ไม่ใช่เจ้าของร้านอ่าน
       if (S.peek) return; // (k187) เจ้าของร้านดูกระดิ่งของน้อง ไม่ใช่น้องอ่าน
       call('notesSeen', {}, auth).then(function () {
@@ -21674,7 +21696,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** A note came while the app is open (the phone's helper says so): the bell counts up, and rings. */
   function bellNews(unread, notes) {
     var b = myBell();
-    if (b && unread != null) b.unread = unread;
+    // k200 เลขจากมือถือของเจ้าของร้าน = เลขโหมดดู (Push.gs apiPushNotes_)
+    if (b && unread != null) { if (S.view === 'owner' && b.look != null) b.look = unread; else if (S.view !== 'owner') b.unread = unread; }
     badgeSet(unread || 0);
     sfx('ding');
     var n = (notes || [])[0];
@@ -21695,6 +21718,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var tab = function (t) { if (sheetState) closeSheet(); ACTIONS.tab({ dataset: { tab: t } }); };
     if (go === 'bell' || !go) { if (!bellShown()) openBell(); return; }
     if (owner) {
+      if (go === 'leaves' && lookOn()) { openLookLeaves(); return; } // k200 ปลายทางเดียวกับแตะในกล่องเรื่องเข้า
       if (go === 'fb') { openFeedbackInbox(); return; }
       if (go === 'meet-sum') { meetData.up = false; openMeet(); return; }
       if (go === 'daily-new') { openDailyInbox(); return; }
@@ -22786,7 +22810,11 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       dlList = d;
       if ($('#dl-inbox')) setSheetBody(dailyInboxBody());
       dlFocus(true);
-      if (!noSync && d.github && !lookOn()) call('dailySync', {}, ownerAuth()).then(function (r) { if (r.changed) { loadDailyList(true); loadOwner(true, true); } }, function () {});
+      // k200 ดึงสรุปจาก GitHub ไม่เกิน 10 นาทีครั้ง ใช้ตัวกันเดียวกับ syncDailySums (เดิมเรียกทุกครั้งที่เปิดแผ่น)
+      if (!noSync && d.github && !lookOn() && Date.now() - dlSyncAt >= 10 * 60000) {
+        dlSyncAt = Date.now();
+        call('dailySync', {}, ownerAuth()).then(function (r) { if (r.changed) { loadDailyList(true); loadOwner(true, true); } }, function () {});
+      }
       return d;
     }, function (e) { toast(e.message, 'bad'); });
   }
@@ -23124,6 +23152,83 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     for (var i = 0; i < 14; i++) out += abc[(bytes ? bytes[i] : Math.floor(Math.random() * 256)) % abc.length];
     return out;
   }
+  // ---- k200 (เจ้าของร้าน 23 พ.ย. 2569 18:34 "ข้อ4โอเคทำเลย") ไฟล์แนบส่งตามเบื้องหลัง ------------------------------------
+  // เดิมรอส่งไฟล์ครบก่อนจึงขึ้นว่าส่งแล้ว (9 ใน 10 ครั้งถึง 10.7 วินาที) → ข้อความส่งก่อน ขึ้น "ส่งแล้ว" ทันที ไฟล์เก็บในเครื่อง (IndexedDB) แล้วส่งตาม
+  // · เน็ตหลุดกลางทาง ไฟล์ยังอยู่ในเครื่อง ส่งต่อเองเมื่อเน็ตกลับหรือเปิดแอปครั้งถัดไป · ไม่ซ้ำ: ชิ้นไฟล์ชื่อเดิมทับตัวเดิม และหลังบ้านรับไฟล์ของเรื่องครั้งเดียว
+  // · เครื่องที่เก็บไม่ได้ ส่งแบบเดิม (รอไฟล์ครบก่อน) ไม่มีอะไรหาย
+  var FBQ = { db: null, busy: false, again: false };
+  function fbqDb() {
+    return new Promise(function (ok) {
+      if (FBQ.db) { ok(FBQ.db); return; }
+      try {
+        if (!window.indexedDB) { ok(null); return; }
+        var t = setTimeout(function () { ok(null); }, 3000);
+        var rq = indexedDB.open(STORE + 'seoulful-fb-queue', 1);
+        rq.onupgradeneeded = function () { rq.result.createObjectStore('q', { keyPath: 'draft' }); };
+        rq.onerror = function () { clearTimeout(t); ok(null); };
+        rq.onsuccess = function () { clearTimeout(t); FBQ.db = rq.result; ok(FBQ.db); };
+      } catch (e) { ok(null); }
+    });
+  }
+  function fbqDo(mode, work, none) {
+    return fbqDb().then(function (db) {
+      if (!db) return none;
+      return new Promise(function (ok) {
+        try {
+          var tx = db.transaction('q', mode);
+          var rq = work(tx.objectStore('q'));
+          tx.oncomplete = function () { ok(mode === 'readonly' ? rq.result || none : true); };
+          tx.onerror = tx.onabort = function () { ok(none); };
+        } catch (e) { ok(none); }
+      });
+    });
+  }
+  /** เก็บไฟล์ของเรื่องนี้ไว้ส่งตาม: true เมื่อเก็บได้จริง */
+  function fbqPut(item) { return fbqDo('readwrite', function (s) { return s.put(item); }, false); }
+  function fbqAll() { return fbqDo('readonly', function (s) { return s.getAll(); }, []); }
+  function fbqDel(draft) { return fbqDo('readwrite', function (s) { return s.delete(draft); }, false); }
+  /** ส่งไฟล์ของเรื่องหนึ่งทีละชิ้น แล้วบอกหลังบ้านว่าไฟล์ของเรื่องนี้ครบ */
+  function fbqSend(it, auth) {
+    var files = [];
+    return it.files.reduce(function (p, f, i) {
+      return p.then(function () {
+        var parts = Math.max(1, Math.ceil(f.blob.size / FB_PART));
+        var ids = [];
+        var one = function (k) {
+          if (k >= parts) { files.push({ type: f.type, size: f.blob.size, parts: ids }); return Promise.resolve(); }
+          return blobBase64(f.blob.slice(k * FB_PART, Math.min(f.blob.size, (k + 1) * FB_PART))).then(function (b64) {
+            return sendAgainOnLoss(function () { return call('feedbackUpload', { draft: it.draft, file: i, of: parts, part: k, type: f.type, data: b64 }, auth); });
+          }).then(function (d) { ids.push(d.id); return one(k + 1); });
+        };
+        return one(0);
+      });
+    }, Promise.resolve()).then(function () {
+      return sendAgainOnLoss(function () { return call('feedbackAttach', { draft: it.draft, files: files }, auth); });
+    });
+  }
+  /** ส่งไฟล์ที่ค้างในเครื่องของคนที่เปิดแอปอยู่ ทีละเรื่อง · ทีละรอบ (เรียกซ้อนระหว่างส่ง = ส่งอีกรอบเมื่อรอบนี้จบ) · เน็ตหลุดหยุดรอรอบหน้า ของยังอยู่ */
+  function fbQueueRun() {
+    if (!S.staff || S.peek) return Promise.resolve(false);
+    if (FBQ.busy) { FBQ.again = true; return Promise.resolve(false); }
+    FBQ.busy = true;
+    var emp = S.staff.empId;
+    var auth = staffAuth();
+    var end = function (v) { FBQ.busy = false; if (FBQ.again) { FBQ.again = false; if (v) return fbQueueRun(); } return v; };
+    return fbqAll().then(function (all) {
+      return (all || []).filter(function (it) { return it && it.emp === emp && it.files && it.files.length; }).reduce(function (p, it) {
+        return p.then(function () {
+          return fbqSend(it, auth).then(function (d) {
+            return fbqDel(it.draft).then(function () { if (d && d.mine && S.staff && S.staff.empId === emp) S.fbMine = d.mine; });
+          }, function (e) {
+            if (e && e.network) throw e; // เน็ตหลุด: หยุดรอบนี้ ไฟล์ยังอยู่ในเครื่อง
+            // เรื่องถูกลบไปแล้ว หรือหลังบ้านไม่รับ 5 รอบ: เลิกส่งเรื่องนี้ (เรื่องอื่นส่งต่อ)
+            it.tries = (it.tries || 0) + 1;
+            return e && e.code === 'FB_GONE' || it.tries >= 5 ? fbqDel(it.draft) : fbqPut(it);
+          });
+        });
+      }, Promise.resolve());
+    }).then(function () { return end(true); }, function () { return end(false); });
+  }
   function sendFeedback() {
     var box = $('#fb-text');
     if (box) fb.text = box.value;
@@ -23137,10 +23242,19 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     var bar = function () { var b = $('#fb-bar'); if (b) b.style.width = Math.max(4, Math.round((sent / total) * 100)) + '%'; };
     var device = mine.kind === 'bug' ? fbDevice() : '';
     openSheet({ title: FB_TITLE, saving: true, body: html`<div class="result-wait" aria-busy="true"><div class="mark">${icon('send')}</div><h2>กำลังส่ง…</h2>${mine.files.length ? html`<p class="first">${fbFilesText(mine.files.map(function (f) { return { t: f.t }; }))}</p><div class="bar fb-bar"><i id="fb-bar" style="width:4%"></i></div><p class="small muted">ไฟล์ใหญ่ใช้เวลาสักครู่ เปิดหน้านี้ไว้จนกว่าจะส่งเสร็จ</p>` : ''}</div>` });
+    var after = false; // k200 ไฟล์เก็บในเครื่องแล้ว ส่งตามเบื้องหลัง
     prepareFeedbackFiles(mine.files).then(function (ready) {
       total = ready.files.reduce(function (n, f) { return n + f.blob.size; }, 0) || 1;
       var files = [];
-      return ready.files.reduce(function (p, f, i) {
+      if (!ready.files.length) return sendAgainOnLoss(function () { return call('feedbackSend', { draft: draft, kind: mine.kind, text: text, files: files, thumb: ready.thumb, device: device }, auth); });
+      return fbqPut({ draft: draft, emp: auth.empId, at: Date.now(), files: ready.files.map(function (f) { return { blob: f.blob, type: f.type }; }) }).then(function (kept) {
+        if (!kept) return fbSendWhole();
+        after = true;
+        return sendAgainOnLoss(function () { return call('feedbackSend', { draft: draft, kind: mine.kind, text: text, files: [], coming: ready.files.length, thumb: ready.thumb, device: device }, auth); })
+          .catch(function (e) { after = false; return fbqDel(draft).then(function () { throw e; }); });
+      });
+      // (เครื่องที่เก็บไฟล์ไม่ได้: แบบเดิม ส่งไฟล์ครบก่อนแล้วจึงส่งข้อความ)
+      function fbSendWhole() { return ready.files.reduce(function (p, f, i) {
         return p.then(function () {
           var parts = Math.max(1, Math.ceil(f.blob.size / FB_PART));
           var ids = [];
@@ -23155,8 +23269,9 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         });
       }, Promise.resolve()).then(function () {
         return sendAgainOnLoss(function () { return call('feedbackSend', { draft: draft, kind: mine.kind, text: text, files: files, thumb: ready.thumb, device: device }, auth); });
-      });
+      }); }
     }).then(function (d) {
+      if (after) fbQueueRun();
       mine.files.forEach(function (f) { URL.revokeObjectURL(f.url); });
       if (fb === mine) fb = null;
       LS.del(fbDraftKey());
@@ -23173,6 +23288,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
           <h2>${mine.kind === 'ask' ? 'ขอบคุณที่ถามนะ!' : 'ขอบคุณที่บอกนะ!'}</h2><p class="first">ส่งถึงเจ้าของร้านแล้ว · เจ้าของร้านตอบทุกเรื่อง</p>
           <ol class="fb-steps"><li class="on">ส่งแล้ว</li><li>เจ้าของร้านอ่าน</li><li>ร้านรับไปทำ</li><li>ใช้ได้แล้ว</li></ol>
           <p class="small muted">มีความคืบหน้าเมื่อไร หน้าแรกจะบอก · ดูได้ตลอดที่ "ที่ฉันเสนอ"</p>
+          ${after ? html`<p class="small muted fb-after">ไฟล์แนบกำลังส่งตามไป · ถ้าเน็ตหลุด แอปส่งต่อให้เองเมื่อเปิดแอปครั้งถัดไป</p>` : ''}
           ${n > 1 || got > 0 ? html`<p class="fb-count">${icon('spark')} ${[n > 1 ? 'คุณช่วยเสนอแล้ว ' + n + ' เรื่อง' : '', got > 0 ? '+' + got + ' แต้ม' : ''].filter(String).join(' · ')}</p>` : ''}${coinsToBox(d.level) ? html`<p class="fb-count">${icon('gift')} ${coinsToBox(d.level)}</p>` : ''}</div>`,
         foot: html`<button class="btn" data-act="fb-mine">ที่ฉันเสนอ</button><button class="btn primary" data-act="sheet-close">เรียบร้อย</button>` });
       lvCheck(d.level);
@@ -23369,15 +23485,62 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
     return a;
   }
-  /** An attached file, its parts fetched one after another and put back together. */
+  // k200 ไฟล์แนบที่เปิดแล้วเก็บไว้ในเครื่อง (Cache API): เปิดแอปครั้งหน้าเปิดไฟล์เดิมได้ทันที ไม่ดึงจาก Google Drive ใหม่ (เดิมจำแค่ในหน้าที่เปิดอยู่)
+  // · ไฟล์ไม่เปลี่ยนหลังส่ง ชื่อในที่เก็บ = รหัสเรื่อง ลำดับไฟล์ จำนวนชิ้น และขนาด · เพดาน: ไฟล์เดียวไม่เกิน FB_KEEP_ONE รวมไม่เกิน FB_KEEP_ALL และ FB_KEEP_N ไฟล์
+  //   เกินแล้วลบไฟล์ที่เก็บก่อนสุด · เก็บไม่ได้ (เครื่องไม่มีที่เก็บ เต็ม หรือเปิดจากไฟล์) = ดึงจากหลังบ้านตามเดิม ไม่ล้ม · ลบเรื่องแล้วไฟล์ในเครื่องหายด้วย
+  var FB_KEPT = STORE + 'seoulful-fb-files';
+  var FB_KEEP_ONE = 12 * 1048576;
+  var FB_KEEP_ALL = 60 * 1048576;
+  var FB_KEEP_N = 40;
+  function fbKeptOpen() {
+    try { return window.caches && /^https?:$/.test(location.protocol) ? caches.open(FB_KEPT).catch(function () { return null; }) : Promise.resolve(null); } catch (e) { return Promise.resolve(null); }
+  }
+  function fbKeptAt(f, i) { return '/_fb-kept/' + encodeURIComponent(f.id) + '/' + i + '-' + f.files[i].parts; }
+  function fbKeptSize(rq) { var m = /[?&]b=(\d+)/.exec(rq.url || ''); return m ? +m[1] : 0; }
+  /** ไฟล์นี้ที่เก็บไว้ในเครื่อง (Blob) หรือ null */
+  function fbKeptGet(f, i) {
+    return fbKeptOpen().then(function (c) {
+      if (!c) return null;
+      return c.match(fbKeptAt(f, i), { ignoreSearch: true }).then(function (r) { return r ? r.blob() : null; });
+    }).catch(function () { return null; });
+  }
+  /** เก็บไฟล์นี้ไว้ในเครื่อง แล้วลบไฟล์เก่าสุดจนไม่เกินเพดาน · ไม่สำเร็จไม่เป็นไร */
+  function fbKeptPut(f, i, blob) {
+    if (!blob || !blob.size || blob.size > FB_KEEP_ONE) return Promise.resolve(false);
+    return fbKeptOpen().then(function (c) {
+      if (!c) return false;
+      var at = fbKeptAt(f, i);
+      return c.delete(at, { ignoreSearch: true }).then(function () {
+        return c.put(at + '?b=' + blob.size, new Response(blob, { headers: { 'Content-Type': blob.type || 'application/octet-stream' } }));
+      }).then(function () { return c.keys(); }).then(function (keys) {
+        var sum = keys.reduce(function (a, k) { return a + fbKeptSize(k); }, 0);
+        var drop = [];
+        // ที่เก็บเรียงตามลำดับที่เก็บ: ตัวแรกเก่าสุด · ตัวที่เพิ่งเก็บ (ท้ายสุด) ไม่ลบ
+        for (var k = 0; k < keys.length - 1 && (keys.length - drop.length > FB_KEEP_N || sum > FB_KEEP_ALL); k++) { sum -= fbKeptSize(keys[k]); drop.push(keys[k]); }
+        return Promise.all(drop.map(function (x) { return c.delete(x); })).then(function () { return true; });
+      });
+    }).catch(function () { return false; });
+  }
+  /** เรื่องนี้ถูกลบ: ไฟล์ของเรื่องที่เก็บในเครื่องหายด้วย */
+  function fbKeptDrop(f) {
+    return fbKeptOpen().then(function (c) {
+      if (!c) return;
+      return Promise.all((f.files || []).map(function (x, i) { return c.delete(fbKeptAt(f, i), { ignoreSearch: true }); }));
+    }).catch(function () {});
+  }
+  var fbBusy = {}; // 'id:file' → ไฟล์ที่กำลังดึงอยู่ (แตะซ้ำไม่ดึงซ้อน)
+  /** An attached file: the copy kept on this phone, or its parts fetched one after another and put back together (and kept). */
   function fbFetchFile(f, i, onPart) {
     var key = f.id + ':' + i;
     if (fbMedia[key]) return Promise.resolve(fbMedia[key]);
+    if (fbBusy[key]) return fbBusy[key];
     var file = f.files[i];
     var chunks = [];
     var next = function (k) {
       if (k >= file.parts) {
-        fbMedia[key] = URL.createObjectURL(new Blob(chunks, { type: file.type }));
+        var blob = new Blob(chunks, { type: file.type });
+        fbMedia[key] = URL.createObjectURL(blob);
+        fbKeptPut(f, i, blob);
         return Promise.resolve(fbMedia[key]);
       }
       return call('feedbackFile', { id: f.id, file: i, part: k }, ownerAuth()).then(function (d) {
@@ -23386,7 +23549,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         return next(k + 1);
       });
     };
-    return next(0);
+    var done = function () { delete fbBusy[key]; };
+    fbBusy[key] = fbKeptGet(f, i).then(function (kept) {
+      if (fbMedia[key]) return fbMedia[key];
+      if (kept && kept.size) { fbMedia[key] = URL.createObjectURL(file.type && kept.type !== file.type ? new Blob([kept], { type: file.type }) : kept); return fbMedia[key]; }
+      return next(0);
+    });
+    fbBusy[key].then(done, done);
+    return fbBusy[key];
   }
   function fbDecided(d) {
     if (fbList) fbList.items = fbList.items.map(function (x) { return x.id === d.item.id ? d.item : x; });
@@ -24195,6 +24365,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
         done: function (d) {
           if (fbList) fbList.items = fbList.items.filter(function (x) { return x.id !== f.id; });
           f.files.forEach(function (x, i) { var k = f.id + ':' + i; if (fbMedia[k]) { URL.revokeObjectURL(fbMedia[k]); delete fbMedia[k]; } });
+          fbKeptDrop(f);
           if (S.ownerHome && S.ownerHome.feedback) {
             fbCount(d.total);
             ownerChanged();
@@ -25475,6 +25646,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     boot();
   }
   window.addEventListener('online', retryBoot);
+  window.addEventListener('online', function () { fbQueueRun(); }); // k200 เน็ตกลับ: ไฟล์แนบที่ค้างส่งต่อ
 
   // ---- the move from Google's page to the shop's site ----------------------
   // Each has its own memory in the phone, so the button carries this phone's
