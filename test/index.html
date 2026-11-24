@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.42","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"cb4cf02a376d"};</script>
+<script>window.__SEOULFUL_SITE__ = {"api":"https://seoulful-test.seeds-to-success9.workers.dev/exec","version":"2.14.43","page":"","e3":"7294d0dd","edge":true,"test":true,"store":"test.","build":"d086408fe401"};</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-title" content="ทดลอง·พนักงาน">
@@ -668,6 +668,9 @@ button.item:active { background: var(--inset); transition-duration: 0s; }
 .gps-line.ok { color: var(--ok); }
 .gps-line.warn { color: var(--warn); }
 .gps-line.wait { animation: sign-in .3s ease 1.5s both; }
+/* (k206) ทางแก้เมื่อหาตำแหน่งไม่ได้ และปุ่มลองอีกครั้ง */
+.gps-tips { margin: 6px 0 0; padding-left: 26px; font-size: 13px; line-height: 1.55; color: var(--ink); }
+.gps-retry { margin-top: 10px; }
 #scan-note.warn { color: var(--warn); font-weight: 600; }
 .streak { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 5px 12px; border-radius: 99px; background: rgba(233, 204, 146, .16); color: #e9cc92; font-size: 13px; font-weight: 600; }
 .streak svg { width: 15px; height: 15px; }
@@ -7419,7 +7422,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (USE.dev) return USE.dev;
     var ua = navigator.userAgent || '';
     var v = function (re) { var m = re.exec(ua); return m ? m.slice(1).filter(Boolean).join('.') : ''; };
-    var os = /iPhone|iPod/.test(ua) ? 'iOS ' + v(/OS (\d+)[_.](\d+)/) : /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iPad' : /Android/.test(ua) ? 'Android ' + v(/Android (\d+)(?:\.(\d+))?/) : /Windows/.test(ua) ? 'Windows' : /Mac OS X/.test(ua) ? 'Mac' : /Linux/.test(ua) ? 'Linux' : 'อื่น ๆ';
+    var os = /iPhone|iPod/.test(ua) ? 'iOS ' + v(/OS (\d+)[_.](\d+)/) : iosDesk() ? 'iPhone (เดสก์ท็อป)' : /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? 'iPad' : /Android/.test(ua) ? 'Android ' + v(/Android (\d+)(?:\.(\d+))?/) : /Windows/.test(ua) ? 'Windows' : /Mac OS X/.test(ua) ? 'Mac' : /Linux/.test(ua) ? 'Linux' : 'อื่น ๆ';
     var br = / Line\//.test(ua) ? 'LINE' : /FBAN|FBAV|Instagram/.test(ua) ? 'Facebook' : /SamsungBrowser/.test(ua) ? 'Samsung' : /EdgA?\/|EdgiOS/.test(ua) ? 'Edge' : /CriOS|Chrome\//.test(ua) ? 'Chrome' : /FxiOS|Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) ? 'Safari' : 'อื่น ๆ';
     var home = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone ? 'หน้าจอโฮม' : 'เบราว์เซอร์';
     var parts = [os.trim(), br, home, Math.round(screen.width) + '×' + Math.round(screen.height)];
@@ -8237,16 +8240,68 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   }
   function locate(fresh) {
     if (HOOKS.locate) return HOOKS.locate().then(function (g) { if (g) S.geo = g; return g; });
-    if (!navigator.geolocation) return Promise.resolve(null);
+    if (!navigator.geolocation) { S.geoErr = 'none'; return Promise.resolve(null); }
     if (!fresh && S.geo && Date.now() - S.geo.t < 60000) return Promise.resolve(S.geo);
+    // (k206 · น้องแจ้ง 24 พ.ย. 2569 iPhone อนุญาตตำแหน่งแล้ว บรรทัด "เปิดตำแหน่ง (GPS)…" ยังค้าง) เดิมขอแบบแม่นยำสูงครั้งเดียว
+    // ล้มแบบไหนก็คืน null เหมือนกัน ตอนนี้: จดเหตุลง S.geoErr (denied เครื่องไม่ให้ · unavailable เครื่องหาไม่ได้ · timeout หมดเวลา)
+    // และมีตัวสำรองแบบแม่นยำต่ำ (watchPosition) เริ่มเมื่อครั้งแรกล้มหรือเงียบเกิน 4 วิ · เวลารวมไม่เกิน 13 วิ เท่าเดิม
+    // ค่าจากตัวสำรองที่คลาดไม่เกิน 100 ม. ใช้ได้ทันที (หลังบ้านเผื่อความคลาดเท่านี้) คลาดกว่านั้นใช้เมื่อไม่มีค่าที่ดีกว่า
     return new Promise(function (resolve) {
-      var done = false;
-      var finish = function (v) { if (!done) { done = true; resolve(v); } };
-      navigator.geolocation.getCurrentPosition(function (pos) {
+      var geo = navigator.geolocation;
+      var done = false, watch = null, best = null, firstErr = '', backErr = '', startT = 0, endT = 0;
+      var WHY = { 1: 'denied', 2: 'unavailable', 3: 'timeout' };
+      var end = function (v) {
+        if (done) return;
+        done = true;
+        clearTimeout(startT);
+        clearTimeout(endT);
+        if (watch != null) { try { geo.clearWatch(watch); } catch (e) {} }
+        resolve(v);
+      };
+      var found = function (pos) {
+        if (done) return;
         S.geo = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: pos.coords.accuracy, t: Date.now() };
-        finish(S.geo);
-      }, function () { finish(null); }, { enableHighAccuracy: true, timeout: 12000, maximumAge: fresh ? 0 : 60000 });
-      setTimeout(function () { finish(S.geo); }, 13000);
+        S.geoErr = '';
+        end(S.geo);
+      };
+      var failed = function (why) {
+        if (done) return;
+        S.geoErr = why;
+        end(null);
+      };
+      // ทั้งสองทางล้มแล้ว: ใช้ค่าคลาดมากที่ตัวสำรองเคยได้ ไม่มีก็บอกเหตุของครั้งแรก
+      var both = function () {
+        if (!firstErr || !backErr) return;
+        if (best) found(best); else failed(firstErr);
+      };
+      var backup = function () {
+        if (done || watch != null) return;
+        if (!geo.watchPosition) { backErr = 'unavailable'; both(); return; }
+        try {
+          watch = geo.watchPosition(function (pos) {
+            if (!best || pos.coords.accuracy < best.coords.accuracy) best = pos;
+            if (pos.coords.accuracy <= 100 || firstErr) found(best);
+          }, function (e) {
+            if (e && e.code === 1) { failed('denied'); return; }
+            backErr = WHY[e && e.code] || 'unavailable';
+            both();
+          }, { enableHighAccuracy: false, timeout: 9000, maximumAge: fresh ? 30000 : 60000 });
+        } catch (e) { backErr = 'unavailable'; both(); }
+      };
+      geo.getCurrentPosition(found, function (e) {
+        if (e && e.code === 1) { failed('denied'); return; }
+        firstErr = WHY[e && e.code] || 'unavailable';
+        if (best) { found(best); return; }
+        backup();
+        both();
+      }, { enableHighAccuracy: true, timeout: 12000, maximumAge: fresh ? 0 : 60000 });
+      startT = setTimeout(backup, 4000);
+      endT = setTimeout(function () {
+        if (done) return;
+        if (best) { found(best); return; }
+        S.geoErr = 'timeout';
+        end(S.geo);
+      }, 13000);
     });
   }
   function startCamera(video) {
@@ -10226,13 +10281,46 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     if (!g) {
       return S.geoBusy
         ? html`<div class="gps-line wait">${icon('pin')}<span>กำลังหาตำแหน่ง…</span></div>`
-        : html`<div class="gps-line warn">${icon('pin')}<span>เปิดตำแหน่ง (GPS) แล้วกดอนุญาตให้เว็บนี้ใช้ตำแหน่ง</span></div>`;
+        : S.geoErr ? gpsHelp()
+        : html`<div class="gps-line warn">${icon('pin')}<span>เปิดตำแหน่ง (GPS) แล้วกดอนุญาตให้เว็บนี้ใช้ตำแหน่ง</span></div>${gpsRetry()}`;
     }
     var d = distM(g.lat, g.lng, shop.lat, shop.lng);
     var inside = !geoOut(g);
     // (k190q) ตำแหน่งที่บอกว่าห่างร้านยังหาซ้ำอยู่: บอกว่ากำลังเช็กอีกครั้ง ไม่ให้เข้าใจว่าค้าง
     if (!inside && (S.geoBusy || S.geoTimer)) return html`<div class="gps-line wait">${icon('pin')}<span>อยู่ห่างร้าน ${distText(d)} · กำลังเช็กตำแหน่งอีกครั้ง…</span></div>`;
     return html`<div class="gps-line ${inside ? 'ok' : 'warn'}">${icon('pin')}<span>${inside ? 'อยู่ในร้าน' : 'อยู่ห่างร้าน ' + distText(d) + ' — ลงเวลาได้เมื่ออยู่ในร้าน'}</span></div>`;
+  }
+  /** (k206) ปุ่มขอตำแหน่งใหม่: iPhone ถามหรือหาตำแหน่งให้เมื่อมาจากการแตะ */
+  function gpsRetry() {
+    return html`<button class="btn sm gps-retry" data-act="gps-again">${icon('refresh')} ลองหาตำแหน่งอีกครั้ง</button>`;
+  }
+  /** (k206) เหตุที่หาตำแหน่งไม่ได้ บอกสั้น ๆ: หัวเรื่อง และทางแก้ตามเครื่อง (S.geoErr จาก locate) */
+  function gpsWhy() {
+    var why = S.geoErr, ios = isIOS(), tips = [];
+    var head = why === 'denied' ? 'เครื่องยังไม่ให้เว็บนี้ใช้ตำแหน่ง' : why === 'none' ? 'เบราว์เซอร์นี้หาตำแหน่งไม่ได้' : 'ยังหาตำแหน่งไม่เจอ';
+    if (why === 'none') {
+      tips.push(ios ? 'เปิดแอปด้วย Safari' : 'เปิดแอปด้วย Chrome');
+    } else if (why === 'denied') {
+      if (ios) {
+        tips.push('การตั้งค่า › ความเป็นส่วนตัวและความปลอดภัย › บริการหาตำแหน่งที่ตั้ง เปิดไว้ แล้วแตะ เว็บไซต์ Safari เลือก "ขณะใช้แอป"');
+        tips.push('ใน Safari แตะปุ่ม aA หน้าที่อยู่เว็บ › การตั้งค่าเว็บไซต์ › ตำแหน่งที่ตั้ง เลือก "อนุญาต"');
+      } else {
+        tips.push('เปิดตำแหน่ง (GPS) ของเครื่อง');
+        tips.push('แตะรูปแม่กุญแจหน้าที่อยู่เว็บ แล้วเปิด "ตำแหน่ง" ให้เว็บนี้');
+      }
+    } else {
+      if (ios) tips.push('การตั้งค่า › ความเป็นส่วนตัวและความปลอดภัย › บริการหาตำแหน่งที่ตั้ง › เว็บไซต์ Safari เปิด "ตำแหน่งที่ตั้งที่แม่นยำ"');
+      else tips.push('เปิดตำแหน่ง (GPS) ของเครื่อง');
+      tips.push('เปิด Wi-Fi ไว้ (ไม่ต้องต่อ) แล้วขยับไปใกล้หน้าร้าน');
+    }
+    // iPhone ที่เปิดแบบเว็บไซต์เดสก์ท็อป: ให้กลับเป็นแบบมือถือ และปิดตัวอ่าน
+    if (iosDesk()) tips.push('แตะปุ่ม aA หน้าที่อยู่เว็บ เลือก "ขอเว็บไซต์สำหรับมือถือ" และ "ซ่อนตัวอ่าน"');
+    return { head: head, tips: tips };
+  }
+  function gpsHelp() {
+    var w = gpsWhy();
+    return html`<div class="gps-line warn">${icon('pin')}<span>${w.head}</span></div>
+      <ul class="gps-tips">${w.tips.map(function (t) { return html`<li>${t}</li>`; })}<li>ลงเวลาไม่ได้จริง ๆ บอกผู้อนุมัติให้ลงเวลาแทนได้</li></ul>${gpsRetry()}`;
   }
   /** Whether this phone already lets the page know where it is. */
   function gpsAllowed() {
@@ -10275,7 +10363,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function geoAgain() {
     if (S.geoTimer) { clearTimeout(S.geoTimer); S.geoTimer = 0; }
     if (S.geo && !geoOut(S.geo)) { S.geoTry = 0; return; }
-    if (!S.geo && !HOOKS.locate && !S.geoAsked) return;
+    if (!S.geo && !HOOKS.locate && !S.geoAsked && !geoSoft()) return;
     if (!geoWanted() || (S.geoTry || 0) >= GEO_TRIES) return;
     S.geoTry = (S.geoTry || 0) + 1;
     S.geoTimer = setTimeout(function () {
@@ -10283,13 +10371,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (geoWanted()) warmGps(); else if (S.view === 'staff') softRender();
     }, GEO_AGAIN_MS);
   }
+  /** (k206) ครั้งก่อนหาไม่ได้เพราะหมดเวลาหรือเครื่องหาไม่เจอ (ไม่ใช่เครื่องไม่ให้): ขอซ้ำได้โดยไม่มีคำถามเด้ง */
+  function geoSoft() { return S.geoErr === 'timeout' || S.geoErr === 'unavailable'; }
   /** กลับมาเปิดแอป: เริ่มนับรอบหาซ้ำใหม่ แล้วหาตำแหน่งทันทีถ้าค่าเดิมใช้ไม่ได้แล้ว */
   function geoBack() {
     if (document.visibilityState !== 'visible') return;
     S.geoTry = 0;
     if (!geoWanted()) return;
     // เคยได้ตำแหน่งแล้ว = เครื่องอนุญาตแล้ว หาได้เลย (มือถือบางรุ่นถามสิทธิ์ล่วงหน้าไม่ได้) · ยังไม่เคย ถามสิทธิ์ก่อน ไม่ให้มีคำถามเด้งเอง
-    if (S.geo || S.geoAsked) { warmGps(); return; }
+    if (S.geo || S.geoAsked || geoSoft()) { warmGps(); return; }
     gpsAllowed().then(function (yes) { if (yes && geoWanted()) warmGps(); });
   }
   /**
@@ -10314,8 +10404,23 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
    * lets the page know already, so no question about it pops up over the camera.
    */
   function geoSoon() {
-    if (S.geo || HOOKS.locate) { geoFresh(); return; }
+    if (S.geo || HOOKS.locate || S.geoAsked || geoSoft()) { geoFresh(); return; }
     gpsAllowed().then(function (yes) { if (yes) geoFresh(); });
+  }
+  /** (k206) แตะ "ลองหาตำแหน่งอีกครั้ง": ล้างเหตุเดิม เริ่มนับรอบหาซ้ำใหม่ แล้วหาทันที */
+  function gpsAgain() {
+    if (S.geoBusy) return;
+    S.geoErr = '';
+    S.geoTry = 0;
+    if (S.geoTimer) { clearTimeout(S.geoTimer); S.geoTimer = 0; }
+    warmGps();
+    softRender();
+  }
+  /** (k206) ลงเวลาไม่ผ่านเพราะไม่มีตำแหน่ง: บอกเหตุของเครื่องนี้และปุ่มที่ต้องกด แทนข้อความกลาง */
+  function gpsSay(e) {
+    if (!e || e.code !== 'GPS' || S.geo || !S.geoErr || HOOKS.locate) return e.message;
+    softRender();
+    return gpsWhy().head + ' — ดูวิธีแก้เหนือปุ่มลงเวลา แล้วกด "ลองหาตำแหน่งอีกครั้ง"';
   }
   /** A QR already scanned that counts: from the app's camera, or from the link when links are allowed. */
   function scannedOk() {
@@ -13591,7 +13696,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if (e.code === 'QR' || e.code === 'QR_OLD' || e.code === 'CLOCK' || e.code === 'NET') { S.scanCode = ''; S.scanInApp = false; S.scanReadAt = ''; render(); }
       if (e.message === 'ยังไม่ได้สแกน') return;
       if (e.message === 'ยังไม่ได้ถ่ายรูป') { if (selfie) toast('ถ่ายรูปตัวเองแล้วลงเวลาได้เลย — กดอีกครั้ง', 'bad'); return; }
-      toast(e.message, qrTone(e));
+      toast(gpsSay(e), qrTone(e));
     });
   }
   /** A QR that did not count says what to do next, calmly; anything else that went wrong is red. */
@@ -13632,7 +13737,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
       if ((e.code === 'POSTER' || e.code === 'QR' || e.code === 'QR_OLD') && S.posterShot && !forReview) { posterMiss(S.posterShot, e.message); return; }
       savingDone();
       if (e.message === 'ยังไม่ได้ถ่ายรูป') { toast('ถ่ายรูปข้างป้ายแล้วลงเวลาได้เลย — กดอีกครั้ง', 'bad'); return; }
-      toast(e.message, 'bad');
+      toast(gpsSay(e), 'bad');
     });
   }
   /**
@@ -20986,7 +21091,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   // same notes for every phone. Until this phone is on, the home screen asks (no way to put it away);
   // the owner and the approvers see who has not turned it on yet.
   var PUSH = { sub: null, checked: false, msg: false, reg: null, key: '', prep: false, fresh: false, renew: false };
-  function isIOS() { return /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+  // (k206) iPhone/iPad ที่เปิดแบบเว็บไซต์เดสก์ท็อปบอกตัวเองว่าเป็น Mac: ดูจากจอสัมผัส (Mac จริงไม่มีจุดสัมผัส)
+  function isIOS() { var ua = navigator.userAgent || ''; return /iP(hone|ad|od)/.test(ua) || ((navigator.platform === 'MacIntel' || /Macintosh/.test(ua)) && navigator.maxTouchPoints > 1); }
+  /** (k206) iPhone ที่เปิดแบบเว็บไซต์เดสก์ท็อป: บอกว่าเป็น Mac มีจอสัมผัส และจอด้านสั้นไม่เกิน 500 (iPad ด้านสั้น 744 ขึ้นไป) */
+  function iosDesk() { return isIOS() && !/iP(hone|ad|od)/.test(navigator.userAgent || '') && Math.min(screen.width, screen.height) <= 500; }
   function inLine() { return /\bLine\//i.test(navigator.userAgent); }
   /** Opened from the home screen's icon (iPhone: only there can a web app be told). */
   function fromHome() { return window.navigator.standalone === true || !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches); }
@@ -21125,7 +21233,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   /** What the phone is called in the owner's list of phones. */
   function deviceName() {
     var ua = navigator.userAgent;
-    var kind = isIOS() ? (/iPad/.test(ua) || !/iPhone/.test(ua) ? 'iPad' : 'iPhone') : /Android/.test(ua) ? 'Android' : 'คอมพิวเตอร์';
+    var kind = isIOS() ? (/iPhone/.test(ua) || iosDesk() ? 'iPhone' : 'iPad') : /Android/.test(ua) ? 'Android' : 'คอมพิวเตอร์';
     var app = fromHome() ? 'แอปบนหน้าจอโฮม' : /SamsungBrowser/.test(ua) ? 'Samsung Internet' : /Firefox\//.test(ua) ? 'Firefox' : /Edg\//.test(ua) ? 'Edge' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : 'เบราว์เซอร์';
     return kind + ' · ' + app;
   }
@@ -23301,7 +23409,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
   function fbDevice() {
     var ua = navigator.userAgent || '';
     var ios = ua.match(/OS (\d+)[_.](\d+)/);
-    var os = /iPhone|iPad|iPod/.test(ua) ? 'iOS ' + (ios ? ios[1] + '.' + ios[2] : '') : /Android/.test(ua) ? 'Android ' + ((ua.match(/Android ([\d.]+)/) || [])[1] || '') : /Mac OS X/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows' : 'อื่น ๆ';
+    var os = /iPhone|iPad|iPod/.test(ua) ? 'iOS ' + (ios ? ios[1] + '.' + ios[2] : '') : iosDesk() ? 'iPhone (เปิดแบบเว็บไซต์เดสก์ท็อป)' : isIOS() ? 'iPad' : /Android/.test(ua) ? 'Android ' + ((ua.match(/Android ([\d.]+)/) || [])[1] || '') : /Mac OS X/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows' : 'อื่น ๆ';
     var app = /Line\//.test(ua) ? 'LINE' : /SamsungBrowser/.test(ua) ? 'Samsung Internet' : /EdgiOS|EdgA|Edg\//.test(ua) ? 'Edge' : /CriOS|Chrome\//.test(ua) ? 'Chrome' : /FxiOS|Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) ? 'Safari' : 'เบราว์เซอร์อื่น';
     var fromHome = window.navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
     var errs = ERRS.slice(-3).map(function (e) { return hmOf(new Date(e.t)) + ' ' + e.at + ' "' + e.m + '"'; });
@@ -24202,6 +24310,8 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--m
     'pick-shift': function (el) { S.shift = el.dataset.code; S.shiftOpen = false; render(); },
     'shift-more': function () { S.shiftOpen = true; render(); },
     'clock-in': function (el) { phoneClockIn(el); },
+    // (k206) ขอตำแหน่งใหม่จากการแตะ (เรียกตัวหาตำแหน่งในจังหวะแตะเลย ไม่รออะไรก่อน)
+    'gps-again': function () { gpsAgain(); },
     'scan-photo': function () {
       var sc = S.scanner;
       if (!sc) return;
